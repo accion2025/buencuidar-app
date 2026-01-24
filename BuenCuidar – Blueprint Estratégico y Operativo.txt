@@ -1,0 +1,69 @@
+BuenCuidar - Blueprint Estratégico y Operativo
+1? Categorías de Servicios y Cuidadores
+Categorías de Limitaciones (Enfoque en Autonomía)
+LimitaciónNombre EstratégicoEnfoqueMentalAcompañamiento CognitivoPreservación cognitiva y estimulación mentalFísicaAsistencia de MovilidadIndependencia física y autonomía diariaCuidado PermanenteGestión de Vida DependienteAtención 24/7 para alta dependenciaCuidados MédicosSoporte Clínico EspecializadoProcedimientos específicos bajo supervisión profesionalNiveles de Cuidadores
+NivelNombre EstratégicoPerfil1Cuidado ConectivoSocialización y compañía, habilidades básicas2Cuidado TécnicoCertificados en gerontología/auxiliares3Enfermería de Alta ComplejidadLicenciados para cuidados críticos
+2? Flujo de Experiencia del Usuario
+A. Familia
+1. Registro y selección de categoría de servicio según autonomía del adulto mayor.
+2. Visualización de cuidadores filtrados por:
+o Nivel de habilidad y perfil
+o Geolocalización
+o Score de visibilidad (ranking)
+3. Supervisión activa mediante Botón Salud:
+o Signos vitales, medicación, bitácora clínica, teleasistencia
+4. Confirmación de pagos y validación de servicios completados.
+B. Cuidador
+1. Registro y selección de nivel de perfil.
+2. Suscripción opcional Premium con beneficios: insignia, acceso anticipado, estadísticas, capacitación.
+3. Recepción de solicitudes según ranking, geolocalización y requisitos del cliente.
+4. Registro de servicios realizados y pagos recibidos en la app.
+5. Acceso a panel de gestión de ingresos y cumplimiento de reglas.
+
+3? Ranking y Publicidad Interna
+Algoritmo de Priorización
+* Suscripción activa (Premium)
+* Cumplimiento de requisitos de la familia
+* Tasa de respuesta
+* Calificación de familias
+* Geolocalización
+Publicidad Interna
+* Cuidadores Destacados: Top 3 resultados, tarjeta visual con etiqueta "Verificado/Destacado"
+* Banners Especializados: Según necesidades específicas (post-operatorio, fisioterapia, etc.)
+Regla de Oro: cuidadores con calificación <3.5 estrellas pierden la opción de publicidad hasta mejorar.
+
+4? Pagos y Validación de Servicios
+Flujo de Pago y Confirmación
+1. Registro por el cuidador:
+o El cuidador marca el servicio como completado en la app.
+o Registra el monto recibido y el método de pago (efectivo o transferencia local).
+2. Confirmación de la familia:
+o La familia recibe una notificación:
+"El cuidador ha registrado un pago de C$XXXX. ¿Es correcto?"
+o Solo después de la validación de la familia, el turno queda verificado y cerrado.
+Observaciones
+* La plataforma no administra ni retiene el dinero; solo supervisa y valida la transacción.
+* Permite control administrativo, historial de pagos y cálculo de comisiones de manera transparente, sin interferir en el flujo de efectivo real.
+* Se mantiene la simplicidad legal y la autonomía del cuidador.
+
+5? Funcionalidades Clave de Supervisión ("Botón Salud")
+1. Monitoreo de signos vitales
+2. Gestión de medicación con recordatorios
+3. Teleasistencia y botón de emergencia
+4. Bitácora clínica digital, compartible con médicos
+Objetivo: Supervisión, confianza y retención de las familias.
+
+6? Controles de Calidad
+* Validación estricta de cuidadores antes de entrar al sistema
+* Evaluaciones periódicas de desempeño
+* Mecanismos de retroalimentación y penalización si el cuidador incumple estándares
+* Transparencia total con la familia y protección del servicio frente a fallas
+
+7? Resumen Estratégico
+* Servicios empáticos, centrados en autonomía y funcionalidad
+* Perfiles jerarquizados, claros para familia y escalables
+* Monetización sostenible, combinando ranking, publicidad y suscripciones
+* Gestión activa, con supervisión y teleasistencia
+* Pagos flexibles y seguros, locales e internacionales
+* Protección y reputación, priorizando confianza sobre volumen
+

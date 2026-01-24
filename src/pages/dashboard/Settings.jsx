@@ -1,0 +1,154 @@
+import React, { useState } from 'react';
+import { Bell, Lock, CreditCard, Shield, ChevronRight, Plus } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
+
+const Settings = () => {
+    const { user, profile, resetPassword } = useAuth();
+    const [notifications, setNotifications] = useState({
+        email: true,
+        sms: false,
+        promotions: true
+    });
+
+    const toggle = (key) => setNotifications({ ...notifications, [key]: !notifications[key] });
+
+    const handlePasswordReset = async () => {
+        if (!user?.email) return;
+        if (confirm(`¿Enviar correo de restablecimiento de contraseña a ${user.email}?`)) {
+            const { error } = await resetPassword(user.email);
+            if (error) {
+                alert("Error al enviar correo: " + error.message);
+            } else {
+                alert("Correo enviado. Revisa tu bandeja de entrada.");
+            }
+        }
+    };
+
+    // Derived State for Subscription
+    const isPremium = profile?.subscription_status === 'active';
+    const planName = profile?.plan_type === 'premium' ? 'Plan Familiar Premium' : 'Plan Básico (Gratuito)';
+
+    return (
+        <div className="space-y-6 animate-fade-in max-w-4xl relative">
+            <h2 className="text-2xl font-bold text-gray-800">Configuración</h2>
+
+            {/* Notifications */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 bg-gray-50">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-orange-100 p-2 rounded-lg text-orange-600">
+                            <Bell size={20} />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800">Notificaciones</h3>
+                    </div>
+                </div>
+                <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between py-2">
+                        <div>
+                            <p className="font-semibold text-gray-700">Avisos por Email</p>
+                            <p className="text-sm text-gray-500">Recibe confirmaciones de citas y recibos.</p>
+                        </div>
+                        <button
+                            onClick={() => toggle('email')}
+                            className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-[var(--primary-color)]' : 'bg-gray-300'}`}
+                        >
+                            <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
+                        </button>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                        <div>
+                            <p className="font-semibold text-gray-700">Mensajes SMS</p>
+                            <p className="text-sm text-gray-500">Alertas urgentes directamente a tu celular.</p>
+                        </div>
+                        <button
+                            onClick={() => toggle('sms')}
+                            className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-[var(--primary-color)]' : 'bg-gray-300'}`}
+                        >
+                            <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Security */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 bg-gray-50">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-blue-100 p-2 rounded-lg text-blue-600">
+                            <Lock size={20} />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800">Seguridad</h3>
+                    </div>
+                </div>
+                <div className="p-6 space-y-4">
+                    <button
+                        onClick={handlePasswordReset}
+                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all group"
+                    >
+                        <span className="font-medium text-gray-700">Cambiar Contraseña</span>
+                        <ChevronRight size={18} className="text-gray-400 group-hover:text-gray-600" />
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.")) {
+                                alert("Por favor contacta a soporte para proceder con la baja definitiva.");
+                            }
+                        }}
+                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-100 transition-all group mt-2"
+                    >
+                        <span className="font-medium text-red-600">Eliminar Cuenta</span>
+                        <ChevronRight size={18} className="text-red-300 group-hover:text-red-500" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Billing */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 bg-gray-50">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-green-100 p-2 rounded-lg text-green-600">
+                            <CreditCard size={20} />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800">Suscripción: Servicio PULSO</h3>
+                    </div>
+                </div>
+                <div className="p-6 space-y-4">
+                    <div className={`p-4 border rounded-lg mb-4 flex justify-between items-center ${isPremium ? 'border-blue-100 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}>
+                        <div>
+                            <h3 className={`font-bold ${isPremium ? 'text-blue-900' : 'text-gray-800'}`}>{planName}</h3>
+                            <p className={`text-sm ${isPremium ? 'text-blue-700' : 'text-gray-500'}`}>
+                                {isPremium ? 'Tu familia está protegida con el plan completo.' : 'Funciones básicas limitadas.'}
+                            </p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${isPremium ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-600'}`}>
+                            {isPremium ? 'ACTIVO' : 'BÁSICO'}
+                        </span>
+                    </div>
+
+                    {!isPremium && (
+                        <div className="bg-orange-50 p-4 rounded-lg flex items-center justify-between border border-orange-100">
+                            <div>
+                                <h4 className="font-bold text-orange-900 text-sm">¿Necesitas seguimiento avanzado?</h4>
+                                <p className="text-xs text-orange-700">Activa PULSO Premium para alertas en tiempo real.</p>
+                            </div>
+                            <a href="/dashboard/plans" className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:brightness-95 transition-all">
+                                Mejorar Plan
+                            </a>
+                        </div>
+                    )}
+
+                    {isPremium && (
+                        <div className="text-center pt-2">
+                            <a href="#" className="text-sm text-gray-400 hover:underline">Gestionar facturación (Stripe Portal)</a>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+
+        </div>
+    );
+};
+
+export default Settings;
