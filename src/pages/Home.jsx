@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { Search, Heart, Shield, Star, CheckCircle, MapPin, Activity, LayoutDashboard, ArrowRight } from 'lucide-react';
+import { Search, Heart, Shield, Star, CheckCircle, MapPin, Activity, LayoutDashboard, ArrowRight, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,6 +9,27 @@ const Home = () => {
     const navigate = useNavigate();
     const { user, profile } = useAuth();
     const dashboardPath = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
+
+    // Install Prompt Logic
+    const [installPrompt, setInstallPrompt] = useState(null);
+
+    useEffect(() => {
+        const handler = (e) => {
+            e.preventDefault();
+            setInstallPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
+
+    const handleInstallApp = async () => {
+        if (!installPrompt) return;
+        installPrompt.prompt();
+        const { outcome } = await installPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setInstallPrompt(null);
+        }
+    };
 
     return (
         <div className="min-h-screen flex flex-col font-sans">
@@ -56,6 +77,17 @@ const Home = () => {
                                     <ArrowRight size={20} />
                                 </button>
                             )}
+
+                            {installPrompt && (
+                                <button
+                                    onClick={handleInstallApp}
+                                    className="bg-blue-600 text-white px-8 py-4 rounded-xl font-black text-lg hover:bg-blue-500 transition-all hover:scale-110 shadow-lg flex items-center justify-center gap-2 animate-bounce-slow"
+                                >
+                                    <Download size={20} />
+                                    Instalar App
+                                </button>
+                            )}
+
                             <button
                                 onClick={() => navigate(user ? '/dashboard/salud' : '/ecosistema-salud')}
                                 className="bg-green-400 text-[var(--primary-color)] px-8 py-4 rounded-xl font-black text-lg hover:bg-green-300 transition-all hover:scale-110 shadow-lg flex items-center justify-center gap-2 italic tracking-tighter"
