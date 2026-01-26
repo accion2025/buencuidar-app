@@ -72,7 +72,8 @@ const CalendarPage = () => {
             `)
                 .or(`client_id.eq.${user.id},caregiver_id.eq.${user.id}`)
                 .gte('date', firstDay.split('T')[0])
-                .lte('date', lastDay.split('T')[0]);
+                .lte('date', lastDay.split('T')[0])
+                .neq('status', 'cancelled');
 
             if (error) throw error;
 
@@ -206,12 +207,33 @@ const CalendarPage = () => {
 
     const confirmDelete = async () => {
         const id = deleteConfirm.id;
+        const appointment = appointments.find(a => a.id === id);
+        const hasCaregiver = !!appointment?.caregiver_id;
+
         setDeleteConfirm(null);
         try {
-            await supabase.from('appointments').delete().eq('id', id);
+            // ALWAYS perform soft delete: Change status to cancelled so it stays in history
+            const { error } = await supabase
+                .from('appointments')
+                .update({
+                    status: 'cancelled',
+                    modification_seen_by_caregiver: false,
+                    is_modification: true // Mark for UI highlight
+                })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            if (hasCaregiver) {
+                alert('Cita cancelada correctamente. El cuidador ha sido notificado.');
+            } else {
+                alert('Cita cancelada correctamente. Se ha movido a tu historial.');
+            }
+
             await loadAppointments();
         } catch (error) {
             console.error("Error deleting appointment:", error);
+            alert("Error al eliminar: " + error.message);
         }
     };
 

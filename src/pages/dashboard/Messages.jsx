@@ -150,16 +150,20 @@ const Messages = () => {
             .on('postgres_changes',
                 { event: '*', schema: 'public', table: 'messages', filter: `conversation_id=eq.${selectedChat.id}` },
                 (payload) => {
+                    console.log('Real-time event received:', payload.eventType, payload);
+
                     if (payload.eventType === 'INSERT') {
-                        // Avoid duplication if already added optimistically
                         setMessages(prev => {
-                            if (prev.find(m => m.id === payload.new.id)) return prev;
-                            const newMsgs = [...prev, payload.new];
-                            return newMsgs;
+                            // Verify if it's already there (to avoid double insert from optimistic + real)
+                            const exists = prev.some(m => m.id === payload.new.id);
+                            if (exists) return prev;
+
+                            // If it's the current user sending, we likely already have it via optimistic update
+                            // but we merge anyway to ensure we have the real DB ID and timestamp
+                            return [...prev, payload.new];
                         });
                         scrollToBottom();
 
-                        // Mark new incoming message as read if we are viewing this chat
                         if (payload.new.sender_id !== user.id) {
                             markAsRead();
                         }
@@ -168,9 +172,12 @@ const Messages = () => {
                     }
                 }
             )
-            .subscribe();
+            .subscribe((status) => {
+                console.log(`Subscription status for chat ${selectedChat.id}:`, status);
+            });
 
         return () => {
+            console.log('Cleaning up channel for:', selectedChat.id);
             supabase.removeChannel(channel);
         };
     }, [selectedChat]);

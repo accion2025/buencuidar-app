@@ -419,30 +419,26 @@ const DashboardOverview = () => {
         const hasCaregiver = !!appointment.caregiver_id;
         const confirmMsg = hasCaregiver
             ? 'Esta cita ya tiene un cuidador asignado. ¿Deseas cancelarla? El cuidador recibirá una notificación.'
-            : '¿Estás seguro de que deseas eliminar esta cita? Esta acción no se puede deshacer.';
+            : '¿Estás seguro de que deseas eliminar esta cita? Se moverá al historial como cancelada.';
 
         if (window.confirm(confirmMsg)) {
             try {
+                // Soft delete: Always change status to cancelled so it stays in DB history
+                const { error } = await supabase
+                    .from('appointments')
+                    .update({
+                        status: 'cancelled',
+                        modification_seen_by_caregiver: false,
+                        is_modification: true // Mark as modified/cancelled for UI highlight
+                    })
+                    .eq('id', appointment.id);
+
+                if (error) throw error;
+
                 if (hasCaregiver) {
-                    // Soft delete: Change status to cancelled so caregiver sees it
-                    const { error } = await supabase
-                        .from('appointments')
-                        .update({
-                            status: 'cancelled',
-                            modification_seen_by_caregiver: false,
-                            is_modification: true // Mark as modified/cancelled for UI highlight
-                        })
-                        .eq('id', appointment.id);
-                    if (error) throw error;
                     alert('Cita cancelada correctamente. El cuidador ha sido notificado.');
                 } else {
-                    // Hard delete: Only if no caregiver was ever assigned
-                    const { error } = await supabase
-                        .from('appointments')
-                        .delete()
-                        .eq('id', appointment.id);
-                    if (error) throw error;
-                    alert('Cita eliminada correctamente.');
+                    alert('Cita cancelada correctamente. Se ha movido a tu historial.');
                 }
 
                 fetchAppointments(); // Refresh list
@@ -511,6 +507,7 @@ const DashboardOverview = () => {
     // We EXCLUDE 'confirmed' appointments that are for TODAY (they belong in Upcoming)
     const historyAppointments = appointments
         .filter(a =>
+            a.status === 'cancelled' ||
             ((a.status === 'completed' || a.status === 'paid') && a.date <= todayLocal) ||
             (a.status === 'confirmed' && a.date < todayLocal)
         )
@@ -518,6 +515,7 @@ const DashboardOverview = () => {
     const upcomingAppointmentsList = appointments.filter(a =>
         a.status !== 'completed' &&
         a.status !== 'paid' &&
+        a.status !== 'cancelled' &&
         a.date >= todayLocal
     );
 

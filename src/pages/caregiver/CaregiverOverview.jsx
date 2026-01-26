@@ -44,7 +44,14 @@ const CaregiverOverview = () => {
                     ? `${notification.time.substring(0, 5)} - ${notification.end_time.substring(0, 5)}`
                     : notification.time.substring(0, 5);
 
-                const msgContent = `He visto la modificación del turno para el ${notification.date} de ${timeString}. Confirmado.`;
+                let msgContent = '';
+                if (notification.status === 'cancelled') {
+                    msgContent = `CANCELACIÓN RECIBIDA: He sido notificado de la cancelación del turno del ${notification.date} (${timeString}). Queda eliminado de mi agenda de trabajo.`;
+                } else if (notification.is_modification) {
+                    msgContent = `CAMBIO CONFIRMADO: He revisado los cambios en el turno del ${notification.date} (${timeString}). Confirmo mi asistencia con las nuevas condiciones requeridas.`;
+                } else {
+                    msgContent = `APROBACIÓN RECIBIDA: ¡Muchas gracias por la confianza! Estaré allí el ${notification.date} a las ${timeString} puntual para cumplir con el servicio.`;
+                }
 
                 // Check for existing conversation
                 const { data: existingConv } = await supabase
@@ -382,15 +389,20 @@ const CaregiverOverview = () => {
                         date,
                         time,
                         end_time,
+                        status,
                         client:client_id (full_name)
                     )
                 `)
                 .eq('caregiver_id', user.id)
                 .order('created_at', { ascending: false })
-                .limit(5);
+                .limit(10); // increased limit slightly to allow filtering junk without empty list
 
             if (error) throw error;
-            setMyApplications(data || []);
+            // Filter out applications where the appointment was cancelled by the client
+            const activeApplications = (data || []).filter(app =>
+                app.appointment && app.appointment.status !== 'cancelled'
+            );
+            setMyApplications(activeApplications.slice(0, 5));
         } catch (error) {
             console.error("Error fetching applications:", error);
         }
@@ -816,7 +828,7 @@ const CaregiverOverview = () => {
                                                                     onClick={() => handleAcknowledge(notif)}
                                                                     className="mt-2 w-full text-center text-xs bg-red-600 text-white px-3 py-1.5 rounded-md font-bold hover:bg-red-700 transition-colors shadow-sm flex items-center justify-center gap-1"
                                                                 >
-                                                                    <Check size={12} /> Entendido, confirmo asistencia
+                                                                    <Check size={12} /> Aceptar cambios y confirmar asistencia
                                                                 </button>
                                                             )}
                                                         </div>
@@ -828,7 +840,7 @@ const CaregiverOverview = () => {
                                                                     onClick={() => handleAcknowledge(notif)}
                                                                     className="mt-2 w-full text-center text-xs bg-blue-600 text-white px-3 py-1.5 rounded-md font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-1"
                                                                 >
-                                                                    <Check size={12} /> Entendido, confirmo asistencia
+                                                                    <Check size={12} /> Muchas gracias, confirmo asistencia
                                                                 </button>
                                                             )}
                                                         </div>
@@ -841,7 +853,7 @@ const CaregiverOverview = () => {
                                                                 onClick={() => handleAcknowledge(notif)}
                                                                 className="mt-2 w-full text-center text-xs bg-red-700 text-white px-3 py-1.5 rounded-md font-bold hover:bg-red-800 transition-colors shadow-sm flex items-center justify-center gap-1"
                                                             >
-                                                                <Check size={12} /> Entendido
+                                                                <Check size={12} /> Entendido, cita cancelada
                                                             </button>
                                                         )}
                                                     </div>
