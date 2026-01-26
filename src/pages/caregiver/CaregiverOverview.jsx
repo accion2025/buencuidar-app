@@ -786,13 +786,13 @@ const CaregiverOverview = () => {
                             {notifications.length > 0 ? (
                                 notifications.map(notif => (
                                     <div key={notif.id} className="flex gap-3 items-start animate-fade-in border-b border-gray-50 pb-3 last:border-0 last:pb-0">
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${notif.status === 'confirmed' && notif.created_at !== notif.updated_at ? 'bg-blue-100' :
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${notif.is_modification && !notif.modification_seen_by_caregiver ? 'bg-red-100' :
                                             notif.status === 'confirmed' ? 'bg-green-100' : 'bg-red-100'
                                             }`}>
-                                            {notif.status === 'confirmed' && notif.created_at === notif.updated_at ? (
+                                            {notif.status === 'confirmed' && !notif.is_modification ? (
                                                 <Check size={14} className="text-green-600" />
-                                            ) : notif.status === 'confirmed' && notif.created_at !== notif.updated_at ? (
-                                                <Clock size={14} className="text-blue-600" />
+                                            ) : notif.status === 'confirmed' && notif.is_modification ? (
+                                                <Clock size={14} className={notif.modification_seen_by_caregiver ? "text-blue-600" : "text-red-600"} />
                                             ) : (
                                                 <X size={14} className="text-red-600" />
                                             )}
@@ -800,23 +800,51 @@ const CaregiverOverview = () => {
                                         <div className="flex-1">
                                             <div className="text-xs text-gray-800">
                                                 {notif.status === 'confirmed' ? (
-                                                    notif.created_at !== notif.updated_at ? (
+                                                    notif.is_modification ? (
                                                         <div>
-                                                            <span className="text-green-600 font-bold">¡FELICITACIONES!</span> Tu cita con <span className="font-bold">{notif.client?.full_name}</span> ha sido aprobada.
+                                                            {!notif.modification_seen_by_caregiver ? (
+                                                                <>
+                                                                    <span className="text-red-600 font-black animate-pulse">¡CAMBIO EN TURNO!</span> Tu cita con <span className="font-bold">{notif.client?.full_name}</span> ha sido modificada.
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <span className="text-blue-600 font-bold">¡TURNO ACTUALIZADO!</span> Los cambios en tu cita con <span className="font-bold">{notif.client?.full_name}</span> han sido revisados.
+                                                                </>
+                                                            )}
                                                             {!notif.modification_seen_by_caregiver && (
                                                                 <button
                                                                     onClick={() => handleAcknowledge(notif)}
-                                                                    className="mt-2 w-full text-center text-xs bg-blue-600 text-white px-3 py-1.5 rounded-md font-medium hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-1"
+                                                                    className="mt-2 w-full text-center text-xs bg-red-600 text-white px-3 py-1.5 rounded-md font-bold hover:bg-red-700 transition-colors shadow-sm flex items-center justify-center gap-1"
                                                                 >
                                                                     <Check size={12} /> Entendido, confirmo asistencia
                                                                 </button>
                                                             )}
                                                         </div>
                                                     ) : (
-                                                        <>Tu turno con <span className="font-bold">{notif.client?.full_name}</span> ha sido confirmado.</>
+                                                        <div>
+                                                            <span className="text-green-600 font-bold">¡FELICITACIONES!</span> Tu cita con <span className="font-bold">{notif.client?.full_name}</span> ha sido aprobada.
+                                                            {!notif.modification_seen_by_caregiver && (
+                                                                <button
+                                                                    onClick={() => handleAcknowledge(notif)}
+                                                                    className="mt-2 w-full text-center text-xs bg-blue-600 text-white px-3 py-1.5 rounded-md font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-1"
+                                                                >
+                                                                    <Check size={12} /> Entendido, confirmo asistencia
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     )
                                                 ) : (
-                                                    <>Tu turno con <span className="font-bold">{notif.client?.full_name}</span> ha sido cancelado.</>
+                                                    <div>
+                                                        <span className="text-red-700 font-black animate-pulse uppercase tracking-tighter">¡TURNO CANCELADO!</span> Tu cita con <span className="font-bold">{notif.client?.full_name}</span> ha sido eliminada por el cliente.
+                                                        {!notif.modification_seen_by_caregiver && (
+                                                            <button
+                                                                onClick={() => handleAcknowledge(notif)}
+                                                                className="mt-2 w-full text-center text-xs bg-red-700 text-white px-3 py-1.5 rounded-md font-bold hover:bg-red-800 transition-colors shadow-sm flex items-center justify-center gap-1"
+                                                            >
+                                                                <Check size={12} /> Entendido
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 )}
                                             </div>
                                             <p className="text-[10px] text-gray-400 mt-1">

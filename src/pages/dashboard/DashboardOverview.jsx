@@ -306,7 +306,9 @@ const DashboardOverview = () => {
                     .from('appointments')
                     .update({
                         caregiver_id: application.caregiver.id,
-                        status: 'confirmed'
+                        status: 'confirmed',
+                        is_modification: false, // Explicitly false for new approval
+                        modification_seen_by_caregiver: false
                     })
                     .eq('id', application.appointment_id);
 
@@ -365,7 +367,9 @@ const DashboardOverview = () => {
                 end_time: updatedData.endTime || null,
                 type: updatedData.type,
                 patient_id: updatedData.patient_id || null, // Fix: Convert empty string to null
-                details: updatedData.details
+                details: updatedData.details,
+                modification_seen_by_caregiver: false, // Reset flag for caregiver to see the change
+                is_modification: true // Mark as a modification
             };
 
             const { error } = await supabase
@@ -412,20 +416,39 @@ const DashboardOverview = () => {
         .slice(0, 3); // Take first 3
 
     const handleDeleteAppointment = async (appointment) => {
-        if (window.confirm('¿Estás seguro de que deseas eliminar esta cita? Esta acción no se puede deshacer.')) {
+        const hasCaregiver = !!appointment.caregiver_id;
+        const confirmMsg = hasCaregiver
+            ? 'Esta cita ya tiene un cuidador asignado. ¿Deseas cancelarla? El cuidador recibirá una notificación.'
+            : '¿Estás seguro de que deseas eliminar esta cita? Esta acción no se puede deshacer.';
+
+        if (window.confirm(confirmMsg)) {
             try {
-                const { error } = await supabase
-                    .from('appointments')
-                    .delete()
-                    .eq('id', appointment.id);
+                if (hasCaregiver) {
+                    // Soft delete: Change status to cancelled so caregiver sees it
+                    const { error } = await supabase
+                        .from('appointments')
+                        .update({
+                            status: 'cancelled',
+                            modification_seen_by_caregiver: false,
+                            is_modification: true // Mark as modified/cancelled for UI highlight
+                        })
+                        .eq('id', appointment.id);
+                    if (error) throw error;
+                    alert('Cita cancelada correctamente. El cuidador ha sido notificado.');
+                } else {
+                    // Hard delete: Only if no caregiver was ever assigned
+                    const { error } = await supabase
+                        .from('appointments')
+                        .delete()
+                        .eq('id', appointment.id);
+                    if (error) throw error;
+                    alert('Cita eliminada correctamente.');
+                }
 
-                if (error) throw error;
-
-                alert('Cita eliminada correctamente.');
                 fetchAppointments(); // Refresh list
             } catch (error) {
-                console.error('Error deleting appointment:', error);
-                alert('Error al eliminar la cita: ' + error.message);
+                console.error('Error handling appointment removal:', error);
+                alert('Error: ' + error.message);
             }
         }
     };
