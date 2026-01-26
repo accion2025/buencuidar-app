@@ -148,14 +148,23 @@ const Messages = () => {
         const channel = supabase
             .channel(`chat:${selectedChat.id}`)
             .on('postgres_changes',
-                { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${selectedChat.id}` },
+                { event: '*', schema: 'public', table: 'messages', filter: `conversation_id=eq.${selectedChat.id}` },
                 (payload) => {
-                    setMessages(prev => [...prev, payload.new]);
-                    scrollToBottom();
+                    if (payload.eventType === 'INSERT') {
+                        // Avoid duplication if already added optimistically
+                        setMessages(prev => {
+                            if (prev.find(m => m.id === payload.new.id)) return prev;
+                            const newMsgs = [...prev, payload.new];
+                            return newMsgs;
+                        });
+                        scrollToBottom();
 
-                    // Mark new incoming message as read if we are viewing this chat
-                    if (payload.new.sender_id !== user.id) {
-                        markAsRead();
+                        // Mark new incoming message as read if we are viewing this chat
+                        if (payload.new.sender_id !== user.id) {
+                            markAsRead();
+                        }
+                    } else if (payload.eventType === 'DELETE') {
+                        setMessages(prev => prev.filter(m => m.id !== payload.old.id));
                     }
                 }
             )
@@ -177,19 +186,39 @@ const Messages = () => {
         if (!inputMessage.trim() || !user || !selectedChat) return;
 
         const text = inputMessage.trim();
-        setInputMessage(''); // Optimistic clear
+        setInputMessage('');
+
+        // Optimistic UI Update
+        const tempId = Date.now().toString();
+        const optimisticMsg = {
+            id: tempId,
+            conversation_id: selectedChat.id,
+            sender_id: user.id,
+            content: text,
+            created_at: new Date().toISOString(),
+            is_optimistic: true
+        };
+
+        setMessages(prev => [...prev, optimisticMsg]);
+        scrollToBottom();
 
         try {
             // 1. Insert Message
-            const { error: msgError } = await supabase
+            const { data: newMsg, error: msgError } = await supabase
                 .from('messages')
                 .insert([{
                     conversation_id: selectedChat.id,
                     sender_id: user.id,
                     content: text
-                }]);
+                }])
+                .select();
 
             if (msgError) throw msgError;
+
+            // Replace optimistic message with real one
+            if (newMsg) {
+                setMessages(prev => prev.map(m => m.id === tempId ? newMsg[0] : m));
+            }
 
             // 2. Update Conversation (last_message)
             await supabase
@@ -202,6 +231,8 @@ const Messages = () => {
 
         } catch (error) {
             console.error('Error sending message:', error);
+            // Remove optimistic message on error
+            setMessages(prev => prev.filter(m => m.id !== tempId));
             alert('Error al enviar el mensaje');
         }
     };
@@ -319,40 +350,78 @@ const Messages = () => {
 
                         {/* Messages Area */}
                         <div className="flex-grow overflow-y-auto p-6 bg-gray-50 space-y-4">
-                            {messages.map(msg => (
-                                <div
-                                    key={msg.id}
-                                    className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`} // Add group for hover
-                                >
-                                    <div className="flex items-end gap-2 max-w-[70%]">
-                                        {/* Delete Button (Only for sender) */}
-                                        {msg.sender_id === user.id && (
-                                            <button
-                                                onClick={() => handleDeleteMessage(msg.id)}
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full"
-                                                title="Eliminar mensaje"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                        )}
+                            {(() => {
+                                let lastDate = null;
+                                return messages.map((msg, idx) => {
+                                    const msgDate = new Date(msg.created_at);
+                                    const dateString = msgDate.toLocaleDateString('es-ES', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    });
 
-                                        <div
-                                            className={`rounded-2xl px-5 py-3 shadow-sm ${msg.sender_id === user.id
-                                                ? 'bg-[var(--primary-color)] text-white rounded-br-none'
-                                                : 'bg-white text-gray-800 rounded-bl-none'
-                                                } min-w-[80px]`}
-                                        >
-                                            <p>{msg.content}</p>
-                                            <p
-                                                className={`text-[10px] mt-1 text-right ${msg.sender_id === user.id ? 'text-blue-100' : 'text-gray-400'
-                                                    }`}
+                                    // Format label
+                                    const today = new Date();
+                                    const yesterday = new Date();
+                                    yesterday.setDate(today.getDate() - 1);
+
+                                    let dateLabel = dateString;
+                                    if (msgDate.toDateString() === today.toDateString()) dateLabel = 'Hoy';
+                                    else if (msgDate.toDateString() === yesterday.toDateString()) dateLabel = 'Ayer';
+                                    else {
+                                        dateLabel = msgDate.toLocaleDateString('es-ES', {
+                                            day: 'numeric',
+                                            month: 'long'
+                                        });
+                                    }
+
+                                    const showDateSeparator = lastDate !== msgDate.toDateString();
+                                    lastDate = msgDate.toDateString();
+
+                                    return (
+                                        <React.Fragment key={msg.id}>
+                                            {showDateSeparator && (
+                                                <div className="flex justify-center my-6">
+                                                    <span className="bg-gray-200/50 text-gray-500 text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
+                                                        {dateLabel}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div
+                                                className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'} group`}
                                             >
-                                                {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                                                <div className="flex items-end gap-2 max-w-[70%]">
+                                                    {msg.sender_id === user.id && (
+                                                        <button
+                                                            onClick={() => handleDeleteMessage(msg.id)}
+                                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+                                                            title="Eliminar mensaje"
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    )}
+
+                                                    <div
+                                                        className={`rounded-2xl px-5 py-3 shadow-sm ${msg.sender_id === user.id
+                                                            ? 'bg-[var(--primary-color)] text-white rounded-br-none'
+                                                            : 'bg-white text-gray-800 rounded-bl-none'
+                                                            } min-w-[80px]`}
+                                                    >
+                                                        <p>{msg.content}</p>
+                                                        <p
+                                                            className={`text-[10px] mt-1 text-right ${msg.sender_id === user.id ? 'text-blue-100' : 'text-gray-400'
+                                                                }`}
+                                                        >
+                                                            {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </React.Fragment>
+                                    );
+                                });
+                            })()}
                             <div ref={messagesEndRef} />
                         </div>
 
