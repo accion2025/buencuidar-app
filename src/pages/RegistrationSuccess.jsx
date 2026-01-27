@@ -1,12 +1,14 @@
 import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CheckCircle, Copy, ArrowRight, ShieldCheck, Mail, Star } from 'lucide-react';
+import { translateSupabaseError } from '../utils/translations';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 const RegistrationSuccess = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { resendConfirmationEmail } = useAuth();
     const { fullName, caregiverCode, email, requiresConfirmation, role } = location.state || {
         fullName: 'Usuario',
         caregiverCode: null,
@@ -76,13 +78,34 @@ const RegistrationSuccess = () => {
                         )}
 
                         <div className="flex flex-col gap-6 mb-12 text-left">
-                            <div className="bg-blue-600 p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 flex items-center gap-6 text-white transform hover:scale-[1.02] transition-all">
-                                <div className="bg-white/20 p-4 rounded-2xl">
+                            <div className="bg-blue-600 p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 flex flex-col md:flex-row items-center gap-6 text-white transform hover:scale-[1.02] transition-all">
+                                <div className="bg-white/20 p-4 rounded-2xl flex-shrink-0">
                                     <Mail size={32} />
                                 </div>
                                 <div className="flex-grow">
                                     <h4 className="text-2xl font-black mb-1">Verifica tu email</h4>
-                                    <p className="opacity-90 font-medium">Hemos enviado las instrucciones a <strong>{email}</strong>. Revisa tu bandeja de entrada y spam.</p>
+                                    <p className="opacity-90 font-medium mb-4">Hemos enviado las instrucciones a <strong>{email}</strong>. Revisa tu bandeja de entrada y spam.</p>
+
+                                    {requiresConfirmation && (
+                                        <button
+                                            onClick={async () => {
+                                                const btn = document.getElementById('resend-btn');
+                                                if (btn) btn.disabled = true;
+                                                const { error } = await resendConfirmationEmail(email);
+                                                if (error) {
+                                                    alert(translateSupabaseError(error.message));
+                                                    if (btn) btn.disabled = false;
+                                                } else {
+                                                    alert("Enlace reenviado. Revisa nuevamente.");
+                                                    if (btn) btn.innerText = "Reenviado ✅";
+                                                }
+                                            }}
+                                            id="resend-btn"
+                                            className="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-6 rounded-xl transition-all flex items-center gap-2 text-sm backdrop-blur-md"
+                                        >
+                                            <Mail size={16} /> Reenviar enlace
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 

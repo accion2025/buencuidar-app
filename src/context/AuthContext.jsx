@@ -145,8 +145,18 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
+    const resendConfirmationEmail = (email) => {
+        return supabase.auth.resend({
+            type: 'signup',
+            email: email,
+            options: {
+                emailRedirectTo: window.location.origin + (profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')
+            }
+        });
+    };
+
     return (
-        <AuthContext.Provider value={{ user, profile, loading, profileLoading, signUp, signIn, signOut, resetPassword, refreshProfile }}>
+        <AuthContext.Provider value={{ user, profile, loading, profileLoading, signUp, signIn, signOut, resetPassword, refreshProfile, resendConfirmationEmail }}>
             {loading ? (
                 <div className="min-h-screen flex items-center justify-center bg-gray-50">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
