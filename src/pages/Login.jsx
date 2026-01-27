@@ -22,9 +22,23 @@ const Login = () => {
         }));
     };
 
-    const { signIn } = useAuth();
+    const { user, profile, signIn } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Auto-redirect if already logged in
+    useEffect(() => {
+        if (user) {
+            const role = profile?.role || user?.user_metadata?.role;
+            if (role === 'caregiver') {
+                navigate('/caregiver');
+            } else if (role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
+        }
+    }, [user, profile, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
