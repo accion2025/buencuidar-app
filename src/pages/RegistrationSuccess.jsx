@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { CheckCircle, Copy, ArrowRight, ShieldCheck, Mail, Star } from 'lucide-react';
 import { translateSupabaseError } from '../utils/translations';
 import Navbar from '../components/layout/Navbar';
