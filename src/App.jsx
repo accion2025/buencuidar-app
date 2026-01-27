@@ -10,6 +10,8 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import SaludInfo from './pages/SaludInfo';
 import RegistrationSuccess from './pages/RegistrationSuccess';
+import ForgotPassword from './pages/ForgotPassword';
+import UpdatePassword from './pages/UpdatePassword';
 
 // Dashboard Imports
 import DashboardLayout from './components/layout/DashboardLayout';
@@ -58,6 +60,8 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/register-caregiver" element={<RegisterCaregiver />} />
             <Route path="/registration-success" element={<RegistrationSuccess />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/search" element={<Search />} />
 
             {/* Family Dashboard Routes (Protected) */}

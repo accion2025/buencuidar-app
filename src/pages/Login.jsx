@@ -93,9 +93,9 @@ const Login = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                                     Contraseña
                                 </label>
-                                <a href="#" className="text-sm text-[var(--primary-light)] hover:underline">
+                                <Link to="/forgot-password" senior className="text-sm text-[var(--primary-light)] hover:underline">
                                     ¿Olvidaste tu contraseña?
-                                </a>
+                                </Link>
                             </div>
                             <input
                                 type="password"
