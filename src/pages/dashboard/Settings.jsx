@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Lock, CreditCard, Shield, ChevronRight, Plus, ShieldCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
 const Settings = () => {
+    const navigate = useNavigate();
     const { user, profile, resetPassword, refreshProfile } = useAuth();
     const [notifications, setNotifications] = useState({
         email: true,
