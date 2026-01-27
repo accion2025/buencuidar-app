@@ -37,8 +37,8 @@ const MonitoringCenter = () => {
     if (!isSubscribed) {
         return (
             <div className="flex-grow flex items-center justify-center py-12 px-4">
-                <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden text-center p-12 space-y-8 animate-fade-in-up">
-                    <div className="bg-blue-50 w-28 h-28 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden p-12 space-y-8 animate-fade-in-up flex flex-col items-center text-center">
+                    <div className="bg-blue-50 w-28 h-28 rounded-full flex items-center justify-center shadow-inner">
                         <Lock size={56} className="text-blue-600 animate-pulse" />
                     </div>
 
@@ -49,10 +49,10 @@ const MonitoringCenter = () => {
                         </p>
                     </div>
 
-                    <div className="pt-8">
+                    <div className="pt-8 flex justify-center w-full">
                         <button
                             onClick={() => navigate('/dashboard/plans')}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 mx-auto"
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
                         >
                             Ver Planes de Suscripción
                         </button>
