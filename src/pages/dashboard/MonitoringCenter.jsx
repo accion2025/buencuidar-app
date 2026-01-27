@@ -36,24 +36,31 @@ const MonitoringCenter = () => {
 
     if (!isSubscribed) {
         return (
-            <div className="max-w-4xl mx-auto py-12 px-4">
-                <div className="bg-white rounded-lg shadow-xl border border-blue-100 overflow-hidden text-center p-12 space-y-6">
-                    <div className="bg-blue-50 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Lock size={48} className="text-blue-600" />
+            <div className="flex-grow flex items-center justify-center py-12 px-4">
+                <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden text-center p-12 space-y-8 animate-fade-in-up">
+                    <div className="bg-blue-50 w-28 h-28 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                        <Lock size={56} className="text-blue-600 animate-pulse" />
                     </div>
-                    <h1 className="text-3xl font-black text-gray-900">Acceso Restringido a PULSO</h1>
-                    <p className="text-gray-600 max-w-lg mx-auto text-lg">
-                        El centro de seguimiento de bienestar en tiempo real es una función exclusiva para usuarios con una suscripción activa a nuestros planes de cuidado premium.
-                    </p>
-                    <div className="pt-6">
+
+                    <div className="space-y-4">
+                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">Acceso Restringido a PULSO</h1>
+                        <p className="text-gray-600 text-xl leading-relaxed max-w-lg mx-auto">
+                            El centro de seguimiento de bienestar en tiempo real es una función exclusiva para usuarios con una suscripción activa a nuestro <span className="text-blue-600 font-bold">Servicio PULSO Premium</span>.
+                        </p>
+                    </div>
+
+                    <div className="pt-8">
                         <button
-                            onClick={() => navigate('/services')}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-blue-200 transition-transform transform hover:scale-105"
+                            onClick={() => navigate('/dashboard/plans')}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 mx-auto"
                         >
                             Ver Planes de Suscripción
                         </button>
                     </div>
-                    <p className="text-sm text-gray-400 mt-4">¿Ya estás suscrito? Contacta a soporte si crees que esto es un error.</p>
+
+                    <div className="pt-4 border-t border-gray-50">
+                        <p className="text-sm text-gray-400">¿Ya estás suscrito? Contacta a soporte si crees que esto es un error.</p>
+                    </div>
                 </div>
             </div>
         );
