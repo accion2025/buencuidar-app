@@ -48,9 +48,12 @@ const Register = () => {
             return;
         }
 
-        navigate('/login', {
+        navigate('/registration-success', {
             state: {
-                message: '¡Cuenta creada con éxito! Por favor, revisa tu correo electrónico para confirmar tu cuenta antes de iniciar sesión.'
+                fullName: formData.fullName,
+                email: formData.email,
+                requiresConfirmation: true,
+                role: 'family'
             }
         });
     };

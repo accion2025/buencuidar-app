@@ -167,7 +167,8 @@ const RegisterCaregiver = () => {
                     fullName: formData.fullName,
                     caregiverCode: finalCode,
                     email: formData.email,
-                    requiresConfirmation: !authData?.session
+                    requiresConfirmation: !authData?.session,
+                    role: 'caregiver'
                 }
             });
 

@@ -7,11 +7,12 @@ import Footer from '../components/layout/Footer';
 const RegistrationSuccess = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { fullName, caregiverCode, email, requiresConfirmation } = location.state || {
-        fullName: 'Cuidador',
-        caregiverCode: 'BC-XXXX',
+    const { fullName, caregiverCode, email, requiresConfirmation, role } = location.state || {
+        fullName: 'Usuario',
+        caregiverCode: null,
         email: 'tu correo',
-        requiresConfirmation: false
+        requiresConfirmation: false,
+        role: 'family'
     };
 
     const copyToClipboard = () => {
@@ -41,34 +42,38 @@ const RegistrationSuccess = () => {
 
                         <p className="text-xl text-gray-600 mb-12 max-w-xl mx-auto font-medium">
                             {requiresConfirmation
-                                ? "Tu registro se ha iniciado correctamente. Para activar tu cuenta y obtener tu código, por favor verifica tu correo."
-                                : "Tu registro ha sido exitoso. Ahora eres parte de la red de cuidadores más profesional y tecnológica."}
+                                ? `Tu registro se ha iniciado correctamente. Para activar tu cuenta${role === 'caregiver' ? ' y obtener tu código' : ''}, por favor verifica tu correo.`
+                                : role === 'caregiver'
+                                    ? "Tu registro ha sido exitoso. Ahora eres parte de la red de cuidadores más profesional y tecnológica."
+                                    : "Tu registro ha sido exitoso. Bienvenido a la comunidad de familias que buscan el mejor cuidado."}
                         </p>
 
-                        <div className="bg-gray-900 rounded-[2rem] p-10 mb-12 shadow-2xl rotate-1 group hover:rotate-0 transition-transform duration-500">
-                            <p className="text-blue-400 text-sm font-black uppercase tracking-[0.2em] mb-4">
-                                {requiresConfirmation ? 'Código Pendiente de Verificación' : 'Tu Código de Identificación Único'}
-                            </p>
-                            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                                <span className={`text-5xl md:text-7xl font-mono font-black tracking-widest bg-white/5 px-8 py-4 rounded-2xl border border-white/10 ${requiresConfirmation ? 'text-gray-500 blur-sm' : 'text-white'}`}>
-                                    {caregiverCode}
-                                </span>
-                                {!requiresConfirmation && caregiverCode !== 'PENDIENTE' && (
-                                    <button
-                                        onClick={copyToClipboard}
-                                        className="bg-white/10 hover:bg-white/20 text-white p-4 rounded-2xl transition-all active:scale-90"
-                                        title="Copiar código"
-                                    >
-                                        <Copy size={24} />
-                                    </button>
-                                )}
+                        {caregiverCode && (
+                            <div className="bg-gray-900 rounded-[2rem] p-10 mb-12 shadow-2xl rotate-1 group hover:rotate-0 transition-transform duration-500">
+                                <p className="text-blue-400 text-sm font-black uppercase tracking-[0.2em] mb-4">
+                                    {requiresConfirmation ? 'Código Pendiente de Verificación' : 'Tu Código de Identificación Único'}
+                                </p>
+                                <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+                                    <span className={`text-5xl md:text-7xl font-mono font-black tracking-widest bg-white/5 px-8 py-4 rounded-2xl border border-white/10 ${requiresConfirmation ? 'text-gray-500 blur-sm' : 'text-white'}`}>
+                                        {caregiverCode}
+                                    </span>
+                                    {!requiresConfirmation && caregiverCode !== 'PENDIENTE' && (
+                                        <button
+                                            onClick={copyToClipboard}
+                                            className="bg-white/10 hover:bg-white/20 text-white p-4 rounded-2xl transition-all active:scale-90"
+                                            title="Copiar código"
+                                        >
+                                            <Copy size={24} />
+                                        </button>
+                                    )}
+                                </div>
+                                <p className="text-gray-400 text-xs mt-6 italic font-medium">
+                                    {requiresConfirmation
+                                        ? "* El código será visible una vez que confirmes el enlace enviado a tu correo."
+                                        : "* Comparte este código con las familias para que puedan contratar tus servicios directamente."}
+                                </p>
                             </div>
-                            <p className="text-gray-400 text-xs mt-6 italic font-medium">
-                                {requiresConfirmation
-                                    ? "* El código será visible una vez que confirmes el enlace enviado a tu correo."
-                                    : "* Comparte este código con las familias para que puedan contratar tus servicios directamente."}
-                            </p>
-                        </div>
+                        )}
 
                         <div className="grid md:grid-cols-2 gap-6 mb-12 text-left">
                             <div className="bg-blue-50 p-6 rounded-[2rem] border border-blue-100 flex items-start gap-4">
@@ -80,15 +85,28 @@ const RegistrationSuccess = () => {
                                     <p className="text-sm text-gray-600">Hemos enviado las instrucciones iniciales a <strong>{email}</strong>.</p>
                                 </div>
                             </div>
-                            <div className="bg-purple-50 p-6 rounded-[2rem] border border-purple-100 flex items-start gap-4">
-                                <div className="bg-purple-600 text-white p-2 rounded-xl">
-                                    <Star size={20} />
+                            {role === 'caregiver' && (
+                                <div className="bg-purple-50 p-6 rounded-[2rem] border border-purple-100 flex items-start gap-4">
+                                    <div className="bg-purple-600 text-white p-2 rounded-xl">
+                                        <Star size={20} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900">Completa tu perfil</h4>
+                                        <p className="text-sm text-gray-600">Sube tus certificaciones para obtener la insignia de Verificado.</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-900">Completa tu perfil</h4>
-                                    <p className="text-sm text-gray-600">Sube tus certificaciones para obtener la insignia de Verificado.</p>
+                            )}
+                            {role === 'family' && (
+                                <div className="bg-orange-50 p-6 rounded-[2rem] border border-orange-100 flex items-start gap-4">
+                                    <div className="bg-orange-600 text-white p-2 rounded-xl">
+                                        <ShieldCheck size={20} />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900">Seguridad Garantizada</h4>
+                                        <p className="text-sm text-gray-600">Todos nuestros cuidadores pasan por un riguroso proceso de validación.</p>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         <button
