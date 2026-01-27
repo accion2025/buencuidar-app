@@ -145,12 +145,13 @@ export const AuthProvider = ({ children }) => {
         });
     };
 
-    const resendConfirmationEmail = (email) => {
+    const resendConfirmationEmail = (email, role = null) => {
+        const targetRole = role || profile?.role;
         return supabase.auth.resend({
             type: 'signup',
             email: email,
             options: {
-                emailRedirectTo: window.location.origin + (profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')
+                emailRedirectTo: window.location.origin + (targetRole === 'caregiver' ? '/caregiver' : '/dashboard')
             }
         });
     };

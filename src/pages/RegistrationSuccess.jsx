@@ -92,7 +92,7 @@ const RegistrationSuccess = () => {
                                             onClick={async () => {
                                                 const btn = document.getElementById('resend-btn');
                                                 if (btn) btn.disabled = true;
-                                                const { error } = await resendConfirmationEmail(email);
+                                                const { error } = await resendConfirmationEmail(email, role);
                                                 if (error) {
                                                     alert(translateSupabaseError(error.message));
                                                     if (btn) btn.disabled = false;
