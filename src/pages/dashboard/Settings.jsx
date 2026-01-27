@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
 const Settings = () => {
-    const { user, profile, resetPassword } = useAuth();
+    const { user, profile, resetPassword, refreshProfile } = useAuth();
     const [notifications, setNotifications] = useState({
         email: true,
         sms: false
@@ -38,6 +38,9 @@ const Settings = () => {
                 .eq('id', user.id);
 
             if (error) throw error;
+
+            // Sync with context
+            await refreshProfile();
 
             // Auto-hide saving indicator
             setTimeout(() => setSaving(false), 1000);
@@ -161,8 +164,10 @@ const Settings = () => {
                     <div className={`p-4 border rounded-lg mb-4 flex justify-between items-center ${isPremium ? 'border-blue-100 bg-blue-50' : 'border-gray-200 bg-gray-50'}`}>
                         <div>
                             <h3 className={`font-bold ${isPremium ? 'text-blue-900' : 'text-gray-800'}`}>{planName}</h3>
-                            <p className={`text-sm ${isPremium ? 'text-blue-700' : 'text-gray-500'}`}>
-                                {isPremium ? 'Tu familia está protegida con el plan completo.' : 'Funciones básicas limitadas.'}
+                            <p className={`text-sm ${isPremium ? 'text-blue-700' : 'text-gray-600'}`}>
+                                {isPremium
+                                    ? 'Tu familia cuenta con protección total y alertas en tiempo real.'
+                                    : 'Acceso básico a la plataforma. Ideal para seguimiento ocasional.'}
                             </p>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold ${isPremium ? 'bg-blue-200 text-blue-800' : 'bg-green-100 text-green-700'}`}>
@@ -171,13 +176,18 @@ const Settings = () => {
                     </div>
 
                     {!isPremium && (
-                        <div className="bg-orange-50 p-4 rounded-lg flex items-center justify-between border border-orange-100">
-                            <div>
-                                <h4 className="font-bold text-orange-900 text-sm">¿Necesitas seguimiento avanzado?</h4>
-                                <p className="text-xs text-orange-700">Activa PULSO Premium para alertas en tiempo real.</p>
+                        <div className="bg-orange-50 p-4 rounded-lg flex items-center justify-between border border-orange-100 shadow-sm">
+                            <div className="flex-1 pr-4">
+                                <h4 className="font-bold text-orange-900 text-sm flex items-center gap-2">
+                                    <Shield size={16} className="text-orange-500" />
+                                    ¿Quieres máxima tranquilidad?
+                                </h4>
+                                <p className="text-xs text-orange-700 mt-1">
+                                    Activa el **Servicio PULSO Premium** para recibir alertas de emergencia al instante y seguimiento detallado de bitácora.
+                                </p>
                             </div>
-                            <a href="/dashboard/plans" className="bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:brightness-95 transition-all">
-                                Mejorar Plan
+                            <a href="/dashboard/plans" className="bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md hover:bg-orange-700 transition-all shrink-0">
+                                Ver Planes
                             </a>
                         </div>
                     )}
