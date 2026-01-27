@@ -46,11 +46,11 @@ const CaregiverOverview = () => {
 
                 let msgContent = '';
                 if (notification.status === 'cancelled') {
-                    msgContent = `CANCELACIÓN RECIBIDA: He sido notificado de la cancelación del turno del ${notification.date} (${timeString}). Queda eliminado de mi agenda de trabajo.`;
+                    msgContent = `SISTEMA: He recibido el aviso de cancelación para el turno del ${notification.date} (${timeString}). Queda eliminado de mi agenda de trabajo.`;
                 } else if (notification.is_modification) {
-                    msgContent = `CAMBIO CONFIRMADO: He revisado los cambios en el turno del ${notification.date} (${timeString}). Confirmo mi asistencia con las nuevas condiciones requeridas.`;
+                    msgContent = `SISTEMA: Confirmo que he visto los cambios en el turno para el ${notification.date} (${timeString}). Asistencia confirmada con los nuevos datos.`;
                 } else {
-                    msgContent = `APROBACIÓN RECIBIDA: ¡Muchas gracias por la confianza! Estaré allí el ${notification.date} a las ${timeString} puntual para cumplir con el servicio.`;
+                    msgContent = `SISTEMA: ¡Cita aprobada! Muchas gracias por la confianza. Confirmo mi asistencia para el ${notification.date} a las ${timeString}.`;
                 }
 
                 // Check for existing conversation
@@ -221,12 +221,14 @@ const CaregiverOverview = () => {
                     patient:patient_id (*)
                 `)
                 .eq('caregiver_id', user.id)
+                .neq('status', 'cancelled')
                 .or(`status.eq.in_progress,and(status.eq.confirmed,date.gte.${today})`)
                 .order('date', { ascending: true })
                 .order('time', { ascending: true })
                 .limit(3);
 
-            setNextShift(nextShiftData || []);
+            const filteredShifts = (nextShiftData || []).filter(s => s.status !== 'cancelled');
+            setNextShift(filteredShifts);
 
             // 2. Fetch Completed Shifts (Current Month) for Stats
             const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
@@ -398,9 +400,11 @@ const CaregiverOverview = () => {
                 .limit(10); // increased limit slightly to allow filtering junk without empty list
 
             if (error) throw error;
-            // Filter out applications where the appointment was cancelled by the client
+            // DUAL-FILTER: Both at DB level (where possible) and JS level
             const activeApplications = (data || []).filter(app =>
-                app.appointment && app.appointment.status !== 'cancelled'
+                app.appointment &&
+                app.appointment.status !== 'cancelled' &&
+                app.appointment.status !== 'deleted'
             );
             setMyApplications(activeApplications.slice(0, 5));
         } catch (error) {

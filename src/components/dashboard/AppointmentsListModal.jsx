@@ -22,8 +22,8 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
 
                 {/* List Content */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-                    {appointments.length > 0 ? (
-                        appointments.map((app) => (
+                    {appointments.filter(a => a.status !== 'cancelled').length > 0 ? (
+                        appointments.filter(a => a.status !== 'cancelled').map((app) => (
                             <div key={app.id} className="bg-white border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-4 sm:items-center group">
                                 {/* Date Box */}
                                 <div className="bg-blue-50 rounded-lg p-3 flex flex-col items-center justify-center min-w-[80px] text-blue-600">
