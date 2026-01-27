@@ -5,34 +5,38 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
 const PlanCard = ({ title, price, features, recommended, onSelect, loading }) => (
-    <div className={`relative bg-white rounded-2xl p-8 transition-all duration-300 ${recommended
-        ? 'border-2 border-blue-500 shadow-xl scale-105 z-10'
-        : 'border border-gray-100 shadow-sm hover:shadow-md'
+    <div className={`relative bg-white rounded-3xl p-8 transition-all duration-500 flex flex-col ${recommended
+        ? 'border-2 border-blue-600 shadow-2xl scale-105 z-10'
+        : 'border border-gray-100 shadow-sm hover:shadow-xl'
         }`}>
         {recommended && (
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                Más Popular
+            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
+                MÁS POPULAR
             </div>
         )}
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{title}</h3>
-        <div className="flex items-baseline mb-6">
-            <span className="text-4xl font-black text-gray-900">${price}</span>
-            <span className="text-gray-500 ml-2">/mes</span>
+        <div className="text-center mb-8">
+            <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tight">{title}</h3>
+            <div className="flex items-center justify-center gap-1">
+                <span className="text-5xl font-black text-gray-900">${price}</span>
+                <span className="text-gray-400 font-bold text-lg mt-2">/mes</span>
+            </div>
         </div>
-        <ul className="space-y-4 mb-8">
+
+        <ul className="space-y-4 mb-10 flex-grow">
             {features.map((feature, idx) => (
-                <li key={idx} className="flex items-center gap-3 text-sm text-gray-600">
-                    <Check size={18} className="text-green-500 flex-shrink-0" />
-                    {feature}
+                <li key={idx} className="flex items-start gap-3 text-gray-600 group">
+                    <Check size={20} className="text-green-500 flex-shrink-0 mt-0.5 transition-transform group-hover:scale-110" />
+                    <span className="text-[15px] font-medium leading-relaxed">{feature}</span>
                 </li>
             ))}
         </ul>
+
         <button
             onClick={onSelect}
             disabled={loading}
-            className={`w-full py-3 rounded-xl font-bold transition-all ${recommended
-                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-200'
-                : 'bg-gray-50 text-gray-800 hover:bg-gray-100'
+            className={`w-full py-5 rounded-2xl font-black text-lg transition-all duration-300 transform active:scale-95 ${recommended
+                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-200 hover:shadow-2xl'
+                : 'bg-gray-50 text-gray-900 hover:bg-gray-100'
                 }`}
         >
             {loading ? 'Procesando...' : 'Elegir Plan'}
@@ -71,20 +75,23 @@ const SubscriptionPlans = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-24 max-w-7xl">
-            {/* Header Section */}
-            <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto mb-28 space-y-8">
-                <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight leading-tight">
-                    Planes diseñados para tu tranquilidad
+        <div className="min-h-screen bg-gray-50/30 flex flex-col items-center py-20 px-4 mt-[-40px]">
+            {/* Header Block */}
+            <div className="max-w-4xl w-full text-center space-y-6 mb-32 group">
+                <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter leading-[1.1] animate-fade-in-down">
+                    Planes diseñados para tu <span className="text-blue-600">tranquilidad</span>
                 </h1>
-                <p className="text-gray-500 text-xl md:text-2xl leading-relaxed max-w-2xl">
+                <div className="w-24 h-2 bg-blue-600 mx-auto rounded-full transition-all group-hover:w-32"></div>
+                <p className="text-gray-500 text-xl md:text-3xl font-medium leading-relaxed max-w-3xl mx-auto">
                     Elige el nivel de cuidado y soporte que tu familia necesita.
-                    <span className="block text-sm font-medium text-gray-400 mt-4 italic uppercase tracking-widest">Cancela en cualquier momento sin compromisos.</span>
+                    <span className="block text-sm font-black text-gray-400 mt-6 md:mt-8 italic uppercase tracking-[0.2em] opacity-80">
+                        Cancela en cualquier momento sin compromisos
+                    </span>
                 </p>
             </div>
 
-            {/* Grid Plans */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto items-stretch">
+            {/* Grid Block */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl w-full px-4 mb-40 items-stretch">
                 <PlanCard
                     title="Básico"
                     price="0"
@@ -124,22 +131,26 @@ const SubscriptionPlans = () => {
                 />
             </div>
 
-            {/* Checkout Trust Section */}
-            <div className="mt-36 max-w-5xl mx-auto">
-                <div className="bg-blue-50/50 rounded-3xl p-10 flex flex-col md:flex-row items-center gap-10 border border-blue-100/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-lg">
-                    <div className="bg-white p-6 rounded-3xl shadow-sm text-blue-600 border border-blue-50">
-                        <Shield size={36} />
+            {/* Bottom Trust Block */}
+            <div className="max-w-4xl w-full">
+                <div className="bg-white rounded-[2.5rem] p-10 md:p-14 flex flex-col md:flex-row items-center gap-12 border border-gray-100 shadow-xl shadow-gray-100/50 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+
+                    <div className="bg-blue-600 p-6 rounded-[2rem] shadow-xl shadow-blue-100 text-white z-10 transition-transform group-hover:rotate-6">
+                        <Shield size={44} />
                     </div>
-                    <div className="flex-1 text-center md:text-left">
-                        <h3 className="font-black text-2xl text-gray-900 mb-2 tracking-tight">Pagos Seguros vía Stripe</h3>
-                        <p className="text-base text-blue-800/60 font-medium">
-                            Tus datos bancarios nunca tocan nuestros servidores. Procesamiento encriptado de nivel bancario de extremo a extremo.
+
+                    <div className="flex-1 text-center md:text-left z-10">
+                        <h3 className="font-black text-3xl text-gray-900 mb-2 tracking-tight">Pagos Seguros vía Stripe</h3>
+                        <p className="text-lg text-gray-500 font-medium leading-relaxed">
+                            Procesamiento encriptado de nivel bancario. Tus datos están protegidos en todo momento.
                         </p>
                     </div>
-                    <div className="flex items-center gap-8 opacity-40 grayscale flex-wrap justify-center">
-                        <span className="font-black text-3xl italic tracking-tighter text-gray-900">VISA</span>
-                        <div className="hidden md:block h-8 w-px bg-gray-300"></div>
-                        <span className="font-black text-2xl italic text-gray-900 tracking-tight">Mastercard</span>
+
+                    <div className="flex items-center gap-10 opacity-30 group-hover:opacity-60 transition-opacity z-10">
+                        <span className="font-black text-4xl italic tracking-tighter text-gray-900">VISA</span>
+                        <div className="h-10 w-px bg-gray-200"></div>
+                        <span className="font-black text-3xl italic text-gray-900 tracking-tight">Mastercard</span>
                     </div>
                 </div>
             </div>
