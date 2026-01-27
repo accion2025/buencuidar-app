@@ -9,7 +9,7 @@ import Footer from '../components/layout/Footer';
 
 const RegisterCaregiver = () => {
     const navigate = useNavigate();
-    const { signUp, user, profile } = useAuth();
+    const { signUp, user, profile, refreshProfile } = useAuth();
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -157,7 +157,9 @@ const RegisterCaregiver = () => {
                     }
 
                     // Force context refresh if session exists
-                    await refreshProfile();
+                    if (refreshProfile) {
+                        await refreshProfile();
+                    }
 
                 } catch (manualOpsError) {
                     console.warn("Client-side DB operations skipped (Trusting Server Trigger):", manualOpsError);

@@ -108,9 +108,17 @@ const CaregiverOverview = () => {
     const [isAvailable, setIsAvailable] = useState(true);
 
     useEffect(() => {
-        if (user && !profileLoading) { // Wait for auth and profile attempt to finish
+        if (user && !profileLoading) {
             const loadData = async () => {
                 try {
+                    // Check if profile exists and has caregiver_details
+                    // If not, we might need a one-time repair or just stop loading
+                    if (!profile) {
+                        console.warn("No profile found for current user");
+                        setIsLoading(false);
+                        return;
+                    }
+
                     await Promise.all([
                         fetchNewRequests(),
                         fetchMyApplications(),
@@ -125,6 +133,8 @@ const CaregiverOverview = () => {
                 }
             };
             loadData();
+        } else if (!user && !profileLoading) {
+            setIsLoading(false);
         }
     }, [user, profileLoading, profile]);
 
