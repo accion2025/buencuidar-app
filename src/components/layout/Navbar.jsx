@@ -1,12 +1,16 @@
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { User, LayoutDashboard, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user, profile } = useAuth();
     const [isOpen, setIsOpen] = React.useState(false);
+
+    const isRegistrationSuccess = location.pathname === '/registration-success';
+    const showUserMenu = user && !isRegistrationSuccess;
 
     return (
         <header className="bg-white shadow-sm sticky top-0 z-50">
@@ -21,7 +25,7 @@ const Navbar = () => {
                         <Link to="/services" className="btn btn-secondary">
                             Servicios
                         </Link>
-                        {!user ? (
+                        {!showUserMenu ? (
                             <>
                                 <button onClick={() => navigate('/login')} className="btn btn-secondary text-sm">Iniciar Sesión</button>
                                 <button onClick={() => navigate('/register')} className="btn btn-primary text-sm whitespace-nowrap">Registrarse</button>
@@ -55,7 +59,7 @@ const Navbar = () => {
                 {/* Mobile Menu Dropdown */}
                 {isOpen && (
                     <div className="md:hidden mt-4 pb-4 border-t border-gray-100 pt-4 animate-fade-in space-y-3">
-                        {user && (
+                        {showUserMenu && (
                             <div className="flex items-center gap-3 px-2 pb-2 mb-2 border-b border-gray-50">
                                 <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500">
                                     <User size={20} />
@@ -75,7 +79,7 @@ const Navbar = () => {
                             Servicios
                         </Link>
 
-                        {!user ? (
+                        {!showUserMenu ? (
                             <div className="grid gap-3 pt-2">
                                 <button
                                     onClick={() => { navigate('/login'); setIsOpen(false); }}
