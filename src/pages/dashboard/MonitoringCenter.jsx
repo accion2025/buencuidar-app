@@ -38,7 +38,7 @@ const MonitoringCenter = () => {
         return (
             <div className="flex-grow flex items-center justify-center py-12 px-4">
                 <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden p-12 space-y-8 animate-fade-in-up flex flex-col items-center text-center">
-                    <div className="bg-blue-50 w-28 h-28 rounded-full flex items-center justify-center shadow-inner">
+                    <div className="bg-blue-50 w-28 h-28 rounded-full flex items-center justify-center shadow-inner mx-auto mb-2">
                         <Lock size={56} className="text-blue-600 animate-pulse" />
                     </div>
 
