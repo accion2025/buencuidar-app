@@ -14,6 +14,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
         patient_id: '',
         selectedServices: []
     });
+    const [initialData, setInitialData] = useState(null);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -39,7 +40,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                 description = cleanDetails;
             }
 
-            setFormData({
+            const data = {
                 title: appointment.title || '',
                 date: appointment.date || '',
                 time: appointment.time || '',
@@ -47,9 +48,11 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                 type: appointment.type || 'medical',
                 patient_id: appointment.patient_id || '',
                 selectedServices: services
-            });
+            };
+            setFormData(data);
+            setInitialData(data);
         }
-    }, [appointment]);
+    }, [appointment, isOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -84,6 +87,16 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
             setSaving(false);
         }
     };
+
+    const isDirty = initialData && (
+        formData.title !== initialData.title ||
+        formData.date !== initialData.date ||
+        formData.time !== initialData.time ||
+        formData.endTime !== initialData.endTime ||
+        formData.type !== initialData.type ||
+        formData.patient_id !== initialData.patient_id ||
+        JSON.stringify(formData.selectedServices) !== JSON.stringify(initialData.selectedServices)
+    );
 
     if (!isOpen) return null;
 
@@ -172,8 +185,8 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
 
                         <button
                             type="submit"
-                            disabled={saving}
-                            className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                            disabled={saving || !isDirty}
+                            className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {saving ? <Loader2 className="animate-spin" size={24} /> : 'Guardar Cambios'}
                         </button>
