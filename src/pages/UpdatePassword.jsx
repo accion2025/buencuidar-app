@@ -12,9 +12,39 @@ const UpdatePassword = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
+    const [isLinkInvalid, setIsLinkInvalid] = useState(false);
+
+    useEffect(() => {
+        // Parse URL fragments (Supabase uses # for auth callbacks)
+        const hash = window.location.hash;
+        const params = new URLSearchParams(hash.replace('#', '?'));
+        const errorMsg = params.get('error_description');
+        const errorCode = params.get('error_code');
+
+        if (errorCode === 'otp_expired' || errorMsg?.includes('expired')) {
+            setError('El enlace de recuperación ha expirado. Por favor, solicita uno nuevo.');
+            setIsLinkInvalid(true);
+        } else if (errorMsg) {
+            setError(errorMsg.replace(/\+/g, ' '));
+            setIsLinkInvalid(true);
+        }
+
+        // Check if we have a session (Supabase should have set it from the link)
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session && !errorCode) {
+                // If no session and no explicit error in URL, it might have been lost on refresh
+                setError('No se encontró una sesión activa. Asegúrate de usar el enlace enviado a tu correo.');
+                setIsLinkInvalid(true);
+            }
+        };
+
+        checkSession();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden.');
             return;
@@ -24,11 +54,16 @@ const UpdatePassword = () => {
         setError(null);
 
         try {
-            const { error: updateError } = await supabase.auth.updateUser({
+            const { data, error: updateError } = await supabase.auth.updateUser({
                 password: password
             });
 
-            if (updateError) throw updateError;
+            if (updateError) {
+                if (updateError.message.includes('session missing')) {
+                    throw new Error('La sesión ha expirado o es inválida. Por favor, solicita un nuevo enlace.');
+                }
+                throw updateError;
+            }
 
             setSuccess(true);
             setTimeout(() => {
@@ -37,6 +72,9 @@ const UpdatePassword = () => {
         } catch (err) {
             console.error('Error updating password:', err);
             setError(err.message || 'No se pudo actualizar la contraseña.');
+            if (err.message.includes('solicita un nuevo enlace')) {
+                setIsLinkInvalid(true);
+            }
         } finally {
             setLoading(false);
         }
@@ -115,20 +153,30 @@ const UpdatePassword = () => {
                                     </div>
                                 )}
 
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                                >
-                                    {loading ? (
-                                        <>
-                                            <Loader2 className="animate-spin" size={24} />
-                                            <span>Actualizando...</span>
-                                        </>
-                                    ) : (
-                                        <span>Cambiar Contraseña</span>
-                                    )}
-                                </button>
+                                {isLinkInvalid ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate('/forgot-password')}
+                                        className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-3"
+                                    >
+                                        Solicitar Nuevo Enlace
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                    >
+                                        {loading ? (
+                                            <>
+                                                <Loader2 className="animate-spin" size={24} />
+                                                <span>Actualizando...</span>
+                                            </>
+                                        ) : (
+                                            <span>Cambiar Contraseña</span>
+                                        )}
+                                    </button>
+                                )}
                             </form>
                         )}
                     </div>
