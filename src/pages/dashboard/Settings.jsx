@@ -112,90 +112,80 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* Billing & Pulso Features */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 bg-gray-50">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-indigo-100 p-2 rounded-lg text-indigo-600">
-                            <CreditCard size={20} />
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-800">Suscripción y Beneficios PULSO</h3>
+            {/* Plan Status & Pulso Banner */}
+            <div className="space-y-6">
+                {/* Plan Card */}
+                <div className={`p-8 border rounded-2xl flex flex-col items-center text-center gap-4 bg-white shadow-sm ${isPremium ? 'border-blue-100' : 'border-gray-200'}`}>
+                    <div className="space-y-2">
+                        <h3 className={`text-xl font-black ${isPremium ? 'text-blue-900' : 'text-gray-800 uppercase tracking-tight'}`}>{planName}</h3>
+                        <p className={`text-sm max-w-sm mx-auto ${isPremium ? 'text-blue-700' : 'text-gray-500'}`}>
+                            {isPremium
+                                ? 'Tu familia cuenta con protección total y alertas en tiempo real activas.'
+                                : 'Acceso básico limitado. Activa PULSO Premium para el máximo nivel de cuidado.'}
+                        </p>
                     </div>
+                    <span className="px-6 py-2 rounded-full text-xs font-black tracking-widest bg-green-500 text-white shadow-sm shadow-green-100">
+                        ACTIVO
+                    </span>
                 </div>
-                <div className="p-6 space-y-8">
-                    {/* Plan Status */}
-                    <div className={`p-6 border rounded-2xl flex flex-col items-center text-center gap-4 ${isPremium ? 'border-blue-100 bg-blue-50/50 shadow-sm shadow-blue-50' : 'border-gray-200 bg-gray-50'}`}>
-                        <div className="space-y-1">
-                            <h3 className={`text-xl font-black ${isPremium ? 'text-blue-900' : 'text-gray-800 uppercase tracking-tight'}`}>{planName}</h3>
-                            <p className={`text-sm max-w-sm mx-auto ${isPremium ? 'text-blue-700' : 'text-gray-500'}`}>
-                                {isPremium
-                                    ? 'Tu familia cuenta con protección total y alertas en tiempo real activas.'
-                                    : 'Acceso básico limitado. Activa PULSO Premium para el máximo nivel de cuidado.'}
-                            </p>
-                        </div>
-                        <span className={`px-4 py-1.5 rounded-full text-xs font-black tracking-widest ${isPremium ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
-                            {isPremium ? 'ACTIVO' : 'BÁSICO'}
-                        </span>
-                    </div>
 
-                    {/* Features linked to PULSO */}
-                    <div className="space-y-4 pt-6 border-t border-gray-100">
-                        {isPremium && (
-                            <>
-                                <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                    <Bell size={16} /> Preferencias de Alerta PULSO
-                                </h4>
+                {/* PULSO Configuration or Upgrade Banner */}
+                <div className="space-y-6">
+                    {isPremium && (
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+                            <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <Bell size={16} /> Preferencias de Alerta PULSO
+                            </h4>
 
-                                <div className="grid md:grid-cols-2 gap-4">
-                                    <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                                        <div>
-                                            <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
-                                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
-                                        </div>
-                                        <button
-                                            onClick={() => toggle('email')}
-                                            className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                        >
-                                            <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
-                                        </button>
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                    <div>
+                                        <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
+                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
                                     </div>
+                                    <button
+                                        onClick={() => toggle('email')}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                    >
+                                        <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
+                                    </button>
+                                </div>
 
-                                    <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                                        <div>
-                                            <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
-                                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
-                                        </div>
-                                        <button
-                                            onClick={() => toggle('sms')}
-                                            className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                        >
-                                            <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
-                                        </button>
+                                <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                    <div>
+                                        <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
+                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
                                     </div>
+                                    <button
+                                        onClick={() => toggle('sms')}
+                                        className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                    >
+                                        <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
+                                    </button>
                                 </div>
-                            </>
-                        )}
-
-                        {!isPremium && (
-                            <div className="bg-orange-50 p-6 rounded-2xl flex flex-col items-center text-center gap-4 border border-orange-100 shadow-sm mt-4">
-                                <div className="space-y-1">
-                                    <h4 className="font-bold text-orange-900 flex items-center justify-center gap-2 text-lg">
-                                        <ShieldCheck size={24} className="text-orange-500" />
-                                        ¿Quieres tranquilidad total?
-                                    </h4>
-                                    <p className="text-sm text-orange-700 max-w-md mx-auto">
-                                        Solo con el **Plan PULSO Premium** recibirás alerta familiar al instante y seguimiento detallado de bitácora.
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={() => navigate('/dashboard/plans')}
-                                    className="bg-orange-600 text-white px-8 py-3 rounded-xl font-black shadow-lg shadow-orange-200 hover:bg-orange-700 transition-all active:scale-95"
-                                >
-                                    ACTIVAR PULSO
-                                </button>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
+
+                    {!isPremium && (
+                        <div className="bg-orange-50 p-8 rounded-2xl flex flex-col items-center text-center gap-6 border border-orange-100 shadow-sm animate-fade-in">
+                            <div className="space-y-2">
+                                <h4 className="font-bold text-orange-900 flex items-center justify-center gap-2 text-xl">
+                                    <ShieldCheck size={28} className="text-orange-500" />
+                                    ¿Quieres tranquilidad total?
+                                </h4>
+                                <p className="text-orange-700 max-w-md mx-auto leading-relaxed">
+                                    Solo con el **Plan PULSO Premium** recibirás alerta familiar al instante y seguimiento detallado de bitácora.
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => navigate('/dashboard/plans')}
+                                className="bg-orange-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-orange-200 hover:bg-orange-700 transition-all active:scale-95 hover:scale-105"
+                            >
+                                ACTIVAR PULSO
+                            </button>
+                        </div>
+                    )}
 
                     {isPremium && (
                         <div className="text-center pt-2">
