@@ -565,7 +565,7 @@ const DashboardOverview = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className={`grid grid-cols-1 md:grid-cols-2 ${profile?.subscription_status === 'active' ? 'lg:grid-cols-4' : 'lg:grid-cols-2 max-w-2xl'} gap-6 mb-8`}>
                 <StatCard
                     icon={Users}
                     title="Cuidadores Disponibles"
@@ -580,35 +580,39 @@ const DashboardOverview = () => {
                     colorClass="bg-[var(--secondary-color)]"
                     onClick={() => setShowListModal(true)}
                 />
-                <StatCard
-                    icon={Clock}
-                    title="Horas (Año Actual)"
-                    value={
-                        <div className="flex items-center gap-3">
-                            <div>
-                                <span className="text-2xl font-bold block">{hoursStats.confirmed}h</span>
-                                <span className="text-xs text-gray-500 font-medium">Confirmadas</span>
-                            </div>
-                            <div className="h-8 w-px bg-gray-200"></div>
-                            <div>
-                                <span className="text-2xl font-bold text-gray-400 block">{hoursStats.pending}h</span>
-                                <span className="text-xs text-gray-400">Pendientes</span>
-                            </div>
-                            <div className="h-8 w-px bg-gray-200"></div>
-                            <div>
-                                <span className="text-2xl font-bold text-purple-600 block">{hoursStats.confirmed + hoursStats.pending}h</span>
-                                <span className="text-xs text-purple-600 font-medium">Total</span>
-                            </div>
-                        </div>
-                    }
-                    colorClass="bg-purple-500"
-                />
-                <StatCard
-                    icon={Star}
-                    title="Promedio Otorgado"
-                    value={averageRating || '-'}
-                    colorClass="bg-orange-500"
-                />
+                {profile?.subscription_status === 'active' && (
+                    <>
+                        <StatCard
+                            icon={Clock}
+                            title="Horas (Año Actual)"
+                            value={
+                                <div className="flex items-center gap-3">
+                                    <div>
+                                        <span className="text-2xl font-bold block">{hoursStats.confirmed}h</span>
+                                        <span className="text-xs text-gray-500 font-medium">Confirmadas</span>
+                                    </div>
+                                    <div className="h-8 w-px bg-gray-200"></div>
+                                    <div>
+                                        <span className="text-2xl font-bold text-gray-400 block">{hoursStats.pending}h</span>
+                                        <span className="text-xs text-gray-400">Pendientes</span>
+                                    </div>
+                                    <div className="h-8 w-px bg-gray-200"></div>
+                                    <div>
+                                        <span className="text-2xl font-bold text-purple-600 block">{hoursStats.confirmed + hoursStats.pending}h</span>
+                                        <span className="text-xs text-purple-600 font-medium">Total</span>
+                                    </div>
+                                </div>
+                            }
+                            colorClass="bg-purple-500"
+                        />
+                        <StatCard
+                            icon={Star}
+                            title="Promedio Otorgado"
+                            value={averageRating || '-'}
+                            colorClass="bg-orange-500"
+                        />
+                    </>
+                )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

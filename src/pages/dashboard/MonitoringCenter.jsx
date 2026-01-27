@@ -78,6 +78,8 @@ const MonitoringCenter = () => {
         energy: { value: 'Pendiente', status: 'En espera' },
         mood: { value: 'Pendiente', status: 'En espera' }
     });
+    const [hoursStats, setHoursStats] = useState({ confirmed: 0, pending: 0 });
+    const [averageRating, setAverageRating] = useState(null);
 
     useEffect(() => {
         if (isSubscribed) {
@@ -183,13 +185,65 @@ const MonitoringCenter = () => {
 
                 setWellnessData(newWellness);
 
+                // 4. Fetch additional premium stats (Hours & Ratings)
+                fetchPremiumStats();
+
             } else {
                 setActiveAppointment(null);
+                // Even without active appointment, premium users might want to see overall stats
+                fetchPremiumStats();
             }
         } catch (error) {
             console.error("Error fetching live data:", error);
         } finally {
             setLoadingData(false);
+        }
+    };
+
+    const fetchPremiumStats = async () => {
+        try {
+            // Calculate Hours (Current Year Only)
+            const { data: appsData, error: appsError } = await supabase
+                .from('appointments')
+                .select('date, time, end_time, status')
+                .eq('client_id', profile.id);
+
+            if (appsError) throw appsError;
+
+            let stats = { confirmed: 0, pending: 0 };
+            const currentYear = new Date().getFullYear();
+
+            appsData.forEach(app => {
+                const appYear = new Date(app.date).getFullYear();
+                if (appYear === currentYear && app.time && app.end_time) {
+                    const start = parseInt(app.time.split(':')[0]);
+                    const end = parseInt(app.end_time.split(':')[0]);
+                    if (!isNaN(start) && !isNaN(end) && end > start) {
+                        const duration = end - start;
+                        if (app.status === 'confirmed' || app.status === 'completed' || app.status === 'paid' || app.status === 'in_progress') {
+                            stats.confirmed += duration;
+                        } else if (app.status === 'pending') {
+                            stats.pending += duration;
+                        }
+                    }
+                }
+            });
+            setHoursStats(stats);
+
+            // Fetch Average Rating
+            const { data: reviewsData, error: reviewsError } = await supabase
+                .from('reviews')
+                .select('rating')
+                .eq('reviewer_id', profile.id);
+
+            if (reviewsError) throw reviewsError;
+
+            if (reviewsData && reviewsData.length > 0) {
+                const total = reviewsData.reduce((acc, curr) => acc + curr.rating, 0);
+                setAverageRating((total / reviewsData.length).toFixed(1));
+            }
+        } catch (error) {
+            console.error("Error fetching premium stats:", error);
         }
     };
 
@@ -234,6 +288,8 @@ const MonitoringCenter = () => {
         { label: 'Nivel de Energía', value: wellnessData.energy.value, sub: 'Activo', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', status: wellnessData.energy.status },
         { label: 'Bienestar Hoy', value: wellnessData.mood.value, sub: 'Tranquilo', icon: Wind, color: 'text-indigo-600', bg: 'bg-indigo-50', status: wellnessData.mood.status },
         { label: 'Rutina Cumplida', value: agendaItems.length > 0 ? `${Math.round((completedAgendaCount / agendaItems.length) * 100)}%` : '0%', sub: `${completedAgendaCount}/${agendaItems.length} tareas`, icon: CircleCheck, color: 'text-orange-600', bg: 'bg-orange-50', status: completedAgendaCount === agendaItems.length && agendaItems.length > 0 ? 'Completo' : 'En curso' },
+        { label: 'Horas de Cuidado', value: `${hoursStats.confirmed}h`, sub: `Este año (${new Date().getFullYear()})`, icon: Clock, color: 'text-purple-600', bg: 'bg-purple-50', status: `${hoursStats.pending}h pendientes` },
+        { label: 'Calificación Promedio', value: averageRating || '-', sub: 'Otorgada a cuidadores', icon: Star, color: 'text-amber-600', bg: 'bg-amber-50', status: 'Nivel de confianza' },
     ];
 
 
