@@ -110,14 +110,6 @@ const RegistrationSuccess = () => {
                             )}
                         </div>
 
-                        <div className="flex flex-col items-center gap-4">
-                            <button
-                                onClick={() => navigate('/login')}
-                                className="text-gray-500 font-bold hover:text-gray-900 transition-colors py-2"
-                            >
-                                Ya verifiqué mi correo, ir al Login
-                            </button>
-                        </div>
                     </div>
                 </div>
             </main>
