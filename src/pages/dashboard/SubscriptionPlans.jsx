@@ -71,20 +71,20 @@ const SubscriptionPlans = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-16 max-w-7xl">
+        <div className="container mx-auto px-4 py-24 max-w-7xl">
             {/* Header Section */}
-            <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
-                <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
+            <div className="flex flex-col items-center justify-center text-center max-w-4xl mx-auto mb-28 space-y-8">
+                <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight leading-tight">
                     Planes diseñados para tu tranquilidad
                 </h1>
-                <p className="text-gray-500 text-xl leading-relaxed">
+                <p className="text-gray-500 text-xl md:text-2xl leading-relaxed max-w-2xl">
                     Elige el nivel de cuidado y soporte que tu familia necesita.
-                    <span className="block text-sm font-medium text-gray-400 mt-2 italic">Cancela en cualquier momento sin compromisos.</span>
+                    <span className="block text-sm font-medium text-gray-400 mt-4 italic uppercase tracking-widest">Cancela en cualquier momento sin compromisos.</span>
                 </p>
             </div>
 
             {/* Grid Plans */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto items-stretch">
                 <PlanCard
                     title="Básico"
                     price="0"
@@ -125,21 +125,21 @@ const SubscriptionPlans = () => {
             </div>
 
             {/* Checkout Trust Section */}
-            <div className="mt-24 max-w-5xl mx-auto">
-                <div className="bg-blue-50/50 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 border border-blue-100/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
-                    <div className="bg-white p-5 rounded-3xl shadow-sm text-blue-600 border border-blue-50">
-                        <Shield size={32} />
+            <div className="mt-36 max-w-5xl mx-auto">
+                <div className="bg-blue-50/50 rounded-3xl p-10 flex flex-col md:flex-row items-center gap-10 border border-blue-100/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-lg">
+                    <div className="bg-white p-6 rounded-3xl shadow-sm text-blue-600 border border-blue-50">
+                        <Shield size={36} />
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                        <h3 className="font-black text-xl text-gray-900 mb-1">Pagos Seguros vía Stripe</h3>
-                        <p className="text-sm text-blue-800/60 font-medium">
-                            Tus datos bancarios nunca tocan nuestros servidores. Procesamiento encriptado de nivel bancario.
+                        <h3 className="font-black text-2xl text-gray-900 mb-2 tracking-tight">Pagos Seguros vía Stripe</h3>
+                        <p className="text-base text-blue-800/60 font-medium">
+                            Tus datos bancarios nunca tocan nuestros servidores. Procesamiento encriptado de nivel bancario de extremo a extremo.
                         </p>
                     </div>
-                    <div className="flex items-center gap-6 opacity-40 grayscale filter hover:grayscale-0 transition-all duration-500">
-                        <span className="font-black text-2xl italic tracking-tighter text-gray-900">VISA</span>
-                        <div className="h-6 w-px bg-gray-300"></div>
-                        <span className="font-black text-xl italic text-gray-900">Mastercard</span>
+                    <div className="flex items-center gap-8 opacity-40 grayscale flex-wrap justify-center">
+                        <span className="font-black text-3xl italic tracking-tighter text-gray-900">VISA</span>
+                        <div className="hidden md:block h-8 w-px bg-gray-300"></div>
+                        <span className="font-black text-2xl italic text-gray-900 tracking-tight">Mastercard</span>
                     </div>
                 </div>
             </div>
