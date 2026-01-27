@@ -46,21 +46,13 @@ const SubscriptionPlans = () => {
 
     const handleSubscribe = async (planType) => {
         setLoading(true);
-        // TODO: Replace with real Stripe integration
-        // For MVP/Demo purposes, we will simulate a "Checkout" redirect or success
-        // In real Stripe: 
-        // 1. Call backend to create Checkout Session
-        // 2. stripe.redirectToCheckout({ sessionId })
-
         console.log(`Iniciando suscripción a plan: ${planType}`);
 
-        // SIMULATION: Direct success
         try {
-            // Create a "pending/active" subscription in DB
             const { error } = await supabase.from('subscriptions').insert({
                 user_id: user.id,
                 plan_type: planType,
-                status: 'active', // Simulating instant approval for demo
+                status: 'active',
                 stripe_customer_id: 'cus_demo_123',
                 stripe_subscription_id: 'sub_demo_456',
                 current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
@@ -68,8 +60,8 @@ const SubscriptionPlans = () => {
 
             if (error) throw error;
 
-            alert("¡Suscripción Simulada Exitosa! (En prod iría a Stripe)");
-            window.location.href = '/dashboard/settings'; // Redirect to settings
+            alert("¡Suscripción Simulada Exitosa!");
+            window.location.href = '/dashboard/settings';
         } catch (err) {
             console.error(err);
             alert("Error simulando suscripción");
@@ -79,15 +71,20 @@ const SubscriptionPlans = () => {
     };
 
     return (
-        <div className="container mx-auto px-4 py-12">
-            <div className="text-center max-w-2xl mx-auto mb-12">
-                <h1 className="text-3xl font-black text-gray-800 mb-4">Planes diseñados para tu tranquilidad</h1>
-                <p className="text-gray-500 text-lg">
-                    Elige el nivel de cuidado y soporte que tu familia necesita. Cancela en cualquier momento.
+        <div className="container mx-auto px-4 py-16 max-w-7xl">
+            {/* Header Section */}
+            <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
+                    Planes diseñados para tu tranquilidad
+                </h1>
+                <p className="text-gray-500 text-xl leading-relaxed">
+                    Elige el nivel de cuidado y soporte que tu familia necesita.
+                    <span className="block text-sm font-medium text-gray-400 mt-2 italic">Cancela en cualquier momento sin compromisos.</span>
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Grid Plans */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
                 <PlanCard
                     title="Básico"
                     price="0"
@@ -127,20 +124,23 @@ const SubscriptionPlans = () => {
                 />
             </div>
 
-            <div className="mt-16 bg-blue-50 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 border border-blue-100">
-                <div className="bg-white p-4 rounded-full shadow-sm text-blue-500">
-                    <Shield size={32} />
-                </div>
-                <div className="flex-1 text-center md:text-left">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">Pagos Seguros vía Stripe</h3>
-                    <p className="text-sm text-gray-600">
-                        Tus datos bancarios nunca tocan nuestros servidores. Procesamiento encriptado de nivel bancario.
-                    </p>
-                </div>
-                <div className="flex gap-4 opacity-50 grayscale">
-                    {/* Placeholders for Visa/Mastercard icons text */}
-                    <span className="font-bold text-xl italic">VISA</span>
-                    <span className="font-bold text-xl italic">Mastercard</span>
+            {/* Checkout Trust Section */}
+            <div className="mt-24 max-w-5xl mx-auto">
+                <div className="bg-blue-50/50 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 border border-blue-100/50 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
+                    <div className="bg-white p-5 rounded-3xl shadow-sm text-blue-600 border border-blue-50">
+                        <Shield size={32} />
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                        <h3 className="font-black text-xl text-gray-900 mb-1">Pagos Seguros vía Stripe</h3>
+                        <p className="text-sm text-blue-800/60 font-medium">
+                            Tus datos bancarios nunca tocan nuestros servidores. Procesamiento encriptado de nivel bancario.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-6 opacity-40 grayscale filter hover:grayscale-0 transition-all duration-500">
+                        <span className="font-black text-2xl italic tracking-tighter text-gray-900">VISA</span>
+                        <div className="h-6 w-px bg-gray-300"></div>
+                        <span className="font-black text-xl italic text-gray-900">Mastercard</span>
+                    </div>
                 </div>
             </div>
         </div>
