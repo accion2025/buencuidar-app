@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, LayoutDashboard, Menu, X } from 'lucide-react';
+import { User, LayoutDashboard, Menu, X, LogOut } from 'lucide-react';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, profile } = useAuth();
+    const { user, profile, signOut } = useAuth();
     const [isOpen, setIsOpen] = React.useState(false);
 
     const isRegistrationSuccess = location.pathname === '/registration-success';
@@ -42,6 +42,16 @@ const Navbar = () => {
                                 >
                                     <LayoutDashboard size={18} />
                                     <span>Mi Panel</span>
+                                </button>
+                                <button
+                                    onClick={async () => {
+                                        await signOut();
+                                        navigate('/');
+                                    }}
+                                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                                    title="Cerrar Sesión"
+                                >
+                                    <LogOut size={20} />
                                 </button>
                             </div>
                         )}
@@ -95,16 +105,29 @@ const Navbar = () => {
                                 </button>
                             </div>
                         ) : (
-                            <button
-                                onClick={() => {
-                                    navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard');
-                                    setIsOpen(false);
-                                }}
-                                className="w-full btn btn-primary justify-center gap-2 mt-2"
-                            >
-                                <LayoutDashboard size={20} />
-                                Ir a Mi Panel
-                            </button>
+                            <div className="space-y-3">
+                                <button
+                                    onClick={() => {
+                                        navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard');
+                                        setIsOpen(false);
+                                    }}
+                                    className="w-full btn btn-primary justify-center gap-2 mt-2"
+                                >
+                                    <LayoutDashboard size={20} />
+                                    Ir a Mi Panel
+                                </button>
+                                <button
+                                    onClick={async () => {
+                                        await signOut();
+                                        setIsOpen(false);
+                                        navigate('/');
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 text-gray-600 font-bold hover:text-red-500 hover:bg-red-50 rounded-xl mt-2 transition-all"
+                                >
+                                    <LogOut size={20} />
+                                    Cerrar Sesión
+                                </button>
+                            </div>
                         )}
                     </div>
                 )}

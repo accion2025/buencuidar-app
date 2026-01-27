@@ -14,12 +14,6 @@ const Home = () => {
     const [installPrompt, setInstallPrompt] = useState(null);
 
     useEffect(() => {
-        if (user) {
-            navigate(dashboardPath);
-        }
-    }, [user, dashboardPath, navigate]);
-
-    useEffect(() => {
         const handler = (e) => {
             e.preventDefault();
             setInstallPrompt(e);
