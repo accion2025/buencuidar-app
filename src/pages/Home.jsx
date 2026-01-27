@@ -15,7 +15,17 @@ const Home = () => {
     const [authError, setAuthError] = useState(null);
 
     useEffect(() => {
-        // Parse Hash errors (Supabase redirects with errors in fragment)
+        // Only auto-redirect if landing from an auth link (verification/login)
+        const hash = window.location.hash;
+        if (user && (hash.includes('access_token') || hash.includes('type=signup'))) {
+            const role = profile?.role || user?.user_metadata?.role;
+            const targetPath = role === 'caregiver' ? '/caregiver' : '/dashboard';
+            navigate(targetPath);
+        }
+    }, [user, profile, navigate]);
+
+    useEffect(() => {
+        // Parse Hash errors
         const hash = window.location.hash;
         if (hash) {
             const params = new URLSearchParams(hash.replace('#', '?'));
