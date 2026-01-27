@@ -47,7 +47,7 @@ const MonitoringCenter = () => {
                         <h1 className="text-4xl font-black text-gray-900 tracking-tight">Acceso Restringido a PULSO</h1>
                         <p className="text-gray-600 text-xl leading-relaxed max-w-lg mx-auto">
                             El centro de seguimiento de bienestar en tiempo real es una función exclusiva para usuarios con una suscripción activa a nuestro <span
-                                onClick={() => navigate('/dashboard/plans')}
+                                onClick={() => navigate('/ecosistema-salud')}
                                 className="text-blue-600 font-bold cursor-pointer hover:underline decoration-2 underline-offset-4 transition-all"
                             >Servicio PULSO Premium</span>.
                         </p>
@@ -55,10 +55,10 @@ const MonitoringCenter = () => {
 
                     <div className="pt-8 flex justify-center w-full">
                         <button
-                            onClick={() => navigate('/dashboard/plans')}
+                            onClick={() => navigate('/ecosistema-salud')}
                             className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
                         >
-                            Ver Planes de Suscripción
+                            Ver Detalles del Servicio
                         </button>
                     </div>
 
