@@ -83,13 +83,11 @@ const DashboardOverview = () => {
     const [appointments, setAppointments] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [patients, setPatients] = useState([]);
-    const [hoursStats, setHoursStats] = useState({ confirmed: 0, pending: 0 });
     const [caregiversCount, setCaregiversCount] = useState(0);
 
     // Modals State
     const [showListModal, setShowListModal] = useState(false);
     const [editingAppointment, setEditingAppointment] = useState(null);
-    const [averageRating, setAverageRating] = useState(null); // For Edit Modal
     const [selectedCaregiver, setSelectedCaregiver] = useState(null); // For Detail Modal
     const [ratingAppointment, setRatingAppointment] = useState(null); // For Rating Modal
 
@@ -103,7 +101,6 @@ const DashboardOverview = () => {
             fetchNotifications();
             fetchPatients();
             fetchCaregiversCount();
-            fetchAverageRating();
         }
     }, [user]);
 
@@ -186,29 +183,6 @@ const DashboardOverview = () => {
                 }
             }
 
-            // Calculate Hours (Current Year Only)
-            let stats = { confirmed: 0, pending: 0 };
-            const currentYear = new Date().getFullYear();
-
-            appointmentsData.forEach(app => {
-                const appYear = new Date(app.date).getFullYear();
-
-                if (appYear === currentYear && app.time && app.end_time) {
-                    const start = parseInt(app.time.split(':')[0]);
-                    const end = parseInt(app.end_time.split(':')[0]);
-
-                    if (!isNaN(start) && !isNaN(end) && end > start) {
-                        const duration = end - start;
-                        if (app.status === 'confirmed') {
-                            stats.confirmed += duration;
-                        } else if (app.status === 'pending') {
-                            stats.pending += duration;
-                        }
-                    }
-                }
-            });
-            setHoursStats(stats);
-
             setAppointments(appointmentsData);
 
         } catch (error) {
@@ -273,28 +247,6 @@ const DashboardOverview = () => {
             setCaregiversCount(count || 0);
         } catch (error) {
             console.error('Error fetching caregivers count:', error);
-        }
-    };
-
-
-    const fetchAverageRating = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('reviews')
-                .select('rating')
-                .eq('reviewer_id', user.id);
-
-            if (error) throw error;
-
-            if (data && data.length > 0) {
-                const total = data.reduce((acc, curr) => acc + curr.rating, 0);
-                const avg = (total / data.length).toFixed(1);
-                setAverageRating(avg);
-            } else {
-                setAverageRating(null);
-            }
-        } catch (error) {
-            console.error('Error fetching average rating:', error);
         }
     };
 
@@ -565,7 +517,7 @@ const DashboardOverview = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className={`grid grid-cols-1 md:grid-cols-2 ${profile?.subscription_status === 'active' ? 'lg:grid-cols-4' : 'lg:grid-cols-2 max-w-2xl'} gap-6 mb-8`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <StatCard
                     icon={Users}
                     title="Cuidadores Disponibles"
@@ -580,84 +532,14 @@ const DashboardOverview = () => {
                     colorClass="bg-[var(--secondary-color)]"
                     onClick={() => setShowListModal(true)}
                 />
-                {profile?.subscription_status === 'active' && (
-                    <>
-                        <StatCard
-                            icon={Clock}
-                            title="Horas (Año Actual)"
-                            value={
-                                <div className="flex items-center gap-3">
-                                    <div>
-                                        <span className="text-2xl font-bold block">{hoursStats.confirmed}h</span>
-                                        <span className="text-xs text-gray-500 font-medium">Confirmadas</span>
-                                    </div>
-                                    <div className="h-8 w-px bg-gray-200"></div>
-                                    <div>
-                                        <span className="text-2xl font-bold text-gray-400 block">{hoursStats.pending}h</span>
-                                        <span className="text-xs text-gray-400">Pendientes</span>
-                                    </div>
-                                    <div className="h-8 w-px bg-gray-200"></div>
-                                    <div>
-                                        <span className="text-2xl font-bold text-purple-600 block">{hoursStats.confirmed + hoursStats.pending}h</span>
-                                        <span className="text-xs text-purple-600 font-medium">Total</span>
-                                    </div>
-                                </div>
-                            }
-                            colorClass="bg-purple-500"
-                        />
-                        <StatCard
-                            icon={Star}
-                            title="Promedio Otorgado"
-                            value={averageRating || '-'}
-                            colorClass="bg-orange-500"
-                        />
-                    </>
-                )}
+                {/* Stats shifted to PULSO (Premium) - Keeping grid for visual weight if needed, or collapse */}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column Wrapper */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Citas en Curso (New Section) */}
-                    {inProgressAppointments.length > 0 && (
-                        <div className="bg-emerald-50 rounded-xl shadow-sm border border-emerald-100 p-6 animate-pulse-slow">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="font-bold text-lg text-emerald-800 flex items-center gap-2">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                                    Citas en Curso
-                                </h3>
-                                <button onClick={() => navigate('/dashboard/monitoring')} className="bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-700 transition-colors shadow-sm">
-                                    Ver Monitor
-                                </button>
-                            </div>
-                            <div className="space-y-4">
-                                {inProgressAppointments.map(app => (
-                                    <div key={app.id} className="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm flex justify-between items-center">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold relative">
-                                                {app.caregiver?.avatar_url ? (
-                                                    <img src={app.caregiver.avatar_url} alt="" className="w-full h-full object-cover rounded-full" />
-                                                ) : (
-                                                    app.caregiver?.full_name?.charAt(0)
-                                                )}
-                                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
-                                            </div>
-                                            <div>
-                                                <h4 className="font-bold text-gray-800">{app.caregiver?.full_name}</h4>
-                                                <p className="text-xs text-emerald-600 font-medium">Servicio Activo • {app.title}</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="font-bold text-emerald-700">{app.time?.substring(0, 5)} - {app.end_time?.substring(0, 5)}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
+                <div className="lg:col-span-2 space-y-6 text-left">
                     {/* Upcoming Appointments (Confirmed Only) */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="font-bold text-lg text-gray-800">Próximas Citas</h3>
                             <button onClick={() => setShowListModal(true)} className="text-[var(--primary-light)] text-sm font-medium hover:underline">Ver Todo</button>
