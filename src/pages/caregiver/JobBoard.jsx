@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageCircle } from 'lucide-react';
+import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageCircle, User } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -235,7 +235,11 @@ const JobBoard = () => {
                                         <Briefcase size={10} className="animate-pulse" /> SERVICIO PULSO
                                     </div>
                                 )}
-                                <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors uppercase tracking-tight pr-20">{job.title}</h3>
+                                <h3 className="text-lg font-bold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors uppercase tracking-tight pr-20">{job.title}</h3>
+                                <div className="flex items-center gap-1.5 text-xs text-[var(--primary-color)] font-bold mb-3">
+                                    <User size={14} className="text-gray-400" />
+                                    <span>Cliente: {job.client?.full_name || 'Particular'}</span>
+                                </div>
 
                                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                                     <div className="flex items-center gap-2">
