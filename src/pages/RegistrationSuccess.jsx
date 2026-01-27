@@ -75,16 +75,17 @@ const RegistrationSuccess = () => {
                             </div>
                         )}
 
-                        <div className="grid md:grid-cols-2 gap-6 mb-12 text-left">
-                            <div className="bg-blue-50 p-6 rounded-[2rem] border border-blue-100 flex items-start gap-4">
-                                <div className="bg-blue-600 text-white p-2 rounded-xl">
-                                    <Mail size={20} />
+                        <div className="flex flex-col gap-6 mb-12 text-left">
+                            <div className="bg-blue-600 p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 flex items-center gap-6 text-white transform hover:scale-[1.02] transition-all">
+                                <div className="bg-white/20 p-4 rounded-2xl">
+                                    <Mail size={32} />
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-900">Verifica tu email</h4>
-                                    <p className="text-sm text-gray-600">Hemos enviado las instrucciones iniciales a <strong>{email}</strong>.</p>
+                                <div className="flex-grow">
+                                    <h4 className="text-2xl font-black mb-1">Verifica tu email</h4>
+                                    <p className="opacity-90 font-medium">Hemos enviado las instrucciones a <strong>{email}</strong>. Revisa tu bandeja de entrada y spam.</p>
                                 </div>
                             </div>
+
                             {role === 'caregiver' && (
                                 <div className="bg-purple-50 p-6 rounded-[2rem] border border-purple-100 flex items-start gap-4">
                                     <div className="bg-purple-600 text-white p-2 rounded-xl">
@@ -109,13 +110,14 @@ const RegistrationSuccess = () => {
                             )}
                         </div>
 
-                        <button
-                            onClick={() => navigate('/login')}
-                            className="bg-[var(--primary-color)] text-white px-12 py-5 rounded-2xl font-black text-xl hover:scale-105 transition-transform flex items-center justify-center gap-3 mx-auto shadow-xl shadow-blue-200"
-                        >
-                            INICIAR SESIÓN AHORA
-                            <ArrowRight size={24} />
-                        </button>
+                        <div className="flex flex-col items-center gap-4">
+                            <button
+                                onClick={() => navigate('/login')}
+                                className="text-gray-500 font-bold hover:text-gray-900 transition-colors py-2"
+                            >
+                                Ya verifiqué mi correo, ir al Login
+                            </button>
+                        </div>
                     </div>
                 </div>
             </main>
