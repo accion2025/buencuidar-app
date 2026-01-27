@@ -140,37 +140,41 @@ const Settings = () => {
 
                     {/* Features linked to PULSO */}
                     <div className="space-y-4 pt-6 border-t border-gray-100">
-                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <Bell size={16} /> Preferencias de Alerta PULSO
-                        </h4>
+                        {isPremium && (
+                            <>
+                                <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                    <Bell size={16} /> Preferencias de Alerta PULSO
+                                </h4>
 
-                        <div className="grid md:grid-cols-2 gap-4">
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                                <div>
-                                    <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
-                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
-                                </div>
-                                <button
-                                    onClick={() => toggle('email')}
-                                    className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                >
-                                    <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
-                                </button>
-                            </div>
+                                <div className="grid md:grid-cols-2 gap-4">
+                                    <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                        <div>
+                                            <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
+                                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
+                                        </div>
+                                        <button
+                                            onClick={() => toggle('email')}
+                                            className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                        >
+                                            <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
+                                        </button>
+                                    </div>
 
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
-                                <div>
-                                    <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
-                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
+                                    <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                        <div>
+                                            <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
+                                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
+                                        </div>
+                                        <button
+                                            onClick={() => toggle('sms')}
+                                            className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                        >
+                                            <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
+                                        </button>
+                                    </div>
                                 </div>
-                                <button
-                                    onClick={() => toggle('sms')}
-                                    className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                >
-                                    <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
-                                </button>
-                            </div>
-                        </div>
+                            </>
+                        )}
 
                         {!isPremium && (
                             <div className="bg-orange-50 p-6 rounded-2xl flex flex-col items-center text-center gap-4 border border-orange-100 shadow-sm mt-4">
@@ -180,14 +184,14 @@ const Settings = () => {
                                         ¿Quieres tranquilidad total?
                                     </h4>
                                     <p className="text-sm text-orange-700 max-w-md mx-auto">
-                                        Solo con el **Plan PULSO Premium** recibirás alertas de emergencia al instante y seguimiento detallado de bitácora.
+                                        Solo con el **Plan PULSO Premium** recibirás alerta familiar al instante y seguimiento detallado de bitácora.
                                     </p>
                                 </div>
                                 <button
                                     onClick={() => navigate('/dashboard/plans')}
                                     className="bg-orange-600 text-white px-8 py-3 rounded-xl font-black shadow-lg shadow-orange-200 hover:bg-orange-700 transition-all active:scale-95"
                                 >
-                                    MEJORAR A PULSO
+                                    ACTIVAR PULSO
                                 </button>
                             </div>
                         )}
