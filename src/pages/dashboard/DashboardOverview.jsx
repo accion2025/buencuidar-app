@@ -561,7 +561,7 @@ const DashboardOverview = () => {
 
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-800">Panel de Control</h1>
-                <p className="text-gray-500 text-lg">¡Bienvenido de nuevo, <span className="text-[var(--primary-color)] font-bold">{firstName}</span>! ✨ Aquí tienes el resumen de hoy.</p>
+                <p className="text-gray-500 text-lg">¡Hola de nuevo, <span className="text-[var(--primary-color)] font-bold">{firstName}</span>! ✨ Aquí tienes el resumen de hoy.</p>
             </div>
 
             {/* Stats Grid */}
@@ -802,7 +802,7 @@ const DashboardOverview = () => {
                                         </div>
                                         <div>
                                             <p className="font-bold text-gray-800 text-sm">{patient.full_name || patient.name}</p>
-                                            <p className="text-xs text-gray-500">{patient.age} años • {(patient.details || patient.condition || 'Sin detalles')}</p>
+                                            <p className="text-xs text-gray-500">{patient.age} años</p>
                                         </div>
                                     </div>
                                 ))

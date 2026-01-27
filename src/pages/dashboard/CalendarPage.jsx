@@ -26,7 +26,6 @@ const CalendarPage = () => {
         endTime: '',
         type: 'medical',
         patient_id: '',
-        details: '',
         selectedServices: []
     });
 
@@ -101,24 +100,13 @@ const CalendarPage = () => {
 
     const handleEditAppointment = async (appointment) => {
         let services = [];
-        let cleanDetails = appointment.details || '';
-        let description = '';
-
         if (cleanDetails.includes('---SERVICES---')) {
             const parts = cleanDetails.split('---SERVICES---');
             try {
                 services = JSON.parse(parts[1]);
-                cleanDetails = parts[0].trim();
             } catch (e) {
                 console.warn("Failed to parse services");
             }
-        }
-
-        // Separate description from [PLAN DE CUIDADO]
-        if (cleanDetails.includes('[PLAN DE CUIDADO]')) {
-            description = cleanDetails.split('[PLAN DE CUIDADO]')[0].trim();
-        } else {
-            description = cleanDetails;
         }
 
         setNewAppointment({
@@ -127,8 +115,6 @@ const CalendarPage = () => {
             endTime: appointment.end_time || '',
             type: appointment.type,
             patient_id: appointment.patient_id || '',
-            description: description,
-            details: '',
             selectedServices: services
         });
 
@@ -149,9 +135,6 @@ const CalendarPage = () => {
             const dateStr = `${y}-${m}-${d}`;
 
             let formattedDetails = "";
-            if (newAppointment.description) {
-                formattedDetails = newAppointment.description.trim() + "\n\n";
-            }
 
             if (newAppointment.selectedServices.length > 0) {
                 const allItems = SERVICE_CATEGORIES.flatMap(c => c.items);
@@ -443,7 +426,7 @@ const CalendarPage = () => {
                                 <h3 className="text-3xl font-black text-gray-800 tracking-tight">{editingId ? 'Editar Cita' : 'Nueva Cita'}</h3>
                                 <p className="text-sm text-gray-500 font-medium mt-1">Servicio para el {selectedDate} de {months[currentDate.getMonth()]}</p>
                             </div>
-                            <button onClick={() => { setShowModal(false); setEditingId(null); setNewAppointment({ title: '', time: '', endTime: '', type: 'medical', patient_id: '', details: '', selectedServices: [] }); }} className="p-3 bg-gray-100 text-gray-500 rounded-lg"><X size={24} /></button>
+                            <button onClick={() => { setShowModal(false); setEditingId(null); setNewAppointment({ title: '', time: '', endTime: '', type: 'medical', patient_id: '', selectedServices: [] }); }} className="p-3 bg-gray-100 text-gray-500 rounded-lg"><X size={24} /></button>
                         </div>
 
                         <form onSubmit={handleAddAppointment} className="flex flex-col md:flex-row divide-x divide-gray-100">

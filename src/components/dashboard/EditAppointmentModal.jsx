@@ -12,7 +12,6 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
         endTime: '',
         type: 'medical',
         patient_id: '',
-        description: '', // Changed from details for clarity if manual
         selectedServices: []
     });
     const [saving, setSaving] = useState(false);
@@ -47,7 +46,6 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                 endTime: appointment.end_time || '',
                 type: appointment.type || 'medical',
                 patient_id: appointment.patient_id || '',
-                description: description.trim(),
                 selectedServices: services
             });
         }
@@ -57,11 +55,8 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
         e.preventDefault();
         setSaving(true);
         try {
-            // Format details with description and services
+            // Format details from services only
             let formattedDetails = "";
-            if (formData.description) {
-                formattedDetails = formData.description.trim() + "\n\n";
-            }
 
             if (formData.selectedServices.length > 0) {
                 const allItems = SERVICE_CATEGORIES.flatMap(c => c.items);
@@ -80,7 +75,6 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
             };
 
             delete payload.selectedServices; // Clean up before sending
-            delete payload.description; // Clean up before sending
 
             await onSave(payload);
             onClose();
@@ -171,15 +165,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                                     </select>
                                 </div>
 
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Detalles del Servicio</label>
-                                    <textarea
-                                        className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30 min-h-[120px] resize-none"
-                                        placeholder="Detalla aquí las instrucciones para el cuidador..."
-                                        value={formData.description || ''}
-                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    />
-                                </div>
+
 
                             </div>
                         </section>

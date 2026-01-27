@@ -36,8 +36,7 @@ const ClientProfile = () => {
         full_name: '',
         relation: '',
         birth_date: '',
-        condition: '', // Optional: kept for potential future use or additional context
-        care_needs: ''
+        condition: ''
     });
     const [addingPatient, setAddingPatient] = useState(false);
     const [editingPatientId, setEditingPatientId] = useState(null);
@@ -87,7 +86,6 @@ const ClientProfile = () => {
                 age: newPatient.age ? parseInt(newPatient.age, 10) : 0,
                 birth_date: validDate || null,
                 condition: newPatient.condition || '',
-                care_needs: newPatient.care_needs,
                 notes: notesContent
             };
 
@@ -114,7 +112,7 @@ const ClientProfile = () => {
             await fetchPatients();
 
             // Reset form and close
-            setNewPatient({ full_name: '', relation: '', birth_date: '', condition: '', care_needs: '', age: '' });
+            setNewPatient({ full_name: '', relation: '', birth_date: '', condition: '', age: '' });
             setEditingPatientId(null);
             setShowAddPatientModal(false);
 
@@ -154,7 +152,6 @@ const ClientProfile = () => {
             full_name: patient.full_name || patient.name,
             age: patient.age,
             relation: relation,
-            care_needs: patient.care_needs || '',
             condition: patient.condition || '',
             birth_date: patient.birth_date || ''
         });
@@ -304,7 +301,7 @@ const ClientProfile = () => {
                             {!showAddPatientModal && (
                                 <button
                                     onClick={() => {
-                                        setNewPatient({ full_name: '', relation: '', birth_date: '', condition: '', care_needs: '', age: '' });
+                                        setNewPatient({ full_name: '', relation: '', birth_date: '', condition: '', age: '' });
                                         setEditingPatientId(null);
                                         setShowAddPatientModal(true);
                                     }}
@@ -351,9 +348,7 @@ const ClientProfile = () => {
                                 ))
                             )}
 
-                            <div className="mt-4 p-4 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100">
-                                <strong>Nota:</strong> Mantén actualizada la información de cuidados de tus familiares para permitir un acompañamiento personalizado y seguro.
-                            </div>
+
                         </div>
                     </div>
                     {/* Add Patient Inline Form */}
@@ -426,15 +421,7 @@ const ClientProfile = () => {
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Notas / Cuidados</label>
-                                    <textarea
-                                        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg outline-none resize-none h-24 font-medium text-gray-800 placeholder-gray-400"
-                                        value={newPatient.care_needs}
-                                        onChange={e => setNewPatient({ ...newPatient, care_needs: e.target.value })}
-                                        placeholder="Describe brevemente si requiere algún apoyo especial..."
-                                    />
-                                </div>
+
 
                                 <div className="flex gap-3 pt-2">
                                     <button
