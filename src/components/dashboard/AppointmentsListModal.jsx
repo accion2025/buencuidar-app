@@ -82,10 +82,11 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                         {onDelete && (
                                             <button
                                                 onClick={() => onDelete(app)}
-                                                className="p-1.5 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
+                                                className="px-3 py-1.5 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1"
                                                 title="Eliminar cita"
                                             >
-                                                <Trash2 size={16} />
+                                                <Trash2 size={14} />
+                                                Eliminar
                                             </button>
                                         )}
                                     </div>
