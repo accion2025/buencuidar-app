@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Lock, CreditCard, Shield, ChevronRight, Plus } from 'lucide-react';
+import { Bell, Lock, CreditCard, Shield, ChevronRight, Plus, ShieldCheck } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
