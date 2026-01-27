@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, Lock, CreditCard, Shield, ChevronRight, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -7,11 +7,48 @@ const Settings = () => {
     const { user, profile, resetPassword } = useAuth();
     const [notifications, setNotifications] = useState({
         email: true,
-        sms: false,
-        promotions: true
+        sms: false
     });
+    const [saving, setSaving] = useState(false);
 
-    const toggle = (key) => setNotifications({ ...notifications, [key]: !notifications[key] });
+    // Load preferences from profile
+    useEffect(() => {
+        if (profile) {
+            setNotifications({
+                email: profile.email_notifications ?? true,
+                sms: profile.sms_notifications ?? false
+            });
+        }
+    }, [profile]);
+
+    const toggle = async (key) => {
+        const newValue = !notifications[key];
+        const updatedNotifications = { ...notifications, [key]: newValue };
+
+        // Optimistic update
+        setNotifications(updatedNotifications);
+        setSaving(true);
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    [`${key}_notifications`]: newValue
+                })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            // Auto-hide saving indicator
+            setTimeout(() => setSaving(false), 1000);
+        } catch (error) {
+            console.error("Error updating notifications:", error);
+            // Revert on error
+            setNotifications(notifications);
+            setSaving(false);
+            alert("No se pudo guardar la preferencia. Inténtalo de nuevo.");
+        }
+    };
 
     const handlePasswordReset = async () => {
         if (!user?.email) return;
@@ -31,7 +68,14 @@ const Settings = () => {
 
     return (
         <div className="space-y-6 animate-fade-in max-w-4xl relative">
-            <h2 className="text-2xl font-bold text-gray-800">Configuración</h2>
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-800">Configuración</h2>
+                {saving && (
+                    <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full animate-pulse border border-green-100 italic">
+                        Guardando cambios...
+                    </span>
+                )}
+            </div>
 
             {/* Notifications */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -121,8 +165,8 @@ const Settings = () => {
                                 {isPremium ? 'Tu familia está protegida con el plan completo.' : 'Funciones básicas limitadas.'}
                             </p>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${isPremium ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-600'}`}>
-                            {isPremium ? 'ACTIVO' : 'BÁSICO'}
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${isPremium ? 'bg-blue-200 text-blue-800' : 'bg-green-100 text-green-700'}`}>
+                            ACTIVO
                         </span>
                     </div>
 
