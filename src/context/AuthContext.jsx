@@ -105,14 +105,19 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const signUp = async (email, password, metadata) => {
+    const signUp = async (email, password, metadata, redirectTo = null) => {
         console.log("Iniciando signUp para:", email, "con metadatos:", metadata);
+        const options = {
+            data: metadata
+        };
+        if (redirectTo) {
+            options.emailRedirectTo = redirectTo;
+        }
+
         const response = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: metadata
-            }
+            options
         });
         if (response.error) {
             console.error("Error en supabase.auth.signUp:", response.error);

@@ -37,10 +37,15 @@ const Register = () => {
         setLoading(true);
         setError('');
 
-        const { data, error: signUpError } = await signUp(formData.email, formData.password, {
-            full_name: formData.fullName,
-            role: 'family'
-        });
+        const { data, error: signUpError } = await signUp(
+            formData.email,
+            formData.password,
+            {
+                full_name: formData.fullName,
+                role: 'family'
+            },
+            window.location.origin + '/dashboard'
+        );
 
         if (signUpError) {
             setError(translateSupabaseError(signUpError.message));

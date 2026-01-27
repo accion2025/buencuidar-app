@@ -107,14 +107,19 @@ const RegisterCaregiver = () => {
                 authData = { user, session: true };
             } else {
                 // NEW USER REGISTRATION
-                const { data, error: signUpError } = await signUp(formData.email, formData.password, {
-                    full_name: formData.fullName,
-                    phone: formData.phone,
-                    role: 'caregiver',
-                    bio: formData.bio,
-                    specialization: formData.specialization,
-                    experience: formData.experience
-                });
+                const { data, error: signUpError } = await signUp(
+                    formData.email,
+                    formData.password,
+                    {
+                        full_name: formData.fullName,
+                        phone: formData.phone,
+                        role: 'caregiver',
+                        bio: formData.bio,
+                        specialization: formData.specialization,
+                        experience: formData.experience
+                    },
+                    window.location.origin + '/caregiver'
+                );
 
                 if (signUpError) throw new Error(`Error de Autenticación: ${signUpError.message}`);
                 authData = data;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { Search, Heart, Shield, Star, CheckCircle, MapPin, Activity, LayoutDashboard, ArrowRight, Download } from 'lucide-react';
+import { Search, Heart, Shield, Star, CheckCircle, MapPin, Activity, LayoutDashboard, ArrowRight, Download, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,6 +12,26 @@ const Home = () => {
 
     // Install Prompt Logic
     const [installPrompt, setInstallPrompt] = useState(null);
+    const [authError, setAuthError] = useState(null);
+
+    useEffect(() => {
+        // Parse Hash errors (Supabase redirects with errors in fragment)
+        const hash = window.location.hash;
+        if (hash) {
+            const params = new URLSearchParams(hash.replace('#', '?'));
+            const errorCode = params.get('error_code');
+            const errorDescription = params.get('error_description');
+
+            if (errorCode === 'otp_expired') {
+                setAuthError('El enlace de verificación ha expirado. Por favor, solicita uno nuevo intentando iniciar sesión.');
+            } else if (errorCode) {
+                setAuthError(errorDescription?.replace(/\+/g, ' ') || 'Ocurrió un error al verificar tu cuenta.');
+            }
+
+            // Clean hash
+            window.history.replaceState(null, null, window.location.pathname);
+        }
+    }, []);
 
     useEffect(() => {
         const handler = (e) => {
@@ -34,6 +54,21 @@ const Home = () => {
     return (
         <div className="min-h-screen flex flex-col font-sans">
             <Navbar />
+
+            {authError && (
+                <div className="bg-red-50 border-b border-red-100 px-6 py-4">
+                    <div className="max-w-7xl mx-auto flex items-center gap-3">
+                        <AlertCircle className="text-red-500 shrink-0" size={20} />
+                        <p className="text-sm text-red-700 font-medium">{authError}</p>
+                        <button
+                            onClick={() => setAuthError(null)}
+                            className="ml-auto text-red-400 hover:text-red-600 font-bold"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* HERO SECTION */}
             <header className="relative bg-[var(--primary-color)] text-white pt-32 pb-20 px-6 overflow-hidden">
