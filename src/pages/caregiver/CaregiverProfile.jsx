@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Star, Edit2, BookOpen, Award, Check, X, Loader2, Camera, Phone, Briefcase, User, Plus, ShieldCheck, CreditCard, Clock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
