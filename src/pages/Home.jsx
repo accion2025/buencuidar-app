@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
+import InstallPrompt from '../components/InstallPrompt';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -12,8 +13,8 @@ const Home = () => {
             <main>
                 {/* Hero Section */}
                 <section className="hero-bg min-h-screen relative overflow-hidden">
-                    {/* Text Container - Top Left (30px top, 60px left) */}
-                    <div className="absolute top-[30px] left-[60px] z-10 text-left max-w-4xl">
+                    {/* Text Container - Top Left (70px top, 40px left) */}
+                    <div className="absolute top-[70px] left-[40px] z-10 text-left max-w-4xl">
                         <h1 style={{ color: '#FAFAF7' }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-xl">
                             El cuidado que tu <br className="hidden md:block" />
                             <span className="text-[var(--secondary-color)]">familia merece</span>, la paz <br className="hidden md:block" />
@@ -44,20 +45,10 @@ const Home = () => {
                         >
                             BC PULSO
                         </button>
-                    </div>
 
-                    {/* Simple JS Scroll Arrow - Adjusted to be below buttons or removed if overlapping, keeping it very low based on layout, but user didn't ask to remove it. 
-                        If buttons are at 100px bottom, arrow at bottom-12 (48px) fits underneath. 
-                    */}
-                    <button
-                        onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-                        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 animate-bounce hover:text-white transition-all z-30 p-2 border border-white/10 rounded-full bg-black/10 backdrop-blur-md"
-                        aria-label="Bajar"
-                    >
-                        <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                        </svg>
-                    </button>
+                        {/* Install Prompt - Positioned below buttons */}
+                        <InstallPrompt className="w-full max-w-sm mt-4 animate-slide-up" />
+                    </div>
                 </section>
 
                 {/* Content Sections that justify the scroll */}
@@ -162,7 +153,10 @@ const Home = () => {
                                 <h2 className="text-3xl font-bold text-[var(--primary-color)] mb-8">
                                     Únete a la comunidad BuenCuidar
                                 </h2>
-                                <button className="btn btn-primary text-xl px-12 py-6 rounded-2xl w-full md:w-auto hover:scale-105 transition-transform">
+                                <button
+                                    onClick={() => navigate('/register')}
+                                    className="btn btn-primary text-xl px-12 py-6 rounded-2xl w-full md:w-auto hover:scale-105 transition-transform"
+                                >
                                     Comenzar Ahora
                                 </button>
                             </div>
