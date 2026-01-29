@@ -1,29 +1,22 @@
 import React from 'react';
-import { ShieldCheck } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
-const Logo = () => {
+const Logo = ({ className = "h-14", iconClassName = "h-full w-auto", textClassName = "text-3xl" }) => {
     return (
-        <div className="flex items-center gap-3 ml-[-5px]">
-            {/* Logo Icon - Scaled to 65px as requested */}
+        <div className={`flex items-center gap-3 ${className}`}>
             <img
                 src="/images/rebranding/official_logo_final.png"
                 alt="BuenCuidar Logo"
-                className="h-[65px] w-auto object-contain"
+                className={`${iconClassName} object-contain h-[70px]`}
             />
-
-            {/* Text and Badge Container */}
-            <div className="flex flex-col justify-center leading-none">
-                {/* Brand Name - Scaled proportionally */}
-                <div className="flex items-center tracking-tight mb-1">
-                    <span className="font-brand text-3xl text-[#0F3C4C] font-bold">Buen</span>
-                    <span className="font-brand text-3xl font-bold" style={{ color: '#2FAE8F' }}>Cuidar</span>
-                </div>
-
-                {/* Verification Badge - Scaled proportionally */}
-                <div className="flex items-center gap-1.5 bg-[#E0F7FA] px-2.5 py-1 rounded-full w-fit">
-                    <ShieldCheck size={14} className="text-[#2FAE8F]" strokeWidth={3} />
-                    <span className="text-[10px] font-bold text-[#0F3C4C] tracking-wide uppercase">
-                        CUIDADORES 100% VERIFICADOS
+            <div className="flex flex-col items-start">
+                <span className={`font-brand font-bold text-[#0F3C4C] tracking-tight leading-none ${textClassName}`}>
+                    BuenCuidar
+                </span>
+                <div className="flex items-center gap-1 mt-1 border border-[#2FAE8F]/30 bg-[#2FAE8F]/5 px-2 py-0.5 rounded-md">
+                    <Shield size={12} className="text-[#2FAE8F] fill-[#2FAE8F]/10" />
+                    <span className="text-[10px] font-black tracking-tighter text-[#0F3C4C] uppercase">
+                        Cuidadores 100% Verificados
                     </span>
                 </div>
             </div>
