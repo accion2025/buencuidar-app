@@ -152,7 +152,7 @@ const Search = () => {
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl font-bold mb-6">Encuentra al cuidador ideal</h2>
 
-                    <div className="bg-white p-4 rounded-[16px] shadow-md flex flex-col md:flex-row gap-4 text-gray-800">
+                    <div className="bg-white p-4 rounded-[16px] shadow-md flex flex-col lg:flex-row gap-4 text-gray-800 items-center">
                         <div className="flex-grow">
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Ubicación</label>
                             <input
