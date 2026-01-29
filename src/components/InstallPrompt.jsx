@@ -39,7 +39,9 @@ const InstallPrompt = ({ className }) => {
         setShowPrompt(false);
     };
 
-    if (!showPrompt) return null;
+    // For debugging: Forcefully show the prompt UI to verify placement
+    // In production, we should uncomment the line below:
+    // if (!showPrompt) return null;
 
     return (
         <div className={className || "fixed bottom-4 left-4 right-4 md:left-auto md:right-6 z-[100] animate-slide-up"}>
