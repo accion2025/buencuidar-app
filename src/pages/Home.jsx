@@ -1,178 +1,176 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
-import { Search, Heart, Shield, Star, CheckCircle, CircleCheck, MapPin, Activity, LayoutDashboard, ArrowRight, Download, AlertCircle, Users, ClipboardCheck, Send, UserPlus, Eye, Coffee, Clock } from 'lucide-react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/layout/Navbar';
 
 const Home = () => {
     const navigate = useNavigate();
-    const { user, profile } = useAuth();
-    const dashboardPath = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
-
-    const [activeTab, setActiveTab] = useState('families');
 
     return (
-        <div className="min-h-screen flex flex-col bg-white font-sans overflow-x-hidden">
+        <div className="w-full bg-[var(--base-bg)]">
             <Navbar />
 
-            {/* HERO SECTION - REPLICA IMAGE 2 WITH HERO IMAGE 3 */}
-            <section className="relative h-[90vh] min-h-[700px] flex items-center justify-center text-center px-6">
-                {/* Background Image - Using Image 3 */}
-                <div className="absolute inset-0 z-0">
-                    <img
-                        src="/images/rebranding/hero_v2.png"
-                        alt="Background"
-                        className="w-full h-full object-cover"
-                    />
-                    {/* Slightly lighter overlay to let the image show better, but enough for text contrast */}
-                    <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"></div>
-                </div>
+            <main>
+                {/* Hero Section */}
+                <section className="hero-bg min-h-screen relative overflow-hidden">
+                    {/* Text Container - Top Left (30px top, 60px left) */}
+                    <div className="absolute top-[30px] left-[60px] z-10 text-left max-w-4xl">
+                        <h1 style={{ color: '#FAFAF7' }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-xl">
+                            El cuidado que tu <br className="hidden md:block" />
+                            <span className="text-[var(--secondary-color)]">familia merece</span>, la paz <br className="hidden md:block" />
+                            que tú necesitas
+                        </h1>
+                    </div>
 
-                {/* Content Overlay - Centered */}
-                <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
-                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-brand font-bold text-[#FAFAF7] leading-tight mb-12 drop-shadow-lg">
-                        El cuidado que tu familia <span className="text-[#2FAE8F]">merece</span>,<br />
-                        la paz que tú necesitas
-                    </h1>
-
-                    {/* Stacked Action Buttons */}
-                    <div className="w-full max-w-md space-y-4">
+                    {/* Buttons Container - Bottom Center (100px from bottom) */}
+                    <div className="absolute bottom-[100px] left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-[30px] w-full z-10 px-4">
                         <button
                             onClick={() => navigate('/search')}
-                            className="w-full bg-[#2FAE8F] text-[#FAFAF7] font-bold py-5 rounded-[8px] flex items-center justify-center gap-3 hover:bg-[#258e74] transition-all text-xl shadow-xl border-none"
+                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm"
                         >
-                            <Search size={22} strokeWidth={3} />
                             Buscar Cuidador
                         </button>
 
                         <button
-                            onClick={() => navigate('/register-caregiver')}
-                            className="w-full bg-white text-[#0F3C4C] font-bold py-5 rounded-[8px] flex items-center justify-center gap-3 hover:bg-gray-50 transition-all text-xl shadow-lg border-none"
+                            onClick={() => navigate('/services')}
+                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all"
                         >
-                            <Heart size={22} className="text-[#2FAE8F]" />
-                            Soy Cuidador
+                            Servicios
                         </button>
 
                         <button
-                            onClick={() => navigate(dashboardPath)}
-                            className="w-full bg-white text-[#0F3C4C] font-bold py-5 rounded-[8px] flex items-center justify-center gap-3 hover:bg-gray-50 transition-all text-xl shadow-lg border border-gray-100 uppercase tracking-[0.2em] text-xs"
+                            onClick={() => navigate('/ecosistema-salud')}
+                            className="btn btn-outline text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm"
+                            style={{ color: '#FAFAF7', fontFamily: 'Poppins, sans-serif' }}
                         >
-                            <Activity size={20} className="text-[#2FAE8F]" />
-                            PULSO
+                            BC PULSO
                         </button>
                     </div>
-                </div>
-            </section>
 
-            {/* HOW IT WORKS - EQUITABLE DISTRIBUTION */}
-            <section className="py-24 px-4 bg-white">
-                <div className="w-full max-w-screen-2xl mx-auto">
-                    <div className="text-center mb-16">
-                        <span className="text-[#2FAE8F] font-black tracking-widest uppercase text-xs">Paso a Paso</span>
-                        <h2 className="text-5xl font-brand font-bold text-[#0F3C4C] mt-2 mb-4">¿Cómo Funciona BuenCuidar?</h2>
-                        <p className="text-gray-500 max-w-2xl mx-auto text-lg">Hemos simplificado el proceso para que encuentres ayuda o trabajo en tiempo récord.</p>
-                    </div>
+                    {/* Simple JS Scroll Arrow - Adjusted to be below buttons or removed if overlapping, keeping it very low based on layout, but user didn't ask to remove it. 
+                        If buttons are at 100px bottom, arrow at bottom-12 (48px) fits underneath. 
+                    */}
+                    <button
+                        onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+                        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 animate-bounce hover:text-white transition-all z-30 p-2 border border-white/10 rounded-full bg-black/10 backdrop-blur-md"
+                        aria-label="Bajar"
+                    >
+                        <svg className="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </button>
+                </section>
 
-                    <div className="flex justify-center mb-16">
-                        <div className="bg-gray-100 p-1.5 rounded-full flex gap-1 shadow-inner">
-                            <button
-                                onClick={() => setActiveTab('families')}
-                                className={`px-10 py-4 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'families' ? 'bg-white text-[#0F3C4C] shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
-                            >
-                                <Heart size={18} /> Para Familias
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('caregivers')}
-                                className={`px-10 py-4 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${activeTab === 'caregivers' ? 'bg-white text-[#0F3C4C] shadow-md' : 'text-gray-500 hover:text-gray-700'}`}
-                            >
-                                <Users size={18} /> Para Cuidadores
-                            </button>
+                {/* Content Sections that justify the scroll */}
+                <section id="features" className="py-24 bg-white relative z-20 shadow-2xl">
+                    <div className="w-full px-8 md:px-16">
+                        {/* Header and subtext aligned strictly over the center column (Monitoreo Salud) */}
+                        <div className="grid md:grid-cols-3 gap-10 mb-20">
+                            <div className="hidden md:block"></div>
+                            <div className="text-center">
+                                <h2 className="text-4xl md:text-5xl font-bold text-[var(--primary-color)] mb-8">
+                                    Seguridad y Confianza en cada paso
+                                </h2>
+                                <p className="text-xl text-gray-500">
+                                    Nuestra plataforma no solo conecta servicios, construye puentes de tranquilidad para lo más valioso: tus seres queridos.
+                                </p>
+                            </div>
+                            <div className="hidden md:block"></div>
+                        </div>
+
+                        <div className="grid md:grid-cols-3 gap-10">
+                            <div className="card p-10 border-none bg-[var(--base-bg)]">
+                                <h3 className="text-2xl font-bold mb-4 text-[var(--primary-color)]">Verificación Total</h3>
+                                <p className="text-gray-600">Proceso exhaustivo de validación de antecedentes y experiencia.</p>
+                            </div>
+                            <div className="card p-10 border-none bg-white shadow-xl">
+                                <h3 className="text-2xl font-bold mb-4 text-[var(--secondary-color)]">Monitoreo Salud</h3>
+                                <p className="text-gray-600">Registro diario de bienestar y alertas para mayor tranquilidad.</p>
+                            </div>
+                            <div className="card p-10 border-none bg-[var(--base-bg)]">
+                                <h3 className="text-2xl font-bold mb-4 text-[var(--primary-color)]">Soporte Humano</h3>
+                                <p className="text-gray-600">Estamos aquí para ayudarte en cada etapa del proceso.</p>
+                            </div>
                         </div>
                     </div>
+                </section>
 
-                    {/* Equitable Grid - Spanning Full Width */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8 px-8">
-                        {(activeTab === 'families' ? [
-                            { n: "1", icon: <UserPlus />, title: "Crear Perfil", desc: "Regístrate gratis y cuéntanos sobre tu familiar.", color: "bg-blue-50 text-blue-600" },
-                            { n: "2", icon: <ClipboardCheck />, title: "Definir Ayuda", desc: "Especifica horarios, tareas y necesidades especiales.", color: "bg-purple-50 text-purple-600" },
-                            { n: "3", icon: <Search />, title: "Elegir Cuidador", desc: "Explora perfiles verificados y entrevista candidatos.", color: "bg-amber-50 text-amber-600" },
-                            { n: "4", icon: <Activity />, title: "Supervisar", desc: "Usa PULSO para seguimiento en tiempo real.", color: "bg-emerald-50 text-emerald-600" }
-                        ] : [
-                            { n: "1", icon: <UserPlus />, title: "Registro", desc: "Crea tu perfil profesional detallado.", color: "bg-indigo-50 text-indigo-600" },
-                            { n: "2", icon: <Shield />, title: "Validación", desc: "Sube tus documentos para verificación de identidad.", color: "bg-rose-50 text-rose-600" },
-                            { n: "3", icon: <Eye />, title: "Publicar Perfil", desc: "Tu perfil se vuelve visible para miles de familias.", color: "bg-cyan-50 text-cyan-600" },
-                            { n: "4", icon: <Send />, title: "Recibir Solicitudes", desc: "Acepta trabajos que se ajusten a tu agenda.", color: "bg-green-50 text-green-600" }
-                        ]).map((step, idx) => (
-                            <div key={idx} className="flex flex-col items-center text-center p-10 rounded-[32px] hover:bg-gray-50 transition-all group">
-                                <div className={`w-24 h-24 rounded-[28px] ${step.color} flex items-center justify-center mb-8 shadow-lg relative group-hover:scale-110 transition-transform duration-300`}>
-                                    {React.cloneElement(step.icon, { size: 40 })}
-                                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-white rounded-full border-2 border-gray-100 flex items-center justify-center font-black text-xs text-gray-400 shadow-sm">
-                                        {step.n}
+                {/* Historias Section */}
+                <section className="py-24 bg-gray-50">
+                    <div className="w-full px-8 md:px-16">
+                        {/* Header aligned strictly under the center column (Monitoreo Salud) */}
+                        <div className="grid md:grid-cols-3 gap-8 mb-16">
+                            <div className="hidden md:block"></div>
+                            <div className="text-center">
+                                <h2 className="text-4xl md:text-5xl font-bold mb-4 text-[#0F3C4C]">Historias que nos inspiran</h2>
+                                <p className="text-xl text-gray-600">
+                                    Lo que dicen las familias que ya transformaron su día a día con nosotros.
+                                </p>
+                            </div>
+                            <div className="hidden md:block"></div>
+                        </div>
+
+                        <div className="grid md:grid-cols-3 gap-8">
+                            {[
+                                {
+                                    quote: "Encontrar a María fue una bendición. Mi padre está feliz y nosotros tranquilos.",
+                                    author: "Lucía M.",
+                                    role: "Hija de persona acompañada",
+                                    initial: "L",
+                                    image: "/images/story_lucia.png"
+                                },
+                                {
+                                    quote: "El proceso fue rapidísimo. En 24 horas ya teníamos a un enfermero certificado en casa.",
+                                    author: "Roberto G.",
+                                    role: "Usuario Premium",
+                                    initial: "R",
+                                    image: "/images/story_roberto.png"
+                                },
+                                {
+                                    quote: "Me encanta la transparencia de los perfiles. Sabes exactamente a quién estás contratando.",
+                                    author: "Ana P.",
+                                    role: "Madre de familia",
+                                    initial: "A",
+                                    image: "/images/story_ana.png"
+                                }
+                            ].map((story, idx) => (
+                                <div key={idx} className="bg-white p-8 rounded-[16px] shadow-sm border border-gray-100 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow">
+                                    <div className="mx-auto mb-6 relative">
+                                        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                                            <img src={story.image} alt={story.author} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        </div>
+                                        <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[var(--secondary-color)] rounded-full flex items-center justify-center text-[#0F3C4C] font-bold text-xs shadow-sm">
+                                            “ ”
+                                        </div>
+                                    </div>
+
+                                    <p className="text-gray-700 text-lg italic mb-6 flex-grow">
+                                        "{story.quote}"
+                                    </p>
+
+                                    <div className="mt-auto">
+                                        <h4 className="font-bold text-[#0F3C4C]">{story.author}</h4>
+                                        <p className="text-sm text-gray-500">{story.role}</p>
                                     </div>
                                 </div>
-                                <h3 className="text-2xl font-brand font-bold text-[#0F3C4C] mb-4">{step.title}</h3>
-                                <p className="text-gray-500 text-base leading-relaxed font-medium">{step.desc}</p>
+                            ))}
+                        </div>
+
+                        {/* CTA positioned strictly under the center column (Roberto G) */}
+                        <div className="grid md:grid-cols-3 gap-8 mt-20">
+                            <div className="hidden md:block"></div>
+                            <div className="flex flex-col items-center text-center">
+                                <h2 className="text-3xl font-bold text-[var(--primary-color)] mb-8">
+                                    Únete a la comunidad BuenCuidar
+                                </h2>
+                                <button className="btn btn-primary text-xl px-12 py-6 rounded-2xl w-full md:w-auto hover:scale-105 transition-transform">
+                                    Comenzar Ahora
+                                </button>
                             </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* DARK SECTION - EQUITABLE DISTRIBUTION & #FAFAF7 TITLES */}
-            <section className="bg-[#0F3C4C] py-28 px-6 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#2FAE8F] rounded-full mix-blend-multiply filter blur-[150px] opacity-10"></div>
-
-                <div className="w-full max-w-full mx-auto relative z-10 px-4 md:px-12 lg:px-24">
-                    {/* Header Removed as requested */}
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-16">
-                        {[
-                            { icon: <Shield size={48} />, title: "Verificación Rigurosa", desc: "Cada cuidador pasa por un proceso de 5 filtros: Identidad, Antecedentes, Referencias, Capacitación y Entrevista." },
-                            { icon: <Activity size={48} />, title: "Tecnología PULSO", desc: "Nuestro sistema exclusivo permite monitorear signos vitales y actividades diarias en tiempo real desde tu celular." },
-                            { icon: <Heart size={48} />, title: "Garantía de Satisfacción", desc: "Si no haces \"click\" con tu cuidador en las primeras 24 horas, te ayudamos a encontrar un reemplazo sin costo extra." }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-white/5 backdrop-blur-md p-14 rounded-[40px] border border-white/10 hover:bg-white/10 transition-all flex flex-col items-center text-center group min-h-[450px] justify-center">
-                                <div className="text-[#2FAE8F] mb-10 p-8 bg-[#2FAE8F]/10 rounded-full group-hover:scale-110 transition-transform duration-300">
-                                    {item.icon}
-                                </div>
-                                <h3 className="text-3xl font-brand font-bold mb-6 text-[#FAFAF7]">{item.title}</h3>
-                                <p className="text-[#FAFAF7]/80 text-xl leading-relaxed font-light">{item.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* CALL TO ACTION - PERFECTLY CENTERED */}
-            <section className="py-28 px-6 bg-[#FAFAF7] flex justify-center items-center">
-                <div className="w-full max-w-5xl bg-white rounded-[48px] shadow-2xl p-16 md:p-32 text-center border border-gray-100 relative overflow-hidden">
-                    <div className="relative z-10">
-                        <h2 className="text-5xl lg:text-7xl font-brand font-bold text-[#0F3C4C] mb-10 tracking-tight">
-                            ¿Listo para transformar <br /> el cuidado en casa?
-                        </h2>
-                        <p className="text-2xl text-gray-500 max-w-3xl mx-auto mb-16 leading-relaxed">
-                            Únete hoy a BuenCuidar. Es gratis registrarse y explorar perfiles. Solo pagas cuando encuentras al cuidador ideal.
-                        </p>
-                        <div className="flex flex-col sm:flex-row justify-center gap-8">
-                            <button
-                                onClick={() => navigate('/register')}
-                                className="bg-[#2FAE8F] text-white px-14 py-6 rounded-[20px] text-xl font-bold shadow-2xl shadow-emerald-500/20 hover:bg-[#258e74] hover:-translate-y-1 transition-all"
-                            >
-                                Empezar Ahora
-                            </button>
-                            <button className="bg-gray-50 text-[#0F3C4C] px-14 py-6 rounded-[20px] text-xl font-bold border border-gray-200 hover:bg-gray-100 transition-all">
-                                Ver Precios
-                            </button>
+                            <div className="hidden md:block"></div>
                         </div>
                     </div>
-                    {/* Subtle decoration */}
-                    <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-[#2FAE8F]/5 rounded-full blur-3xl"></div>
-                    <div className="absolute -top-24 -left-24 w-64 h-64 bg-[#0F3C4C]/5 rounded-full blur-3xl"></div>
-                </div>
-            </section>
-
-            <Footer />
+                </section>
+            </main>
         </div>
     );
 };
