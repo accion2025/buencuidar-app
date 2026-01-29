@@ -32,9 +32,13 @@ const CaregiverProfile = () => {
     const [showCropper, setShowCropper] = useState(false);
     const [newCert, setNewCert] = useState({ title: '', org: '', year: '' });
     const [documents, setDocuments] = useState([]);
+    const [ratingStats, setRatingStats] = useState({ average: 5.0, count: 0 });
 
     useEffect(() => {
-        if (user?.id) fetchDocuments();
+        if (user?.id) {
+            fetchDocuments();
+            fetchRatings();
+        }
     }, [user?.id]);
 
     const fetchDocuments = async () => {
@@ -43,6 +47,24 @@ const CaregiverProfile = () => {
             .select('document_type, status')
             .eq('caregiver_id', user.id);
         if (data) setDocuments(data);
+    };
+
+    const fetchRatings = async () => {
+        const { data: allReviews } = await supabase
+            .from('reviews')
+            .select('rating')
+            .eq('caregiver_id', user.id);
+
+        if (allReviews && allReviews.length > 0) {
+            const average = (allReviews.reduce((acc, curr) => acc + curr.rating, 0) / allReviews.length).toFixed(1);
+            setRatingStats({ average, count: allReviews.length });
+        } else {
+            // Fallback to profile data if no reviews table data
+            setRatingStats({
+                average: profile?.caregiver_details?.rating || 5.0,
+                count: profile?.caregiver_details?.reviews_count || 0
+            });
+        }
     };
 
     if (!profile) return null;
@@ -234,11 +256,11 @@ const CaregiverProfile = () => {
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-1">
                                     {[1, 2, 3, 4, 5].map((s) => (
-                                        <Star key={s} size={16} className={`${((profile.caregiver_details?.reviews_count || 0) > 0 && s <= (profile.caregiver_details?.rating || 5)) ? 'text-yellow-400 fill-yellow-400' : 'text-white/20'}`} />
+                                        <Star key={s} size={16} className={`${s <= Number(ratingStats.average) ? 'text-yellow-400 fill-yellow-400' : 'text-white/20'}`} />
                                     ))}
                                 </div>
-                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{profile.caregiver_details?.rating || '5.0'}</span>
-                                <span className="text-xs font-secondary !text-[#FAFAF7]">({profile.caregiver_details?.reviews_count || 0} res)</span>
+                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{ratingStats.average}</span>
+                                <span className="text-xs font-secondary !text-[#FAFAF7]">({ratingStats.count} res)</span>
                             </div>
 
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
@@ -354,7 +376,7 @@ const CaregiverProfile = () => {
                             Insignias Ganadas
                         </h3>
                         <div className="grid grid-cols-2 gap-8 text-center relative z-10">
-                            <div className={`flex flex-col items-center group ${(profile.caregiver_details?.rating || profile.rating || 5) >= 4.8 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
+                            <div className={`flex flex-col items-center group ${Number(ratingStats.average) >= 4.8 && ratingStats.count > 0 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
                                 <div className="w-20 h-20 bg-gradient-to-br from-amber-50 to-amber-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-amber-200 group-hover:rotate-12 transition-transform border border-amber-200/50">🏆</div>
                                 <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Top Rated</span>
                                 <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Rating 4.8+</span>
@@ -372,7 +394,7 @@ const CaregiverProfile = () => {
                                 <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Doc. Validada</span>
                             </div>
 
-                            <div className={`flex flex-col items-center group ${(profile.caregiver_details?.reviews_count || 0) >= 0 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
+                            <div className={`flex flex-col items-center group ${ratingStats.count >= 5 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
                                 <div className="w-20 h-20 bg-gradient-to-br from-purple-50 to-purple-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform border border-purple-200/50">✨</div>
                                 <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Popular</span>
                                 <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">+5 Reseñas</span>
