@@ -50,7 +50,10 @@ const InstallPrompt = ({ className }) => {
             }
         } else {
             // Android/Desktop standard install
-            if (!deferredPrompt) return;
+            if (!deferredPrompt) {
+                alert("La instalación automática no está lista. Intenta desde el menú del navegador (3 puntos) -> Instalar aplicación.");
+                return;
+            }
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             console.log(`User response: ${outcome}`);
