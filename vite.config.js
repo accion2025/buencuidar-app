@@ -27,12 +27,14 @@ export default defineConfig({
           {
             src: '/images/rebranding/pwa_icon_square.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           },
           {
             src: '/images/rebranding/pwa_icon_square.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           }
         ],
         background_color: '#ffffff',
