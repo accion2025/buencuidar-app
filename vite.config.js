@@ -25,12 +25,12 @@ export default defineConfig({
         theme_color: '#0F4C5C',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/images/rebranding/pwa_icon_square.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/images/rebranding/pwa_icon_square.png',
             sizes: '512x512',
             type: 'image/png'
           }

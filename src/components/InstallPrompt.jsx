@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, X } from 'lucide-react';
 
-const InstallPrompt = () => {
+const InstallPrompt = ({ className }) => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showPrompt, setShowPrompt] = useState(false);
 
@@ -42,8 +42,8 @@ const InstallPrompt = () => {
     if (!showPrompt) return null;
 
     return (
-        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 z-[100] animate-slide-up">
-            <div className="bg-slate-900 !text-[#FAFAF7] p-4 rounded-[16px] shadow-2xl border border-white/10 flex items-center gap-4 max-w-sm ml-auto">
+        <div className={className || "fixed bottom-4 left-4 right-4 md:left-auto md:right-6 z-[100] animate-slide-up"}>
+            <div className="bg-slate-900 !text-[#FAFAF7] p-4 rounded-[16px] shadow-2xl border border-white/10 flex items-center gap-4 max-w-sm ml-auto w-full">
                 <div className="bg-blue-600 p-2 rounded-[16px]">
                     <Download size={24} />
                 </div>
