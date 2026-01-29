@@ -17,8 +17,8 @@ const Home = () => {
                     <div className="absolute top-[50px] left-[40px] z-10 text-left max-w-4xl">
                         <h1 style={{ color: '#FAFAF7' }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-xl">
                             El cuidado que tu <br />
-                            <span className="text-[var(--secondary-color)]">familia merece</span>, la paz <br />
-                            que tú necesitas
+                            <span className="text-[var(--secondary-color)]">familia merece,</span> <br />
+                            la paz que tú necesitas
                         </h1>
                     </div>
 
