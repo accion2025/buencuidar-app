@@ -50,7 +50,7 @@ const InstallPrompt = ({ className }) => {
                     <Download size={24} />
                 </div>
                 <div className="flex-1">
-                    <h3 className="font-bold text-sm">Instalar App</h3>
+                    <h3 className="font-bold text-sm text-[#2FAE8F]">Instalar App</h3>
                     <p className="text-xs text-slate-300">Accede más rápido desde tu inicio</p>
                 </div>
                 <div className="flex items-center gap-2">
