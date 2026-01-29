@@ -4,13 +4,13 @@ import { Users, CreditCard, Activity, CalendarCheck } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const StatCard = ({ title, value, subtext, icon: Icon, color }) => (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div className="bg-white p-6 rounded-[16px] shadow-sm border border-gray-100">
         <div className="flex justify-between items-start mb-4">
             <div>
                 <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{title}</p>
                 <h3 className="text-3xl font-black text-gray-800 mt-1">{value}</h3>
             </div>
-            <div className={`p-3 rounded-xl ${color} bg-opacity-10 text-opacity-100`}>
+            <div className={`p-3 rounded-[16px] ${color} bg-opacity-10 text-opacity-100`}>
                 <Icon size={24} className={color.replace('bg-', 'text-')} />
             </div>
         </div>
@@ -108,13 +108,13 @@ const AdminDashboard = () => {
 
             {/* Quick Actions / Recent (Placeholder) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div className="lg:col-span-2 bg-white p-6 rounded-[16px] shadow-sm border border-gray-100">
                     <h3 className="font-bold text-lg text-gray-800 mb-4">Actividad Reciente</h3>
-                    <div className="flex items-center justify-center h-40 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    <div className="flex items-center justify-center h-40 bg-gray-50 rounded-[16px] border border-dashed border-gray-200">
                         <p className="text-gray-400 text-sm">Gráfico de actividad próximamente...</p>
                     </div>
                 </div>
-                <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-lg shadow-slate-200">
+                <div className="bg-slate-900 !text-[#FAFAF7] p-6 rounded-[16px] shadow-lg shadow-slate-200">
                     <h3 className="font-bold text-lg mb-4">Estado del Sistema</h3>
                     <div className="space-y-4">
                         <div className="flex justify-between text-sm">
@@ -123,7 +123,7 @@ const AdminDashboard = () => {
                         </div>
                         <div className="flex justify-between text-sm">
                             <span className="text-slate-400">Versión App</span>
-                            <span className="text-white font-bold">v1.2.0 (PULSO)</span>
+                            <span className="!text-[#FAFAF7] font-bold">v1.2.0 (PULSO)</span>
                         </div>
                         <div className="pt-4 border-t border-slate-700">
                             <p className="text-xs text-slate-500 leading-relaxed">

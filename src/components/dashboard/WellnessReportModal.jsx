@@ -66,7 +66,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
-            <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 relative overflow-hidden">
+            <div className="bg-white rounded-[16px] w-full max-w-sm shadow-2xl p-6 relative overflow-hidden">
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -88,7 +88,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                                 <button
                                     key={opt}
                                     onClick={() => setGeneralState(opt)}
-                                    className={`py-2 px-1 text-xs font-bold rounded-lg border transition-all ${generalState === opt
+                                    className={`py-2 px-1 text-xs font-bold rounded-[16px] border transition-all ${generalState === opt
                                         ? 'bg-green-100 text-green-700 border-green-200 shadow-sm'
                                         : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
                                         }`}
@@ -109,7 +109,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                                 <button
                                     key={opt}
                                     onClick={() => setEnergyLevel(opt)}
-                                    className={`py-2 px-1 text-xs font-bold rounded-lg border transition-all ${energyLevel === opt
+                                    className={`py-2 px-1 text-xs font-bold rounded-[16px] border transition-all ${energyLevel === opt
                                         ? 'bg-blue-100 text-blue-700 border-blue-200 shadow-sm'
                                         : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
                                         }`}
@@ -130,7 +130,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                                 <button
                                     key={opt}
                                     onClick={() => setMood(opt)}
-                                    className={`py-2 px-1 text-xs font-bold rounded-lg border transition-all ${mood === opt
+                                    className={`py-2 px-1 text-xs font-bold rounded-[16px] border transition-all ${mood === opt
                                         ? 'bg-indigo-100 text-indigo-700 border-indigo-200 shadow-sm'
                                         : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
                                         }`}
@@ -145,14 +145,14 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                 <div className="mt-8 pt-4 border-t border-gray-100 flex gap-3">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white border border-gray-200 text-gray-500 font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors"
+                        className="flex-1 bg-white border border-gray-200 text-gray-500 font-bold py-3 rounded-[16px] hover:bg-gray-50 transition-colors"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex-[2] bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors shadow-lg flex items-center justify-center gap-2"
+                        className="flex-[2] bg-slate-900 !text-[#FAFAF7] font-bold py-3 rounded-[16px] hover:bg-slate-800 transition-colors shadow-lg flex items-center justify-center gap-2"
                     >
                         {loading ? <Loader2 size={18} className="animate-spin" /> : <><Save size={18} /> Guardar</>}
                     </button>

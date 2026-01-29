@@ -5,12 +5,12 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
 const PlanCard = ({ title, price, features, recommended, onSelect, loading }) => (
-    <div className={`relative bg-white rounded-3xl p-8 transition-all duration-500 flex flex-col ${recommended
+    <div className={`relative bg-white rounded-[16px] p-8 transition-all duration-500 flex flex-col ${recommended
         ? 'border-2 border-blue-600 shadow-2xl scale-105 z-10'
         : 'border border-gray-100 shadow-sm hover:shadow-xl'
         }`}>
         {recommended && (
-            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
+            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
                 MÁS POPULAR
             </div>
         )}
@@ -34,8 +34,8 @@ const PlanCard = ({ title, price, features, recommended, onSelect, loading }) =>
         <button
             onClick={onSelect}
             disabled={loading}
-            className={`w-full py-5 rounded-2xl font-black text-lg transition-all duration-300 transform active:scale-95 ${recommended
-                ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-200 hover:shadow-2xl'
+            className={`w-full py-5 rounded-[16px] font-black text-lg transition-all duration-300 transform active:scale-95 ${recommended
+                ? 'bg-blue-600 !text-[#FAFAF7] hover:bg-blue-700 shadow-xl shadow-blue-200 hover:shadow-2xl'
                 : 'bg-gray-50 text-gray-900 hover:bg-gray-100'
                 }`}
         >
@@ -77,21 +77,14 @@ const SubscriptionPlans = () => {
     return (
         <div className="min-h-screen bg-gray-50/30 flex flex-col items-center py-20 px-4 mt-[-40px]">
             {/* Header Block */}
-            <div className="max-w-4xl w-full text-center space-y-6 mb-32 group">
-                <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter leading-[1.1] animate-fade-in-down">
-                    Planes diseñados para tu <span className="text-blue-600">tranquilidad</span>
+            <div className="max-w-4xl w-full text-center space-y-6 mb-44 group">
+                <h1 className="text-5xl md:text-7xl font-brand font-bold !text-[#0F3C4C] tracking-tighter leading-[1.1] animate-fade-in-down">
+                    Planes diseñados para tu <span className="text-[var(--secondary-color)]">tranquilidad</span>
                 </h1>
-                <div className="w-24 h-2 bg-blue-600 mx-auto rounded-full transition-all group-hover:w-32"></div>
-                <p className="text-gray-500 text-xl md:text-3xl font-medium leading-relaxed max-w-3xl mx-auto">
-                    Elige el nivel de cuidado y soporte que tu familia necesita.
-                    <span className="block text-sm font-black text-gray-400 mt-6 md:mt-8 italic uppercase tracking-[0.2em] opacity-80">
-                        Cancela en cualquier momento sin compromisos
-                    </span>
-                </p>
             </div>
 
             {/* Grid Block */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl w-full px-4 mb-40 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-[1600px] w-full px-4 mb-40 items-stretch">
                 <PlanCard
                     title="Básico"
                     price="0"
@@ -132,11 +125,11 @@ const SubscriptionPlans = () => {
             </div>
 
             {/* Bottom Trust Block */}
-            <div className="max-w-4xl w-full">
-                <div className="bg-white rounded-[2.5rem] p-10 md:p-14 flex flex-col md:flex-row items-center gap-12 border border-gray-100 shadow-xl shadow-gray-100/50 relative overflow-hidden group">
+            <div className="max-w-4xl w-full mt-60 pb-20">
+                <div className="bg-white rounded-[16px] p-8 flex flex-col md:flex-row items-center gap-12 border border-blue-50/50 shadow-xl shadow-blue-50/20 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
 
-                    <div className="bg-blue-600 p-6 rounded-[2rem] shadow-xl shadow-blue-100 text-white z-10 transition-transform group-hover:rotate-6">
+                    <div className="bg-[var(--secondary-color)] p-6 rounded-[16px] shadow-xl shadow-blue-100 !text-[#FAFAF7] z-10 transition-transform group-hover:rotate-6">
                         <Shield size={44} />
                     </div>
 

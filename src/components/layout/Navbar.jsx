@@ -1,138 +1,220 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { User, LayoutDashboard, Menu, X, LogOut } from 'lucide-react';
+import {
+    User,
+    LayoutDashboard,
+    Menu,
+    X,
+    LogOut,
+    Home,
+    Activity,
+    Sparkles,
+    BookOpen,
+    LogIn,
+    UserPlus,
+    ChevronRight
+} from 'lucide-react';
+import Logo from './Logo';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, profile, signOut } = useAuth();
-    const [isOpen, setIsOpen] = React.useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const isRegistrationSuccess = location.pathname === '/registration-success';
     const showUserMenu = user && !isRegistrationSuccess;
 
+    const handleNavigation = (path) => {
+        navigate(path);
+        setIsSidebarOpen(false);
+    };
+
+    // Sidebar Item Component for consistency
+    const SidebarItem = ({ icon: Icon, label, onClick, active, highlight }) => (
+        <div
+            onClick={onClick}
+            className={`flex items-center justify-end gap-3 px-4 py-3 rounded-[16px] cursor-pointer transition-all duration-300 relative group ${active ? 'bg-white/20 text-white font-bold' : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                } ${highlight ? 'bg-[var(--secondary-color)] !text-white shadow-lg' : ''}`}
+        >
+            <span className="font-medium">{label}</span>
+            <Icon size={20} className={highlight ? 'animate-pulse' : ''} />
+            {active && <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[var(--secondary-color)] rounded-l-full" />}
+        </div>
+    );
+
     return (
-        <header className="bg-white shadow-sm sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-4">
-                <div className="flex justify-between items-center">
-                    <Link to="/" className="text-2xl font-bold text-[var(--primary-color)] flex-shrink-0">
-                        BuenCuidar
-                    </Link>
-
-                    {/* Desktop Menu */}
-                    <nav className="hidden md:flex items-center gap-4">
-                        <Link to="/services" className="btn btn-secondary">
-                            Servicios
+        <React.Fragment>
+            <header className="bg-white shadow-sm sticky top-0 z-40 transition-all duration-300 h-[50px]">
+                <div className="w-full px-6 md:px-12 h-full">
+                    <div className="flex justify-between items-center h-full">
+                        <Link to="/" className="flex-shrink-0 hover:opacity-80 transition-opacity flex items-center">
+                            <Logo />
                         </Link>
-                        {!showUserMenu ? (
-                            <>
-                                <button onClick={() => navigate('/login')} className="btn btn-secondary text-sm">Iniciar Sesión</button>
-                                <button onClick={() => navigate('/register')} className="btn btn-primary text-sm whitespace-nowrap">Registrarse</button>
-                            </>
-                        ) : (
-                            <div className="flex items-center gap-4">
-                                <div className="hidden lg:flex flex-col items-end">
-                                    <span className="text-xs text-gray-400 font-medium">Hola de nuevo</span>
-                                    <span className="text-sm font-bold text-gray-800">{profile?.full_name || 'Usuario'}</span>
-                                </div>
-                                <button
-                                    onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')}
-                                    className="btn btn-primary flex items-center gap-2 text-sm"
-                                >
-                                    <LayoutDashboard size={18} />
-                                    <span>Mi Panel</span>
-                                </button>
-                                <button
-                                    onClick={async () => {
-                                        await signOut();
-                                        navigate('/');
-                                    }}
-                                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                                    title="Cerrar Sesión"
-                                >
-                                    <LogOut size={20} />
-                                </button>
-                            </div>
-                        )}
-                    </nav>
 
-                    {/* Mobile Menu Button */}
-                    <button
-                        className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        onClick={() => setIsOpen(!isOpen)}
-                    >
-                        {isOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
+                        {/* Desktop Menu */}
+                        <nav className="hidden md:flex items-center gap-6">
+                            <Link to="/services" className="text-[var(--text-main)] font-semibold hover:text-[var(--primary-color)] transition-colors">
+                                Servicios
+                            </Link>
+                            <Link to="/ecosistema-salud" className="text-[var(--text-main)] font-semibold hover:text-[var(--primary-color)] transition-colors flex items-center gap-1">
+                                <Activity size={16} className="text-[var(--secondary-color)]" />
+                                BC PULSO
+                            </Link>
+
+                            {!showUserMenu ? (
+                                <div className="flex items-center gap-3">
+                                    <button onClick={() => navigate('/login')} className="btn btn-outline border-none hover:bg-gray-50 uppercase text-xs tracking-widest">Iniciar Sesión</button>
+                                    <button onClick={() => navigate('/register')} className="btn btn-primary uppercase text-xs tracking-widest px-8">Registrarse</button>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-4">
+                                    <div className="hidden lg:flex flex-col items-end mr-2">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Hola de nuevo</span>
+                                        <span className="text-sm font-black text-[var(--primary-color)]">{profile?.full_name || 'Usuario'}</span>
+                                    </div>
+                                    <button
+                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')}
+                                        className="btn btn-primary flex items-center gap-2 text-xs tracking-widest uppercase shadow-lg shadow-green-100"
+                                    >
+                                        <LayoutDashboard size={16} />
+                                        <span>Mi Panel</span>
+                                    </button>
+                                    <button
+                                        onClick={async () => {
+                                            await signOut();
+                                            navigate('/login');
+                                        }}
+                                        className="p-2 text-gray-400 hover:text-[var(--error-color)] transition-colors bg-gray-50 rounded-[16px]"
+                                        title="Cerrar Sesión"
+                                    >
+                                        <LogOut size={20} />
+                                    </button>
+                                </div>
+                            )}
+                        </nav>
+
+                        {/* Mobile Menu Button */}
+                        <button
+                            className="md:hidden p-2 text-[var(--primary-color)] hover:bg-gray-100 rounded-[16px] transition-colors"
+                            onClick={() => setIsSidebarOpen(true)}
+                        >
+                            <Menu size={24} />
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 z-50 md:hidden backdrop-blur-sm transition-opacity"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
+            {/* Mobile Sidebar Pane */}
+            <aside
+                className={`
+                    fixed inset-y-0 right-0 z-[60] w-[280px] bg-[#0F3C4C] text-[#FAFAF7] shadow-2xl transition-transform duration-300 ease-in-out md:hidden flex flex-col
+                    ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
+                `}
+            >
+                {/* Sidebar Header */}
+                <div className="p-6 border-b border-white/10 flex justify-end items-center bg-[#0d3542]">
+                    <div className="text-right">
+                        <h2 className="text-xl font-brand font-bold tracking-tight" style={{ color: '#FAFAF7' }}>BuenCuidar</h2>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-widest">Menu Principal</p>
+                    </div>
                 </div>
 
-                {/* Mobile Menu Dropdown */}
-                {isOpen && (
-                    <div className="md:hidden mt-4 pb-4 border-t border-gray-100 pt-4 animate-fade-in space-y-3">
-                        {showUserMenu && (
-                            <div className="flex items-center gap-3 px-2 pb-2 mb-2 border-b border-gray-50">
-                                <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500">
-                                    <User size={20} />
+                {/* Sidebar Content */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                    {/* User Info Card (if logged in) */}
+                    {showUserMenu && (
+                        <div className="bg-white/10 rounded-[16px] p-4 mb-6 border border-white/5">
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-10 h-10 rounded-full bg-[var(--secondary-color)] flex items-center justify-center font-bold text-[#0F3C4C]">
+                                    {profile?.full_name?.charAt(0) || <User size={20} />}
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-bold text-gray-800">{profile?.full_name || 'Usuario'}</span>
-                                    <span className="text-xs text-gray-400">Sesión activa</span>
+                                <div className="flex flex-col overflow-hidden">
+                                    <span className="font-bold text-sm truncate">{profile?.full_name || 'Usuario'}</span>
+                                    <span className="text-[10px] text-[var(--secondary-color)] uppercase tracking-wider font-bold">
+                                        {profile?.role === 'caregiver' ? 'Cuidador PRO' : 'Usuario'}
+                                    </span>
                                 </div>
                             </div>
-                        )}
+                            <button
+                                onClick={() => handleNavigation(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')}
+                                className="w-full bg-[var(--primary-color)] hover:brightness-110 text-white text-xs font-bold py-2.5 rounded-[12px] flex items-center justify-center gap-2 transition-all shadow-md"
+                            >
+                                <LayoutDashboard size={14} />
+                                IR A MI PANEL
+                            </button>
+                        </div>
+                    )}
 
-                        <Link
-                            to="/services"
-                            className="btn btn-secondary w-full justify-center"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            Servicios
-                        </Link>
+                    {/* Navigation Links */}
+                    <div className="space-y-1">
+                        <p className="px-4 text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2 pt-2 text-right">Navegación</p>
 
-                        {!showUserMenu ? (
-                            <div className="grid gap-3 pt-2">
-                                <button
-                                    onClick={() => { navigate('/login'); setIsOpen(false); }}
-                                    className="w-full btn btn-secondary justify-center"
-                                >
-                                    Iniciar Sesión
-                                </button>
-                                <button
-                                    onClick={() => { navigate('/register'); setIsOpen(false); }}
-                                    className="w-full btn btn-primary justify-center"
-                                >
-                                    Registrarse
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => {
-                                        navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard');
-                                        setIsOpen(false);
-                                    }}
-                                    className="w-full btn btn-primary justify-center gap-2 mt-2"
-                                >
-                                    <LayoutDashboard size={20} />
-                                    Ir a Mi Panel
-                                </button>
-                                <button
-                                    onClick={async () => {
-                                        await signOut();
-                                        setIsOpen(false);
-                                        navigate('/');
-                                    }}
-                                    className="w-full flex items-center justify-center gap-2 py-3 px-4 text-gray-600 font-bold hover:text-red-500 hover:bg-red-50 rounded-xl mt-2 transition-all"
-                                >
-                                    <LogOut size={20} />
-                                    Cerrar Sesión
-                                </button>
-                            </div>
-                        )}
+                        <SidebarItem
+                            icon={Home}
+                            label="Inicio"
+                            onClick={() => handleNavigation('/')}
+                            active={location.pathname === '/'}
+                        />
+                        <SidebarItem
+                            icon={Sparkles}
+                            label="Servicios"
+                            onClick={() => handleNavigation('/services')}
+                            active={location.pathname === '/services'}
+                        />
+                        <SidebarItem
+                            icon={Activity}
+                            label="BC PULSO"
+                            onClick={() => handleNavigation('/ecosistema-salud')}
+                            active={location.pathname === '/ecosistema-salud'}
+                        />
                     </div>
-                )}
-            </div>
-        </header>
+                </div>
+
+                {/* Sidebar Footer */}
+                <div className="p-4 border-t border-white/10 bg-[#0d3542]">
+                    {!showUserMenu ? (
+                        <div className="grid gap-3">
+                            <button
+                                onClick={() => handleNavigation('/login')}
+                                className="w-full flex items-center justify-center gap-2 py-3 rounded-[16px] border border-white/20 hover:bg-white/10 transition-colors text-sm font-bold tracking-wide"
+                            >
+                                <LogIn size={18} />
+                                INICIAR SESIÓN
+                            </button>
+                            <button
+                                onClick={() => handleNavigation('/register')}
+                                className="w-full flex items-center justify-center gap-2 py-3 rounded-[16px] bg-[var(--secondary-color)] text-[#0F3C4C] hover:brightness-110 transition-colors text-sm font-black tracking-wide shadow-lg"
+                            >
+                                <UserPlus size={18} />
+                                REGISTRARSE
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={async () => {
+                                await signOut();
+                                navigate('/login');
+                                setIsSidebarOpen(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-3 rounded-[16px] text-red-300 hover:bg-red-500/10 hover:text-red-200 transition-colors"
+                        >
+                            <LogOut size={20} />
+                            <span className="font-bold text-sm">Cerrar Sesión</span>
+                        </button>
+                    )}
+                </div>
+            </aside>
+        </React.Fragment>
     );
 };
 

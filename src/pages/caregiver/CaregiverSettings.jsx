@@ -77,53 +77,59 @@ const CaregiverSettings = () => {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in max-w-3xl">
-            <h1 className="text-2xl font-bold text-gray-800">Configuración de la App</h1>
+        <div className="space-y-10 animate-fade-in max-w-3xl">
+            <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Configuración de la App</h1>
 
             {/* Work Preferences */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 bg-gray-50">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-purple-100 p-2 rounded-lg text-purple-600">
-                            <Sliders size={20} />
+            <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div className="p-8 border-b border-gray-50 bg-slate-50/50">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-purple-100 p-3 rounded-[16px] text-purple-600 shadow-inner">
+                            <Sliders size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800">Preferencias de Trabajo</h3>
-                        {saving && <span className="text-xs text-gray-400 animate-pulse ml-auto">Guardando...</span>}
+                        <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Preferencias de Trabajo</h3>
+                        {saving && <span className="text-[10px] font-black uppercase tracking-widest text-[#0F3C4C]/40 animate-pulse ml-auto">Guardando...</span>}
                     </div>
                 </div>
-                <div className="p-6 space-y-6">
+                <div className="p-8 space-y-8 text-left">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="font-semibold text-gray-700">Llamadas de Urgencia</p>
-                            <p className="text-sm text-gray-500">Recibir ofertas de último minuto (tarifa 1.5x).</p>
+                            <p className="font-brand font-bold text-[#0F3C4C] text-lg">Llamadas de Urgencia</p>
+                            <p className="text-sm text-gray-500 font-secondary mt-1">Recibir ofertas de último minuto con tarifa premium (1.5x).</p>
                         </div>
-                        <input
-                            type="checkbox"
-                            checked={preferences.urgentCalls}
-                            onChange={(e) => {
-                                const newVal = e.target.checked;
-                                setPreferences({ ...preferences, urgentCalls: newVal });
-                                updateSetting('urgentCalls', newVal);
-                            }}
-                            className="w-6 h-6 text-blue-600 rounded focus:ring-blue-500 cursor-pointer"
-                        />
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={preferences.urgentCalls}
+                                onChange={(e) => {
+                                    const newVal = e.target.checked;
+                                    setPreferences({ ...preferences, urgentCalls: newVal });
+                                    updateSetting('urgentCalls', newVal);
+                                }}
+                                className="sr-only peer"
+                            />
+                            <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--secondary-color)]"></div>
+                        </label>
                     </div>
 
-                    <div className="border-t border-gray-100 pt-4">
-                        <p className="font-semibold text-gray-700 mb-2">Radio de Cobertura ({preferences.radius} km)</p>
+                    <div className="border-t border-gray-50 pt-8">
+                        <div className="flex justify-between items-end mb-4">
+                            <p className="font-brand font-bold text-[#0F3C4C] text-lg text-left">Radio de Cobertura</p>
+                            <span className="text-[10px] font-black bg-[var(--primary-color)] !text-[#FAFAF7] px-4 py-1.5 rounded-full uppercase tracking-widest">{preferences.radius} KM</span>
+                        </div>
                         <input
                             type="range"
                             min="1"
                             max="50"
                             value={preferences.radius}
                             onChange={(e) => setPreferences({ ...preferences, radius: e.target.value })}
-                            onMouseUp={(e) => updateSetting('radius', e.target.value)} // Save on release
+                            onMouseUp={(e) => updateSetting('radius', e.target.value)}
                             onTouchEnd={(e) => updateSetting('radius', e.target.value)}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            className="w-full h-3 bg-slate-100 rounded-full appearance-none cursor-pointer accent-[var(--secondary-color)]"
                         />
-                        <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <div className="flex justify-between text-[10px] text-gray-400 font-black uppercase tracking-widest mt-4">
                             <span>1 km</span>
-                            <span>25 km</span>
+                            <span className="text-slate-200">25 km</span>
                             <span>50 km</span>
                         </div>
                     </div>
@@ -131,18 +137,21 @@ const CaregiverSettings = () => {
             </div>
 
             {/* General Settings */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 bg-gray-50">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-gray-100 p-2 rounded-lg text-gray-600">
-                            <Shield size={20} />
+            <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div className="p-8 border-b border-gray-50 bg-slate-50/50">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-slate-100 p-3 rounded-[16px] text-[#0F3C4C] shadow-inner">
+                            <Shield size={24} />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800">Cuenta y Seguridad</h3>
+                        <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Cuenta y Seguridad</h3>
                     </div>
                 </div>
-                <div className="divide-y divide-gray-100">
-                    <button onClick={handlePasswordReset} className="w-full p-4 hover:bg-gray-50 text-left text-gray-700 font-medium">
+                <div className="divide-y divide-gray-50 text-left">
+                    <button onClick={handlePasswordReset} className="w-full p-8 hover:bg-slate-50/50 transition-all font-brand font-bold text-[#0F3C4C] text-lg flex justify-between items-center group">
                         Cambiar Contraseña
+                        <div className="w-10 h-10 rounded-[16px] bg-gray-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-lg transition-all">
+                            <Shield size={18} className="text-gray-300 group-hover:text-[var(--primary-color)] transition-colors" />
+                        </div>
                     </button>
 
                     <button
@@ -151,9 +160,12 @@ const CaregiverSettings = () => {
                                 alert("Por favor contacta a soporte para proceder con la baja definitiva.");
                             }
                         }}
-                        className="w-full p-4 hover:bg-red-50 text-left text-red-600 font-medium"
+                        className="w-full p-8 hover:bg-red-50 transition-all font-brand font-bold text-red-500 text-lg flex justify-between items-center group"
                     >
                         Eliminar Cuenta
+                        <div className="w-10 h-10 rounded-[16px] bg-red-50/50 flex items-center justify-center group-hover:bg-white group-hover:shadow-lg transition-all">
+                            <Shield size={18} className="text-red-300" />
+                        </div>
                     </button>
                 </div>
             </div>

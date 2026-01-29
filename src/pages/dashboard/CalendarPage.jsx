@@ -293,12 +293,12 @@ const CalendarPage = () => {
     }, [user, currentDate.getFullYear()]); // Refetch when year changes
 
     return (
-        <div translate="no" className="flex bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-140px)] overflow-hidden relative">
+        <div translate="no" className="flex bg-white rounded-[16px] shadow-sm border border-gray-200 h-[calc(100vh-140px)] overflow-hidden relative">
             <div className="flex-grow flex flex-col p-6 overflow-hidden">
                 <div className="flex justify-between items-end mb-8">
                     <div className="flex flex-col">
                         <div className="flex items-baseline justify-start gap-4 mb-2 w-full">
-                            <span className="text-8xl font-black bg-gradient-to-br from-blue-600 to-indigo-500 bg-clip-text text-transparent tracking-tighter leading-none">
+                            <span className="text-8xl font-black !text-[#2FAE8F] tracking-tighter leading-none drop-shadow-sm">
                                 {currentDate.getFullYear()}
                             </span>
                             <h2 className="text-3xl font-bold text-gray-400 tracking-tight">
@@ -316,7 +316,7 @@ const CalendarPage = () => {
                                 </button>
 
                                 {showMonthSelector && (
-                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden animate-fade-in">
+                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-[16px] shadow-2xl border border-gray-100 z-50 overflow-hidden animate-fade-in">
                                         <div className="grid grid-cols-1 max-h-[300px] overflow-y-auto custom-scrollbar">
                                             {months.map((month, idx) => (
                                                 <button
@@ -351,7 +351,7 @@ const CalendarPage = () => {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-7 flex-grow auto-rows-fr gap-2 bg-gray-50 p-2 rounded-xl border border-gray-200 overflow-y-auto relative">
+                <div className="grid grid-cols-7 flex-grow auto-rows-fr gap-2 bg-gray-50 p-2 rounded-[16px] border border-gray-200 overflow-y-auto relative">
                     {fetching && (
                         <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center z-20">
                             <Loader2 className="animate-spin text-blue-600" size={40} />
@@ -365,10 +365,10 @@ const CalendarPage = () => {
                             <div
                                 key={day}
                                 onClick={() => setSelectedDate(day)}
-                                className={`bg-white rounded-lg p-2 border transition-all cursor-pointer min-h-[100px] flex flex-col gap-1 ${isSelected ? 'border-blue-600 ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300'}`}
+                                className={`bg-white rounded-[16px] p-2 border transition-all cursor-pointer min-h-[100px] flex flex-col gap-1 ${isSelected ? 'border-blue-600 ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300'}`}
                             >
                                 <div className="flex justify-between items-start">
-                                    <span className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-semibold mb-1 ${isSelected ? 'bg-blue-600 text-white' : 'text-gray-700'}`}>
+                                    <span className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-semibold mb-1 ${isSelected ? 'bg-blue-600 !text-[#FAFAF7]' : 'text-gray-700'}`}>
                                         {day}
                                     </span>
                                     <button onClick={(e) => { e.stopPropagation(); openModal(day); }} className="text-gray-300 hover:text-blue-600 group-hover:opacity-100 transition-opacity"><Plus size={16} /></button>
@@ -396,12 +396,12 @@ const CalendarPage = () => {
                         </div>
                         {appointments.filter(a => a.date === selectedDate).length > 0 ? (
                             <>
-                                <button onClick={() => openModal(selectedDate)} className="w-full mb-4 py-2 border border-dashed border-blue-600 text-blue-600 rounded-lg font-medium hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"><Plus size={16} /> Agregar otra cita</button>
+                                <button onClick={() => openModal(selectedDate)} className="w-full mb-4 py-2 border border-dashed border-blue-600 text-blue-600 rounded-[16px] font-medium hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"><Plus size={16} /> Agregar otra cita</button>
                                 {appointments.filter(a => a.date === selectedDate).map(event => (
-                                    <div key={event.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative group/event">
+                                    <div key={event.id} className="bg-white p-4 rounded-[16px] shadow-sm border border-gray-100 relative group/event">
                                         <div className="flex gap-1 absolute top-2 right-2">
-                                            <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg"><Edit2 size={16} /></button>
-                                            <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+                                            <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-[16px]"><Edit2 size={16} /></button>
+                                            <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
                                         </div>
                                         <h4 className="font-bold text-gray-800 mb-1 pr-8">{event.title}</h4>
                                         <div className="text-sm text-gray-600 flex items-center gap-2"><Clock size={14} /> {event.time} {event.end_time ? `- ${event.end_time.substring(0, 5)}` : ''}</div>
@@ -420,13 +420,13 @@ const CalendarPage = () => {
 
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center pt-24 z-[100] px-4 overflow-y-auto pb-10">
-                    <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl flex flex-col animate-slide-up border border-white/20 overflow-hidden">
+                    <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-4xl flex flex-col animate-slide-up border border-white/20 overflow-hidden">
                         <div className="p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
                                 <h3 className="text-3xl font-black text-gray-800 tracking-tight">{editingId ? 'Editar Cita' : 'Nueva Cita'}</h3>
                                 <p className="text-sm text-gray-500 font-medium mt-1">Servicio para el {selectedDate} de {months[currentDate.getMonth()]}</p>
                             </div>
-                            <button onClick={() => { setShowModal(false); setEditingId(null); setNewAppointment({ title: '', time: '', endTime: '', type: 'medical', patient_id: '', selectedServices: [] }); }} className="p-3 bg-gray-100 text-gray-500 rounded-lg"><X size={24} /></button>
+                            <button onClick={() => { setShowModal(false); setEditingId(null); setNewAppointment({ title: '', time: '', endTime: '', type: 'medical', patient_id: '', selectedServices: [] }); }} className="p-3 bg-gray-100 text-gray-500 rounded-[16px]"><X size={24} /></button>
                         </div>
 
                         <form onSubmit={handleAddAppointment} className="flex flex-col md:flex-row divide-x divide-gray-100">
@@ -434,28 +434,28 @@ const CalendarPage = () => {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Título</label>
-                                        <input type="text" required className="w-full px-6 py-4 rounded-lg border-2 border-gray-100 font-bold" value={newAppointment.title} onChange={e => setNewAppointment({ ...newAppointment, title: e.target.value })} />
+                                        <input type="text" required className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold" value={newAppointment.title} onChange={e => setNewAppointment({ ...newAppointment, title: e.target.value })} />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Inicio</label>
-                                            <input type="time" required className="w-full px-6 py-4 rounded-lg border-2 border-gray-100 font-bold" value={newAppointment.time} onChange={e => setNewAppointment({ ...newAppointment, time: e.target.value })} />
+                                            <input type="time" required className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold" value={newAppointment.time} onChange={e => setNewAppointment({ ...newAppointment, time: e.target.value })} />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Fin</label>
-                                            <input type="time" className="w-full px-6 py-4 rounded-lg border-2 border-gray-100 font-bold" value={newAppointment.endTime || ''} onChange={e => setNewAppointment({ ...newAppointment, endTime: e.target.value })} />
+                                            <input type="time" className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold" value={newAppointment.endTime || ''} onChange={e => setNewAppointment({ ...newAppointment, endTime: e.target.value })} />
                                         </div>
                                     </div>
                                     <div>
                                         <label className="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Persona a Cuidar</label>
-                                        <select required className="w-full px-6 py-4 rounded-lg border-2 border-gray-100 font-bold appearance-none" value={newAppointment.patient_id || ''} onChange={e => setNewAppointment({ ...newAppointment, patient_id: e.target.value })}>
+                                        <select required className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold appearance-none" value={newAppointment.patient_id || ''} onChange={e => setNewAppointment({ ...newAppointment, patient_id: e.target.value })}>
                                             <option value="">Seleccionar familiar...</option>
                                             {patients.map(p => (<option key={p.id} value={p.id}>{p.full_name}</option>))}
                                         </select>
                                     </div>
 
                                 </div>
-                                <button type="submit" disabled={saving} className="w-full bg-slate-900 text-white py-5 rounded-lg font-black text-lg shadow-xl hover:bg-slate-800 flex items-center justify-center gap-3">
+                                <button type="submit" disabled={saving} className="w-full bg-slate-900 !text-[#FAFAF7] py-5 rounded-[16px] font-black text-lg shadow-xl hover:bg-slate-800 flex items-center justify-center gap-3">
                                     {saving ? <Loader2 className="animate-spin" size={24} /> : (editingId ? 'Guardar Cambios' : 'Agendar Cita')}
                                 </button>
                             </div>
@@ -470,13 +470,13 @@ const CalendarPage = () => {
 
             {deleteConfirm && (
                 <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[110]">
-                    <div className="bg-white rounded-lg p-10 max-w-sm text-center">
+                    <div className="bg-white rounded-[16px] p-10 max-w-sm text-center">
                         <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4"><Trash2 size={32} /></div>
                         <h3 className="text-xl font-bold mb-2">¿Eliminar cita?</h3>
                         <p className="text-gray-500 mb-8 font-medium">Esta acción no se puede deshacer.</p>
                         <div className="flex gap-4">
-                            <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 bg-gray-100 rounded-lg font-bold">No</button>
-                            <button onClick={confirmDelete} className="flex-1 py-3 bg-red-600 text-white rounded-lg font-bold">Sí, eliminar</button>
+                            <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 bg-gray-100 rounded-[16px] font-bold">No</button>
+                            <button onClick={confirmDelete} className="flex-1 py-3 bg-red-600 !text-[#FAFAF7] rounded-[16px] font-bold">Sí, eliminar</button>
                         </div>
                     </div>
                 </div>

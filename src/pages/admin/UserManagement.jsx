@@ -38,29 +38,29 @@ const UserManagement = () => {
         <div className="space-y-6 animate-fade-in">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                 <h1 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h1>
-                <div className="flex items-center gap-2 bg-white p-1 rounded-lg border border-gray-200 shadow-sm">
+                <div className="flex items-center gap-2 bg-white p-1 rounded-[16px] border border-gray-200 shadow-sm">
                     <button
                         onClick={() => setFilter('all')}
-                        className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'all' ? 'bg-slate-800 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+                        className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'all' ? 'bg-slate-800 !text-[#FAFAF7]' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
                         Todos
                     </button>
                     <button
                         onClick={() => setFilter('family')}
-                        className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'family' ? 'bg-slate-800 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+                        className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'family' ? 'bg-slate-800 !text-[#FAFAF7]' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
                         Familias
                     </button>
                     <button
                         onClick={() => setFilter('caregiver')}
-                        className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'caregiver' ? 'bg-slate-800 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+                        className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'caregiver' ? 'bg-slate-800 !text-[#FAFAF7]' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
                         Cuidadores
                     </button>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead className="bg-gray-50 border-b border-gray-100">
@@ -91,7 +91,7 @@ const UserManagement = () => {
                                         </div>
                                     </td>
                                     <td className="p-4">
-                                        <span className={`px-2 py-1 rounded-lg text-xs font-bold border ${user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                        <span className={`px-2 py-1 rounded-[16px] text-xs font-bold border ${user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
                                                 user.role === 'caregiver' ? 'bg-blue-50 text-blue-700 border-blue-100' :
                                                     'bg-green-50 text-green-700 border-green-100'
                                             }`}>
@@ -111,7 +111,7 @@ const UserManagement = () => {
                                         </span>
                                     </td>
                                     <td className="p-4 text-right">
-                                        <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors">
+                                        <button className="p-2 hover:bg-gray-100 rounded-[16px] text-gray-400 hover:text-gray-600 transition-colors">
                                             <MoreHorizontal size={18} />
                                         </button>
                                     </td>

@@ -23,15 +23,15 @@ const SidebarItem = ({ icon: Icon, label, path, active, onClick, badge }) => {
     return (
         <div
             onClick={onClick}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-300 relative ${active
-                ? 'bg-[var(--primary-light)] text-white shadow-lg translate-x-1'
+            className={`flex items-center gap-3 px-4 py-3 rounded-[16px] cursor-pointer transition-all duration-300 relative ${active
+                ? 'bg-[var(--primary-light)] !text-[#FAFAF7] shadow-lg translate-x-1'
                 : 'text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-1'
-                } ${isSalud ? 'border-l-4 border-green-400 font-black tracking-widest text-white bg-white/5' : ''}`}
+                } ${isSalud ? 'border-l-4 border-green-400 font-black tracking-widest !text-[#FAFAF7] bg-white/5' : ''}`}
         >
             <Icon size={isSalud ? 24 : 20} className={isSalud ? 'text-green-400 animate-pulse' : ''} />
             <span className={isSalud ? 'text-lg' : 'font-medium'}>{label}</span>
             {badge > 0 && (
-                <span className="absolute right-3 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-bounce">
+                <span className="absolute right-3 bg-red-500 !text-[#FAFAF7] text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-bounce">
                     {badge}
                 </span>
             )}
@@ -76,8 +76,8 @@ const DashboardLayout = () => {
         setIsMobileMenuOpen(false);
     };
 
-    const handleLogout = () => {
-        signOut(); // Fire and forget for "efficient" UI feedback
+    const handleLogout = async () => {
+        await signOut();
         navigate('/login');
     };
 
@@ -86,18 +86,18 @@ const DashboardLayout = () => {
             {/* Sidebar - Desktop & Mobile */}
             <aside
                 className={`
-                    fixed inset-y-0 left-0 z-50 w-64 bg-[var(--primary-color)] text-white transition-transform duration-300 ease-in-out
+                    fixed inset-y-0 left-0 z-50 w-64 bg-[var(--primary-color)] !text-[#FAFAF7] transition-transform duration-300 ease-in-out
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                     md:relative md:translate-x-0 flex flex-col
                 `}
             >
                 {/* Logo Area */}
                 <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                    <h2 className="text-2xl font-bold cursor-pointer" onClick={() => navigate('/')}>
+                    <h1 className="text-2xl font-bold cursor-pointer font-brand !text-[#FAFAF7]" onClick={() => navigate('/')}>
                         BuenCuidar
-                    </h2>
+                    </h1>
                     <button
-                        className="md:hidden text-white"
+                        className="md:hidden !text-[#FAFAF7]"
                         onClick={() => setIsMobileMenuOpen(false)}
                     >
                         <X size={24} />
@@ -123,7 +123,7 @@ const DashboardLayout = () => {
                 <div className="p-4 border-t border-white/10">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-red-200 hover:bg-red-900/20 hover:text-red-100 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 w-full rounded-[16px] text-red-200 hover:bg-red-900/20 hover:text-red-100 transition-colors"
                     >
                         <LogOut size={20} />
                         <span className="font-medium">Cerrar Sesión</span>

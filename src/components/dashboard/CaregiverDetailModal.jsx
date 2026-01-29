@@ -51,7 +51,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative flex flex-col border border-white/20">
+            <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative flex flex-col border border-white/20">
 
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto">
@@ -61,7 +61,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                             <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                             <button
                                 onClick={onClose}
-                                className="absolute top-6 right-6 bg-white/10 text-white p-2.5 rounded-lg hover:bg-white/20 transition-all backdrop-blur-md z-10"
+                                className="absolute top-6 right-6 bg-white/10 !text-[#FAFAF7] p-2.5 rounded-[16px] hover:bg-white/20 transition-all backdrop-blur-md z-10"
                             >
                                 <X size={24} />
                             </button>
@@ -85,12 +85,12 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                             <div className="text-center mt-4 mb-2">
                                 <h2 className="text-3xl font-black text-gray-800 tracking-tight">{caregiver.full_name}</h2>
                                 <div className="flex items-center justify-center gap-2 mt-1">
-                                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20">
+                                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 !text-[#FAFAF7] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20">
                                         <Award size={12} strokeWidth={3} />
                                         <span>Cuidador PRO</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[11px] font-black border border-amber-200">
-                                        <Star size={12} className="fill-current" />
+                                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black border ${realStats.count > 0 ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                                        <Star size={12} className={realStats.count > 0 ? 'fill-current' : ''} />
                                         <span>{realStats.rating} ({realStats.count})</span>
                                     </div>
                                 </div>
@@ -102,21 +102,21 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
                             {/* Key Stats Row */}
                             <div className="flex justify-center gap-4 w-full mb-8">
-                                <div className="flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
+                                <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
                                     <div className="mb-1 text-blue-500 mx-auto w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <Shield size={16} />
                                     </div>
                                     <p className="text-[10px] uppercase font-black text-gray-400 tracking-wider">Status</p>
                                     <p className="font-bold text-gray-800 text-xs">Verificado</p>
                                 </div>
-                                <div className="flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
+                                <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
                                     <div className="mb-1 text-indigo-500 mx-auto w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <Clock size={16} />
                                     </div>
                                     <p className="text-[10px] uppercase font-black text-gray-400 tracking-wider">Exp.</p>
                                     <p className="font-bold text-gray-800 text-xs">{caregiver.caregiver_details?.experience || caregiver.experience || '1'} Años</p>
                                 </div>
-                                <div className="flex-1 bg-slate-50 p-3 rounded-lg border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
+                                <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
                                     <div className="mb-1 text-rose-500 mx-auto w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <MapPin size={16} />
                                     </div>
@@ -136,7 +136,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 <span className="w-1.5 h-6 bg-[#0F4C5C] rounded-full"></span>
                                 Sobre Mí
                             </h3>
-                            <p className="text-gray-600 leading-relaxed text-sm bg-gray-50/50 p-5 rounded-lg border border-gray-100">
+                            <p className="text-gray-600 leading-relaxed text-sm bg-gray-50/50 p-5 rounded-[16px] border border-gray-100">
                                 {caregiver.bio || caregiver.caregiver_details?.bio || "Este cuidador se especializa en brindar atención compasiva y profesional, enfocándose en el bienestar integral del paciente."}
                             </p>
                         </div>
@@ -151,7 +151,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
                                     {(caregiver.skills || caregiver.caregiver_details?.skills || ['Cuidados Básicos']).map((skill, idx) => (
-                                        <span key={idx} className="bg-emerald-50 text-emerald-800 text-[11px] font-bold px-3 py-1.5 rounded-lg border border-emerald-100/50">
+                                        <span key={idx} className="bg-emerald-50 text-emerald-800 text-[11px] font-bold px-3 py-1.5 rounded-[16px] border border-emerald-100/50">
                                             {skill}
                                         </span>
                                     ))}
@@ -166,7 +166,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 </h3>
                                 <div className="space-y-2">
                                     {(caregiver.certifications || caregiver.caregiver_details?.certifications || []).slice(0, 3).map((cert, idx) => (
-                                        <div key={idx} className="flex items-start gap-3 p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                                        <div key={idx} className="flex items-start gap-3 p-2.5 rounded-[16px] border border-gray-100 hover:bg-gray-50 transition-colors">
                                             <div className="mt-0.5 text-blue-400 bg-blue-50 p-1 rounded-md">
                                                 <Award size={12} />
                                             </div>
@@ -185,14 +185,14 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
                         {/* Featured Reviews */}
                         {reviews.length > 0 && (
-                            <div className="bg-amber-50/30 rounded-lg p-6 border border-amber-100/50">
+                            <div className="bg-amber-50/30 rounded-[16px] p-6 border border-amber-100/50">
                                 <h3 className="flex items-center gap-2 font-black text-gray-800 mb-4">
                                     <Star className="text-amber-400 fill-amber-400" size={20} />
                                     Reseñas Destacadas
                                 </h3>
                                 <div className="grid gap-3">
                                     {reviews.map((review) => (
-                                        <div key={review.id} className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm relative">
+                                        <div key={review.id} className="bg-white p-4 rounded-[16px] border border-gray-100 shadow-sm relative">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-6 h-6 rounded-full bg-slate-200 overflow-hidden">
@@ -225,13 +225,13 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                 <div className="p-6 border-t border-gray-100 bg-white z-30 flex gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white border-2 border-slate-100 text-slate-500 font-bold py-4 rounded-lg hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs"
+                        className="flex-1 bg-white border-2 border-slate-100 text-slate-500 font-bold py-4 rounded-[16px] hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={() => onContact(caregiver)}
-                        className="flex-[2] bg-[#0F4C5C] text-white font-black py-4 rounded-lg hover:shadow-xl hover:shadow-[#0F4C5C]/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
+                        className="flex-[2] bg-[#0F4C5C] !text-[#FAFAF7] font-black py-4 rounded-[16px] hover:shadow-xl hover:shadow-[#0F4C5C]/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
                     >
                         <Mail size={18} />
                         Enviar Mensaje

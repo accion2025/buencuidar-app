@@ -48,20 +48,20 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-slide-up">
+            <div className="bg-white rounded-[16px] shadow-xl w-full max-w-md overflow-hidden animate-slide-up">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                     <h3 className="font-bold text-gray-800 flex items-center gap-2">
                         <DollarSign size={20} className="text-green-600" />
                         Registrar Pago
                     </h3>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-200 rounded-lg transition-colors">
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-200 rounded-[16px] transition-colors">
                         <X size={20} />
                     </button>
                 </div>
 
                 <form onSubmit={handleSave} className="p-6 space-y-6">
                     {/* Appointment Summary */}
-                    <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 space-y-2">
+                    <div className="bg-blue-50/50 p-4 rounded-[16px] border border-blue-100 space-y-2">
                         <div className="flex items-center gap-2 text-sm font-bold text-gray-800">
                             <User size={14} className="text-blue-500" />
                             {appointment.client?.full_name || 'Cliente'}
@@ -91,7 +91,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                                     <input
                                         type="time"
                                         required
-                                        className="w-full px-3 py-2 rounded-xl border-2 border-gray-100 focus:border-blue-500 outline-none transition-all font-mono font-bold text-gray-800"
+                                        className="w-full px-3 py-2 rounded-[16px] border-2 border-gray-100 focus:border-blue-500 outline-none transition-all font-mono font-bold text-gray-800"
                                         value={startTime}
                                         onChange={(e) => setStartTime(e.target.value)}
                                     />
@@ -101,7 +101,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                                     <input
                                         type="time"
                                         required
-                                        className="w-full px-3 py-2 rounded-xl border-2 border-gray-100 focus:border-blue-500 outline-none transition-all font-mono font-bold text-gray-800"
+                                        className="w-full px-3 py-2 rounded-[16px] border-2 border-gray-100 focus:border-blue-500 outline-none transition-all font-mono font-bold text-gray-800"
                                         value={endTime}
                                         onChange={(e) => setEndTime(e.target.value)}
                                     />
@@ -118,7 +118,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                                     min="0"
                                     step="0.01"
                                     required
-                                    className="w-full pl-8 pr-4 py-3 rounded-xl border-2 border-gray-100 focus:border-green-500 outline-none transition-all font-mono font-bold text-lg text-gray-800"
+                                    className="w-full pl-8 pr-4 py-3 rounded-[16px] border-2 border-gray-100 focus:border-green-500 outline-none transition-all font-mono font-bold text-lg text-gray-800"
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                     placeholder="0.00"
@@ -132,7 +132,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                                 <button
                                     type="button"
                                     onClick={() => setStatus('pending')}
-                                    className={`py-2 px-4 rounded-xl border-2 font-bold text-sm transition-all flex items-center justify-center gap-2 ${status === 'pending'
+                                    className={`py-2 px-4 rounded-[16px] border-2 font-bold text-sm transition-all flex items-center justify-center gap-2 ${status === 'pending'
                                         ? 'border-yellow-400 bg-yellow-50 text-yellow-700'
                                         : 'border-gray-100 text-gray-400 hover:border-gray-200'
                                         }`}
@@ -142,7 +142,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                                 <button
                                     type="button"
                                     onClick={() => setStatus('paid')}
-                                    className={`py-2 px-4 rounded-xl border-2 font-bold text-sm transition-all flex items-center justify-center gap-2 ${status === 'paid'
+                                    className={`py-2 px-4 rounded-[16px] border-2 font-bold text-sm transition-all flex items-center justify-center gap-2 ${status === 'paid'
                                         ? 'border-green-500 bg-green-50 text-green-700'
                                         : 'border-gray-100 text-gray-400 hover:border-gray-200'
                                         }`}
@@ -157,14 +157,14 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition-colors"
+                            className="px-4 py-2 text-gray-500 font-bold hover:bg-gray-100 rounded-[16px] transition-colors"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="bg-green-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-green-700 transition-colors shadow-lg shadow-green-200 flex items-center gap-2"
+                            className="bg-green-600 !text-[#FAFAF7] px-6 py-2 rounded-[16px] font-bold hover:bg-green-700 transition-colors shadow-lg shadow-green-200 flex items-center gap-2"
                         >
                             {loading ? 'Guardando...' : 'Confirmar Todo'}
                         </button>

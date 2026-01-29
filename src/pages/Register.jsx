@@ -59,30 +59,33 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[var(--bg-color)] flex flex-col">
+        <div className="min-h-screen bg-[var(--base-bg)] flex flex-col">
             <Navbar />
 
-            <main className="flex-grow container mx-auto px-4 py-16 flex items-center justify-center">
-                <div className="card w-full max-w-lg bg-white p-8 shadow-lg">
-                    <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold text-[var(--primary-color)]">
+            <main className="flex-grow container mx-auto px-4 py-24 flex items-center justify-center relative">
+                <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[var(--secondary-color)] rounded-full blur-[120px] opacity-10 -z-10 animate-pulse"></div>
+                <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-[var(--accent-color)] rounded-full blur-[120px] opacity-20 -z-10"></div>
+
+                <div className="card w-full max-w-2xl bg-white p-10 md:p-14 animate-fade-in-up shadow-2xl border-none">
+                    <div className="text-center mb-10">
+                        <h2 className="text-4xl font-brand font-bold text-[var(--primary-color)] tracking-tight">
                             Crear Cuenta
                         </h2>
-                        <p className="text-gray-500 mt-2">
+                        <p className="text-[var(--text-light)] mt-2 font-secondary">
                             Encuentra el cuidado perfecto para tus seres queridos
                         </p>
                     </div>
 
                     {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 animate-shake">
-                            <AlertCircle className="text-red-500 shrink-0" size={20} />
-                            <p className="text-sm text-red-700">{error}</p>
+                        <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-[16px] flex items-start gap-3 animate-shake">
+                            <AlertCircle className="text-[var(--error-color)] shrink-0" size={20} />
+                            <p className="text-xs font-black text-[var(--error-color)] uppercase tracking-widest leading-relaxed">{error}</p>
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         <div>
-                            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="fullName" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
                                 Nombre Completo
                             </label>
                             <input
@@ -90,7 +93,7 @@ const Register = () => {
                                 id="fullName"
                                 name="fullName"
                                 required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+                                className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
                                 placeholder="Juan Pérez"
                                 value={formData.fullName}
                                 onChange={handleChange}
@@ -98,7 +101,7 @@ const Register = () => {
                         </div>
 
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
                                 Correo Electrónico
                             </label>
                             <input
@@ -106,16 +109,16 @@ const Register = () => {
                                 id="email"
                                 name="email"
                                 required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+                                className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
                                 placeholder="juan@ejemplo.com"
                                 value={formData.email}
                                 onChange={handleChange}
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="password" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
                                     Contraseña
                                 </label>
                                 <input
@@ -123,14 +126,14 @@ const Register = () => {
                                     id="password"
                                     name="password"
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
                                     placeholder="••••••••"
                                     value={formData.password}
                                     onChange={handleChange}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                                <label htmlFor="confirmPassword" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
                                     Confirmar Contraseña
                                 </label>
                                 <input
@@ -138,7 +141,7 @@ const Register = () => {
                                     id="confirmPassword"
                                     name="confirmPassword"
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
                                     placeholder="••••••••"
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
@@ -152,41 +155,47 @@ const Register = () => {
                                 name="terms"
                                 type="checkbox"
                                 required
-                                className="h-4 w-4 text-[var(--primary-color)] focus:ring-[var(--primary-color)] border-gray-300 rounded"
+                                className="h-5 w-5 text-[var(--secondary-color)] focus:ring-[var(--secondary-color)] border-gray-300 rounded-[6px] transition-all cursor-pointer"
                             />
-                            <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
-                                Acepto los <a href="#" className="text-[var(--primary-light)] hover:underline">Términos y Condiciones</a>
+                            <label htmlFor="terms" className="ml-3 block text-sm text-[var(--text-main)] font-secondary">
+                                Acepto los <a href="#" className="font-bold text-[var(--secondary-color)] hover:underline">Términos y Condiciones</a>
                             </label>
                         </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-slate-200"
-                        >
-                            {loading ? (
-                                <span className="flex items-center gap-2">
-                                    <Loader2 className="animate-spin" size={20} />
-                                    <span>Registrando...</span>
-                                </span>
-                            ) : (
-                                <span>Registrarse</span>
-                            )}
-                        </button>
+                        <div className="pt-2">
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full btn btn-primary py-5 text-lg shadow-xl shadow-green-100 uppercase tracking-widest"
+                            >
+                                {loading ? (
+                                    <span className="flex items-center gap-3">
+                                        <Loader2 className="animate-spin" size={24} />
+                                        <span>Registrando...</span>
+                                    </span>
+                                ) : (
+                                    <span>Registrarse Now</span>
+                                )}
+                            </button>
+                        </div>
                     </form>
 
-                    <div className="mt-6 text-center border-t pt-6">
-                        <p className="text-sm text-gray-600 mb-2">¿Buscas trabajo como cuidador?</p>
-                        <Link to="/register-caregiver" className="text-[var(--secondary-color)] font-bold hover:underline">
-                            Regístrate como Cuidador
-                        </Link>
-                    </div>
+                    <div className="mt-12 text-center space-y-4 border-t border-gray-50 pt-10">
+                        <div>
+                            <p className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest mb-2">¿Buscas trabajo como cuidador?</p>
+                            <Link to="/register-caregiver" className="text-[var(--secondary-color)] font-brand font-bold text-lg hover:underline italic">
+                                Regístrate como Cuidador
+                            </Link>
+                        </div>
 
-                    <div className="mt-4 text-center text-sm text-gray-600">
-                        ¿Ya tienes cuenta?{' '}
-                        <Link to="/login" className="font-semibold text-[var(--primary-color)] hover:underline">
-                            Inicia Sesión
-                        </Link>
+                        <div className="pt-4">
+                            <p className="text-sm font-secondary text-[var(--text-light)]">
+                                ¿Ya tienes cuenta?{' '}
+                                <Link to="/login" className="font-black text-[var(--primary-color)] hover:underline uppercase tracking-widest text-xs">
+                                    Inicia Sesión
+                                </Link>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </main>

@@ -85,7 +85,7 @@ const UpdatePassword = () => {
             <Navbar />
 
             <main className="flex-grow container mx-auto px-4 py-20 flex items-center justify-center">
-                <div className="card w-full max-w-md bg-white p-8 animate-fade-in shadow-xl rounded-3xl border border-gray-100 relative overflow-hidden">
+                <div className="card w-full max-w-md bg-white p-8 animate-fade-in shadow-xl rounded-[16px] border border-gray-100 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
 
                     <div className="relative z-10">
@@ -97,7 +97,7 @@ const UpdatePassword = () => {
                         </p>
 
                         {success ? (
-                            <div className="bg-green-50 border border-green-100 p-6 rounded-2xl text-center animate-scale-in">
+                            <div className="bg-green-50 border border-green-100 p-6 rounded-[16px] text-center animate-scale-in">
                                 <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <CheckCircle size={32} />
                                 </div>
@@ -119,7 +119,7 @@ const UpdatePassword = () => {
                                             id="password"
                                             required
                                             minLength="6"
-                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--primary-color)] focus:bg-white focus:border-transparent outline-none transition-all shadow-inner"
+                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-[var(--primary-color)] focus:bg-white focus:border-transparent outline-none transition-all shadow-inner"
                                             placeholder="••••••••"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
@@ -138,7 +138,7 @@ const UpdatePassword = () => {
                                             id="confirmPassword"
                                             required
                                             minLength="6"
-                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[var(--primary-color)] focus:bg-white focus:border-transparent outline-none transition-all shadow-inner"
+                                            className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-[16px] focus:ring-2 focus:ring-[var(--primary-color)] focus:bg-white focus:border-transparent outline-none transition-all shadow-inner"
                                             placeholder="••••••••"
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -147,7 +147,7 @@ const UpdatePassword = () => {
                                 </div>
 
                                 {error && (
-                                    <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 animate-shake">
+                                    <div className="p-4 bg-red-50 border border-red-100 rounded-[16px] flex items-start gap-3 animate-shake">
                                         <AlertCircle className="text-red-500 shrink-0" size={20} />
                                         <p className="text-sm text-red-700 font-medium">{error}</p>
                                     </div>
@@ -157,7 +157,7 @@ const UpdatePassword = () => {
                                     <button
                                         type="button"
                                         onClick={() => navigate('/forgot-password')}
-                                        className="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-3"
+                                        className="w-full bg-indigo-600 !text-[#FAFAF7] py-5 rounded-[16px] font-black text-lg hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-3"
                                     >
                                         Solicitar Nuevo Enlace
                                     </button>
@@ -165,7 +165,7 @@ const UpdatePassword = () => {
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                                        className="w-full bg-slate-900 !text-[#FAFAF7] py-5 rounded-[16px] font-black text-lg hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                                     >
                                         {loading ? (
                                             <>

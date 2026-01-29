@@ -8,7 +8,7 @@ const About = () => {
         <div className="min-h-screen flex flex-col font-sans">
             <Navbar />
 
-            <header className="bg-[var(--primary-color)] text-white py-20 px-6 text-center">
+            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] py-20 px-6 text-center">
                 <h1 className="text-4xl md:text-5xl font-bold mb-4">Nacemos del corazón</h1>
                 <p className="text-xl text-green-100 max-w-2xl mx-auto">
                     No solo somos una plataforma, somos familias ayudando a otras familias.
@@ -48,7 +48,7 @@ const About = () => {
                 </div>
 
                 {/* Story Section */}
-                <div className="bg-gray-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
+                <div className="bg-gray-50 rounded-[16px] p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
                     <div className="md:w-1/2 space-y-6">
                         <h2 className="text-3xl font-bold text-gray-900">¿Por qué creamos BuenCuidar?</h2>
                         <p className="text-gray-600 text-lg leading-relaxed">
@@ -62,7 +62,7 @@ const About = () => {
                         <img
                             src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
                             alt="Equipo trabajando"
-                            className="rounded-2xl shadow-xl w-full object-cover h-64 md:h-96"
+                            className="rounded-[16px] shadow-xl w-full object-cover h-64 md:h-96"
                         />
                     </div>
                 </div>

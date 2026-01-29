@@ -13,7 +13,8 @@ import {
     Menu,
     X,
     User,
-    MessageSquare
+    MessageSquare,
+    Lock
 } from 'lucide-react';
 import InstallPrompt from '../InstallPrompt';
 
@@ -62,13 +63,13 @@ const CaregiverLayout = () => {
         <div className="min-h-screen bg-gray-50 flex font-sans overflow-hidden h-screen">
             {/* Sidebar */}
             <aside
-                className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 !text-[#FAFAF7] transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
                     } lg:relative lg:translate-x-0 shadow-xl flex flex-col`}
             >
                 {/* Logo */}
                 <div className="p-6 border-b border-slate-800 flex justify-between items-center">
                     <Link to="/" className="block hover:opacity-80 transition-opacity">
-                        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">BuenCuidar</h1>
+                        <h1 className="text-2xl font-bold font-brand !text-[#FAFAF7]">BuenCuidar</h1>
                         <span className="text-xs text-slate-400 uppercase tracking-wider">PRO / Cuidador</span>
                     </Link>
                     <button
@@ -81,24 +82,35 @@ const CaregiverLayout = () => {
 
                 {/* Navigation */}
                 <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
-                    {menuItems.map((item) => (
-                        <div
-                            key={item.path}
-                            onClick={() => handleNavigation(item.path)}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group relative cursor-pointer ${window.location.pathname === item.path || (item.path === '/caregiver' && window.location.pathname === '/caregiver/')
-                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-                                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                                }`}
-                        >
-                            <item.icon size={20} className="group-hover:scale-110 transition-transform" />
-                            <span className="font-medium">{item.label}</span>
-                            {item.badge > 0 && (
-                                <span className="absolute right-3 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
-                                    {item.badge}
-                                </span>
-                            )}
-                        </div>
-                    ))}
+                    {menuItems.map((item) => {
+                        const isPremiumOnly = item.path === '/caregiver/analytics';
+                        const isPremiumUser = profile?.plan_type === 'premium';
+                        const isBlocked = isPremiumOnly && !isPremiumUser;
+
+                        return (
+                            <div
+                                key={item.path}
+                                onClick={() => handleNavigation(item.path)}
+                                className={`flex items-center gap-3 px-4 py-3 rounded-[16px] transition-all duration-200 group relative cursor-pointer ${window.location.pathname === item.path || (item.path === '/caregiver' && window.location.pathname === '/caregiver/')
+                                    ? 'bg-blue-600 !text-[#FAFAF7] shadow-lg shadow-blue-900/50'
+                                    : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                                    } ${isBlocked ? 'opacity-80' : ''}`}
+                            >
+                                <item.icon size={20} className="group-hover:scale-110 transition-transform" />
+                                <span className={`font-medium ${isBlocked ? 'text-slate-500' : ''}`}>{item.label}</span>
+                                {isBlocked && (
+                                    <span className="ml-auto text-slate-600">
+                                        <Lock size={12} />
+                                    </span>
+                                )}
+                                {item.badge > 0 && (
+                                    <span className="absolute right-3 bg-red-500 !text-[#FAFAF7] text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                                        {item.badge}
+                                    </span>
+                                )}
+                            </div>
+                        );
+                    })}
                 </nav>
 
                 {/* Footer Sidebar */}
@@ -108,7 +120,7 @@ const CaregiverLayout = () => {
                             {profile?.full_name?.charAt(0) || 'U'}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate text-white">{profile?.full_name || 'Cuidador'}</p>
+                            <p className="text-sm font-medium truncate !text-[#FAFAF7]">{profile?.full_name || 'Cuidador'}</p>
                             <p className="text-[10px] text-slate-500 uppercase">
                                 {profile?.role === 'caregiver' ? 'Cuidador Verificado' : 'Usuario'}
                             </p>
@@ -116,7 +128,7 @@ const CaregiverLayout = () => {
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-xl transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-[16px] transition-colors"
                     >
                         <LogOut size={20} />
                         <span className="font-medium">Cerrar Sesión</span>

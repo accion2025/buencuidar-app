@@ -264,7 +264,7 @@ const Messages = () => {
     };
 
     return (
-        <div className="flex bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-140px)] overflow-hidden">
+        <div className="flex bg-white rounded-[16px] shadow-sm border border-gray-200 h-[calc(100vh-140px)] overflow-hidden">
             {/* Conversations Sidebar */}
             <div className={`w-full md:w-1/3 border-r border-gray-200 flex flex-col ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
                 <div className="p-4 border-b border-gray-200">
@@ -274,7 +274,7 @@ const Messages = () => {
                         <input
                             type="text"
                             placeholder="Buscar conversación..."
-                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
+                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-[16px] focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
                         />
                     </div>
                 </div>
@@ -410,8 +410,8 @@ const Messages = () => {
                                                     )}
 
                                                     <div
-                                                        className={`rounded-2xl px-5 py-3 shadow-sm ${msg.sender_id === user.id
-                                                            ? 'bg-[var(--primary-color)] text-white rounded-br-none'
+                                                        className={`rounded-[16px] px-5 py-3 shadow-sm ${msg.sender_id === user.id
+                                                            ? 'bg-[var(--primary-color)] !text-[#FAFAF7] rounded-br-none'
                                                             : 'bg-white text-gray-800 rounded-bl-none'
                                                             } min-w-[80px]`}
                                                     >
@@ -447,7 +447,7 @@ const Messages = () => {
                             <button
                                 type="submit"
                                 className={`p-2 rounded-full transition-colors ${inputMessage.trim()
-                                    ? 'bg-[var(--primary-color)] text-white hover:bg-[var(--primary-light)]'
+                                    ? 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:bg-[var(--primary-light)]'
                                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                     }`}
                                 disabled={!inputMessage.trim()}

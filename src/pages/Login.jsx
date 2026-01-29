@@ -70,24 +70,30 @@ const Login = () => {
     const simulateLogin = (path) => navigate(path);
 
     return (
-        <div className="min-h-screen bg-[var(--bg-color)] flex flex-col">
+        <div className="min-h-screen bg-[var(--base-bg)] flex flex-col">
             <Navbar />
 
-            <main className="flex-grow container mx-auto px-4 py-20 flex items-center justify-center">
-                <div className="card w-full max-w-md bg-white p-8 animate-fade-in shadow-lg">
-                    <h2 className="text-3xl font-bold text-center mb-4 text-[var(--primary-color)]">
-                        Bienvenido de nuevo
-                    </h2>
+            <main className="flex-grow container mx-auto px-4 py-24 flex items-center justify-center relative">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--secondary-color)] rounded-full blur-[120px] opacity-10 -z-10 animate-pulse"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--accent-color)] rounded-full blur-[120px] opacity-20 -z-10"></div>
+
+                <div className="card w-full max-w-lg bg-white p-10 md:p-14 animate-fade-in-up shadow-2xl border-none">
+                    <div className="text-center mb-10">
+                        <h2 className="text-4xl font-brand font-bold text-[var(--primary-color)] tracking-tight">
+                            Bienvenido de nuevo
+                        </h2>
+                        <p className="text-[var(--text-light)] mt-2 font-secondary">Tu tranquilidad comienza con un clic.</p>
+                    </div>
 
                     {state?.message && (
-                        <div className="bg-green-50 text-green-700 p-3 rounded-lg text-sm mb-6 text-center border border-green-100">
+                        <div className="bg-green-50 text-green-700 p-4 rounded-[16px] text-sm mb-8 text-center border border-green-100 font-bold">
                             {state.message}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
                                 Correo Electrónico
                             </label>
                             <input
@@ -95,7 +101,7 @@ const Login = () => {
                                 id="email"
                                 name="email"
                                 required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none transition-all"
+                                className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
                                 placeholder="tu@email.com"
                                 value={formData.email}
                                 onChange={handleChange}
@@ -103,11 +109,11 @@ const Login = () => {
                         </div>
 
                         <div>
-                            <div className="flex justify-between items-center mb-1">
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            <div className="flex justify-between items-center mb-3">
+                                <label htmlFor="password" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest">
                                     Contraseña
                                 </label>
-                                <Link to="/forgot-password" senior className="text-sm text-[var(--primary-light)] hover:underline">
+                                <Link to="/forgot-password" senior className="text-xs font-bold text-[var(--secondary-color)] hover:underline">
                                     ¿Olvidaste tu contraseña?
                                 </Link>
                             </div>
@@ -116,33 +122,33 @@ const Login = () => {
                                 id="password"
                                 name="password"
                                 required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none transition-all"
+                                className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={handleChange}
                             />
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="pt-2">
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-[var(--primary-color)] text-white py-3 rounded-lg font-bold hover:brightness-90 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full btn btn-primary py-5 text-lg shadow-xl shadow-green-100 uppercase tracking-widest"
                             >
                                 {loading ? 'Iniciando sesión...' : 'Entrar a mi cuenta'}
                             </button>
 
                             {error && (
-                                <p className="text-red-500 text-sm font-medium text-center animate-shake">
+                                <p className="text-[var(--error-color)] text-xs font-black text-center mt-6 animate-shake uppercase tracking-widest">
                                     {error}
                                 </p>
                             )}
                         </div>
                     </form>
 
-                    <div className="mt-6 text-center text-sm text-gray-600">
+                    <div className="mt-12 text-center text-sm font-secondary text-[var(--text-light)] border-t border-gray-50 pt-8">
                         ¿No tienes una cuenta?{' '}
-                        <Link to="/register" className="font-semibold text-[var(--primary-color)] hover:underline">
+                        <Link to="/register" className="font-black text-[var(--secondary-color)] hover:underline">
                             Regístrate
                         </Link>
                     </div>

@@ -22,48 +22,71 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import ConfigureAgendaModal from '../../components/dashboard/ConfigureAgendaModal';
+import { formatTimeAgo } from '../../utils/time';
 
 const MonitoringCenter = () => {
     const { profile, loading: authLoading } = useAuth();
     const navigate = useNavigate();
-    const [lastUpdate] = useState("Hace 5 minutos");
+    const [lastUpdate, setLastUpdate] = useState("Sincronizando...");
 
     // Subscription Check
     const isSubscribed = profile?.subscription_status === 'active';
 
     if (authLoading) {
-        return <div className="p-10 text-center text-gray-500">Cargando PULSO...</div>;
+        return (
+            <div className="flex h-[60vh] items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Activity size={48} className="animate-pulse text-[var(--secondary-color)]" />
+                    <p className="text-[var(--text-light)] font-black uppercase tracking-widest text-xs">Iniciando PULSO...</p>
+                </div>
+            </div>
+        );
     }
 
     if (!isSubscribed) {
         return (
-            <div className="flex-grow flex items-center justify-center py-12 px-4">
-                <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-blue-100 overflow-hidden p-12 space-y-8 animate-fade-in-up flex flex-col items-center text-center">
-                    <div className="bg-blue-50 w-28 h-28 rounded-full flex items-center justify-center shadow-inner mx-auto mb-2">
-                        <Lock size={56} className="text-blue-600 animate-pulse" />
-                    </div>
-
-                    <div className="space-y-4">
-                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">Acceso Restringido a PULSO</h1>
-                        <p className="text-gray-600 text-xl leading-relaxed max-w-lg mx-auto">
+            <div className="flex-grow flex items-center justify-center py-20 px-4">
+                <div className="max-w-3xl w-full card !p-0 overflow-hidden shadow-2xl border-none animate-fade-in-up">
+                    <div className="bg-[var(--primary-color)] p-12 text-center relative flex flex-col items-center justify-center">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px] opacity-20"></div>
+                        <div className="bg-white/10 w-24 h-24 rounded-[16px] flex items-center justify-center backdrop-blur-md border border-white/20 mb-8 shadow-2xl">
+                            <Lock size={48} className="text-[var(--accent-color)]" />
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight mb-4 drop-shadow-sm">Acceso Restringido a PULSO</h1>
+                        <p className="text-[var(--accent-color)] text-lg leading-relaxed max-w-xl mx-auto opacity-90 font-secondary text-center">
                             El centro de seguimiento de bienestar en tiempo real es una función exclusiva para usuarios con una suscripción activa a nuestro <span
                                 onClick={() => navigate('/ecosistema-salud')}
-                                className="text-blue-600 font-bold cursor-pointer hover:underline decoration-2 underline-offset-4 transition-all"
+                                className="!text-[#FAFAF7] font-black cursor-pointer hover:underline decoration-2 underline-offset-4 transition-all"
                             >Servicio PULSO Premium</span>.
                         </p>
                     </div>
 
-                    <div className="pt-8 flex justify-center w-full">
+                    <div className="p-12 bg-white flex flex-col items-center text-center">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 w-full">
+                            {[
+                                { icon: Activity, text: "Seguimiento en Vivo" },
+                                { icon: Heart, text: "Bienestar Real" },
+                                { icon: ShieldCheck, text: "Agenda Asegurada" }
+                            ].map((item, i) => (
+                                <div key={i} className="flex flex-col items-center gap-2">
+                                    <div className="w-10 h-10 rounded-[16px] bg-[var(--base-bg)] text-[var(--secondary-color)] flex items-center justify-center">
+                                        <item.icon size={20} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-[var(--primary-color)]">{item.text}</span>
+                                </div>
+                            ))}
+                        </div>
+
                         <button
                             onClick={() => navigate('/dashboard/plans')}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3"
+                            className="btn btn-primary px-12 py-6 text-xl shadow-2xl shadow-green-100 uppercase tracking-widest"
                         >
-                            ACTIVAR PULSO
+                            ACTIVAR PULSO AHORA
                         </button>
-                    </div>
 
-                    <div className="pt-4 border-t border-gray-50">
-                        <p className="text-sm text-gray-400">¿Ya estás suscrito? Contacta a soporte si crees que esto es un error.</p>
+                        <p className="text-xs text-[var(--text-light)] mt-8 font-secondary">
+                            ¿Ya estás suscrito? Contacta a soporte si crees que esto es un error.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -160,6 +183,15 @@ const MonitoringCenter = () => {
 
                 if (logsError) throw logsError;
 
+                // Update Last Update Time
+                if (logs && logs.length > 0) {
+                    setLastUpdate(formatTimeAgo(logs[0].created_at));
+                } else if (!upcoming) {
+                    setLastUpdate("Iniciada (sin reportes)");
+                } else {
+                    setLastUpdate("Esperando inicio...");
+                }
+
                 // Process Logs: Separate Wellness from Operations
                 const opLogs = logs.filter(l => l.category !== 'Wellness');
                 const wellnessLogs = logs.filter(l => l.category === 'Wellness');
@@ -194,6 +226,7 @@ const MonitoringCenter = () => {
 
             } else {
                 setActiveAppointment(null);
+                setLastUpdate("Sin actividad reciente");
                 // Even without active appointment, premium users might want to see overall stats
                 fetchPremiumStats();
             }
@@ -309,114 +342,120 @@ const MonitoringCenter = () => {
                     onSave={handleUpdateAgenda}
                 />
             )}
-            <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-10">
-
+            <div className="space-y-10 animate-fade-in max-w-[1600px] mx-auto pb-16 pt-4 px-4">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-lg border border-gray-100 shadow-sm">
-                    <div>
-                        <h1 className="text-4xl font-black text-gray-800 flex items-center gap-2 tracking-tighter italic">
-                            PULSO <span className={`text-sm font-normal not-italic px-3 py-1 rounded-full border flex items-center gap-1.5 ${activeAppointment
-                                ? (isUpcoming ? 'text-orange-600 bg-orange-50 border-orange-100' : 'text-blue-500 bg-blue-50 border-blue-100')
-                                : 'text-gray-500 bg-gray-50 border-gray-100'
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[var(--primary-color)] p-8 rounded-[16px] shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px] opacity-10"></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tighter italic drop-shadow-sm">PULSO</h1>
+                            <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border backdrop-blur-md flex items-center gap-2 ${activeAppointment
+                                ? (isUpcoming ? 'text-[var(--warning-color)] bg-[var(--warning-color)]/10 border-[var(--warning-color)]/20' : 'text-[var(--secondary-color)] bg-[var(--secondary-color)]/10 border-[var(--secondary-color)]/20')
+                                : 'text-[var(--accent-color)] bg-white/5 border-white/10'
                                 }`}>
                                 <span className={`w-2 h-2 rounded-full ${activeAppointment
-                                    ? (isUpcoming ? 'bg-orange-600' : 'bg-blue-500 animate-pulse')
-                                    : 'bg-gray-400'
+                                    ? (isUpcoming ? 'bg-[var(--warning-color)]' : 'bg-[var(--secondary-color)] animate-pulse shadow-[0_0_10px_var(--secondary-color)]')
+                                    : 'bg-white/20'
                                     }`}></span>
                                 {activeAppointment ? (isUpcoming ? 'Próximo' : 'En Vivo') : 'Sin Actividad'}
                             </span>
-                        </h1>
-                        <p className="text-gray-500 mt-1 flex items-center gap-2 font-medium">
+                        </div>
+                        <p className="text-[var(--accent-color)] mt-3 flex items-center gap-2 font-secondary opacity-80 text-sm">
                             <Clock size={16} /> Última actualización: {lastUpdate}
                         </p>
                     </div>
-                    {/* RENAMED: Emergency -> Alerta Familiar */}
-                    <div className="flex flex-col items-end gap-1 w-full md:w-auto">
-                        <button className="w-full md:w-auto bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-amber-200 transition-all hover:scale-105 active:scale-95 group">
-                            <AlertCircle className="group-hover:animate-bounce" /> ALERTA FAMILIAR
+                    {/* Alerta Familiar Button */}
+                    <div className="flex flex-col items-end gap-2 w-full md:w-auto relative z-10">
+                        <button className="w-full md:w-auto bg-[var(--error-color)] hover:bg-red-700 !text-[#FAFAF7] px-10 py-4 rounded-[16px] font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-red-900/40 transition-all hover:scale-105 active:scale-95 group border-none">
+                            <AlertCircle size={24} className="group-hover:animate-bounce" /> ALERTA FAMILIAR
                         </button>
-                        <span className="text-[10px] text-gray-400 font-medium text-center md:text-right w-full">No sustituye servicios de emergencia locales.</span>
+                        <p className="text-[10px] !text-[#FAFAF7]/40 font-bold uppercase tracking-widest text-center md:text-right w-full">Seguridad Prioritaria</p>
                     </div>
                 </div>
 
                 {/* Service Explanation Card */}
-                <div className="bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-light)] p-1 rounded-lg shadow-lg animate-fade-in">
-                    <div className="bg-white/95 backdrop-blur-sm p-6 rounded-xl flex flex-col md:flex-row items-center gap-6">
-                        <div className="bg-green-100 p-4 rounded-2xl text-[var(--primary-color)]">
-                            <ShieldCheck size={40} />
+                <div className="card !p-8 animate-fade-in hover:border-[var(--secondary-color)]/10 transition-all">
+                    <div className="flex flex-col md:flex-row items-center gap-8">
+                        <div className="bg-[var(--secondary-color)]/10 p-5 rounded-[24px] text-[var(--secondary-color)] shadow-inner">
+                            <ShieldCheck size={48} strokeWidth={1.5} />
                         </div>
-                        <div className="flex-1">
-                            <h2 className="text-xl font-bold text-gray-800 mb-1">PULSO es tu espacio de seguimiento del cuidado y la tranquilidad familiar.</h2>
-                            <p className="text-gray-600 leading-relaxed">
+                        <div className="flex-1 text-center md:text-left">
+                            <h2 className="text-2xl font-brand font-bold mb-2 !text-[#0F3C4C] drop-shadow-sm">PULSO es tu espacio de seguimiento del cuidado y la tranquilidad familiar.</h2>
+                            <p className="text-[var(--text-light)] font-secondary leading-relaxed">
                                 Aquí puedes dar seguimiento a las actividades realizadas, las rutinas acordadas y los registros básicos de bienestar que el cuidador comparte contigo.
                             </p>
                         </div>
-                        <div className="flex gap-4">
-                            <div className="text-center px-4">
-                                <p className="text-2xl font-bold text-[var(--primary-color)]">24/7</p>
-                                <p className="text-xs text-gray-400 font-bold uppercase">Acompañamiento</p>
+                        <div className="flex gap-8">
+                            <div className="text-center">
+                                <p className="text-3xl font-brand font-black text-[var(--primary-color)]">24/7</p>
+                                <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest mt-1">Acompañamiento</p>
                             </div>
-                            <div className="w-px h-10 bg-gray-200 self-center"></div>
-                            <div className="text-center px-4">
-                                <p className="text-2xl font-bold text-green-500">100%</p>
-                                <p className="text-xs text-gray-400 font-bold uppercase">Confiable</p>
+                            <div className="w-px h-12 bg-gray-100 self-center"></div>
+                            <div className="text-center">
+                                <p className="text-3xl font-brand font-black text-[var(--secondary-color)]">100%</p>
+                                <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest mt-1">Confiable</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid lg:grid-cols-3 gap-6">
-                    {/* Indicators Grid (Formerly Vitals) */}
-                    <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid lg:grid-cols-3 gap-8">
+                    {/* Indicators Grid */}
+                    <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                         {indicators.map((item, idx) => (
-                            <div key={idx} className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className={`${item.bg} ${item.color} p-3 rounded-xl group-hover:scale-110 transition-transform`}>
-                                        <item.icon size={24} />
+                            <div key={idx} className="card !p-6 group hover:border-[var(--secondary-color)]/20 transition-all">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className={`p-4 rounded-[16px] ${item.bg.includes('green') || item.bg.includes('blue') || item.icon === Heart ? 'bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'bg-[var(--primary-color)] !text-[#FAFAF7]'} group-hover:scale-110 transition-transform shadow-lg`}>
+                                        <item.icon size={28} strokeWidth={2.5} />
                                     </div>
-                                    <span className={`text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md ${item.status === 'Normal' || item.status === 'Bueno' || item.status === 'Excelente' || item.status === 'Completo' ? 'text-green-600 bg-green-50' : 'text-gray-600 bg-gray-50'
+                                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${item.status === 'Normal' || item.status === 'Bueno' || item.status === 'Excelente' || item.status === 'Completo' ? 'text-[var(--secondary-color)] bg-[var(--secondary-color)]/10' : 'text-[var(--text-light)] bg-[var(--base-bg)]'
                                         }`}>{item.status}</span>
                                 </div>
-                                <div className="flex items-baseline gap-1">
-                                    <h3 className="text-2xl font-bold text-gray-800">{item.value}</h3>
-                                </div>
-                                <div className="flex justify-between items-center mt-1">
-                                    <p className="text-sm text-gray-500 font-medium">{item.label}</p>
-                                    <span className="text-xs text-gray-400">{item.sub}</span>
+                                <div>
+                                    <h3 className="text-4xl font-brand font-bold text-[var(--primary-color)] tracking-tight">{item.value}</h3>
+                                    <div className="flex justify-between items-end mt-3">
+                                        <div>
+                                            <p className="text-sm font-brand font-bold text-[var(--primary-color)]">{item.label}</p>
+                                            <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest mt-0.5">{item.sub}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
 
-                        {/* Care Log (Formerly Clinical Log) */}
-                        <div className="md:col-span-2 bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden flex flex-col min-h-[300px]">
-                            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                                <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                                    <History size={20} className="text-blue-600" /> Bitácora de Cuidado
+                        {/* Care Log */}
+                        <div className="md:col-span-2 card !p-0 overflow-hidden flex flex-col min-h-[400px]">
+                            <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-[var(--base-bg)]/50 backdrop-blur-sm">
+                                <h2 className="text-2xl font-brand font-bold text-[var(--primary-color)] flex items-center gap-3">
+                                    <History size={24} className="text-[var(--secondary-color)]" /> Bitácora de Cuidado
                                 </h2>
-                                <button className="text-blue-600 text-sm font-bold hover:underline">Ver Historial Completo</button>
+                                <button className="text-xs font-black text-[var(--secondary-color)] uppercase tracking-widest hover:underline">Ver Historial Completo</button>
                             </div>
-                            <div className="p-6 space-y-4 flex-grow max-h-[400px] overflow-y-auto custom-scrollbar">
+                            <div className="p-8 space-y-6 flex-grow max-h-[500px] overflow-y-auto custom-scrollbar">
                                 {careLogs.length > 0 ? (
                                     careLogs.map((log, idx) => (
-                                        <div key={log.id || idx} className="border-b border-gray-50 pb-3 last:border-0 last:pb-0">
-                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-1">
-                                                <h4 className="font-bold text-gray-800 text-sm leading-tight">{log.action}</h4>
-                                                <span className="text-sm font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-lg self-start md:self-auto shrink-0">
+                                        <div key={log.id || idx} className="border-b border-gray-50 pb-5 last:border-0 last:pb-0 group">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-2">
+                                                <h4 className="font-brand font-bold text-[var(--primary-color)] text-lg leading-tight group-hover:text-[var(--secondary-color)] transition-colors">{log.action}</h4>
+                                                <span className="text-[10px] font-black !text-[#FAFAF7] bg-[var(--primary-color)] px-3 py-1 rounded-full self-start md:self-auto shrink-0 uppercase tracking-widest">
                                                     {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
 
-                                            {/* Only show detail if it's custom or different from default */}
                                             {log.detail && log.detail !== 'Completado según agenda' && (
-                                                <p className="text-sm text-gray-500 leading-relaxed">{log.detail}</p>
+                                                <p className="text-sm text-[var(--text-light)] font-secondary leading-relaxed bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-100">
+                                                    {log.detail}
+                                                </p>
                                             )}
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="flex flex-col items-center justify-center h-full text-gray-400 py-10">
-                                        <History size={48} className="mb-4 opacity-20" />
-                                        <p className="italic">No hay registros en la bitácora hoy.</p>
-                                        <p className="text-xs mt-2 text-gray-300">Los registros aparecerán aquí cuando el cuidador los añada.</p>
+                                    <div className="flex flex-col items-center justify-center h-full text-[var(--text-light)] py-16">
+                                        <div className="w-20 h-20 bg-[var(--base-bg)] rounded-full flex items-center justify-center mb-6">
+                                            <History size={40} className="opacity-20" />
+                                        </div>
+                                        <p className="italic font-secondary">No hay registros en la bitácora hoy.</p>
+                                        <p className="text-[10px] mt-2 font-black uppercase tracking-widest opacity-40">Los registros aparecerán aquí automáticamente.</p>
                                     </div>
                                 )}
                             </div>
@@ -424,56 +463,60 @@ const MonitoringCenter = () => {
                     </div>
 
                     {/* Right Sidebar - Care Agenda & Alerts */}
-                    <div className="space-y-6">
-                        {/* Care Agenda (Formerly Medications) */}
-                        <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden shadow-indigo-100/50 border-indigo-50">
-                            <div className="p-6 bg-gradient-to-r from-indigo-600 to-blue-600 text-white flex justify-between items-start">
-                                <div>
-                                    <h2 className="text-xl font-bold flex items-center gap-2">
-                                        <Clock size={20} /> Agenda de Cuidado
-                                    </h2>
-                                    <p className="text-indigo-100 text-sm mt-1">
+                    <div className="space-y-8">
+                        {/* Care Agenda */}
+                        <div className="card !p-0 overflow-hidden border-none shadow-2xl">
+                            <div className="p-8 bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] !text-[#FAFAF7] relative">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[60px] opacity-20"></div>
+                                <div className="relative z-10">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div className="p-3 bg-white/10 rounded-[16px] backdrop-blur-md border border-white/20">
+                                            <Clock size={24} />
+                                        </div>
+                                        {activeAppointment && (
+                                            <button
+                                                onClick={() => setShowAgendaModal(true)}
+                                                className="p-2.5 bg-white/10 hover:bg-white/20 rounded-[16px] !text-[#FAFAF7] transition-all backdrop-blur-sm border border-white/10"
+                                                title="Configurar Agenda"
+                                            >
+                                                <Settings size={20} />
+                                            </button>
+                                        )}
+                                    </div>
+                                    <h2 className="text-2xl font-brand font-bold !text-[#FAFAF7]">Agenda</h2>
+                                    <p className="text-[var(--accent-color)] text-[10px] font-black uppercase tracking-widest mt-1 opacity-80">
                                         {careAgenda.length > 0
-                                            ? `${careAgenda.filter(i => i.status === 'Completado').length} de ${careAgenda.length} actividades completadas`
-                                            : 'Sin actividades configuradas'}
+                                            ? `${careAgenda.filter(i => i.status === 'Completado').length} de ${careAgenda.length} actividades`
+                                            : 'Sin actividades'}
                                     </p>
                                 </div>
-                                {activeAppointment ? (
-                                    <button
-                                        onClick={() => {
-                                            console.log("Opening Agenda Modal", activeAppointment);
-                                            setShowAgendaModal(true);
-                                        }}
-                                        className="p-2 bg-white/20 hover:bg-white/30 rounded-lg text-white transition-colors pointer-events-auto relative z-10"
-                                        title="Configurar Agenda"
-                                    >
-                                        <Settings size={20} />
-                                    </button>
-                                ) : (
-                                    <div className="opacity-50 pointer-events-none p-2"><Settings size={20} /></div>
-                                )}
                             </div>
-                            <div className="p-4 space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar">
+                            <div className="p-6 space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar bg-white">
                                 {careAgenda.length > 0 ? (
                                     careAgenda.map((item, idx) => (
-                                        <div key={idx} className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100 hover:border-indigo-100 transition-colors cursor-pointer group">
-                                            <div className={`${item.iconColor} bg-white p-2 rounded-lg shadow-sm group-hover:scale-110 transition-transform`}>
-                                                <item.icon size={20} />
+                                        <div key={idx} className="flex items-center gap-4 p-4 rounded-[16px] bg-[var(--base-bg)] border border-gray-100 hover:border-[var(--secondary-color)]/20 transition-all cursor-pointer group">
+                                            <div className="bg-[var(--primary-color)] p-2.5 rounded-[16px] shadow-lg !text-[#FAFAF7] group-hover:scale-110 transition-transform">
+                                                <item.icon size={20} strokeWidth={2.5} />
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h4 className="font-bold text-gray-800 text-sm truncate">{item.name}</h4>
+                                                <h4 className="font-brand font-bold text-[var(--primary-color)] text-sm truncate">{item.name}</h4>
+                                                <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest">{item.frequency}</p>
                                             </div>
-                                            {item.status === 'Completado' && <Check size={16} className="text-green-500" strokeWidth={3} />}
+                                            {item.status === 'Completado' && (
+                                                <div className="bg-[var(--secondary-color)] !text-[#FAFAF7] p-1 rounded-full">
+                                                    <Check size={14} strokeWidth={4} />
+                                                </div>
+                                            )}
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="text-center py-8 text-gray-400">
-                                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                                            <ClipboardList size={24} className="opacity-30" />
+                                    <div className="text-center py-12 text-[var(--text-light)]">
+                                        <div className="w-16 h-16 bg-[var(--base-bg)] rounded-[16px] flex items-center justify-center mx-auto mb-4">
+                                            <ClipboardList size={32} className="opacity-20" />
                                         </div>
-                                        <p className="text-sm">No hay agenda configurada.</p>
+                                        <p className="text-sm font-secondary italic">No hay agenda configurada.</p>
                                         {activeAppointment && (
-                                            <button onClick={() => setShowAgendaModal(true)} className="text-xs text-indigo-600 font-bold hover:underline mt-2">
+                                            <button onClick={() => setShowAgendaModal(true)} className="text-[10px] font-black uppercase tracking-widest text-[var(--secondary-color)] hover:underline mt-4">
                                                 Configurar ahora
                                             </button>
                                         )}
@@ -481,10 +524,10 @@ const MonitoringCenter = () => {
                                 )}
                             </div>
                             {careAgenda.length > 3 && (
-                                <div className="p-4 border-t border-gray-100 bg-gray-50/50">
+                                <div className="p-6 border-t border-gray-50 bg-white">
                                     <button
                                         onClick={() => setShowAgendaModal(true)}
-                                        className="w-full py-2 bg-white border border-indigo-200 text-indigo-600 rounded-lg text-sm font-bold hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2"
+                                        className="btn btn-outline w-full py-4 text-[10px] font-black uppercase tracking-widest"
                                     >
                                         <ClipboardList size={16} /> Gestionar Agenda Completa
                                     </button>
@@ -493,31 +536,32 @@ const MonitoringCenter = () => {
                         </div>
 
                         {/* Quick Contact Card */}
-                        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6 relative overflow-hidden group">
+                        <div className="card !p-8 relative overflow-hidden group border-none shadow-2xl">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
                             {caregiver ? (
                                 <>
-                                    <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700"></div>
-                                    <h3 className="font-bold text-gray-800 mb-4 relative z-10">Contacto Directo</h3>
-                                    <div className="flex items-center gap-4 mb-6 relative z-10">
-                                        <div className="w-12 h-12 rounded-full border-2 border-blue-500 p-0.5 overflow-hidden">
-                                            <img src={caregiver.avatar_url || "https://ui-avatars.com/api/?name=" + caregiver.full_name} alt="Cuidador" className="w-full h-full rounded-full object-cover" />
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-[var(--text-light)] mb-6">Contacto Directo</h3>
+                                    <div className="flex items-center gap-5 mb-8">
+                                        <div className="w-16 h-16 rounded-[16px] border-2 border-[var(--secondary-color)]/20 p-1 overflow-hidden shadow-lg">
+                                            <img src={caregiver.avatar_url || "https://ui-avatars.com/api/?name=" + caregiver.full_name} alt="Cuidador" className="w-full h-full rounded-[16px] object-cover" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-800 text-sm">{caregiver.full_name}</p>
-                                            <p className="text-xs text-green-500 font-medium flex items-center gap-1">
-                                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> En servicio
+                                            <p className="font-brand font-bold text-[var(--primary-color)] text-lg">{caregiver.full_name}</p>
+                                            <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.1em] flex items-center gap-1.5 mt-1">
+                                                <span className="w-2 h-2 bg-[var(--secondary-color)] rounded-full animate-pulse"></span> En servicio
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-1 gap-3 relative z-10">
-                                        <button className="bg-gray-100 text-gray-700 py-2 rounded-lg text-xs font-bold hover:bg-gray-200 transition-colors">
-                                            Enviar Mensaje
-                                        </button>
-                                    </div>
+                                    <button className="btn btn-primary w-full py-4 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-100">
+                                        Enviar Mensaje
+                                    </button>
                                 </>
                             ) : (
-                                <div className="text-center py-4">
-                                    <p className="text-gray-400 text-sm">No hay cuidador activo en este momento.</p>
+                                <div className="text-center py-6">
+                                    <div className="w-16 h-16 bg-[var(--base-bg)] rounded-[16px] flex items-center justify-center mx-auto mb-4">
+                                        <ShieldCheck size={32} className="opacity-10 text-[var(--primary-color)]" />
+                                    </div>
+                                    <p className="text-[var(--text-light)] text-sm font-secondary italic">No hay cuidador activo en este momento.</p>
                                 </div>
                             )}
                         </div>

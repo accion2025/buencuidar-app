@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component {
                     </pre>
                     <button
                         onClick={() => window.location.href = '/'}
-                        className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                        className="mt-6 px-4 py-2 bg-red-600 !text-[#FAFAF7] rounded hover:bg-red-700"
                     >
                         Volver al Inicio
                     </button>

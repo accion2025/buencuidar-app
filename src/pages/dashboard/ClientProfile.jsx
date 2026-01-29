@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Save, Plus, X, Trash2, Edit2 } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Save, Plus, X, Trash2, Edit2, Loader2, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -210,82 +210,111 @@ const ClientProfile = () => {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in relative">
-            <h2 className="text-2xl font-bold text-gray-800">Mi Perfil</h2>
+        <div className="space-y-12 animate-fade-in pb-12">
+            {/* Header */}
+            <div className="bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[120px] opacity-20"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[100px] opacity-10"></div>
+
+                <div className="relative z-10">
+                    <span className="bg-white/10 text-[var(--accent-color)] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block border border-white/10 backdrop-blur-md">
+                        Configuración de Cuenta
+                    </span>
+                    <h1 className="text-4xl md:text-5xl font-brand font-bold tracking-tight mb-2 text-left !text-[#FAFAF7]">
+                        Mi Perfil
+                    </h1>
+                    <p className="text-[var(--accent-color)] text-lg font-secondary max-w-xl">
+                        Gestiona tu información personal y los perfiles de tus familiares.
+                    </p>
+                </div>
+            </div>
 
             <div className="space-y-6">
                 {/* Personal Info Card */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold text-gray-700">Información Personal</h3>
+                <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10 relative z-10">
+                        <h3 className="text-2xl font-brand font-bold text-[var(--primary-color)] tracking-tight flex items-center gap-3">
+                            <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
+                                <User size={24} />
+                            </span>
+                            Información Personal
+                        </h3>
                         <button
                             onClick={() => isEditing ? formRef.current?.requestSubmit() : setIsEditing(true)}
                             disabled={isSaving}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isEditing
-                                ? 'bg-[var(--primary-color)] text-white hover:brightness-90'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            className={`flex items-center gap-3 px-8 py-3.5 rounded-[16px] text-[10px] font-black uppercase tracking-widest transition-all shadow-lg ${isEditing
+                                ? 'bg-[var(--secondary-color)] !text-[#FAFAF7] hover:bg-emerald-600 shadow-green-100'
+                                : 'bg-[var(--base-bg)] text-[var(--primary-color)] hover:bg-gray-100'
                                 }`}
                         >
-                            <span>
-                                {isSaving ? 'Guardando...' : (isEditing ? <span className="flex items-center gap-2"><Save size={16} /> Guardar Cambios</span> : 'Editar Perfil')}
-                            </span>
+                            {isSaving ? (
+                                <span className="flex items-center gap-2 italic">Guardando...</span>
+                            ) : (
+                                isEditing ? (
+                                    <span className="flex items-center gap-2"><Save size={16} /> Guardar Cambios</span>
+                                ) : (
+                                    <span className="flex items-center gap-2"><Edit2 size={16} /> Editar Perfil</span>
+                                )
+                            )}
                         </button>
                     </div>
 
-                    <form ref={formRef} id="profile-form" onSubmit={handleSave} className="space-y-4">
-                        <div className="grid md:grid-cols-2 gap-4">
+                    <form ref={formRef} id="profile-form" onSubmit={handleSave} className="space-y-8 relative z-10">
+                        <div className="grid md:grid-cols-2 gap-8">
                             <div>
-                                <label className="block text-sm font-medium text-gray-500 mb-1">Nombre Completo</label>
-                                <div className="relative">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Nombre Completo</label>
+                                <div className="relative group">
                                     <input
                                         type="text"
                                         disabled={!isEditing}
                                         value={formData.name}
                                         onChange={e => setFormData({ ...formData, name: e.target.value })}
                                         placeholder="Ej. Juan Pérez"
-                                        className="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 font-semibold focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary-color)] outline-none transition-all"
+                                        className="w-full pl-6 pr-12 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
                                     />
-                                    <User size={18} className="absolute right-3 top-3 text-gray-400" />
+                                    <User size={20} className={`absolute right-5 top-5 transition-colors ${isEditing ? 'text-[var(--secondary-color)]' : 'text-gray-300'}`} />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-500 mb-1">Teléfono</label>
-                                <div className="relative">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Teléfono</label>
+                                <div className="relative group">
                                     <input
                                         type="tel"
                                         disabled={!isEditing}
                                         value={formData.phone}
                                         onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                         placeholder="Ej. 555-1234"
-                                        className="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 font-semibold focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary-color)] outline-none transition-all"
+                                        className="w-full pl-6 pr-12 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
                                     />
-                                    <Phone size={18} className="absolute right-3 top-3 text-gray-400" />
+                                    <Phone size={20} className={`absolute right-5 top-5 transition-colors ${isEditing ? 'text-[var(--secondary-color)]' : 'text-gray-300'}`} />
                                 </div>
                             </div>
                             <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
-                                <div className="relative">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Email</label>
+                                <div className="relative opacity-60">
                                     <input
                                         type="email"
                                         disabled={true}
                                         value={formData.email}
-                                        className="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-500 cursor-not-allowed outline-none"
+                                        className="w-full pl-6 pr-12 py-4 rounded-[16px] border border-gray-100 bg-gray-50 text-[var(--text-light)] font-bold text-lg cursor-not-allowed outline-none"
                                     />
-                                    <Mail size={18} className="absolute right-3 top-3 text-gray-400" />
+                                    <Mail size={20} className="absolute right-5 top-5 text-gray-300" />
                                 </div>
                             </div>
                             <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-500 mb-1">Dirección Principal</label>
-                                <div className="relative">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Dirección Principal</label>
+                                <div className="relative group">
                                     <input
                                         type="text"
                                         disabled={!isEditing}
                                         value={formData.address}
                                         onChange={e => setFormData({ ...formData, address: e.target.value })}
                                         placeholder="Calle Principal 123"
-                                        className="w-full pl-4 pr-10 py-2 rounded-lg border border-gray-300 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 font-semibold focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary-color)] outline-none transition-all"
+                                        className="w-full pl-6 pr-12 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
                                     />
-                                    <MapPin size={18} className="absolute right-3 top-3 text-gray-400" />
+                                    <MapPin size={20} className={`absolute right-5 top-5 transition-colors ${isEditing ? 'text-[var(--secondary-color)]' : 'text-gray-300'}`} />
                                 </div>
                             </div>
                         </div>
@@ -293,11 +322,18 @@ const ClientProfile = () => {
                 </div>
 
                 {/* Family Column Wrapper */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-8">
                     {/* Family Members Card */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-lg font-bold text-gray-700">Familiares</h3>
+                    <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+
+                        <div className="flex justify-between items-center mb-10 relative z-10">
+                            <h3 className="text-2xl font-brand font-bold text-[var(--primary-color)] tracking-tight flex items-center gap-3">
+                                <span className="p-2.5 bg-purple-50 text-purple-600 rounded-[16px]">
+                                    <Plus size={24} />
+                                </span>
+                                Familiares
+                            </h3>
                             {!showAddPatientModal && (
                                 <button
                                     onClick={() => {
@@ -305,138 +341,161 @@ const ClientProfile = () => {
                                         setEditingPatientId(null);
                                         setShowAddPatientModal(true);
                                     }}
-                                    className="text-[var(--primary-color)] hover:bg-[var(--primary-light)]/10 p-2 rounded-full transition-colors flex items-center gap-2 text-sm font-bold bg-blue-50"
+                                    className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-3 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-green-100"
                                 >
-                                    <Plus size={16} />
-                                    Agregar
+                                    <Plus size={16} strokeWidth={3} />
+                                    Agregar Nuevo
                                 </button>
                             )}
                         </div>
 
-                        <div className="space-y-4 flex-grow overflow-y-auto max-h-[400px] custom-scrollbar">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
                             {loadingPatients ? (
-                                <p className="text-gray-400 text-sm text-center italic">Cargando familiares...</p>
+                                <div className="col-span-full py-20 flex flex-col items-center justify-center bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                    <Loader2 className="animate-spin text-[var(--secondary-color)] mb-4" size={32} />
+                                    <p className="text-[var(--text-light)] text-sm font-secondary italic">Cargando familiares...</p>
+                                </div>
                             ) : patients.length === 0 ? (
-                                <p className="text-gray-400 text-sm text-center italic">No has agregado familiares.</p>
+                                <div className="col-span-full py-24 flex flex-col items-center justify-center bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                    <User className="text-gray-300 mb-6 opacity-30" size={64} />
+                                    <p className="text-[var(--text-light)] text-lg font-secondary italic">No has agregado familiares todavía.</p>
+                                </div>
                             ) : (
                                 patients.map(patient => (
-                                    <div key={patient.id} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all bg-gray-50 group">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-[var(--primary-color)] text-white flex items-center justify-center font-bold text-sm">
+                                    <div key={patient.id} className="p-8 bg-white rounded-[16px] border border-gray-100 hover:border-[var(--secondary-color)]/30 hover:shadow-2xl transition-all group relative overflow-hidden">
+                                        <div className="flex items-center gap-6 relative z-10">
+                                            <div className="w-16 h-16 rounded-[16px] bg-[var(--accent-color)]/20 text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-2xl shadow-inner group-hover:bg-[var(--secondary-color)] group-hover:text-white transition-all transform group-hover:scale-105">
                                                 {(patient.full_name || patient.name || '?').charAt(0)}
                                             </div>
-                                            <div>
-                                                <p className="font-bold text-gray-800 text-sm">{patient.full_name || patient.name || '(Sin Nombre)'}</p>
-                                                <p className="text-xs text-gray-500">{(patient.notes || '').split('.')[0]} • {patient.age || 'Edad desc.'} años</p>
+                                            <div className="text-left flex-1">
+                                                <p className="font-brand font-bold text-[var(--primary-color)] text-xl tracking-tight line-clamp-1">{patient.full_name || patient.name || '(Sin Nombre)'}</p>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em]">{(patient.notes || '').split('.')[0].replace('Parentesco:', '').trim() || 'Familiar'}</span>
+                                                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                                                    <span className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-[0.2em]">{patient.age || '---'} años</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="flex gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+
+                                        <div className="mt-8 flex gap-3 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 relative z-10">
                                             <button
                                                 onClick={() => startEditPatient(patient)}
-                                                className="p-1.5 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                                                className="flex-1 bg-[var(--base-bg)] text-[var(--primary-color)] py-3 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] hover:text-white transition-all flex items-center justify-center gap-2 border border-gray-50 shadow-sm"
                                             >
-                                                <Edit2 size={16} />
+                                                <Edit2 size={14} /> Editar
                                             </button>
                                             <button
                                                 onClick={() => handleDeletePatient(patient.id)}
-                                                className="p-1.5 text-red-500 hover:bg-red-100 rounded-lg transition-colors"
+                                                className="aspect-square bg-white text-gray-400 p-3 rounded-[16px] hover:text-[var(--error-color)] hover:bg-red-50 border border-gray-50 transition-all shadow-sm"
                                             >
                                                 <Trash2 size={16} />
                                             </button>
                                         </div>
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl group-hover:bg-[var(--secondary-color)]/5 transition-colors"></div>
                                     </div>
                                 ))
                             )}
-
-
                         </div>
                     </div>
                     {/* Add Patient Inline Form */}
                     {showAddPatientModal && (
-                        <div className="bg-white rounded-xl shadow-lg border-l-4 border-l-[var(--primary-color)] overflow-hidden mt-4">
-                            <div className="bg-gray-50 px-6 py-4 flex justify-between items-center border-b border-gray-100">
-                                <h3 className="text-lg font-bold text-gray-800">
-                                    {editingPatientId ? 'Editar Familiar' : 'Agregar Nuevo Familiar'}
+                        <div className="card !p-10 border-none shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden animate-fade-in-up bg-[#fcfdff]">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--primary-color)]/5 rounded-full translate-x-1/3 -translate-y-1/3 blur-[80px]"></div>
+
+                            <div className="flex justify-between items-center mb-10 relative z-10">
+                                <h3 className="text-3xl font-brand font-bold text-[var(--primary-color)] tracking-tight">
+                                    {editingPatientId ? 'Actualizar Información' : 'Nuevo Familiar'}
                                 </h3>
                                 <button
                                     onClick={() => setShowAddPatientModal(false)}
-                                    className="text-gray-400 hover:text-gray-600 hover:bg-white p-1 rounded-full transition-colors"
+                                    className="p-3 bg-white text-gray-400 hover:text-[var(--primary-color)] hover:shadow-lg rounded-[16px] transition-all border border-gray-100"
                                 >
-                                    <X size={20} />
+                                    <X size={24} />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleAddPatient} className="p-6 space-y-4">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Nombre Completo</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--primary-light)] outline-none font-medium text-gray-800"
-                                        value={newPatient.full_name}
-                                        onChange={e => setNewPatient({ ...newPatient, full_name: e.target.value })}
-                                        placeholder="Nombre del familiar"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
+                            <form onSubmit={handleAddPatient} className="space-y-8 relative z-10 max-w-2xl mx-auto">
+                                <div className="space-y-6">
                                     <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Parentesco</label>
-                                        <div className="relative">
-                                            <select
-                                                required
-                                                className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg appearance-none outline-none font-medium text-gray-700"
-                                                value={newPatient.relation}
-                                                onChange={e => setNewPatient({ ...newPatient, relation: e.target.value })}
-                                            >
-                                                <option value="">Seleccionar...</option>
-                                                <option value="Padre/Madre">Padre/Madre</option>
-                                                <option value="Hermano/a">Hermano/a</option>
-                                                <option value="Abuelo/a">Abuelo/a</option>
-                                                <option value="Esposo/a">Esposo/a</option>
-                                                <option value="Otro">Otro</option>
-                                            </select>
-                                            <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-gray-700 mb-1">Edad</label>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Nombre Completo</label>
                                         <input
-                                            type="number"
+                                            type="text"
                                             required
-                                            min="0"
-                                            className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg outline-none font-medium text-gray-800"
-                                            value={newPatient.age || ''}
-                                            onChange={e => {
-                                                const age = e.target.value;
-                                                const currentYear = new Date().getFullYear();
-                                                const birthYear = currentYear - parseInt(age || 0);
-                                                const approxBirthDate = `${birthYear}-01-01`;
-                                                setNewPatient({ ...newPatient, age: age, birth_date: approxBirthDate });
-                                            }}
-                                            placeholder="Ej. 75"
+                                            className="w-full px-6 py-4 rounded-[16px] border border-gray-100 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
+                                            value={newPatient.full_name}
+                                            onChange={e => setNewPatient({ ...newPatient, full_name: e.target.value })}
+                                            placeholder="Nombre completo del familiar"
                                         />
                                     </div>
+
+                                    <div className="grid grid-cols-2 gap-8">
+                                        <div>
+                                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Parentesco</label>
+                                            <div className="relative">
+                                                <select
+                                                    required
+                                                    className="w-full px-6 py-4 rounded-[16px] border border-gray-100 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm appearance-none bg-white"
+                                                    value={newPatient.relation}
+                                                    onChange={e => setNewPatient({ ...newPatient, relation: e.target.value })}
+                                                >
+                                                    <option value="">Seleccionar...</option>
+                                                    <option value="Padre/Madre">Padre/Madre</option>
+                                                    <option value="Hermano/a">Hermano/a</option>
+                                                    <option value="Abuelo/a">Abuelo/a</option>
+                                                    <option value="Esposo/a">Esposo/a</option>
+                                                    <option value="Hijo/a">Hijo/a</option>
+                                                    <option value="Otro">Otro</option>
+                                                </select>
+                                                <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none text-[var(--secondary-color)]">
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Edad Actual</label>
+                                            <input
+                                                type="number"
+                                                required
+                                                min="0"
+                                                className="w-full px-6 py-4 rounded-[16px] border border-gray-100 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
+                                                value={newPatient.age || ''}
+                                                onChange={e => {
+                                                    const age = e.target.value;
+                                                    const currentYear = new Date().getFullYear();
+                                                    const birthYear = currentYear - parseInt(age || 0);
+                                                    const approxBirthDate = `${birthYear}-01-01`;
+                                                    setNewPatient({ ...newPatient, age: age, birth_date: approxBirthDate });
+                                                }}
+                                                placeholder="Ej. 75"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-
-
-                                <div className="flex gap-3 pt-2">
+                                <div className="flex gap-4 pt-6">
                                     <button
                                         type="button"
                                         onClick={() => setShowAddPatientModal(false)}
-                                        className="flex-1 py-2.5 text-sm text-gray-600 border border-gray-300 rounded-lg font-bold hover:bg-gray-50 transition-colors"
+                                        className="flex-1 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 bg-[var(--base-bg)] rounded-[16px] hover:bg-gray-100 transition-all border border-gray-50"
                                     >
                                         Cancelar
                                     </button>
                                     <button
                                         type="submit"
-                                        disabled={addingPatient}
-                                        className="flex-1 py-2.5 text-sm bg-[var(--primary-color)] text-white rounded-lg font-bold hover:shadow-md hover:brightness-105 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                                        disabled={addingPatient || !newPatient.full_name || !newPatient.relation}
+                                        className="flex-[2] py-5 text-[10px] font-black uppercase tracking-widest bg-[var(--secondary-color)] !text-[#FAFAF7] rounded-[16px] hover:bg-emerald-600 shadow-xl shadow-green-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-none"
                                     >
-                                        {addingPatient ? 'Guardando...' : (editingPatientId ? 'Actualizar Familiar' : 'Guardar Familiar')}
+                                        {addingPatient ? (
+                                            <>
+                                                <Loader2 size={16} className="animate-spin" /> Procesando...
+                                            </>
+                                        ) : (
+                                            editingPatientId ? (
+                                                <><Check size={16} strokeWidth={4} /> Actualizar Datos</>
+                                            ) : (
+                                                <><Plus size={16} strokeWidth={4} /> Guardar Familiar</>
+                                            )
+                                        )}
                                     </button>
                                 </div>
                             </form>

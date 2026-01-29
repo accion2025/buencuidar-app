@@ -7,6 +7,7 @@ import RegisterCaregiver from './pages/RegisterCaregiver';
 import Search from './pages/Search';
 import Services from './pages/Services';
 import About from './pages/About';
+
 import Contact from './pages/Contact';
 import SaludInfo from './pages/SaludInfo';
 import RegistrationSuccess from './pages/RegistrationSuccess';
@@ -38,6 +39,7 @@ import AdminRoute from './components/AdminRoute';
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
+import AdminVerification from './pages/admin/AdminVerification';
 
 import { AuthProvider } from './context/AuthContext';
 import { MessageProvider } from './context/MessageContext';
@@ -93,6 +95,7 @@ function App() {
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="users" element={<UserManagement />} />
+                <Route path="verification" element={<AdminVerification />} />
                 <Route path="settings" element={<div className="p-8">Configuración (Próximamente)</div>} />
               </Route>
             </Route>

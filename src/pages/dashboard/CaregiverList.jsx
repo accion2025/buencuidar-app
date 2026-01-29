@@ -24,10 +24,40 @@ const CaregiverList = () => {
                     caregiver_details (*)
                 `)
                 .eq('role', 'caregiver')
-                .eq('is_available', true);
+                .eq('is_available', true)
+                .order('rating', { foreignTable: 'caregiver_details', ascending: false, nullsFirst: false });
 
             if (error) throw error;
-            setCaregivers(data || []);
+
+            // Sort in memory to ensure parent list is ordered by child rating
+            const sortedData = (data || []).sort((a, b) => {
+                const detailsA = Array.isArray(a.caregiver_details) ? a.caregiver_details[0] : a.caregiver_details;
+                const detailsB = Array.isArray(b.caregiver_details) ? b.caregiver_details[0] : b.caregiver_details;
+
+                const reviewsA = detailsA?.reviews_count || 0;
+                const reviewsB = detailsB?.reviews_count || 0;
+                const ratingA = detailsA?.rating || 0;
+                const ratingB = detailsB?.rating || 0;
+
+                // 1. Priority to those with real reviews
+                if (reviewsA > 0 && reviewsB === 0) return -1;
+                if (reviewsA === 0 && reviewsB > 0) return 1;
+
+                // 2. Otherwise sort by rating
+                if (ratingB !== ratingA) {
+                    return ratingB - ratingA;
+                }
+
+                // 3. TIE-BREAKER: Priority to PREMIUM caregivers (Suscripción PRO)
+                const isAPremium = a.plan_type === 'premium';
+                const isBPremium = b.plan_type === 'premium';
+                if (isAPremium && !isBPremium) return -1;
+                if (!isAPremium && isBPremium) return 1;
+
+                return 0;
+            });
+
+            setCaregivers(sortedData);
         } catch (error) {
             console.error('Error fetching caregivers:', error);
         } finally {
@@ -112,12 +142,12 @@ const CaregiverList = () => {
                     <input
                         type="text"
                         placeholder="Buscar por nombre o especialidad..."
-                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-[16px] focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <button className="px-6 py-3 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 flex items-center gap-2 font-medium">
+                <button className="px-6 py-3 border border-gray-200 rounded-[16px] text-gray-600 hover:bg-gray-50 flex items-center gap-2 font-medium">
                     <Filter size={18} />
                     Filtros
                 </button>
@@ -134,7 +164,7 @@ const CaregiverList = () => {
                         const displayLocation = bg.address || details?.location;
 
                         return (
-                            <div key={bg.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow flex flex-col items-center text-center">
+                            <div key={bg.id} className="bg-white rounded-[16px] shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow flex flex-col items-center text-center">
                                 <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden">
                                     {bg.avatar_url ? (
                                         <img src={bg.avatar_url} alt={bg.full_name} className="w-full h-full object-cover" />
@@ -147,7 +177,7 @@ const CaregiverList = () => {
                                 <h3 className="font-bold text-gray-800 text-lg mb-1">{bg.full_name}</h3>
                                 {details?.rating && (
                                     <div className="flex items-center gap-1 mb-2">
-                                        <Star size={14} className="fill-orange-400 text-orange-400" />
+                                        <Star size={14} className={`${(details?.reviews_count || 0) > 0 ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`} />
                                         <span className="font-bold text-gray-700">{details.rating}</span>
                                         <span className="text-xs text-gray-400">({details.reviews_count || 0})</span>
                                     </div>
@@ -163,7 +193,7 @@ const CaregiverList = () => {
 
                                 <button
                                     onClick={() => setSelectedCaregiver(bg)}
-                                    className="w-full py-2 border border-[var(--primary-color)] text-[var(--primary-color)] font-bold rounded-lg hover:bg-blue-50 transition-colors"
+                                    className="w-full py-2 border border-[var(--primary-color)] text-[var(--primary-color)] font-bold rounded-[16px] hover:bg-blue-50 transition-colors"
                                 >
                                     Ver Perfil
                                 </button>

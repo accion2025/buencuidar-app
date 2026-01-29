@@ -40,7 +40,7 @@ const RateCaregiverModal = ({ isOpen, onClose, appointment, onSuccess }) => {
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden relative">
+            <div className="bg-white rounded-[16px] shadow-xl w-full max-w-md overflow-hidden relative">
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -95,7 +95,7 @@ const RateCaregiverModal = ({ isOpen, onClose, appointment, onSuccess }) => {
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 placeholder="Comparte detalles sobre el cuidado recibido..."
-                                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all resize-none text-sm"
+                                className="w-full px-4 py-3 rounded-[16px] border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all resize-none text-sm"
                                 rows="3"
                             />
                         </div>
@@ -104,7 +104,7 @@ const RateCaregiverModal = ({ isOpen, onClose, appointment, onSuccess }) => {
                         <button
                             type="submit"
                             disabled={rating === 0 || isSubmitting}
-                            className={`w-full py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all ${rating > 0 && !isSubmitting
+                            className={`w-full py-3 rounded-[16px] font-bold !text-[#FAFAF7] flex items-center justify-center gap-2 transition-all ${rating > 0 && !isSubmitting
                                 ? 'bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200'
                                 : 'bg-gray-300 cursor-not-allowed'
                                 }`}

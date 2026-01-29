@@ -191,11 +191,11 @@ const JobBoard = () => {
             {/* ... header ... */}
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Bolsa de Trabajo</h1>
-                    <p className="text-gray-500">Encuentra oportunidades que se ajusten a tu horario.</p>
+                    <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Bolsa de Trabajo</h1>
+                    <p className="text-gray-500 font-secondary mt-1">Encuentra oportunidades que se ajusten a tu horario.</p>
                 </div>
                 <div className="flex gap-2">
-                    <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50">
+                    <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-[16px] text-sm font-medium hover:bg-gray-50">
                         <Filter size={16} /> Filtros
                     </button>
                     <button onClick={fetchJobs} className="text-blue-600 text-sm font-medium hover:underline self-center">
@@ -210,7 +210,7 @@ const JobBoard = () => {
                 <input
                     type="text"
                     placeholder="Buscar por zona, especialidad o tarifa..."
-                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-sm"
+                    className="w-full pl-12 pr-4 py-3 rounded-[16px] border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none shadow-sm"
                 />
             </div>
 
@@ -229,15 +229,15 @@ const JobBoard = () => {
                         const isPulso = job.client?.subscription_status === 'active';
 
                         return (
-                            <div key={job.id} className="bg-white p-6 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all group relative overflow-hidden">
+                            <div key={job.id} className="bg-white p-8 rounded-[16px] border border-slate-100 hover:border-[var(--secondary-color)]/30 hover:shadow-2xl hover:shadow-slate-200 transition-all group relative overflow-hidden flex flex-col">
                                 {isPulso && (
-                                    <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl shadow-sm z-10 flex items-center gap-1">
+                                    <div className="absolute top-0 right-0 bg-[#4F46E5] !text-[#FAFAF7] text-[10px] font-black px-4 py-1.5 rounded-bl-2xl shadow-lg z-10 flex items-center gap-2 uppercase tracking-widest">
                                         <Briefcase size={10} className="animate-pulse" /> SERVICIO PULSO
                                     </div>
                                 )}
-                                <h3 className="text-lg font-bold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors uppercase tracking-tight pr-20">{job.title}</h3>
-                                <div className="flex items-center gap-1.5 text-xs text-[var(--primary-color)] font-bold mb-3">
-                                    <User size={14} className="text-gray-400" />
+                                <h3 className="text-2xl font-brand font-bold !text-[#0F3C4C] mb-1 group-hover:text-[var(--secondary-color)] transition-colors uppercase tracking-tight pr-24">{job.title}</h3>
+                                <div className="flex items-center gap-2 text-xs text-[#07212e] font-black uppercase tracking-widest mb-6 opacity-60">
+                                    <User size={14} className="text-[var(--secondary-color)]" />
                                     <span>Cliente: {job.client?.full_name || 'Particular'}</span>
                                 </div>
 
@@ -252,8 +252,8 @@ const JobBoard = () => {
                                         <Clock size={16} className="text-gray-400" />
                                         {job.time?.substring(0, 5)} {job.end_time ? `- ${job.end_time.substring(0, 5)}` : ''}
                                     </div>
-                                    <div className="flex items-center gap-2 font-bold text-gray-800">
-                                        <DollarSign size={16} className="text-green-600" /> {job.offered_rate || 'A convenir'}
+                                    <div className="flex items-center gap-3 font-brand font-bold text-[#0F3C4C] text-lg bg-slate-50 p-4 rounded-[16px] border border-slate-100">
+                                        <DollarSign size={20} className="text-[var(--secondary-color)]" /> {job.offered_rate || 'Por definir'}
                                     </div>
                                 </div>
 
@@ -270,8 +270,8 @@ const JobBoard = () => {
                                                     <div>
                                                         <div className="flex flex-wrap gap-1.5 mt-2">
                                                             {services.map((s, i) => (
-                                                                <span key={i} className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md font-medium border border-blue-100 flex items-center gap-1">
-                                                                    <Briefcase size={10} className="text-blue-500" /> {s}
+                                                                <span key={i} className="text-[10px] bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-[var(--secondary-color)]/10 flex items-center gap-1.5">
+                                                                    <Briefcase size={10} /> {s}
                                                                 </span>
                                                             ))}
                                                         </div>
@@ -284,7 +284,7 @@ const JobBoard = () => {
                                 )}
 
                                 {applicationStatus === 'rejected' ? (
-                                    <div className="w-full py-2.5 rounded-lg font-bold text-center bg-red-100 text-red-600 border border-red-200 cursor-not-allowed">
+                                    <div className="w-full py-2.5 rounded-[16px] font-bold text-center bg-red-100 text-red-600 border border-red-200 cursor-not-allowed">
                                         Solicitud Rechazada
                                     </div>
                                 ) : (
@@ -292,16 +292,16 @@ const JobBoard = () => {
                                         <button
                                             onClick={() => handleApply(job)}
                                             disabled={applying === job.id || !!applicationStatus}
-                                            className={`flex-grow py-2.5 rounded-lg font-bold transition-all disabled:cursor-not-allowed ${applicationStatus === 'pending'
-                                                ? 'bg-green-600 text-white border border-green-600 disabled:opacity-100'
-                                                : 'bg-blue-600 text-white border border-blue-600 hover:bg-blue-700 hover:border-blue-700 disabled:opacity-50'
+                                            className={`flex-grow py-5 rounded-[16px] font-black uppercase tracking-widest text-xs transition-all disabled:cursor-not-allowed shadow-xl ${applicationStatus === 'pending'
+                                                ? 'bg-[var(--secondary-color)] !text-[#FAFAF7] border-none shadow-green-900/20 disabled:opacity-100'
+                                                : 'bg-[var(--primary-color)] !text-[#FAFAF7] border-none hover:bg-[#1a5a70] shadow-blue-900/20 disabled:opacity-50'
                                                 }`}
                                         >
                                             {applicationStatus === 'pending'
-                                                ? '¡Solicitud Enviada!'
+                                                ? '¡SOLICITUD ENVIADA!'
                                                 : applying === job.id
-                                                    ? 'Procesando...'
-                                                    : 'Enviar solicitud'
+                                                    ? 'PROCESANDO...'
+                                                    : 'ENVIAR SOLICITUD'
                                             }
                                         </button>
                                     </div>

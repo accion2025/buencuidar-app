@@ -5,7 +5,7 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
-            <div className="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl">
+            <div className="bg-white rounded-[16px] w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl">
                 {/* Header */}
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-lg">
                     <div>
@@ -24,9 +24,9 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                 <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
                     {appointments.filter(a => a.status !== 'cancelled').length > 0 ? (
                         appointments.filter(a => a.status !== 'cancelled').map((app) => (
-                            <div key={app.id} className="bg-white border border-gray-100 rounded-lg p-5 hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-4 sm:items-center group">
+                            <div key={app.id} className="bg-white border border-gray-100 rounded-[16px] p-5 hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-4 sm:items-center group">
                                 {/* Date Box */}
-                                <div className="bg-blue-50 rounded-lg p-3 flex flex-col items-center justify-center min-w-[80px] text-blue-600">
+                                <div className="bg-blue-50 rounded-[16px] p-3 flex flex-col items-center justify-center min-w-[80px] text-blue-600">
                                     <span className="text-xs font-bold uppercase tracking-wider">
                                         {new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short' }).replace('.', '')}
                                     </span>
@@ -74,7 +74,7 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                         {onEdit && (
                                             <button
                                                 onClick={() => onEdit(app)}
-                                                className="px-3 py-1.5 bg-blue-50 text-blue-600 font-bold rounded-lg hover:bg-blue-100 transition-colors"
+                                                className="px-3 py-1.5 bg-blue-50 text-blue-600 font-bold rounded-[16px] hover:bg-blue-100 transition-colors"
                                             >
                                                 Editar
                                             </button>
@@ -82,7 +82,7 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                         {onDelete && (
                                             <button
                                                 onClick={() => onDelete(app)}
-                                                className="px-3 py-1.5 bg-red-50 text-red-600 font-bold rounded-lg hover:bg-red-100 transition-colors flex items-center gap-1"
+                                                className="px-3 py-1.5 bg-red-50 text-red-600 font-bold rounded-[16px] hover:bg-red-100 transition-colors flex items-center gap-1"
                                                 title="Eliminar cita"
                                             >
                                                 <Trash2 size={14} />
@@ -110,7 +110,7 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                 <div className="p-4 border-t border-gray-100 bg-gray-50/50 rounded-b-lg">
                     <button
                         onClick={onClose}
-                        className="w-full bg-white border border-gray-200 text-gray-700 font-bold py-3 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="w-full bg-white border border-gray-200 text-gray-700 font-bold py-3 rounded-[16px] hover:bg-gray-50 transition-colors"
                     >
                         Cerrar Informe
                     </button>

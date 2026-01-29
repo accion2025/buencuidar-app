@@ -83,10 +83,10 @@ const Settings = () => {
             </div>
 
             {/* Security */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-[16px] shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-6 border-b border-gray-100 bg-gray-50">
                     <div className="flex items-center gap-3">
-                        <div className="bg-blue-100 p-2 rounded-lg text-blue-600">
+                        <div className="bg-blue-100 p-2 rounded-[16px] text-blue-600">
                             <Lock size={20} />
                         </div>
                         <h3 className="text-lg font-bold text-gray-800">Seguridad</h3>
@@ -95,7 +95,7 @@ const Settings = () => {
                 <div className="p-6 space-y-4">
                     <button
                         onClick={handlePasswordReset}
-                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all group"
+                        className="w-full flex items-center justify-between p-3 rounded-[16px] hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all group"
                     >
                         <span className="font-medium text-gray-700">Cambiar Contraseña</span>
                         <ChevronRight size={18} className="text-gray-400 group-hover:text-gray-600" />
@@ -106,7 +106,7 @@ const Settings = () => {
                                 alert("Por favor contacta a soporte para proceder con la baja definitiva.");
                             }
                         }}
-                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-red-50 border border-transparent hover:border-red-100 transition-all group mt-2"
+                        className="w-full flex items-center justify-between p-3 rounded-[16px] hover:bg-red-50 border border-transparent hover:border-red-100 transition-all group mt-2"
                     >
                         <span className="font-medium text-red-600">Eliminar Cuenta</span>
                         <ChevronRight size={18} className="text-red-300 group-hover:text-red-500" />
@@ -117,7 +117,7 @@ const Settings = () => {
             {/* Plan Status & Pulso Banner */}
             <div className="space-y-6">
                 {/* Plan Card */}
-                <div className={`p-8 border rounded-2xl flex flex-col items-center text-center gap-4 bg-white shadow-sm ${isPremium ? 'border-blue-100' : 'border-gray-200'}`}>
+                <div className={`p-8 border rounded-[16px] flex flex-col items-center text-center gap-4 bg-white shadow-sm ${isPremium ? 'border-blue-100' : 'border-gray-200'}`}>
                     <div className="space-y-2">
                         <h3 className={`text-xl font-black ${isPremium ? 'text-blue-900' : 'text-gray-800 uppercase tracking-tight'}`}>{planName}</h3>
                         <p className={`text-sm max-w-sm mx-auto ${isPremium ? 'text-blue-700' : 'text-gray-500'}`}>
@@ -126,7 +126,7 @@ const Settings = () => {
                                 : 'Acceso básico limitado. Activa PULSO Premium para el máximo nivel de cuidado.'}
                         </p>
                     </div>
-                    <span className="px-6 py-2 rounded-full text-xs font-black tracking-widest bg-green-500 text-white shadow-sm shadow-green-100">
+                    <span className="px-6 py-2 rounded-full text-xs font-black tracking-widest bg-green-500 !text-[#FAFAF7] shadow-sm shadow-green-100">
                         ACTIVO
                     </span>
                 </div>
@@ -134,13 +134,13 @@ const Settings = () => {
                 {/* PULSO Configuration or Upgrade Banner */}
                 <div className="space-y-6">
                     {isPremium && (
-                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6">
+                        <div className="bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm space-y-6">
                             <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
                                 <Bell size={16} /> Preferencias de Alerta PULSO
                             </h4>
 
                             <div className="grid md:grid-cols-2 gap-4">
-                                <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
                                     <div>
                                         <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
                                         <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
@@ -153,7 +153,7 @@ const Settings = () => {
                                     </button>
                                 </div>
 
-                                <div className="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
                                     <div>
                                         <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
                                         <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
@@ -170,7 +170,7 @@ const Settings = () => {
                     )}
 
                     {!isPremium && (
-                        <div className="bg-orange-50 p-8 rounded-2xl flex flex-col items-center text-center gap-6 border border-orange-100 shadow-sm animate-fade-in">
+                        <div className="bg-orange-50 p-8 rounded-[16px] flex flex-col items-center text-center gap-6 border border-orange-100 shadow-sm animate-fade-in">
                             <div className="space-y-2">
                                 <h4 className="font-bold text-orange-900 flex items-center justify-center gap-2 text-xl">
                                     <ShieldCheck size={28} className="text-orange-500" />
@@ -182,7 +182,7 @@ const Settings = () => {
                             </div>
                             <button
                                 onClick={() => navigate('/dashboard/plans')}
-                                className="bg-orange-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl shadow-orange-200 hover:bg-orange-700 transition-all active:scale-95 hover:scale-105"
+                                className="bg-orange-600 !text-[#FAFAF7] px-10 py-4 rounded-[16px] font-black text-lg shadow-xl shadow-orange-200 hover:bg-orange-700 transition-all active:scale-95 hover:scale-105"
                             >
                                 ACTIVAR PULSO
                             </button>

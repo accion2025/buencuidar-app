@@ -43,8 +43,8 @@ const InstallPrompt = () => {
 
     return (
         <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 z-[100] animate-slide-up">
-            <div className="bg-slate-900 text-white p-4 rounded-xl shadow-2xl border border-white/10 flex items-center gap-4 max-w-sm ml-auto">
-                <div className="bg-blue-600 p-2 rounded-lg">
+            <div className="bg-slate-900 !text-[#FAFAF7] p-4 rounded-[16px] shadow-2xl border border-white/10 flex items-center gap-4 max-w-sm ml-auto">
+                <div className="bg-blue-600 p-2 rounded-[16px]">
                     <Download size={24} />
                 </div>
                 <div className="flex-1">
@@ -54,13 +54,13 @@ const InstallPrompt = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setShowPrompt(false)}
-                        className="p-2 hover:bg-white/10 rounded-lg text-slate-400 transition-colors"
+                        className="p-2 hover:bg-white/10 rounded-[16px] text-slate-400 transition-colors"
                     >
                         <X size={18} />
                     </button>
                     <button
                         onClick={handleInstallClick}
-                        className="bg-white text-slate-900 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 transition-colors"
+                        className="bg-white text-slate-900 px-4 py-2 rounded-[16px] text-xs font-bold hover:bg-gray-100 transition-colors"
                     >
                         Instalar
                     </button>

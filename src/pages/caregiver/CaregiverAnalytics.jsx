@@ -1,5 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -18,8 +20,9 @@ import {
 // Given the complexity of adding chartjs without ensuring it's in package.json, I will build simple CSS charts first to ensure stability.
 
 const CaregiverAnalytics = () => {
-    const { user } = useAuth();
+    const { user, profile, loading: authLoading } = useAuth();
     const [loading, setLoading] = useState(true);
+    const [timeRange, setTimeRange] = useState('year'); // 'month', 'year', 'all'
     const [stats, setStats] = useState({
         totalEarnings: 0,
         totalHours: 0,
@@ -28,11 +31,49 @@ const CaregiverAnalytics = () => {
         monthlyHours: []
     });
     const [payments, setPayments] = useState([]);
-    const [timeRange, setTimeRange] = useState('year'); // 'month', 'year', 'all'
+
+    // Protection: Only Premium users can access Analytics
+    const isPremium = profile?.plan_type === 'premium';
 
     useEffect(() => {
-        if (user) fetchAnalytics();
-    }, [user, timeRange]);
+        if (user && isPremium) fetchAnalytics();
+        else if (user && !isPremium) setLoading(false);
+    }, [user, timeRange, isPremium]);
+
+    if (authLoading) return null;
+
+    if (!isPremium) {
+        return (
+            <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-10 bg-white rounded-[16px] border border-slate-100 shadow-xl max-w-2xl mx-auto my-12 animate-fade-in">
+                <div className="w-24 h-24 bg-blue-50 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-8 shadow-inner ring-4 ring-blue-50/50">
+                    <BarChart2 size={48} strokeWidth={1.5} />
+                </div>
+                <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-4 tracking-tight">Acceso Limitado</h2>
+                <p className="text-gray-600 font-secondary text-lg mb-10 max-w-md mx-auto leading-relaxed">
+                    La sección de **Análisis y Reportes Financieros** está reservada para nuestros cuidadores con suscripción **Premium**.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-10 text-left">
+                    <div className="bg-slate-50 p-6 rounded-[24px] border border-slate-100 ring-1 ring-slate-200/50">
+                        <TrendingUp className="text-[var(--secondary-color)] mb-3" size={24} />
+                        <h4 className="font-bold text-sm text-[var(--primary-color)] mb-1 uppercase tracking-widest">Gráficos Pro</h4>
+                        <p className="text-xs text-gray-500 font-medium">Visualiza tus ingresos mensuales y proyección de crecimiento.</p>
+                    </div>
+                    <div className="bg-slate-50 p-6 rounded-[24px] border border-slate-100 ring-1 ring-slate-200/50">
+                        <FileText className="text-[var(--secondary-color)] mb-3" size={24} />
+                        <h4 className="font-bold text-sm text-[var(--primary-color)] mb-1 uppercase tracking-widest">Reportes PDF</h4>
+                        <p className="text-xs text-gray-500 font-medium">Exporta tu historial de pagos en formato profesional para tus finanzas.</p>
+                    </div>
+                </div>
+                <a
+                    href="/caregiver/payments"
+                    className="btn btn-secondary !px-12 !py-5 !text-sm font-black uppercase tracking-widest shadow-2xl shadow-emerald-200/50 transform hover:scale-105 transition-all"
+                >
+                    Mejorar mi Plan Ahora
+                </a>
+            </div>
+        );
+    }
+    // fetchAnalytics called via consolidated useEffect above
 
     const fetchAnalytics = async () => {
         try {
@@ -131,29 +172,68 @@ const CaregiverAnalytics = () => {
     };
 
     const generateReport = () => {
-        // Mock PDF Generation
-        const reportContent = `
-            REPORTE FINANCIERO - BUENCUIDAR
-            Cuidador: ${user.email}
-            Fecha: ${new Date().toLocaleDateString()}
-            -----------------------------------
-            Ganancias Totales: $${stats.totalEarnings}
-            Horas Totales: ${stats.totalHours.toFixed(1)}h
-            Promedio $/Hora: $${stats.avgHourlyRate}
-            -----------------------------------
-            Detalle de Pagos:
-            ${payments.map(p => `${p.date}: $${p.calculatedAmount} (${p.calculatedHours.toFixed(1)}h)`).join('\n')}
-        `;
+        const doc = new jsPDF();
 
-        // Create a blob and download trigger
-        const blob = new Blob([reportContent], { type: 'text/plain' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Reporte_BuenCuidar_${new Date().toISOString().split('T')[0]}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        // Header
+        doc.setFontSize(22);
+        doc.setTextColor(15, 60, 76); // #0F3C4C
+        doc.text("BuenCuidar - Reporte de Ingresos", 14, 22);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text(`Cuidador: ${profile?.full_name || user?.email}`, 14, 30);
+        doc.text(`Fecha de emisión: ${new Date().toLocaleDateString()}`, 14, 35);
+
+        // Stats Box
+        doc.setDrawColor(240);
+        doc.setFillColor(249, 250, 251);
+        doc.roundedRect(14, 45, 182, 25, 3, 3, 'FD');
+
+        doc.setFontSize(11);
+        doc.setTextColor(15, 60, 76);
+        doc.text("Resumen de Actividad", 20, 52);
+
+        doc.setFontSize(9);
+        doc.setTextColor(80);
+        doc.text(`Ganancias Totales: $${stats.totalEarnings.toLocaleString()}`, 20, 60);
+        doc.text(`Total Horas: ${stats.totalHours.toFixed(1)}h`, 80, 60);
+        doc.text(`Promedio $/hora: $${stats.avgHourlyRate}/h`, 140, 60);
+
+        // Table
+        const tableData = payments.map(p => [
+            p.date,
+            p.client?.full_name || 'N/A',
+            `${p.calculatedHours.toFixed(1)}h`,
+            `$${p.hourlyRate}`,
+            `$${p.calculatedAmount}`,
+            p.payment_status === 'paid' ? 'PAGADO' : 'COMPLETADO'
+        ]);
+
+        autoTable(doc, {
+            startY: 80,
+            head: [['Fecha', 'Cliente', 'Horas', 'Tarifa', 'Total', 'Estado']],
+            body: tableData,
+            headStyles: { fillColor: [15, 60, 76], textColor: [250, 250, 247] }, // FAFAF7
+            alternateRowStyles: { fillColor: [249, 250, 251] },
+            margin: { top: 80 },
+            styles: { font: "helvetica", fontSize: 9 }
+        });
+
+        // Footer
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            doc.text(
+                `Documento generado automáticamente por la plataforma BuenCuidar - Página ${i} de ${pageCount}`,
+                doc.internal.pageSize.getWidth() / 2,
+                doc.internal.pageSize.getHeight() - 10,
+                { align: "center" }
+            );
+        }
+
+        doc.save(`Reporte_BuenCuidar_${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
     // Helper for CSS Chart
@@ -163,53 +243,56 @@ const CaregiverAnalytics = () => {
         <div className="space-y-8 animate-fade-in pb-12">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                    <TrendingUp className="text-blue-600" />
+                <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C] flex items-center gap-4">
+                    <span className="p-3 bg-blue-50 text-[var(--primary-color)] rounded-[16px] shadow-inner"><TrendingUp size={32} /></span>
                     Reportes y Finanzas
                 </h1>
-                <p className="text-gray-500 mt-2">Analiza tu rendimiento y descarga tus comprobantes.</p>
+                <p className="text-gray-500 font-secondary mt-3">Analiza tu rendimiento profesional y descarga comprobantes.</p>
             </div>
 
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="bg-green-100 p-3 rounded-xl text-green-600">
-                            <DollarSign size={24} />
+                <div className="bg-white p-8 rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl transition-all group overflow-hidden relative">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="bg-[var(--secondary-color)] !text-[#FAFAF7] p-4 rounded-[16px] shadow-lg shadow-green-900/20 group-hover:scale-110 transition-transform">
+                            <DollarSign size={28} />
                         </div>
                     </div>
-                    <p className="text-sm text-gray-500 font-medium">Ganancias Totales (Año)</p>
-                    <h3 className="text-3xl font-bold text-gray-800">${stats.totalEarnings.toLocaleString()}</h3>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-2">Ganancias Totales (Año)</p>
+                    <h3 className="text-4xl font-brand font-bold text-[#0F3C4C] tracking-tight">${stats.totalEarnings.toLocaleString()}</h3>
+                    <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[var(--secondary-color)] rounded-full opacity-[0.03] group-hover:scale-150 transition-transform"></div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="bg-blue-100 p-3 rounded-xl text-blue-600">
-                            <Clock size={24} />
+                <div className="bg-white p-8 rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl transition-all group overflow-hidden relative">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="bg-[var(--primary-color)] !text-[#FAFAF7] p-4 rounded-[16px] shadow-lg shadow-blue-900/20 group-hover:scale-110 transition-transform">
+                            <Clock size={28} />
                         </div>
                     </div>
-                    <p className="text-sm text-gray-500 font-medium">Horas Trabajadas</p>
-                    <h3 className="text-3xl font-bold text-gray-800">{stats.totalHours.toFixed(1)}h</h3>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-2">Horas Trabajadas</p>
+                    <h3 className="text-4xl font-brand font-bold text-[#0F3C4C] tracking-tight">{stats.totalHours.toFixed(1)}h</h3>
+                    <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-[var(--primary-color)] rounded-full opacity-[0.03] group-hover:scale-150 transition-transform"></div>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                    <div className="flex justify-between items-start mb-4">
-                        <div className="bg-purple-100 p-3 rounded-xl text-purple-600">
-                            <Activity size={24} />
+                <div className="bg-white p-8 rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-2xl transition-all group overflow-hidden relative">
+                    <div className="flex justify-between items-start mb-6">
+                        <div className="bg-purple-600 !text-[#FAFAF7] p-4 rounded-[16px] shadow-lg shadow-purple-900/20 group-hover:scale-110 transition-transform">
+                            <Activity size={28} />
                         </div>
                     </div>
-                    <p className="text-sm text-gray-500 font-medium">Eficiencia (Promedio $/h)</p>
-                    <h3 className="text-3xl font-bold text-gray-800">${stats.avgHourlyRate}/h</h3>
+                    <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-2">Eficiencia (Promedio $/h)</p>
+                    <h3 className="text-4xl font-brand font-bold text-[#0F3C4C] tracking-tight">${stats.avgHourlyRate}/h</h3>
+                    <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-purple-600 rounded-full opacity-[0.03] group-hover:scale-150 transition-transform"></div>
                 </div>
             </div>
 
             {/* Charts Section */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold text-gray-800">Tendencias Mensuales</h3>
+            <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 p-8">
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Tendencias Mensuales</h3>
                     <div className="flex gap-2">
-                        <button className="text-sm bg-gray-100 px-3 py-1 rounded-lg text-gray-600 font-medium">Ganancias</button>
-                        <button className="text-sm px-3 py-1 rounded-lg text-gray-400 font-medium hover:bg-gray-50">Horas</button>
+                        <button className="text-[10px] font-black uppercase tracking-widest bg-[var(--secondary-color)]/10 px-4 py-2 rounded-[16px] text-[var(--secondary-color)]">Ganancias</button>
+                        <button className="text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-[16px] text-gray-400 hover:bg-gray-50">Horas</button>
                     </div>
                 </div>
 
@@ -221,7 +304,7 @@ const CaregiverAnalytics = () => {
                                 ${item.value}
                             </div>
                             <div
-                                className="w-full bg-blue-500 rounded-t-lg transition-all duration-500 hover:bg-blue-600 relative"
+                                className="w-full bg-[var(--secondary-color)] rounded-t-2xl transition-all duration-700 hover:brightness-110 relative shadow-lg shadow-green-900/10"
                                 style={{ height: `${(item.value / getMax(stats.monthlyEarnings)) * 100}%` }}
                             >
                             </div>
@@ -235,27 +318,27 @@ const CaregiverAnalytics = () => {
             </div>
 
             {/* Detailed Table */}
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                    <h3 className="text-lg font-bold text-gray-800">Historial de Pagos</h3>
+            <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+                <div className="p-8 border-b border-gray-50 flex justify-between items-center">
+                    <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Historial de Pagos</h3>
                     <button
                         onClick={generateReport}
-                        className="flex items-center gap-2 text-blue-600 font-bold text-sm bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors"
+                        className="flex items-center gap-2 bg-[var(--primary-color)] !text-[#FAFAF7] font-black text-[10px] uppercase tracking-widest px-6 py-3 rounded-[16px] hover:bg-[#1a5a70] transition-all shadow-xl shadow-blue-900/20"
                     >
                         <Download size={18} /> Descargar Reporte
                     </button>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-gray-50 text-gray-500 text-xs uppercase font-bold">
+                        <thead className="bg-slate-50 text-gray-400 text-[10px] uppercase font-black tracking-widest">
                             <tr>
-                                <th className="px-6 py-4">Fecha</th>
-                                <th className="px-6 py-4">Cliente</th>
-                                <th className="px-6 py-4">Servicio</th>
-                                <th className="px-6 py-4 text-center">Horas</th>
-                                <th className="px-6 py-4 text-center">$/Hora</th>
-                                <th className="px-6 py-4 text-right">Total</th>
-                                <th className="px-6 py-4 text-center">Estado</th>
+                                <th className="px-8 py-5">Fecha</th>
+                                <th className="px-8 py-5">Cliente</th>
+                                <th className="px-8 py-5">Servicio</th>
+                                <th className="px-8 py-5 text-center">Horas</th>
+                                <th className="px-8 py-5 text-center">$/Hora</th>
+                                <th className="px-8 py-5 text-right">Total</th>
+                                <th className="px-8 py-5 text-center">Estado</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">

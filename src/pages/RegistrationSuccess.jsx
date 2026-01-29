@@ -25,25 +25,24 @@ const RegistrationSuccess = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+        <div className="min-h-screen bg-[var(--base-bg)] flex flex-col">
             <Navbar />
 
-            <main className="flex-grow flex items-center justify-center px-6 py-24">
-                <div className="max-w-3xl w-full bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden relative">
-                    {/* Elementos decorativos de fondo */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-50"></div>
+            <main className="flex-grow flex items-center justify-center px-6 py-24 relative overflow-hidden">
+                <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-[var(--secondary-color)] rounded-full blur-[150px] opacity-10 -z-10 animate-pulse"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-[var(--accent-color)] rounded-full blur-[150px] opacity-20 -z-10"></div>
 
-                    <div className="relative z-10 p-8 md:p-16 text-center">
-                        <div className="w-24 h-24 bg-green-100 text-green-600 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce">
-                            <CheckCircle size={48} weight="bold" />
+                <div className="max-w-4xl w-full bg-white rounded-[48px] shadow-2xl border-none overflow-hidden relative">
+                    <div className="relative z-10 p-10 md:p-20 text-center">
+                        <div className="w-28 h-28 bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] rounded-[16px] flex items-center justify-center mx-auto mb-10 animate-bounce shadow-lg shadow-green-100">
+                            <CheckCircle size={56} strokeWidth={2.5} />
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tighter italic uppercase">
-                            ¡BIENVENIDO A <span className="text-[var(--primary-color)]">BuenCuidar</span>, {fullName}!
+                        <h1 className="text-4xl md:text-6xl font-brand font-bold text-[var(--primary-color)] mb-6 tracking-tight">
+                            ¡BIENVENIDO A <span className="text-[var(--secondary-color)] italic">BuenCuidar</span>, {fullName}!
                         </h1>
 
-                        <p className="text-xl text-gray-600 mb-12 max-w-xl mx-auto font-medium">
+                        <p className="text-xl text-[var(--text-light)] mb-14 max-w-2xl mx-auto font-secondary leading-relaxed">
                             {requiresConfirmation
                                 ? `Tu registro se ha iniciado correctamente. Para activar tu cuenta${role === 'caregiver' ? ' y obtener tu código' : ''}, por favor verifica tu correo.`
                                 : role === 'caregiver'
@@ -52,25 +51,26 @@ const RegistrationSuccess = () => {
                         </p>
 
                         {caregiverCode && (
-                            <div className="bg-gray-900 rounded-[2rem] p-10 mb-12 shadow-2xl rotate-1 group hover:rotate-0 transition-transform duration-500">
-                                <p className="text-blue-400 text-sm font-black uppercase tracking-[0.2em] mb-4">
+                            <div className="bg-[var(--primary-color)] rounded-[16px] p-12 mb-14 shadow-2xl relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                                <p className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-[0.2em] mb-6">
                                     {requiresConfirmation ? 'Código Pendiente de Verificación' : 'Tu Código de Identificación Único'}
                                 </p>
-                                <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                                    <span className={`text-5xl md:text-7xl font-mono font-black tracking-widest bg-white/5 px-8 py-4 rounded-2xl border border-white/10 ${requiresConfirmation ? 'text-gray-500 blur-sm' : 'text-white'}`}>
+                                <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+                                    <span className={`text-5xl md:text-8xl font-brand font-bold tracking-tighter bg-white/5 px-10 py-6 rounded-[24px] border border-white/10 ${requiresConfirmation ? 'text-gray-500 blur-md' : 'text-white shadow-[0_0_30px_rgba(255,255,255,0.05)]'}`}>
                                         {caregiverCode}
                                     </span>
                                     {!requiresConfirmation && caregiverCode !== 'PENDIENTE' && (
                                         <button
                                             onClick={copyToClipboard}
-                                            className="bg-white/10 hover:bg-white/20 text-white p-4 rounded-2xl transition-all active:scale-90"
+                                            className="bg-white/10 hover:bg-white/20 !text-[#FAFAF7] p-5 rounded-[16px] transition-all active:scale-90 border border-white/10 backdrop-blur-sm"
                                             title="Copiar código"
                                         >
-                                            <Copy size={24} />
+                                            <Copy size={28} />
                                         </button>
                                     )}
                                 </div>
-                                <p className="text-gray-400 text-xs mt-6 italic font-medium">
+                                <p className="!text-[#FAFAF7]/40 text-xs mt-8 italic font-secondary">
                                     {requiresConfirmation
                                         ? "* El código será visible una vez que confirmes el enlace enviado a tu correo."
                                         : "* Comparte este código con las familias para que puedan contratar tus servicios directamente."}
@@ -78,14 +78,14 @@ const RegistrationSuccess = () => {
                             </div>
                         )}
 
-                        <div className="flex flex-col gap-6 mb-12 text-left">
-                            <div className="bg-blue-600 p-8 rounded-[2.5rem] shadow-xl shadow-blue-100 flex flex-col md:flex-row items-center gap-6 text-white transform hover:scale-[1.02] transition-all">
-                                <div className="bg-white/20 p-4 rounded-2xl flex-shrink-0">
-                                    <Mail size={32} />
+                        <div className="flex flex-col gap-8 mb-14 text-left">
+                            <div className="bg-[var(--base-bg)] p-10 rounded-[16px] border border-gray-100 flex flex-col md:flex-row items-center gap-8 transform hover:scale-[1.01] transition-all">
+                                <div className="bg-[var(--primary-color)] !text-[#FAFAF7] p-5 rounded-[22px] flex-shrink-0 shadow-lg shadow-blue-900/10">
+                                    <Mail size={36} />
                                 </div>
                                 <div className="flex-grow">
-                                    <h4 className="text-2xl font-black mb-1">Verifica tu email</h4>
-                                    <p className="opacity-90 font-medium mb-4">Hemos enviado las instrucciones a <strong>{email}</strong>. Revisa tu bandeja de entrada y spam.</p>
+                                    <h4 className="text-2xl font-brand font-bold text-[var(--primary-color)] mb-2">Verifica tu email</h4>
+                                    <p className="text-[var(--text-light)] font-secondary leading-relaxed mb-6">Hemos enviado las instrucciones a <strong className="text-[var(--primary-color)]">{email}</strong>. Revisa tu bandeja de entrada y spam.</p>
 
                                     {requiresConfirmation && (
                                         <button
@@ -102,7 +102,7 @@ const RegistrationSuccess = () => {
                                                 }
                                             }}
                                             id="resend-btn"
-                                            className="bg-white/20 hover:bg-white/30 text-white font-bold py-2 px-6 rounded-xl transition-all flex items-center gap-2 text-sm backdrop-blur-md"
+                                            className="btn btn-primary py-3 px-8 text-xs shadow-md shadow-green-100 uppercase tracking-widest inline-flex"
                                         >
                                             <Mail size={16} /> Reenviar enlace
                                         </button>
@@ -110,30 +110,49 @@ const RegistrationSuccess = () => {
                                 </div>
                             </div>
 
-                            {role === 'caregiver' && (
-                                <div className="bg-purple-50 p-6 rounded-[2rem] border border-purple-100 flex items-start gap-4">
-                                    <div className="bg-purple-600 text-white p-2 rounded-xl">
-                                        <Star size={20} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {role === 'caregiver' ? (
+                                    <div className="bg-purple-50 p-8 rounded-[16px] border border-purple-100 flex items-start gap-5">
+                                        <div className="bg-purple-600 !text-[#FAFAF7] p-3 rounded-[16px] shadow-lg shadow-purple-200">
+                                            <Star size={24} />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-brand font-bold text-gray-900 text-lg">Completa tu perfil</h4>
+                                            <p className="text-sm text-gray-600 font-secondary mt-1">Sube tus certificaciones para obtener la insignia de Verificado.</p>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="bg-orange-50 p-8 rounded-[16px] border border-orange-100 flex items-start gap-5">
+                                        <div className="bg-orange-600 !text-[#FAFAF7] p-3 rounded-[16px] shadow-lg shadow-orange-200">
+                                            <ShieldCheck size={24} />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-brand font-bold text-gray-900 text-lg">Seguridad Garantizada</h4>
+                                            <p className="text-sm text-gray-600 font-secondary mt-1">Todos nuestros cuidadores pasan por un riguroso proceso de validación.</p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="bg-[var(--secondary-color)]/5 p-8 rounded-[16px] border border-[var(--secondary-color)]/20 flex items-start gap-5">
+                                    <div className="bg-[var(--secondary-color)] !text-[#FAFAF7] p-3 rounded-[16px] shadow-lg shadow-green-200">
+                                        <ArrowRight size={24} />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-gray-900">Completa tu perfil</h4>
-                                        <p className="text-sm text-gray-600">Sube tus certificaciones para obtener la insignia de Verificado.</p>
+                                        <h4 className="font-brand font-bold text-gray-900 text-lg">¿Siguiente Paso?</h4>
+                                        <p className="text-sm text-gray-600 font-secondary mt-1">Inicia sesión y descubre todo lo que BuenCuidar tiene para ti.</p>
                                     </div>
                                 </div>
-                            )}
-                            {role === 'family' && (
-                                <div className="bg-orange-50 p-6 rounded-[2rem] border border-orange-100 flex items-start gap-4">
-                                    <div className="bg-orange-600 text-white p-2 rounded-xl">
-                                        <ShieldCheck size={20} />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-gray-900">Seguridad Garantizada</h4>
-                                        <p className="text-sm text-gray-600">Todos nuestros cuidadores pasan por un riguroso proceso de validación.</p>
-                                    </div>
-                                </div>
-                            )}
+                            </div>
                         </div>
 
+                        <div className="pt-4">
+                            <button
+                                onClick={() => navigate('/login')}
+                                className="btn btn-primary w-full md:w-auto px-16 py-5 text-lg uppercase tracking-[0.2em]"
+                            >
+                                Ir al Inicio de Sesión
+                            </button>
+                        </div>
                     </div>
                 </div>
             </main>

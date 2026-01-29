@@ -102,13 +102,13 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto pb-10">
-            <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-4xl flex flex-col animate-slide-up border border-white/20 overflow-hidden">
+            <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-4xl flex flex-col animate-slide-up border border-white/20 overflow-hidden">
                 <div className="p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <div>
                         <h3 className="text-3xl font-black text-gray-800 tracking-tight">Editar Cita</h3>
                         <p className="text-sm text-gray-500 font-medium mt-1">Personaliza el plan de cuidado para este servicio</p>
                     </div>
-                    <button onClick={onClose} className="p-3 bg-gray-100 text-gray-500 rounded-2xl hover:bg-gray-200 transition-all">
+                    <button onClick={onClose} className="p-3 bg-gray-100 text-gray-500 rounded-[16px] hover:bg-gray-200 transition-all">
                         <X size={24} />
                     </button>
                 </div>
@@ -127,7 +127,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                                     <input
                                         type="text"
                                         required
-                                        className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30"
+                                        className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30"
                                         value={formData.title}
                                         onChange={e => setFormData({ ...formData, title: e.target.value })}
                                     />
@@ -139,7 +139,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                                         <input
                                             type="date"
                                             required
-                                            className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30"
+                                            className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30"
                                             value={formData.date}
                                             onChange={e => setFormData({ ...formData, date: e.target.value })}
                                         />
@@ -150,13 +150,13 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                                             <input
                                                 type="time"
                                                 required
-                                                className="w-full px-4 py-4 rounded-2xl border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30 text-sm"
+                                                className="w-full px-4 py-4 rounded-[16px] border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30 text-sm"
                                                 value={formData.time}
                                                 onChange={e => setFormData({ ...formData, time: e.target.value })}
                                             />
                                             <input
                                                 type="time"
-                                                className="w-full px-4 py-4 rounded-2xl border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30 text-sm"
+                                                className="w-full px-4 py-4 rounded-[16px] border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30 text-sm"
                                                 value={formData.endTime || ''}
                                                 onChange={e => setFormData({ ...formData, endTime: e.target.value })}
                                             />
@@ -167,7 +167,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                                 <div>
                                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Persona a Cuidar</label>
                                     <select
-                                        className="w-full px-6 py-4 rounded-2xl border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30 appearance-none cursor-pointer"
+                                        className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30 appearance-none cursor-pointer"
                                         value={formData.patient_id || ''}
                                         onChange={e => setFormData({ ...formData, patient_id: e.target.value })}
                                     >
@@ -186,7 +186,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                         <button
                             type="submit"
                             disabled={saving || !isDirty}
-                            className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-slate-900 !text-[#FAFAF7] py-5 rounded-[16px] font-black text-lg shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {saving ? <Loader2 className="animate-spin" size={24} /> : 'Guardar Cambios'}
                         </button>
@@ -206,7 +206,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                             onChange={(services) => setFormData({ ...formData, selectedServices: services })}
                         />
 
-                        <div className="mt-6 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-3">
+                        <div className="mt-6 p-4 bg-blue-50 rounded-[16px] border border-blue-100 flex items-start gap-3">
                             <Info size={18} className="text-blue-600 mt-0.5" />
                             <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
                                 Estas selecciones actualizarán el plan de trabajo para el cuidador. Puedes seleccionar múltiples servicios.

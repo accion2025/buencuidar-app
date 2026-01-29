@@ -98,12 +98,12 @@ const ServiceSelector = ({ selectedServices = [], onChange }) => {
                                 <div
                                     key={item.id}
                                     onClick={() => handleToggle(item.id)}
-                                    className={`flex items-start gap-3 p-3 rounded-xl border-2 transition-all cursor-pointer group ${isSelected
+                                    className={`flex items-start gap-3 p-3 rounded-[16px] border-2 transition-all cursor-pointer group ${isSelected
                                         ? 'border-blue-500 bg-blue-50 shadow-md shadow-blue-100'
                                         : 'border-gray-100 hover:border-gray-200 bg-white'
                                         }`}
                                 >
-                                    <div className={`mt-0.5 rounded-full p-0.5 transition-colors ${isSelected ? 'bg-blue-600 text-white' : 'text-gray-300'}`}>
+                                    <div className={`mt-0.5 rounded-full p-0.5 transition-colors ${isSelected ? 'bg-blue-600 !text-[#FAFAF7]' : 'text-gray-300'}`}>
                                         <CheckCircle size={18} />
                                     </div>
                                     <div className="flex-1">

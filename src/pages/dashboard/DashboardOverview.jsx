@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Star, TrendingUp, Users, MessageSquare, Bell, Check, Info, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, Star, TrendingUp, Users, MessageSquare, Bell, Check, Info, AlertTriangle, CheckCircle, ArrowRight, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
@@ -10,66 +10,74 @@ import EditAppointmentModal from '../../components/dashboard/EditAppointmentModa
 const StatCard = ({ icon: Icon, title, value, colorClass, onClick }) => (
     <div
         onClick={onClick}
-        className={`bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-start gap-4 ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`}
+        className={`card !p-8 flex items-center gap-6 ${onClick ? 'cursor-pointer hover:border-[var(--secondary-color)]/40 hover:shadow-2xl transition-all hover:scale-[1.02]' : ''} relative overflow-hidden group`}
     >
-        <div className={`p-3 rounded-lg ${colorClass}`}>
-            <Icon size={24} className="text-white" />
+        <div className={`p-4 rounded-[16px] ${colorClass.includes('secondary') ? 'bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'bg-[var(--primary-color)] !text-[#FAFAF7]'} group-hover:scale-110 transition-transform shadow-lg relative z-10`}>
+            <Icon size={32} strokeWidth={2.5} />
         </div>
-        <div>
-            <p className="text-sm text-gray-500 font-medium">{title}</p>
-            <h3 className="text-2xl font-bold text-gray-800 mt-1">{value}</h3>
+        <div className="relative z-10 text-left">
+            <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-[0.2em] mb-1">{title}</p>
+            <h3 className="text-4xl font-brand font-bold text-[var(--primary-color)] tracking-tight">{value}</h3>
         </div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl group-hover:bg-[var(--secondary-color)]/10 transition-colors"></div>
     </div>
 );
 
 const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile, onRate, status }) => (
-    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg mb-3 last:mb-0 animate-fade-in">
-        <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm ${image ? '' : 'border border-blue-200'} shrink-0`}>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white border border-gray-100 rounded-[16px] mb-4 last:mb-0 hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all animate-fade-in group relative overflow-hidden">
+        <div className="flex items-center gap-5 relative z-10">
+            <div className={`w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/30 text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-xl overflow-hidden shrink-0 shadow-inner group-hover:scale-105 transition-transform border border-white`}>
                 {image ? (
-                    <img src={image} alt={name} className="w-10 h-10 rounded-full object-cover" />
+                    <img src={image} alt={name} className="w-full h-full object-cover" />
                 ) : (
                     name.charAt(0)
                 )}
             </div>
-            <div>
-                <h4 className="font-bold text-sm text-gray-800 line-clamp-1">{name}</h4>
-                <p className="text-xs text-gray-500">{role}</p>
+            <div className="text-left">
+                <h4 className="font-brand font-bold text-[var(--primary-color)] text-lg group-hover:text-[var(--secondary-color)] transition-colors tracking-tight">{name}</h4>
+                <div className="flex flex-col gap-1 mt-1">
+                    <p className="text-[10px] text-[var(--text-light)] font-black font-secondary uppercase tracking-widest">{role}</p>
+                    <div className="flex items-center gap-3 text-[var(--text-light)] mt-1">
+                        <div className="flex items-center gap-1.5">
+                            <Clock size={12} className="text-[var(--secondary-color)]" />
+                            <span className="text-xs font-bold font-brand">{time}</span>
+                        </div>
+                        <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                        <span className="text-xs font-bold font-brand uppercase opacity-80">{date.split(',')[0]}</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div className="text-right flex flex-col items-end gap-1 min-w-[100px]">
-            <p className="text-sm font-bold text-[var(--primary-color)]">{time}</p>
-            <p className="text-xs text-gray-400">{date}</p>
 
-            {/* View Profile Button - Only show if NO ACTION is required (not completable/ratable) OR if explicit view requested */}
+        <div className="mt-4 sm:mt-0 flex flex-col items-end gap-3 relative z-10">
             {onViewProfile && !onRate && !rating && (
                 <button
                     onClick={onViewProfile}
-                    className="text-[10px] font-bold text-blue-600 hover:bg-blue-50 px-2 py-0.5 rounded transition-colors mt-1"
+                    className="bg-[var(--base-bg)] text-[var(--primary-color)] px-4 py-2 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] hover:text-white transition-all border border-gray-100 shadow-sm"
                 >
                     Ver perfil
                 </button>
             )}
 
-            {/* Rating Display or Action */}
             {(status === 'completed' || status === 'paid') && (
-                <>
+                <div className="flex flex-col items-end gap-2">
                     {rating ? (
-                        <div className="flex items-center gap-1 mt-1 bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">
-                            <Star size={12} className="fill-orange-400 text-orange-400" />
-                            <span className="text-xs font-bold text-orange-600">{rating}</span>
+                        <div className="flex items-center gap-2 bg-orange-50 px-4 py-2 rounded-[16px] border border-orange-100 shadow-sm">
+                            <Star size={14} className="fill-orange-400 text-orange-400" />
+                            <span className="text-sm font-black text-orange-600">{rating}</span>
                         </div>
                     ) : (
                         <button
                             onClick={onRate || onViewProfile}
-                            className="text-[10px] font-bold text-orange-600 hover:bg-orange-50 px-2 py-0.5 rounded transition-colors mt-1 flex items-center justify-end gap-1 ml-auto border border-orange-200"
+                            className="bg-orange-50 text-orange-600 px-5 py-2.5 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-orange-100 transition-all flex items-center gap-2 border border-orange-200 shadow-md shadow-orange-100"
                         >
-                            <Star size={10} className="fill-current" /> Calificar
+                            <Star size={12} className="fill-current" /> Calificar servicio
                         </button>
                     )}
-                </>
+                </div>
             )}
         </div>
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl group-hover:bg-[var(--secondary-color)]/5 transition-colors"></div>
     </div>
 );
 
@@ -472,18 +480,18 @@ const DashboardOverview = () => {
     );
 
     return (
-        <div className="max-w-7xl mx-auto animate-fade-in relative">
+        <div className="max-w-7xl mx-auto animate-fade-in relative pb-12">
             <AppointmentsListModal
                 isOpen={showListModal}
                 onClose={() => setShowListModal(false)}
                 appointments={upcomingAppointmentsList}
-                onEdit={handleEditClick} // Pass edit handler
-                onDelete={handleDeleteAppointment} // Pass delete handler
+                onEdit={handleEditClick}
+                onDelete={handleDeleteAppointment}
             />
 
             <EditAppointmentModal
                 isOpen={!!editingAppointment}
-                onClose={() => { setEditingAppointment(null); setShowListModal(true); }} // Re-open list on cancel?
+                onClose={() => { setEditingAppointment(null); setShowListModal(true); }}
                 appointment={editingAppointment}
                 onSave={handleSaveChanges}
                 patients={patients}
@@ -506,75 +514,145 @@ const DashboardOverview = () => {
                 appointment={ratingAppointment}
                 onSuccess={() => {
                     alert("¡Gracias por tu calificación!");
-                    fetchAppointments(); // Refresh to potentially hide the button or update stats
+                    fetchAppointments();
                 }}
             />
 
 
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-800">Panel de Control</h1>
-                <p className="text-gray-500 text-lg">¡Hola de nuevo, <span className="text-[var(--primary-color)] font-bold">{firstName}</span>! ✨ Aquí tienes el resumen de hoy.</p>
+            <div className="bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[120px] opacity-20"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[100px] opacity-10"></div>
+
+                <div className="relative z-10">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                        <div>
+                            <span className="bg-white/10 text-[var(--accent-color)] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block border border-white/10 backdrop-blur-md">
+                                Panel de Control
+                            </span>
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-brand font-bold tracking-tight mb-2 text-left !text-[#FAFAF7] break-words drop-shadow-sm">
+                                ¡Hola de nuevo, {profile?.full_name?.split(' ')[0] || 'Usuario'}!
+                            </h1>
+                            <p className="!text-[#FAFAF7]/80 text-lg font-secondary max-w-xl text-left">
+                                Aquí tienes el resumen de hoy y el estado de tus servicios de cuidado.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <StatCard
                     icon={Users}
                     title="Cuidadores Disponibles"
                     value={caregiversCount.toString()}
-                    colorClass="bg-blue-500"
+                    colorClass="secondary"
                     onClick={() => navigate('/dashboard/caregivers')}
                 />
                 <StatCard
                     icon={Calendar}
                     title="Citas Programadas"
                     value={upcomingAppointmentsList.length.toString()}
-                    colorClass="bg-[var(--secondary-color)]"
+                    colorClass="primary"
                     onClick={() => setShowListModal(true)}
                 />
-                {/* Stats shifted to PULSO (Premium) - Keeping grid for visual weight if needed, or collapse */}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                 {/* Left Column Wrapper */}
-                <div className="lg:col-span-2 space-y-6 text-left">
-                    {/* Upcoming Appointments (Confirmed Only) */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="font-bold text-lg text-gray-800">Próximas Citas</h3>
-                            <button onClick={() => setShowListModal(true)} className="text-[var(--primary-light)] text-sm font-medium hover:underline">Ver Todo</button>
+                <div className="lg:col-span-2 space-y-10 text-left">
+                    {/* In Progress Section (If any) */}
+                    {inProgressAppointments.length > 0 && (
+                        <div className="card !p-8 border-none bg-gradient-to-r from-emerald-50 to-white shadow-xl">
+                            <div className="flex justify-between items-center mb-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="relative flex h-3 w-3">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--secondary-color)] opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--secondary-color)]"></span>
+                                    </div>
+                                    <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Servicio en Curso</h3>
+                                </div>
+                                <button
+                                    onClick={() => navigate('/dashboard/pulso')}
+                                    className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline flex items-center gap-2"
+                                >
+                                    Ver en PULSO <Activity size={14} />
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                {inProgressAppointments.map(app => (
+                                    <AppointmentCard
+                                        key={app.id}
+                                        name={app.caregiver?.full_name || 'Cuidador Asignado'}
+                                        role={app.title}
+                                        time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
+                                        date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                        image={app.caregiver?.avatar_url}
+                                        status={app.status}
+                                        onViewProfile={() => setSelectedCaregiver(app.caregiver)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Upcoming Appointments */}
+                    <div className="card !p-10 border-none shadow-2xl">
+                        <div className="flex justify-between items-center mb-10">
+                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
+                                <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
+                                    <Calendar size={20} />
+                                </span>
+                                Próximas Citas
+                            </h3>
+                            <button onClick={() => setShowListModal(true)} className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] hover:underline bg-[var(--base-bg)] px-4 py-2 rounded-[16px] transition-all">Ver Todo</button>
                         </div>
 
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                             {confirmedAppointments.length > 0 ? (
                                 confirmedAppointments.map(app => (
                                     <AppointmentCard
                                         key={app.id}
                                         name={app.caregiver?.full_name || 'Cuidador Asignado'}
                                         role={app.title}
-                                        time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`} // Show end time
+                                        time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
                                         date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                        image={app.caregiver?.avatar_url} // If available
-                                        status={app.status} // Pass status
+                                        image={app.caregiver?.avatar_url}
+                                        status={app.status}
                                         onViewProfile={() => setSelectedCaregiver(app.caregiver)}
                                     />
                                 ))
                             ) : (
-                                <p className="text-gray-400 italic text-center py-4">No tienes visitas confirmadas próximamente.</p>
+                                <div className="text-center py-16 bg-gray-50/50 rounded-[16px] border border-dashed border-gray-200">
+                                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                        <Calendar size={32} className="text-gray-300" />
+                                    </div>
+                                    <p className="text-[var(--text-light)] italic font-secondary text-lg">No tienes visitas confirmadas próximamente.</p>
+                                    <button
+                                        onClick={() => navigate('/services')}
+                                        className="mt-6 text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline"
+                                    >
+                                        Pedir mi primer servicio
+                                    </button>
+                                </div>
                             )}
 
                         </div>
                     </div>
 
-                    {/* Completed Appointments (To Rate) */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <h3 className="font-bold text-lg text-gray-800 mb-6 flex items-center gap-2">
-                            <Star size={18} className="text-orange-500" />
-                            Historial de Citas
-                        </h3>
-                        <div className="space-y-4">
+                    {/* Completed Appointments */}
+                    <div className="card !p-10 border-none shadow-2xl">
+                        <div className="flex items-center gap-3 mb-10">
+                            <div className="p-2.5 bg-orange-50 text-orange-500 rounded-[16px]">
+                                <Star size={20} fill="currentColor" />
+                            </div>
+                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Historial de Citas</h3>
+                        </div>
+                        <div className="grid gap-6">
                             {historyAppointments.length > 0 ? (
                                 historyAppointments
+                                    .slice(0, 3)
                                     .map(app => (
                                         <AppointmentCard
                                             key={app.id}
@@ -583,14 +661,14 @@ const DashboardOverview = () => {
                                             time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
                                             date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                             image={app.caregiver?.avatar_url}
-                                            status={app.status} // Pass status for rating logic
-                                            rating={app.reviews?.[0]?.rating} // Pass existing rating if any
-                                            onViewProfile={() => setSelectedCaregiver(app.caregiver)} // View Full Profile
-                                            onRate={() => setRatingAppointment(app)} // Trigger Rating
+                                            status={app.status}
+                                            rating={app.reviews?.[0]?.rating}
+                                            onViewProfile={() => setSelectedCaregiver(app.caregiver)}
+                                            onRate={() => setRatingAppointment(app)}
                                         />
                                     ))
                             ) : (
-                                <p className="text-gray-400 italic text-center py-4">No tienes citas completadas registradas.</p>
+                                <p className="text-[var(--text-light)] italic text-center py-8 font-secondary text-lg">No tienes citas completadas registradas.</p>
                             )}
                         </div>
                     </div>
@@ -598,12 +676,18 @@ const DashboardOverview = () => {
 
 
                 {/* Right Column */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-10">
                     {/* Caregiver Requests Panel */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <h3 className="font-bold text-lg text-gray-800 mb-4">Solicitudes de Cuidadores</h3>
+                    <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                        <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
+                            <span className="p-2.5 bg-emerald-50 text-[var(--secondary-color)] rounded-[16px]">
+                                <Activity size={20} />
+                            </span>
+                            Postulaciones
+                        </h3>
 
-                        <div className="space-y-4">
+                        <div className="space-y-6 relative z-10">
                             {appointments.flatMap(a =>
                                 (a.job_applications || [])
                                     .filter(app => app.status === 'pending')
@@ -614,148 +698,151 @@ const DashboardOverview = () => {
                                         .filter(app => app.status === 'pending')
                                         .map(app => ({ ...app, appointment: a }))
                                 ).map((req) => (
-                                    <div key={req.id} className="bg-blue-50 border border-blue-100 rounded-lg p-4 animate-fade-in">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-10 h-10 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold overflow-hidden">
+                                    <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <div className="w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/20 shadow-inner text-[var(--primary-color)] flex items-center justify-center font-brand font-bold overflow-hidden border border-white">
                                                 {req.caregiver?.avatar_url ? (
                                                     <img src={req.caregiver.avatar_url} alt="" className="w-full h-full object-cover" />
                                                 ) : (
                                                     req.caregiver?.full_name?.charAt(0) || '?'
                                                 )}
                                             </div>
-                                            <div>
-                                                <p className="font-bold text-gray-800">{req.caregiver?.full_name || 'Candidato'}</p>
-                                                <p className="text-xs text-gray-500 font-medium">Se postula para cuidar a tu familiar</p>
+                                            <div className="text-left">
+                                                <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Candidato'}</p>
+                                                <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em] mt-0.5">Nueva Solicitud</p>
                                             </div>
                                         </div>
 
-                                        <div className="text-sm text-gray-600 mb-3 space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <Calendar size={14} className="text-gray-400" />
-                                                <span className="font-semibold">{req.appointment.date}</span> • {req.appointment.time?.substring(0, 5)} {req.appointment.end_time ? `- ${req.appointment.end_time.substring(0, 5)}` : ''}
+                                        <div className="text-sm text-[var(--text-main)] mb-6 space-y-3 font-secondary bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-50">
+                                            <div className="flex items-center gap-3">
+                                                <Calendar size={14} className="text-[var(--secondary-color)]" />
+                                                <span className="font-bold text-[var(--primary-color)]">{req.appointment.date}</span>
                                             </div>
-                                            <p className="text-xs italic text-gray-500">"{req.appointment.title}"</p>
+                                            <p className="text-xs italic text-[var(--text-light)] leading-relaxed">"{req.appointment.title}"</p>
                                         </div>
 
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-3">
                                             <button
                                                 onClick={() => handleMessage(req.caregiver)}
-                                                className="p-2 rounded-lg border border-blue-200 text-blue-600 hover:bg-white transition-colors"
+                                                className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--base-bg)] transition-all shadow-sm group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100"
                                                 title="Enviar mensaje"
                                             >
                                                 <MessageSquare size={18} />
                                             </button>
                                             <button
-                                                onClick={() => setSelectedCaregiver(req.caregiver)}
-                                                className="px-3 bg-blue-100 text-blue-700 text-xs font-bold py-2 rounded-lg hover:bg-blue-200 transition-colors"
-                                            >
-                                                Ver perfil
-                                            </button>
-                                            <button
                                                 onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, true)}
-                                                className="flex-1 bg-blue-600 text-white text-xs font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                                className="flex-1 bg-[var(--secondary-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-100 hover:bg-emerald-600 transition-all border-none"
                                             >
                                                 Aprobar
                                             </button>
                                             <button
                                                 onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, false)}
-                                                className="flex-1 bg-white border border-gray-300 text-gray-600 text-xs font-bold py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                                                className="px-4 bg-white border border-gray-100 text-gray-400 rounded-[16px] hover:text-[var(--error-color)] hover:bg-red-50 hover:border-red-100 transition-all"
+                                                title="Rechazar"
                                             >
-                                                Rechazar
+                                                <Check size={20} className="rotate-45" />
                                             </button>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-gray-400 text-sm italic text-center py-4">No tienes solicitudes pendientes.</p>
+                                <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                    <Activity size={32} className="mx-auto text-gray-300 mb-4 opacity-50" />
+                                    <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes solicitudes pendientes.</p>
+                                </div>
                             )}
                         </div>
                     </div>
 
                     {/* Family Members Card */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-bold text-lg text-gray-800">Mis Familiares</h3>
-                            <button onClick={() => navigate('/dashboard/profile')} className="text-[var(--primary-color)] text-sm font-medium hover:underline">Gestionar</button>
+                    <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                        <div className="flex justify-between items-center mb-10 relative z-10">
+                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
+                                <span className="p-2.5 bg-purple-50 text-purple-600 rounded-[16px]">
+                                    <Users size={20} />
+                                </span>
+                                Familiares
+                            </h3>
+                            <button onClick={() => navigate('/dashboard/profile')} className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-widest hover:underline bg-[var(--base-bg)] px-3 py-1.5 rounded-[16px] transition-all">Gestionar</button>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-4 relative z-10">
                             {patients.length > 0 ? (
                                 patients.map((patient) => (
-                                    <div key={patient.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                        <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                    <div key={patient.id} className="flex items-center gap-5 p-5 bg-[var(--base-bg)]/50 rounded-[24px] border border-transparent hover:bg-white hover:border-[var(--secondary-color)]/20 hover:shadow-xl transition-all group">
+                                        <div className="w-14 h-14 rounded-[16px] bg-white shadow-md text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-xl border border-gray-50 group-hover:bg-[var(--secondary-color)] group-hover:text-white transition-all transform group-hover:scale-105">
                                             {(patient.full_name || patient.name || '?').charAt(0)}
                                         </div>
-                                        <div>
-                                            <p className="font-bold text-gray-800 text-sm">{patient.full_name || patient.name}</p>
-                                            <p className="text-xs text-gray-500">{patient.age} años</p>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-gray-400 text-sm italic text-center py-2">No tienes familiares registrados.</p>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Notifications Panel */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <h3 className="font-bold text-lg text-gray-800 mb-6">Notificaciones</h3>
-
-                        <div className="space-y-6">
-                            {notifications.length > 0 ? (
-                                notifications.map((notif) => (
-                                    <div key={notif.id} className={`flex gap-3 items-start animate-fade-in ${notif.is_read ? 'opacity-60' : ''}`}>
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${notif.type === 'alert' || notif.type === 'warning' ? 'bg-red-100' :
-                                            notif.type === 'success' ? 'bg-emerald-100' : 'bg-blue-100'
-                                            }`}>
-                                            {notif.type === 'alert' || notif.type === 'warning' ? (
-                                                <AlertTriangle size={14} className="text-red-600" />
-                                            ) : notif.type === 'success' ? (
-                                                <CheckCircle size={14} className="text-emerald-600" />
-                                            ) : (
-                                                <Info size={14} className="text-blue-600" />
-                                            )}
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex justify-between items-start">
-                                                <p className={`text-sm ${notif.is_read ? 'font-medium text-gray-600' : 'font-bold text-gray-800'}`}>
-                                                    {notif.title}
-                                                </p>
-                                                {!notif.is_read && (
-                                                    <button onClick={() => markAsRead(notif.id)} className="text-blue-500 hover:text-blue-700 p-1" title="Marcar leída">
-                                                        <Check size={12} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                            <p className="text-xs text-gray-500 mt-0.5 leading-snug">
-                                                {notif.message}
-                                            </p>
-                                            <p className="text-[10px] text-gray-400 mt-1">
-                                                {timeAgo(notif.created_at)}
-                                            </p>
+                                        <div className="text-left">
+                                            <p className="font-brand font-bold text-[var(--primary-color)] text-lg tracking-tight">{patient.full_name || patient.name}</p>
+                                            <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-[0.2em] mt-0.5">{patient.age} años</p>
                                         </div>
                                     </div>
                                 ))
                             ) : (
                                 <div className="text-center py-6">
-                                    <p className="text-gray-400 text-sm">No tienes nuevas notificaciones.</p>
+                                    <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes familiares registrados.</p>
                                 </div>
                             )}
+                        </div>
+                    </div>
 
-                            {/* Placeholder for "No New Messages" */}
-                            <div className="flex gap-3 items-start opacity-50">
-                                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                                    <MessageSquare size={14} className="text-gray-400" />
+                    {/* Notifications Panel */}
+                    <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                        <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
+                            <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
+                                <Bell size={20} />
+                            </span>
+                            Mensajes
+                        </h3>
+
+                        <div className="space-y-8 relative z-10">
+                            {notifications.length > 0 ? (
+                                notifications.map((notif) => (
+                                    <div key={notif.id} className={`flex gap-5 items-start animate-fade-in transition-all ${notif.is_read ? 'opacity-40 grayscale-[0.5]' : 'hover:scale-[1.02]'}`}>
+                                        <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center flex-shrink-0 shadow-lg border-2 ${notif.type === 'alert' || notif.type === 'warning' ? 'bg-red-50 text-[var(--error-color)] border-red-100' :
+                                            notif.type === 'success' ? 'bg-emerald-50 text-[var(--secondary-color)] border-emerald-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+                                            }`}>
+                                            {notif.type === 'alert' || notif.type === 'warning' ? (
+                                                <AlertTriangle size={22} />
+                                            ) : notif.type === 'success' ? (
+                                                <CheckCircle size={22} />
+                                            ) : (
+                                                <Info size={22} />
+                                            )}
+                                        </div>
+                                        <div className="flex-1 text-left min-w-0">
+                                            <div className="flex justify-between items-start gap-4">
+                                                <p className={`text-base font-brand leading-tight truncate ${notif.is_read ? 'font-medium text-[var(--text-main)]' : 'font-bold text-[var(--primary-color)]'}`}>
+                                                    {notif.title}
+                                                </p>
+                                                {!notif.is_read && (
+                                                    <button onClick={() => markAsRead(notif.id)} className="text-[var(--secondary-color)] hover:bg-[var(--secondary-color)]/10 p-2 rounded-[16px] transition-colors bg-[var(--base-bg)] border border-gray-100">
+                                                        <Check size={16} strokeWidth={4} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <p className="text-sm text-[var(--text-light)] mt-2 leading-relaxed font-secondary line-clamp-2">
+                                                {notif.message}
+                                            </p>
+                                            <div className="flex items-center gap-2 mt-3 text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em]">
+                                                <Clock size={12} />
+                                                {timeAgo(notif.created_at)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                    <p className="text-[var(--text-light)] text-sm font-secondary">No tienes nuevas notificaciones.</p>
                                 </div>
-                                <div>
-                                    <p className="text-sm text-gray-600">No tienes mensajes nuevos.</p>
-                                </div>
-                            </div>
+                            )}
                         </div>
 
-                        <button className="w-full mt-6 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
-                            Ver todas
+                        <button className="w-full mt-12 py-4 bg-[var(--base-bg)] border border-gray-100 rounded-[16px] text-[10px] font-black text-[var(--primary-color)] uppercase tracking-[0.25em] hover:bg-white hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all relative z-10">
+                            Ver historial completo
                         </button>
                     </div>
                 </div>

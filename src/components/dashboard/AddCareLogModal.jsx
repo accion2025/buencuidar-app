@@ -122,7 +122,7 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
-            <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 relative overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="bg-white rounded-[16px] w-full max-w-md shadow-2xl p-6 relative overflow-hidden flex flex-col max-h-[80vh]">
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-100 rounded-full transition-colors z-10"
@@ -131,7 +131,7 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                 </button>
 
                 <div className="flex items-center gap-3 mb-2 relative z-10 flex-shrink-0">
-                    <div className="bg-blue-100 p-3 rounded-xl text-blue-600">
+                    <div className="bg-blue-100 p-3 rounded-[16px] text-blue-600">
                         <ClipboardList size={24} />
                     </div>
                     <div>
@@ -153,14 +153,14 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                                         <div
                                             key={idx}
                                             onClick={() => toggleItem(item)}
-                                            className={`flex items-start gap-3 p-4 rounded-xl border transition-all cursor-pointer ${checked
+                                            className={`flex items-start gap-3 p-4 rounded-[16px] border transition-all cursor-pointer ${checked
                                                 ? 'bg-green-50 border-green-200 shadow-sm'
                                                 : 'bg-white border-gray-100 hover:border-blue-200 hover:shadow-md'
                                                 }`}
                                         >
                                             <div className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${checked ? 'bg-green-500 border-green-500' : 'border-gray-300'
                                                 }`}>
-                                                {checked && <Check size={12} className="text-white" />}
+                                                {checked && <Check size={12} className="!text-[#FAFAF7]" />}
                                             </div>
                                             <span className={`text-sm font-medium leading-tight ${checked ? 'text-green-800 line-through opacity-70' : 'text-gray-700'}`}>
                                                 {item}
@@ -171,7 +171,7 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                             )}
                         </div>
                     ) : (
-                        <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        <div className="text-center py-8 bg-gray-50 rounded-[16px] border border-dashed border-gray-200">
                             <ListTodo size={32} className="mx-auto text-gray-300 mb-2" />
                             <p className="text-sm text-gray-500 font-medium">No hay tareas específicas configuradas.</p>
                             <p className="text-xs text-gray-400">Todo el registro será manual.</p>
@@ -182,14 +182,14 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                 <div className="pt-4 border-t border-gray-100 flex gap-3 flex-shrink-0">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white border border-gray-200 text-gray-500 font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors"
+                        className="flex-1 bg-white border border-gray-200 text-gray-500 font-bold py-3 rounded-[16px] hover:bg-gray-50 transition-colors"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex-[2] bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
+                        className="flex-[2] bg-blue-600 !text-[#FAFAF7] font-bold py-3 rounded-[16px] hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
                     >
                         {loading ? <Loader2 size={20} className="animate-spin" /> : 'Guardar y Cerrar'}
                     </button>
