@@ -50,7 +50,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     if (!isOpen || !caregiver) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center pt-5 px-4 pb-4 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative flex flex-col border border-white/20">
 
                 {/* Scrollable Content */}

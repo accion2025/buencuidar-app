@@ -47,7 +47,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-5 px-4 pb-4 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-xl w-full max-w-md overflow-hidden animate-slide-up">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                     <h3 className="font-bold text-gray-800 flex items-center gap-2">

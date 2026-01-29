@@ -121,7 +121,7 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm pt-5 px-4 pb-4 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] w-full max-w-md shadow-2xl p-6 relative overflow-hidden flex flex-col max-h-[80vh]">
                 <button
                     onClick={onClose}
