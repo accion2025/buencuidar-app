@@ -9,26 +9,27 @@ const InstallPrompt = ({ className }) => {
     useEffect(() => {
         // 1. Check if already installed (Standalone mode)
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-        if (isStandalone) return;
+
+        // ALWAYS show the prompt if not currently installed
+        // This ensures the button is visible even if the browser event is delayed or suppressed
+        if (!isStandalone) {
+            setShowPrompt(true);
+        }
 
         // 2. Detect iOS
         const userAgent = window.navigator.userAgent.toLowerCase();
         const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
         setIsIOS(isIosDevice);
 
-        if (isIosDevice) {
-            // On iOS, we always show the prompt because there's no event to wait for
-            setShowPrompt(true);
-        } else {
-            // On Android/Desktop, we wait for the browser event
-            const handler = (e) => {
-                e.preventDefault();
-                setDeferredPrompt(e);
-                setShowPrompt(true);
-            };
-            window.addEventListener('beforeinstallprompt', handler);
-            return () => window.removeEventListener('beforeinstallprompt', handler);
-        }
+        // 3. Listen for the native Android install event
+        // Even if we showed the prompt above, we need this event to trigger the native dialog
+        const handler = (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+            console.log("Native install event captured");
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
     }, []);
 
     const handleInstallClick = async () => {
