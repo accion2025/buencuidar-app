@@ -1,10 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/layout/Navbar';
 import InstallPrompt from '../components/InstallPrompt';
 
 const Home = () => {
     const navigate = useNavigate();
+    const { user, profile, loading } = useAuth();
+    const dashboardPath = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
+
+    if (loading) {
+        return <div className="min-h-screen flex items-center justify-center bg-[var(--base-bg)] text-[var(--primary-color)]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2FAE8F]"></div>
+        </div>;
+    }
 
     return (
         <div className="w-full bg-[var(--base-bg)]">
@@ -154,10 +163,10 @@ const Home = () => {
                                     Únete a la comunidad BuenCuidar
                                 </h2>
                                 <button
-                                    onClick={() => navigate('/register')}
+                                    onClick={() => navigate(user ? dashboardPath : '/register')}
                                     className="btn btn-primary text-xl px-12 py-6 rounded-2xl w-full md:w-auto hover:scale-105 transition-transform"
                                 >
-                                    Comenzar Ahora
+                                    {user ? 'Ir a Mi Panel' : 'Comenzar Ahora'}
                                 </button>
                             </div>
                             <div className="hidden md:block"></div>
