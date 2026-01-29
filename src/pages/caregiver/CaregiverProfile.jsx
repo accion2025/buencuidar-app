@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Star, Edit2, BookOpen, Award, Check, X, Loader2, Camera, Phone, Briefcase, User, Plus, ShieldCheck, CreditCard } from 'lucide-react';
+import { MapPin, Star, Edit2, BookOpen, Award, Check, X, Loader2, Camera, Phone, Briefcase, User, Plus, ShieldCheck, CreditCard, Clock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import VerificationModal from '../../components/dashboard/VerificationModal';
@@ -31,6 +31,19 @@ const CaregiverProfile = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [showCropper, setShowCropper] = useState(false);
     const [newCert, setNewCert] = useState({ title: '', org: '', year: '' });
+    const [documents, setDocuments] = useState([]);
+
+    useEffect(() => {
+        if (user?.id) fetchDocuments();
+    }, [user?.id]);
+
+    const fetchDocuments = async () => {
+        const { data } = await supabase
+            .from('caregiver_documents')
+            .select('document_type, status')
+            .eq('caregiver_id', user.id);
+        if (data) setDocuments(data);
+    };
 
     if (!profile) return null;
 
@@ -144,7 +157,10 @@ const CaregiverProfile = () => {
                 isOpen={showVerificationModal}
                 onClose={() => setShowVerificationModal(false)}
                 caregiverId={user.id}
-                onComplete={refreshProfile}
+                onComplete={() => {
+                    refreshProfile();
+                    fetchDocuments();
+                }}
             />
             {showCropper && selectedImage && (
                 <ImageCropper
@@ -258,7 +274,7 @@ const CaregiverProfile = () => {
                 </div>
             </div>
 
-            <div className="grid lg:grid-cols-[1fr_380px] gap-10">
+            <div className="grid lg:grid-cols-1 xl:grid-cols-[1fr_380px] gap-10">
                 <div className="space-y-10 text-left">
                     <div className="bg-white rounded-[16px] p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
@@ -375,41 +391,34 @@ const CaregiverProfile = () => {
                         <div className="space-y-6 relative z-10">
                             <CheckRow
                                 label="Identidad Validada"
-                                active={profile.verification_status === 'verified'}
-                                status={profile.verification_status}
+                                docData={documents.find(d => d.document_type === 'id_card')}
                             />
                             <CheckRow
                                 label="Antecedentes Penales"
-                                active={profile.verification_status === 'verified'}
-                                status={profile.verification_status}
+                                docData={documents.find(d => d.document_type === 'criminal_record')}
                             />
                             <CheckRow
-                                label="Referencias Verificadas"
-                                active={profile.verification_status === 'verified'}
-                                status={profile.verification_status}
+                                label="Licencia / Certificación"
+                                docData={documents.find(d => d.document_type === 'professional_license')}
                             />
                             <CheckRow
-                                label="Pruebas Psicométricas"
-                                active={profile.verification_status === 'verified'}
-                                status={profile.verification_status}
+                                label="Evaluación de trato humano"
+                                docData={documents.find(d => d.document_type === 'human_evaluation')}
                             />
                         </div>
                         <div className="mt-10 p-4 bg-white/5 rounded-[16px] border border-white/5 text-[10px] font-secondary !text-[#FAFAF7]/50 leading-relaxed italic">
-                            {profile.verification_status === 'pending' ?
-                                'Sube tus documentos para iniciar el proceso de verificación.' :
-                                profile.verification_status === 'in_review' ?
-                                    'Tus documentos están siendo revisados por nuestro equipo.' :
-                                    'Tu perfil cuenta con la máxima distinción de seguridad BuenCuidar.'
+                            {documents.length < 4 ?
+                                'Sube tus documentos faltantes para completar la verificación.' :
+                                'Tus documentos están siendo procesados por nuestro equipo.'
                             }
                         </div>
-                        {profile.verification_status === 'pending' && (
-                            <button
-                                onClick={() => setShowVerificationModal(true)}
-                                className="w-full mt-6 btn btn-secondary !text-[10px] font-black uppercase tracking-widest py-4"
-                            >
-                                Subir Documentación
-                            </button>
-                        )}
+
+                        <button
+                            onClick={() => setShowVerificationModal(true)}
+                            className="w-full mt-6 btn btn-secondary !text-[10px] font-black uppercase tracking-widest py-4"
+                        >
+                            {documents.length > 0 ? 'Gestionar Documentación' : 'Subir Documentación'}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -692,18 +701,23 @@ const CaregiverProfile = () => {
     );
 };
 
-const CheckRow = ({ label, active, status }) => (
-    <div className="flex items-center justify-between text-sm py-2 border-b border-white/5 last:border-0">
-        <span className="!text-[#FAFAF7] font-secondary font-medium uppercase tracking-widest text-[10px]">{label}</span>
-        <div className={`flex items-center gap-3 font-black ${active ? 'text-[var(--secondary-color)]' : '!text-[#FAFAF7]/40'}`}>
-            <span className="text-[9px] uppercase tracking-widest">
-                {active ? 'Completado' : status === 'in_review' ? 'En Revisión' : 'Pendiente'}
-            </span>
-            <div className={`w-6 h-6 rounded-[16px] border-2 flex items-center justify-center transition-all ${active ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)]/20 shadow-lg shadow-green-500/20' : 'border-white/10'}`}>
-                {active ? <Check size={12} strokeWidth={4} /> : status === 'in_review' ? <Loader2 size={12} className="animate-spin" /> : null}
+const CheckRow = ({ label, docData }) => {
+    const status = docData?.status || 'missing';
+    const active = status === 'verified';
+
+    return (
+        <div className="flex items-center justify-between text-sm py-2 border-b border-white/5 last:border-0">
+            <span className="!text-[#FAFAF7] font-secondary font-medium uppercase tracking-widest text-[10px]">{label}</span>
+            <div className={`flex items-center gap-3 font-black ${active ? 'text-[var(--secondary-color)]' : '!text-[#FAFAF7]/40'}`}>
+                <span className="text-[9px] uppercase tracking-widest">
+                    {active ? 'Completado' : status === 'in_review' ? 'En Revisión' : status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                </span>
+                <div className={`w-6 h-6 rounded-[16px] border-2 flex items-center justify-center transition-all ${active ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)]/20 shadow-lg shadow-green-500/20' : 'border-white/10'}`}>
+                    {active ? <Check size={12} strokeWidth={4} /> : status === 'in_review' ? <Clock size={12} className="text-orange-300" /> : status === 'rejected' ? <X size={12} className="text-red-400" /> : null}
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 export default CaregiverProfile;

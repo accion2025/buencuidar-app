@@ -6,7 +6,7 @@ const DOCUMENT_TYPES = [
     { id: 'id_card', label: 'Identificación Oficial (INE/Pasaporte)', icon: FileText, description: 'Sube una foto clara de ambos lados de tu identificación.' },
     { id: 'criminal_record', label: 'Antecedentes Penales', icon: ShieldCheck, description: 'Certificado de no antecedentes penales con vigencia menor a 3 meses.' },
     { id: 'professional_license', label: 'Cédula o Certificación', icon: Check, description: 'Título o cédula profesional que avale tus conocimientos.' },
-    { id: 'address_proof', label: 'Comprobante de Domicilio', icon: Upload, description: 'Recibo de luz, agua o teléfono menor a 3 meses.' }
+    { id: 'human_evaluation', label: 'Evaluación de trato humano', icon: ShieldCheck, description: 'Certificado de evaluación de confianza y trato al paciente.' }
 ];
 
 const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
@@ -26,8 +26,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
         try {
             const fileExt = file.name.split('.').pop();
-            const fileName = `${caregiverId}-${docType}-${Math.random()}.${fileExt}`;
-            const filePath = `verification/${fileName}`;
+            const fileName = `${docType}-${Date.now()}.${fileExt}`;
+            const filePath = `${caregiverId}/${fileName}`;
 
             // Upload to storage
             const { error: uploadError } = await supabase.storage
@@ -109,8 +109,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                         </div>
                                     </div>
                                     <label className={`shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                        : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
                                         }`}>
                                         {uploading === doc.id ? (
                                             <>
