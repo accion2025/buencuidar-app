@@ -184,7 +184,7 @@ const Search = () => {
                                 className="btn btn-primary w-full md:w-auto px-8 flex items-center justify-center gap-2"
                             >
                                 <SearchIcon size={18} />
-                                Buscar
+                                <span>Buscar</span>
                             </button>
                         </div>
                     </div>
@@ -269,7 +269,7 @@ const Search = () => {
                     {/* Results Grid */}
                     <div className="w-full lg:w-3/4">
                         <div className="mb-4 flex justify-between items-center">
-                            <span className="text-gray-600">{caregivers.length} cuidadores encontrados</span>
+                            <span className="text-gray-600"><span>{caregivers.length}</span> cuidadores encontrados</span>
                             <span className="text-sm font-bold text-[var(--primary-color)] bg-[var(--primary-light)]/10 px-4 py-1.5 rounded-full border border-[var(--primary-light)]/20 shadow-sm flex items-center gap-2 animate-fade-in">
                                 <Star size={14} className="fill-[var(--primary-color)]" />
                                 Ordenados por Mejor Calificación
@@ -300,7 +300,7 @@ const Search = () => {
                                                     <div className="flex items-center mt-1">
                                                         <Star size={14} className={`${caregiver.reviews > 0 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
                                                         <span className="text-sm font-bold text-gray-700 ml-1">{caregiver.rating}</span>
-                                                        <span className="text-xs text-gray-400 ml-1">({caregiver.reviews} reseñas)</span>
+                                                        <span className="text-xs text-gray-400 ml-1"><span>({caregiver.reviews}</span> <span>reseñas)</span></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -326,7 +326,7 @@ const Search = () => {
                                         <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-between">
                                             <div>
                                                 <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest leading-none mb-1">Tarifa</p>
-                                                <p className="text-xl font-brand font-bold text-[var(--primary-color)]">${caregiver.price}<span className="text-sm font-normal text-gray-500 ml-1">/hr</span></p>
+                                                <p className="text-xl font-brand font-bold text-[var(--primary-color)]"><span>${caregiver.price}</span><span className="text-sm font-normal text-gray-500 ml-1">/hr</span></p>
                                             </div>
                                             <button
                                                 onClick={() => setSelectedCaregiver(caregiver.raw)}
