@@ -392,7 +392,7 @@ const ClientProfile = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-8 flex gap-3 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 relative z-10">
+                                        <div className="mt-8 flex gap-3 opacity-100 transition-all relative z-10">
                                             <button
                                                 onClick={() => startEditPatient(patient)}
                                                 className="flex-1 bg-[var(--base-bg)] text-[var(--primary-color)] py-3 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] hover:text-white transition-all flex items-center justify-center gap-2 border border-gray-50 shadow-sm"
