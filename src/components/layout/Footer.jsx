@@ -4,7 +4,7 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react
 
 const Footer = () => {
     return (
-        <footer className="bg-[var(--primary-color)] !text-[#FAFAF7] pt-[10px] pb-8">
+        <footer className="bg-[var(--primary-color)] !text-[#FAFAF7] pt-[10px] pb-[52px]">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col items-center text-center gap-[10px] mb-8 w-full">
                     {/* Socials */}
