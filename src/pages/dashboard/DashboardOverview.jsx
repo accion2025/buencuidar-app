@@ -477,6 +477,14 @@ const DashboardOverview = () => {
             a.status === 'paid' ||
             (a.status === 'confirmed' && a.date < todayLocal)
         )
+        .sort((a, b) => {
+            // Priority: Completed/Paid > Cancelled
+            const scoreA = (a.status === 'completed' || a.status === 'paid') ? 1 : 0;
+            const scoreB = (b.status === 'completed' || b.status === 'paid') ? 1 : 0;
+            if (scoreA !== scoreB) return scoreB - scoreA; // High score first
+            // Secondary sort: Date descending (Newest first)
+            return new Date(b.date) - new Date(a.date);
+        });
     // Filter for "Citas Programadas" (Modal & Stat Card)
     const upcomingAppointmentsList = appointments.filter(a =>
         a.status !== 'completed' &&
