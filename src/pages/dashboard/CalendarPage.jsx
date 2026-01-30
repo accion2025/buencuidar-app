@@ -384,7 +384,7 @@ const CalendarPage = () => {
                 </div>
             </div>
 
-            <div className={`w-80 border-l border-gray-200 bg-gray-50 p-6 flex flex-col transition-all duration-300 ${selectedDate ? 'translate-x-0' : 'translate-x-full hidden'}`}>
+            <div className={`w-80 border-l border-gray-200 bg-gray-50 p-6 flex flex-col transition-all duration-300 absolute top-0 right-0 h-full z-20 shadow-2xl lg:static lg:h-auto lg:shadow-none ${selectedDate ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="font-bold text-lg text-gray-800">Detalles del Día</h3>
                     <button onClick={() => setSelectedDate(null)} className="text-gray-400 hover:text-gray-600">×</button>
@@ -419,7 +419,7 @@ const CalendarPage = () => {
             </div>
 
             {showModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start justify-center pt-24 z-[100] px-4 overflow-y-auto pb-10">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] px-4 overflow-y-auto p-4">
                     <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-4xl flex flex-col animate-slide-up border border-white/20 overflow-hidden">
                         <div className="p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
