@@ -66,18 +66,18 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[150] flex items-start justify-center px-6 pt-5 pb-6 text-left overflow-y-auto">
-            <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-slide-up border border-white/20">
-                <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[150] flex items-center justify-center p-4 text-left overflow-hidden">
+            <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-2xl max-h-[90dvh] flex flex-col animate-slide-up border border-white/20 relative">
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 sticky top-0 z-10 backdrop-blur-sm">
                     <div>
-                        <h3 className="text-2xl font-brand font-bold text-[var(--primary-color)] flex items-center gap-3">
-                            <ShieldCheck size={28} className="text-[var(--secondary-color)]" />
+                        <h3 className="text-xl font-brand font-bold text-[var(--primary-color)] flex items-center gap-2">
+                            <ShieldCheck size={24} className="text-[var(--secondary-color)]" />
                             Portal de Verificación
                         </h3>
-                        <p className="text-xs text-[var(--text-light)] mt-1 font-secondary font-bold">Respalda tu experiencia con documentación oficial.</p>
+                        <p className="text-[10px] text-[var(--text-light)] mt-1 font-secondary font-bold">Documentación oficial requerida.</p>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-red-500 p-2 rounded-[16px] hover:bg-red-50 transition-all">
-                        <X size={24} />
+                    <button onClick={onClose} className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all">
+                        <X size={20} />
                     </button>
                 </div>
 

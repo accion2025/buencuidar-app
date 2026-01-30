@@ -81,8 +81,8 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] bg-black flex flex-col animate-fade-in safe-area-inset-bottom">
-            <div className="relative flex-1 bg-black overflow-hidden">
+        <div className="fixed inset-0 z-[200] bg-black flex flex-col">
+            <div className="relative flex-1 bg-black w-full h-full pb-32">
                 <Cropper
                     image={imageSrc}
                     crop={crop}
@@ -94,57 +94,57 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                     onZoomChange={onZoomChange}
                     cropShape="round"
                     showGrid={false}
+                    classes={{
+                        containerClassName: "h-full w-full",
+                        mediaClassName: "h-auto max-h-full",
+                    }}
                 />
             </div>
 
-            <div className="bg-white p-6 pb-8 md:pb-12 rounded-t-[24px] shrink-0 z-50">
-                <div className="max-w-md mx-auto space-y-4 md:space-y-6">
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-500">
-                            <span>Zoom</span>
-                            <span>{zoom.toFixed(1)}x</span>
+            <div className="fixed bottom-0 left-0 right-0 bg-white p-6 pb-safe pt-6 rounded-t-[24px] z-[210] shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+                <div className="max-w-md mx-auto space-y-4">
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-4">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 w-12">Zoom</span>
+                            <input
+                                type="range"
+                                value={zoom}
+                                min={1}
+                                max={3}
+                                step={0.1}
+                                aria-labelledby="Zoom"
+                                onChange={(e) => setZoom(e.target.value)}
+                                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[var(--secondary-color)]"
+                            />
                         </div>
-                        <input
-                            type="range"
-                            value={zoom}
-                            min={1}
-                            max={3}
-                            step={0.1}
-                            aria-labelledby="Zoom"
-                            onChange={(e) => setZoom(e.target.value)}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[var(--secondary-color)]"
-                        />
+
+                        <div className="flex items-center gap-4">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 w-12">Giro</span>
+                            <input
+                                type="range"
+                                value={rotation}
+                                min={0}
+                                max={360}
+                                step={1}
+                                aria-labelledby="Rotation"
+                                onChange={(e) => setRotation(e.target.value)}
+                                className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[var(--secondary-color)]"
+                            />
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-500">
-                            <span>Rotación</span>
-                            <span>{rotation}°</span>
-                        </div>
-                        <input
-                            type="range"
-                            value={rotation}
-                            min={0}
-                            max={360}
-                            step={1}
-                            aria-labelledby="Rotation"
-                            onChange={(e) => setRotation(e.target.value)}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[var(--secondary-color)]"
-                        />
-                    </div>
-
-                    <div className="flex gap-4 pt-2 md:pt-4">
+                    <div className="flex gap-3 pt-2">
                         <button
                             onClick={onCancel}
-                            className="flex-1 bg-gray-100 text-gray-500 font-bold py-3 md:py-4 rounded-[16px] uppercase tracking-widest text-xs hover:bg-gray-200"
+                            className="flex-1 bg-gray-100 text-gray-500 font-bold py-3 rounded-[16px] uppercase tracking-widest text-[10px] hover:bg-gray-200"
                         >
                             Cancelar
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex-1 bg-[var(--primary-color)] !text-[#FAFAF7] font-bold py-3 md:py-4 rounded-[16px] uppercase tracking-widest text-xs shadow-xl shadow-green-900/20"
+                            className="flex-1 bg-[var(--primary-color)] !text-[#FAFAF7] font-bold py-3 rounded-[16px] uppercase tracking-widest text-[10px] shadow-lg shadow-green-900/20"
                         >
-                            Guardar
+                            Guardar Foto
                         </button>
                     </div>
                 </div>

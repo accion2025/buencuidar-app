@@ -70,12 +70,12 @@ const Login = () => {
     const simulateLogin = (path) => navigate(path);
 
     return (
-        <div className="min-h-screen bg-[var(--base-bg)] flex flex-col">
+        <div className="min-h-screen bg-[var(--base-bg)] flex flex-col overflow-hidden">
             <Navbar />
 
-            <main className="flex-grow container mx-auto px-4 py-24 flex items-center justify-center relative">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--secondary-color)] rounded-full blur-[120px] opacity-10 -z-10 animate-pulse"></div>
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--accent-color)] rounded-full blur-[120px] opacity-20 -z-10"></div>
+            <main className="flex-grow container mx-auto px-4 py-28 md:py-24 flex items-start md:items-center justify-center relative">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--secondary-color)] rounded-full blur-[120px] opacity-10 -z-10 animate-pulse hidden md:block"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[var(--accent-color)] rounded-full blur-[120px] opacity-20 -z-10 hidden md:block"></div>
 
                 <div className="card w-full max-w-lg bg-white p-10 md:p-14 animate-fade-in-up shadow-2xl border-none">
                     <div className="text-center mb-10">
