@@ -78,6 +78,8 @@ export const AuthProvider = ({ children }) => {
             console.log("Datos del perfil recibidos:", data);
 
             if (data) {
+                console.log("Datos de profiles (incluido avatar_url):", data.avatar_url);
+
                 // caregiver_details puede venir como objeto o array
                 if (data.caregiver_details) {
                     const caregiverData = Array.isArray(data.caregiver_details)
@@ -85,9 +87,14 @@ export const AuthProvider = ({ children }) => {
                         : data.caregiver_details;
 
                     if (caregiverData) {
-                        const flattened = { ...data, ...caregiverData };
+                        // FIX: Asegurar que el avatar_url de 'profiles' NO sea sobrescrito por null en 'caregiver_details'
+                        const flattened = {
+                            ...data,
+                            ...caregiverData,
+                            avatar_url: data.avatar_url || caregiverData.avatar_url
+                        };
                         delete flattened.caregiver_details;
-                        console.log("Perfil aplanado:", flattened);
+                        console.log("Perfil aplanado con avatar_url prioritario:", flattened.avatar_url);
                         setProfile(flattened);
                     } else {
                         setProfile(data);
@@ -157,7 +164,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, profile, loading, profileLoading, signUp, signIn, signOut, resetPassword, refreshProfile, resendConfirmationEmail }}>
+        <AuthContext.Provider value={{ user, profile, setProfile, loading, profileLoading, signUp, signIn, signOut, resetPassword, refreshProfile, resendConfirmationEmail }}>
             {loading ? (
                 <div className="min-h-screen flex items-center justify-center bg-gray-50">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

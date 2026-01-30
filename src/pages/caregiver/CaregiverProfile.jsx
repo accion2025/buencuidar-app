@@ -21,7 +21,7 @@ const AVAILABLE_SKILLS = [
 ];
 
 const CaregiverProfile = () => {
-    const { profile, user, refreshProfile } = useAuth();
+    const { profile, user, refreshProfile, setProfile } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -166,7 +166,15 @@ const CaregiverProfile = () => {
 
             if (updateError) throw updateError;
 
-            await refreshProfile();
+            // 1. ACTUALIZACIÓN INSTANTÁNEA: Forzar el estado local antes del refresco
+            setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
+            console.log("Avatar actualizado localmente:", publicUrl);
+
+            // 2. REFRESCO DIFERIDO: Esperar un poco para asegurar consistencia en Supabase
+            setTimeout(async () => {
+                await refreshProfile();
+            }, 2000);
+
         } catch (error) {
             console.error("Error uploading avatar:", error);
             alert("No se pudo subir la foto: " + error.message);

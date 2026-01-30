@@ -111,8 +111,14 @@ const CaregiverLayout = () => {
                 {/* Footer Sidebar */}
                 <div className="p-4 border-t border-slate-800">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-xs">
-                            {profile?.full_name?.charAt(0) || 'U'}
+                        <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
+                            {profile?.avatar_url ? (
+                                <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="font-bold text-xs text-slate-400">
+                                    {profile?.full_name?.charAt(0) || 'U'}
+                                </span>
+                            )}
                         </div>
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate !text-[#FAFAF7]">{profile?.full_name || 'Cuidador'}</p>
