@@ -126,7 +126,6 @@ const Navbar = () => {
                     <div className="text-right">
                         <h2 className="text-xl font-brand font-bold tracking-tight" style={{ color: '#FAFAF7' }}>BuenCuidar</h2>
                         <p className="text-[10px] text-gray-400 uppercase tracking-widest">Menu Principal</p>
-                        <p className="text-[8px] text-[var(--secondary-color)] font-bold mt-1">v1.0.1</p>
                     </div>
                 </div>
 
