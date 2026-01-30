@@ -13,13 +13,16 @@ const JobBoard = () => {
     const [applying, setApplying] = useState(null);
     const [startingChat, setStartingChat] = useState(null);
     const [appliedJobs, setAppliedJobs] = useState({}); // Map: appointment_id -> status ('pending', 'rejected', 'approved')
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const JOBS_PER_PAGE = 10;
 
     useEffect(() => {
         let mounted = true;
 
         const loadJobs = async () => {
             if (!mounted) return;
-            await fetchJobs();
+            await fetchJobs(0);
         };
 
         loadJobs();
@@ -29,9 +32,12 @@ const JobBoard = () => {
         };
     }, []);
 
-    const fetchJobs = async () => {
+    const fetchJobs = async (pageNumber = 0) => {
         try {
-            setLoading(true);
+            if (pageNumber === 0) setLoading(true);
+
+            const from = pageNumber * JOBS_PER_PAGE;
+            const to = from + JOBS_PER_PAGE - 1;
 
             // 1. Fetch appointments that are pending and have NO caregiver assigned (Open Jobs)
             const { data: jobsData, error: jobsError } = await supabase
@@ -50,7 +56,8 @@ const JobBoard = () => {
                 .eq('status', 'pending')
                 .is('caregiver_id', null)
                 .gte('date', new Date().toLocaleDateString('en-CA')) // YYYY-MM-DD in local time
-                .order('date', { ascending: true });
+                .order('date', { ascending: true })
+                .range(from, to);
 
             if (jobsError) throw jobsError;
 
@@ -72,12 +79,30 @@ const JobBoard = () => {
             }
 
             setAppliedJobs(appliedMap);
-            setJobs(jobsData || []);
+
+            if (pageNumber === 0) {
+                setJobs(jobsData || []);
+            } else {
+                setJobs(prev => [...prev, ...(jobsData || [])]);
+            }
+
+            if (jobsData && jobsData.length < JOBS_PER_PAGE) {
+                setHasMore(false);
+            } else {
+                setHasMore(true);
+            }
+
+            setPage(pageNumber);
+
         } catch (error) {
             console.error("Error fetching jobs:", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleLoadMore = () => {
+        fetchJobs(page + 1);
     };
 
     const handleApply = async (job) => {
@@ -198,7 +223,7 @@ const JobBoard = () => {
                     <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-[16px] text-sm font-medium hover:bg-gray-50">
                         <Filter size={16} /> Filtros
                     </button>
-                    <button onClick={fetchJobs} className="text-blue-600 text-sm font-medium hover:underline self-center">
+                    <button onClick={() => fetchJobs(0)} className="text-blue-600 text-sm font-medium hover:underline self-center">
                         Actualizar
                     </button>
                 </div>
@@ -313,9 +338,12 @@ const JobBoard = () => {
             )}
 
             {/* Empty State / More jobs */}
-            {!loading && jobs.length > 0 && (
+            {!loading && jobs.length > 0 && hasMore && (
                 <div className="text-center py-8">
-                    <button className="text-blue-600 font-medium hover:underline">Cargar más ofertas...</button>
+                    <button onClick={handleLoadMore} className="text-blue-600 font-medium hover:underline">
+                        Cargar más ofertas ({jobs.length} mostradas)
+                    </button>
+                    <div className="text-xs text-gray-400 mt-2">Página {page + 1}</div>
                 </div>
             )}
         </div>

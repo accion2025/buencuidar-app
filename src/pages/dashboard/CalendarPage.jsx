@@ -100,6 +100,8 @@ const CalendarPage = () => {
 
     const handleEditAppointment = async (appointment) => {
         let services = [];
+        let cleanDetails = appointment.details || '';
+
         if (cleanDetails.includes('---SERVICES---')) {
             const parts = cleanDetails.split('---SERVICES---');
             try {
