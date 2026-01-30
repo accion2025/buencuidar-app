@@ -48,8 +48,8 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                         color={[0, 0, 0, 0.6]} // Background dimming
                         scale={scale}
                         rotate={0}
-                        crossOrigin="anonymous" // Essential for Supabase/external images
                         className="max-w-full h-auto"
+                        allowTransparent={false} // Ensure background isn't weirdly transparent
                     />
                 </div>
 
