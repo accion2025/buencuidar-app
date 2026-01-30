@@ -64,7 +64,7 @@ const CaregiverLayout = () => {
         <div className="min-h-[100dvh] bg-gray-50 flex font-sans overflow-hidden h-[100dvh]">
             {/* Sidebar */}
             <aside
-                className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 !text-[#FAFAF7] transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                className={`fixed top-0 left-0 h-[100dvh] z-50 w-64 bg-slate-900 !text-[#FAFAF7] transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
                     } lg:relative lg:translate-x-0 shadow-xl flex flex-col`}
             >
                 {/* Logo */}
@@ -77,7 +77,7 @@ const CaregiverLayout = () => {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+                <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto pb-24">
                     {menuItems.map((item) => {
                         const isPremiumOnly = item.path === '/caregiver/analytics';
                         const isPremiumUser = profile?.plan_type === 'premium';
@@ -110,7 +110,7 @@ const CaregiverLayout = () => {
                 </nav>
 
                 {/* Footer Sidebar */}
-                <div className="p-4 border-t border-slate-800">
+                <div className="p-4 border-t border-slate-800 bg-slate-900">
                     <div className="flex items-center gap-3 px-4 py-3 mb-2">
                         <div className="w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
                             {profile?.avatar_url ? (

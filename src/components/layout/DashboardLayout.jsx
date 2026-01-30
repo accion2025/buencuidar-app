@@ -86,7 +86,7 @@ const DashboardLayout = () => {
             {/* Sidebar - Desktop & Mobile */}
             <aside
                 className={`
-                    fixed inset-y-0 left-0 z-50 w-64 bg-[var(--primary-color)] !text-[#FAFAF7] transition-transform duration-300 ease-in-out
+                    fixed top-0 left-0 z-50 w-64 h-[100dvh] bg-[var(--primary-color)] !text-[#FAFAF7] transition-transform duration-300 ease-in-out
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
                     md:relative md:translate-x-0 flex flex-col
                 `}
@@ -100,7 +100,7 @@ const DashboardLayout = () => {
                 </div>
 
                 {/* Navigation Items */}
-                <nav className="flex-grow p-4 space-y-2 overflow-y-auto">
+                <nav className="flex-grow p-4 space-y-2 overflow-y-auto pb-24">
                     {menuItems.map((item) => (
                         <SidebarItem
                             key={item.path}
@@ -115,7 +115,7 @@ const DashboardLayout = () => {
                 </nav>
 
                 {/* Bottom Actions */}
-                <div className="p-4 border-t border-white/10">
+                <div className="p-4 border-t border-white/10 bg-[var(--primary-color)]">
                     <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-3 w-full rounded-[16px] text-red-200 hover:bg-red-900/20 hover:text-red-100 transition-colors"
