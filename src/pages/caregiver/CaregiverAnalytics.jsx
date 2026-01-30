@@ -23,7 +23,6 @@ const CaregiverAnalytics = () => {
     const { user, profile, loading: authLoading } = useAuth();
     const [loading, setLoading] = useState(true);
     const [timeRange, setTimeRange] = useState('year'); // 'month', 'year', 'all'
-    const [chartType, setChartType] = useState('earnings'); // 'earnings', 'hours'
     const [stats, setStats] = useState({
         totalEarnings: 0,
         totalHours: 0,
@@ -287,57 +286,7 @@ const CaregiverAnalytics = () => {
                 </div>
             </div>
 
-            {/* Charts Section */}
-            <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 p-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Tendencias Mensuales</h3>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => setChartType('earnings')}
-                            className={`text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-[16px] transition-all ${chartType === 'earnings'
-                                    ? 'bg-[var(--secondary-color)]/10 text-[var(--secondary-color)]'
-                                    : 'text-gray-400 hover:bg-gray-50'
-                                }`}
-                        >
-                            Ganancias
-                        </button>
-                        <button
-                            onClick={() => setChartType('hours')}
-                            className={`text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-[16px] transition-all ${chartType === 'hours'
-                                    ? 'bg-blue-100 text-blue-600'
-                                    : 'text-gray-400 hover:bg-gray-50'
-                                }`}
-                        >
-                            Horas
-                        </button>
-                    </div>
-                </div>
 
-                {/* Simple CSS Bar Chart for Earnings/Hours */}
-                <div className="h-64 flex items-end justify-between gap-4 pt-10 px-4">
-                    {(chartType === 'earnings' ? stats.monthlyEarnings : stats.monthlyHours).map((item, idx) => {
-                        const maxValue = getMax(chartType === 'earnings' ? stats.monthlyEarnings : stats.monthlyHours);
-                        const displayValue = chartType === 'earnings' ? `$${item.value}` : `${Math.round(item.value)}h`;
-
-                        return (
-                            <div key={idx} className="flex-1 flex flex-col items-center gap-2 group">
-                                <div className="text-xs font-bold text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity absolute -mt-6">
-                                    {displayValue}
-                                </div>
-                                <div
-                                    className={`w-full ${chartType === 'earnings' ? 'bg-[var(--secondary-color)] shadow-green-900/10' : 'bg-blue-500 shadow-blue-900/10'} rounded-t-2xl transition-all duration-700 hover:brightness-110 relative shadow-lg`}
-                                    style={{ height: `${item.value > 0 ? (item.value / maxValue) * 100 : 0}%` }}
-                                >
-                                </div>
-                                <span className="text-xs text-gray-400 font-medium">{item.month.split('-')[1]}</span>
-                            </div>
-                        );
-                    })}
-                    {(chartType === 'earnings' ? stats.monthlyEarnings : stats.monthlyHours).length === 0 && (
-                        <div className="w-full text-center text-gray-400 italic">No hay datos suficientes para graficar.</div>
-                    )}
-                </div>
-            </div>
 
             {/* Detailed Table */}
             <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
