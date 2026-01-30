@@ -82,28 +82,29 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
     };
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
-            <div className="relative w-full bg-black flex-1">
-                <Cropper
-                    image={imageSrc}
-                    crop={crop}
-                    zoom={zoom}
-                    rotation={rotation}
-                    aspect={1}
-                    onCropChange={onCropChange}
-                    onCropComplete={onCropCompleteHandler}
-                    onZoomChange={onZoomChange}
-                    cropShape="round"
-                    showGrid={false}
-                    classes={{
-                        containerClassName: "h-full w-full",
-                        mediaClassName: "h-auto max-h-full",
-                    }}
-                />
-            </div>
+        <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-[24px] overflow-hidden shadow-2xl w-full max-w-[320px] animate-scale-in">
+                <div className="relative w-full h-[320px] bg-black">
+                    <Cropper
+                        image={imageSrc}
+                        crop={crop}
+                        zoom={zoom}
+                        rotation={rotation}
+                        aspect={1}
+                        cropSize={{ width: 280, height: 280 }}
+                        onCropChange={onCropChange}
+                        onCropComplete={onCropCompleteHandler}
+                        onZoomChange={onZoomChange}
+                        cropShape="round"
+                        showGrid={false}
+                        classes={{
+                            containerClassName: "h-full w-full",
+                            mediaClassName: "h-auto max-h-full",
+                        }}
+                    />
+                </div>
 
-            <div className="bg-white p-6 pb-safe pt-6 rounded-t-[24px] z-[9999] shadow-[0_-4px_20px_rgba(0,0,0,0.3)] shrink-0 safe-area-inset-bottom">
-                <div className="max-w-md mx-auto space-y-4">
+                <div className="p-6 space-y-4">
                     <div className="space-y-4">
                         <div className="flex items-center gap-4">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 w-12">Zoom</span>
@@ -137,15 +138,15 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                     <div className="flex gap-3 pt-2">
                         <button
                             onClick={onCancel}
-                            className="flex-1 bg-gray-100 text-gray-500 font-bold py-3 rounded-[16px] uppercase tracking-widest text-[10px] hover:bg-gray-200"
+                            className="flex-1 bg-gray-100 text-gray-500 font-bold py-3 rounded-[16px] uppercase tracking-widest text-[10px] hover:bg-gray-200 transition-colors"
                         >
                             Cancelar
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex-1 bg-[var(--primary-color)] !text-[#FAFAF7] font-bold py-3 rounded-[16px] uppercase tracking-widest text-[10px] shadow-lg shadow-green-900/20"
+                            className="flex-1 bg-[var(--primary-color)] !text-[#FAFAF7] font-bold py-3 rounded-[16px] uppercase tracking-widest text-[10px] shadow-lg shadow-green-900/20 hover:brightness-110 transition-all"
                         >
-                            Guardar Foto
+                            Guardar
                         </button>
                     </div>
                 </div>
