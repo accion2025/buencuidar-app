@@ -66,8 +66,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[150] flex items-center justify-center p-4 text-left overflow-hidden">
-            <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-2xl max-h-[90dvh] flex flex-col animate-slide-up border border-white/20 relative">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[150] flex items-center justify-center p-0 md:p-4 text-left overflow-hidden">
+            <div className="bg-white rounded-none md:rounded-[24px] shadow-2xl w-full max-w-2xl h-full md:h-auto md:max-h-[90dvh] flex flex-col animate-slide-up border-none md:border border-white/20 relative">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 sticky top-0 z-10 backdrop-blur-sm">
                     <div>
                         <h3 className="text-xl font-brand font-bold text-[var(--primary-color)] flex items-center gap-2">

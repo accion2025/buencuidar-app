@@ -82,7 +82,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
 
     return (
         <div className="fixed inset-0 z-[200] bg-black flex flex-col">
-            <div className="relative flex-1 bg-black w-full h-full pb-32">
+            <div className="relative w-full bg-black" style={{ height: 'calc(100% - 220px)' }}>
                 <Cropper
                     image={imageSrc}
                     crop={crop}
