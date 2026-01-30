@@ -143,12 +143,15 @@ const CaregiverProfile = () => {
         setUploading(true);
         setShowCropper(false);
         try {
-            const fileName = `${user.id}-${Date.now()}.jpg`;
-            const filePath = `${fileName}`;
+            const fileName = `avatar-${Date.now()}.jpg`;
+            const filePath = `${user.id}/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
-                .upload(filePath, croppedBlob);
+                .upload(filePath, croppedBlob, {
+                    contentType: 'image/jpeg',
+                    upsert: true
+                });
 
             if (uploadError) throw uploadError;
 
