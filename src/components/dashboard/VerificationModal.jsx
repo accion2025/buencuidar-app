@@ -109,7 +109,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                             <p className="text-[10px] text-[var(--text-light)] font-secondary mt-1 leading-relaxed">{doc.description}</p>
                                         </div>
                                     </div>
-                                    <label className={`shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
+                                    <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
                                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                         : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
                                         }`}>
@@ -126,7 +126,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                         )}
                                         <input
                                             type="file"
-                                            className="hidden"
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            accept="image/*,application/pdf"
                                             onChange={(e) => handleUpload(e, doc.id)}
                                             disabled={uploading !== null}
                                         />

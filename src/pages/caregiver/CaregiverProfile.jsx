@@ -216,7 +216,7 @@ const CaregiverProfile = () => {
                             <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer !text-[#FAFAF7] backdrop-blur-sm">
                                 <Camera size={32} className="mb-2" />
                                 <span className="text-[10px] font-black uppercase tracking-widest">Cambiar Foto</span>
-                                <input type="file" className="hidden" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
+                                <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
                             </label>
                         </div>
                         <div className="absolute -bottom-2 -right-2 bg-[var(--secondary-color)] w-10 h-10 rounded-[16px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]" title="Activo ahora">
