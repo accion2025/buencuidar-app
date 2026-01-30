@@ -348,7 +348,7 @@ const MonitoringCenter = () => {
                     <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px] opacity-10"></div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-3">
-                            <h1 className="text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tighter italic drop-shadow-sm">PULSO</h1>
+                            <h1 className="text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tighter italic drop-shadow-sm">BC <span className="text-[#2FAE8F]">PULSO</span></h1>
                             <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border backdrop-blur-md flex items-center gap-2 ${activeAppointment
                                 ? (isUpcoming ? 'text-[var(--warning-color)] bg-[var(--warning-color)]/10 border-[var(--warning-color)]/20' : 'text-[var(--secondary-color)] bg-[var(--secondary-color)]/10 border-[var(--secondary-color)]/20')
                                 : 'text-[var(--accent-color)] bg-white/5 border-white/10'

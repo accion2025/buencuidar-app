@@ -18,7 +18,7 @@ import { supabase } from '../../lib/supabase';
 import InstallPrompt from '../InstallPrompt';
 
 const SidebarItem = ({ icon: Icon, label, path, active, onClick, badge }) => {
-    const isSalud = label === 'PULSO';
+    const isSalud = path === '/dashboard/pulso';
     return (
         <div
             onClick={onClick}
@@ -52,7 +52,7 @@ const DashboardLayout = () => {
             path: profile?.role === 'caregiver' ? '/caregiver' : '/dashboard'
         },
         // 'PULSO' y 'Calendario' comunes, o ajustar según se requiera
-        { icon: Activity, label: 'PULSO', path: '/dashboard/pulso' },
+        { icon: Activity, label: <span>BC <span className="text-[#2FAE8F]">PULSO</span></span>, path: '/dashboard/pulso' },
         { icon: Calendar, label: 'Calendario', path: '/dashboard/calendar' },
         { icon: MessageSquare, label: 'Mensajes', path: '/dashboard/messages', badge: unreadCount },
         {
