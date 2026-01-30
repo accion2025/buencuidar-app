@@ -753,7 +753,7 @@ const CaregiverOverview = () => {
                                                 {!isReview && (
                                                     <button
                                                         onClick={() => setEditingPayment(item.data)}
-                                                        className="opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 text-[10px] font-black uppercase tracking-widest bg-white hover:bg-[var(--secondary-color)] hover:!text-[#FAFAF7] text-[var(--primary-color)] px-4 py-2 rounded-[16px] border border-gray-100 shadow-md"
+                                                        className="text-[10px] font-black uppercase tracking-widest bg-white hover:bg-[var(--secondary-color)] hover:!text-[#FAFAF7] text-[var(--primary-color)] px-4 py-2 rounded-[16px] border border-gray-100 shadow-md transition-all active:scale-95"
                                                     >
                                                         {item.data.payment_status === 'paid' ? 'Editar Registro' : 'Registrar Pago'}
                                                     </button>
