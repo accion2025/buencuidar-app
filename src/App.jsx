@@ -69,7 +69,7 @@ function App() {
             {/* Family Dashboard Routes (Protected) */}
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route index element={<DashboardOverview />} />
-              <Route path="salud" element={<MonitoringCenter />} />
+              <Route path="pulso" element={<MonitoringCenter />} />
               <Route path="calendar" element={<CalendarPage />} />
               <Route path="messages" element={<Messages />} />
               <Route path="caregivers" element={<CaregiverList />} />
