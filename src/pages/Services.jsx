@@ -51,11 +51,19 @@ const Services = () => {
         <div className="min-h-screen flex flex-col font-sans bg-gray-50">
             <Navbar />
 
-            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] h-[35px] flex items-center justify-center px-4 overflow-hidden relative z-10">
-                <p className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
-                    <span className="font-bold mr-2">Cuidamos lo que más amas:</span>
-                    <span className="text-green-100/90">Porque sabemos que cada familia es un mundo, diseñamos servicios que se adaptan a tu ritmo y a las necesidades de tu hogar.</span>
-                </p>
+            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] pt-[80px] pb-[60px] px-8 md:px-16">
+                <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">Cuidamos lo que más amas</h1>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                    <div className="hidden md:block"></div>
+                    <div className="text-center">
+                        <p className="text-xl text-green-100">
+                            Porque sabemos que cada familia es un mundo, diseñamos servicios que se
+                            adaptan a tu ritmo y a las necesidades de tu hogar.
+                        </p>
+                    </div>
+                    <div className="hidden md:block"></div>
+                </div>
             </header>
 
             <main className="w-full px-8 py-16">
