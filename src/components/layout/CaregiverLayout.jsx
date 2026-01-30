@@ -11,7 +11,7 @@ import {
     Settings,
     LogOut,
     Menu,
-    X,
+
     User,
     MessageSquare,
     Lock
@@ -72,12 +72,7 @@ const CaregiverLayout = () => {
                         <h1 className="text-2xl font-bold font-brand !text-[#FAFAF7]">BuenCuidar</h1>
                         <span className="text-xs text-slate-400 uppercase tracking-wider">PRO / Cuidador</span>
                     </Link>
-                    <button
-                        onClick={() => setIsSidebarOpen(false)}
-                        className="lg:hidden text-slate-400 hover:text-white"
-                    >
-                        <X size={24} />
-                    </button>
+
                 </div>
 
                 {/* Navigation */}
