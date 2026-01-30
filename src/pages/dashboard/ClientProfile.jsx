@@ -392,18 +392,18 @@ const ClientProfile = () => {
                                             </div>
                                         </div>
 
-                                        <div className="mt-8 flex gap-3 opacity-100 transition-all relative z-10">
+                                        <div className="mt-8 flex gap-3 opacity-100 relative z-10 w-full">
                                             <button
                                                 onClick={() => startEditPatient(patient)}
-                                                className="flex-1 bg-[var(--base-bg)] text-[var(--primary-color)] py-3 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] hover:text-white transition-all flex items-center justify-center gap-2 border border-gray-50 shadow-sm"
+                                                className="flex-1 bg-gray-100 text-[var(--primary-color)] py-3.5 rounded-[12px] text-[11px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] hover:text-white transition-all flex items-center justify-center gap-2 border border-gray-200 shadow-sm"
                                             >
-                                                <Edit2 size={14} /> Editar
+                                                <Edit2 size={16} /> Editar
                                             </button>
                                             <button
                                                 onClick={() => handleDeletePatient(patient.id)}
-                                                className="aspect-square bg-white text-gray-400 p-3 rounded-[16px] hover:text-[var(--error-color)] hover:bg-red-50 border border-gray-50 transition-all shadow-sm"
+                                                className="aspect-square bg-red-50 text-red-400 p-3.5 rounded-[12px] hover:text-white hover:bg-red-500 border border-red-100 transition-all shadow-sm flex items-center justify-center"
                                             >
-                                                <Trash2 size={16} />
+                                                <Trash2 size={18} />
                                             </button>
                                         </div>
                                         <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl group-hover:bg-[var(--secondary-color)]/5 transition-colors"></div>
