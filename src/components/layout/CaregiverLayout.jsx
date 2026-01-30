@@ -69,7 +69,7 @@ const CaregiverLayout = () => {
                 {/* Logo */}
                 <div className="p-6 border-b border-slate-800 flex justify-between items-center">
                     <Link to="/" className="block hover:opacity-80 transition-opacity">
-                        <h1 className="text-2xl font-bold font-brand !text-[#FAFAF7]">BuenCuidar</h1>
+                        <h1 className="text-2xl font-bold font-brand !text-[#FAFAF7]">Buen<span className="text-[#2FAE8F]">Cuidar</span></h1>
                         <span className="text-xs text-slate-400 uppercase tracking-wider">PRO / Cuidador</span>
                     </Link>
 

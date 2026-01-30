@@ -124,7 +124,7 @@ const Navbar = () => {
                 {/* Sidebar Header */}
                 <div className="p-6 border-b border-white/10 flex justify-end items-center bg-[#0d3542]">
                     <div className="text-right">
-                        <h2 className="text-xl font-brand font-bold tracking-tight" style={{ color: '#FAFAF7' }}>BuenCuidar</h2>
+                        <h2 className="text-xl font-brand font-bold tracking-tight" style={{ color: '#FAFAF7' }}>Buen<span className="text-[#2FAE8F]">Cuidar</span></h2>
                         <p className="text-[10px] text-gray-400 uppercase tracking-widest">Menu Principal</p>
                     </div>
                 </div>

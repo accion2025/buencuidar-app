@@ -10,7 +10,6 @@ import {
     Settings,
     LogOut,
     Menu,
-    X,
     Bell,
     Activity,
     Shield
@@ -94,14 +93,9 @@ const DashboardLayout = () => {
                 {/* Logo Area */}
                 <div className="p-6 border-b border-white/10 flex justify-between items-center">
                     <h1 className="text-2xl font-bold cursor-pointer font-brand !text-[#FAFAF7]" onClick={() => navigate('/')}>
-                        BuenCuidar
+                        Buen<span className="text-[#2FAE8F]">Cuidar</span>
                     </h1>
-                    <button
-                        className="md:hidden !text-[#FAFAF7]"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                        <X size={24} />
-                    </button>
+
                 </div>
 
                 {/* Navigation Items */}
