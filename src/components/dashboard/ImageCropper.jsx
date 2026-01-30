@@ -93,8 +93,8 @@ const handleSave = async () => {
 
 return createPortal(
     <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-[24px] overflow-hidden shadow-2xl w-full max-w-[340px] animate-scale-in flex flex-col">
-            <div className="relative w-full h-[340px] bg-black">
+        <div className="bg-white rounded-[24px] overflow-hidden shadow-2xl w-full max-w-[340px] flex flex-col">
+            <div className="relative w-full h-[340px] bg-black" style={{ touchAction: 'none' }}>
                 <Cropper
                     image={imageSrc}
                     crop={crop}
@@ -108,7 +108,7 @@ return createPortal(
                     cropShape="round"
                     showGrid={true}
                     restrictPosition={false}
-                    objectFit="horizontal-cover"
+                    minZoom={0.5}
                     classes={{
                         containerClassName: "h-full w-full",
                         mediaClassName: "h-auto max-h-full",
