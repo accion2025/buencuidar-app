@@ -482,7 +482,7 @@ const CaregiverOverview = () => {
                             {/* Avatar integration in overview */}
                             <div className="w-24 h-24 rounded-[20px] border-[4px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden shrink-0 ring-4 ring-white/10">
                                 <img
-                                    src={profile.avatar_url || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"}
+                                    src={profile?.avatar_url || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"}
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                 />
