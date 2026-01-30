@@ -10,10 +10,6 @@ const Footer = () => {
                     {/* Brand Column */}
                     <div className="col-span-1 md:col-span-1">
                         <h4 className="text-3xl font-bold mb-4 tracking-tight font-brand">BuenCuidar</h4>
-                        <p className="text-gray-300 text-sm leading-relaxed mb-6 font-secondary">
-                            Conectando tecnología y amor para brindar tranquilidad real a las familias.
-                            Tu ser querido, acompañado con dignidad y confianza.
-                        </p>
                         <div className="flex gap-4">
                             <a href="#" className="p-2 bg-white/10 rounded-[16px] hover:bg-[var(--secondary-color)] transition-all">
                                 <Facebook size={18} />
@@ -25,17 +21,6 @@ const Footer = () => {
                                 <Linkedin size={18} />
                             </a>
                         </div>
-                    </div>
-
-                    {/* Quick Links */}
-                    <div>
-                        <h5 className="font-brand font-bold uppercase tracking-widest text-xs mb-6 text-[var(--secondary-color)]">Navegación</h5>
-                        <ul className="space-y-4 text-sm font-secondary">
-                            <li><Link to="/" className="text-gray-300 hover:text-white transition-colors">Inicio</Link></li>
-                            <li><Link to="/services" className="text-gray-300 hover:text-white transition-colors">Servicios</Link></li>
-                            <li><Link to="/login" className="text-gray-300 hover:text-white transition-colors">Iniciar Sesión</Link></li>
-                            <li><Link to="/register" className="text-gray-300 hover:text-white transition-colors">Registrarse</Link></li>
-                        </ul>
                     </div>
 
                     {/* Contact Info */}
