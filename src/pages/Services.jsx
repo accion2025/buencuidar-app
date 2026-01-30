@@ -51,7 +51,7 @@ const Services = () => {
         <div className="min-h-screen flex flex-col font-sans bg-gray-50">
             <Navbar />
 
-            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] py-20 px-8 md:px-16">
+            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] py-[70px] px-8 md:px-16">
                 <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">Cuidamos lo que más amas</h1>
 
                 <div className="grid md:grid-cols-3 gap-8">
