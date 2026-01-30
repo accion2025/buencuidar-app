@@ -266,10 +266,11 @@ const CaregiverOverview = () => {
             let monthlyHours = 0;
 
             (completedThisMonth || []).forEach(app => {
-                // Logic: Use payment_amount ONLY if status is 'paid'. Otherwise use offered_rate.
+                // Logic: STRICTLY use payment_amount ONLY if status is 'paid'.
+                // If not paid, earnings are 0.
                 const pay = app.payment_status === 'paid' && app.payment_amount
                     ? parseFloat(app.payment_amount)
-                    : parseFloat(app.offered_rate || 0);
+                    : 0;
 
                 // Add to monthly earnings
                 monthlyEarnings += pay;

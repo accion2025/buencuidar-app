@@ -104,10 +104,11 @@ const CaregiverAnalytics = () => {
             const monthsMap = {};
 
             const processedPayments = (apps || []).map(app => {
-                // Logic: Use payment_amount ONLY if status is 'paid'. Otherwise use offered_rate.
+                // Logic: STRICTLY use payment_amount ONLY if status is 'paid'.
+                // If not paid, earnings are 0 (do not use offered_rate).
                 const amount = app.payment_status === 'paid' && app.payment_amount
                     ? parseFloat(app.payment_amount)
-                    : parseFloat(app.offered_rate || 0);
+                    : 0;
 
                 // Calculate hours
                 let hours = 0;
