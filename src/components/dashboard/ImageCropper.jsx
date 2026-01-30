@@ -26,8 +26,7 @@ const createImage = (url) =>
         const image = new Image();
         image.addEventListener('load', () => resolve(image));
         image.addEventListener('error', (error) => reject(error));
-        // For data URLs, crossOrigin is often not needed and can cause issues
-        // image.setAttribute('crossOrigin', 'anonymous'); 
+        image.setAttribute('crossOrigin', 'anonymous'); // Essential for external images (Supabase)
         image.src = url;
     });
 
@@ -77,13 +76,16 @@ const handleSave = async () => {
     if (isSaving) return;
     setIsSaving(true);
     try {
+        if (!croppedAreaPixels) {
+            throw new Error("No hay área de recorte seleccionada");
+        }
         const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, rotation);
         if (onCropComplete) {
             await onCropComplete(croppedImage);
         }
     } catch (e) {
         console.error('Error saving cropped image:', e);
-        alert('Error al guardar la imagen. Por favor intenta de nuevo.');
+        alert('Error al guardar la imagen. Asegúrate de mover la imagen un poco antes de guardar.');
     } finally {
         setIsSaving(false);
     }
@@ -106,7 +108,7 @@ return createPortal(
                     cropShape="round"
                     showGrid={true}
                     restrictPosition={false}
-                    objectFit="contain"
+                    objectFit="horizontal-cover"
                     classes={{
                         containerClassName: "h-full w-full",
                         mediaClassName: "h-auto max-h-full",
