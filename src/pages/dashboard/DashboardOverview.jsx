@@ -37,13 +37,12 @@ const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile,
                 <h4 className="font-brand font-bold text-[var(--primary-color)] text-lg group-hover:text-[var(--secondary-color)] transition-colors tracking-tight">{name}</h4>
                 <div className="flex flex-col gap-1 mt-1">
                     <p className="text-[10px] text-[var(--text-light)] font-black font-secondary uppercase tracking-widest">{role}</p>
-                    <div className="flex items-center gap-3 text-[var(--text-light)] mt-1">
+                    <div className="flex items-center gap-3 text-[var(--text-light)] mt-1 flex-wrap">
                         <div className="flex items-center gap-1.5">
                             <Clock size={12} className="text-[var(--secondary-color)]" />
                             <span className="text-xs font-bold font-brand">{time}</span>
                         </div>
-                        <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                        <span className="text-xs font-bold font-brand uppercase opacity-80">{date.split(',')[0]}</span>
+                        <span className="text-xs font-bold font-brand opacity-80">{date}</span>
                     </div>
                 </div>
             </div>
