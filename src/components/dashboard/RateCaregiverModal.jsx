@@ -39,7 +39,7 @@ const RateCaregiverModal = ({ isOpen, onClose, appointment, onSuccess }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-xl w-full max-w-md overflow-hidden relative">
                 <button
                     onClick={onClose}
