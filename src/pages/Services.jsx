@@ -52,12 +52,12 @@ const Services = () => {
             <Navbar />
 
             <header className="bg-[var(--primary-color)] !text-[#FAFAF7] pt-[80px] pb-[60px] px-8 md:px-16">
-                <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center text-[#FAFAF7]">Cuidamos lo que más amas</h1>
+                <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center" style={{ color: '#FAFAF7' }}>Cuidamos lo que más amas</h1>
 
                 <div className="grid md:grid-cols-3 gap-8">
                     <div className="hidden md:block"></div>
                     <div className="text-center">
-                        <p className="text-xl text-green-100">
+                        <p className="text-xl" style={{ color: '#FAFAF7' }}>
                             Porque sabemos que cada familia es un mundo, diseñamos servicios que se
                             adaptan a tu ritmo y a las necesidades de tu hogar.
                         </p>
