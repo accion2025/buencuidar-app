@@ -253,7 +253,22 @@ const ClientProfile = () => {
                                 <span className="flex items-center gap-2 italic">Guardando...</span>
                             ) : (
                                 isEditing ? (
-                                    <span className="flex items-center gap-2"><Save size={16} /> Guardar Cambios</span>
+                                    <div className="flex items-center gap-2">
+                                        <span onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsEditing(false);
+                                            // Reset form data to original profile values
+                                            if (profile) {
+                                                setFormData({
+                                                    name: profile.full_name || '',
+                                                    email: profile.email || '',
+                                                    phone: profile.phone || '',
+                                                    address: profile.address || ''
+                                                });
+                                            }
+                                        }} className="cursor-pointer hover:underline opacity-80 mr-2 text-[9px]">CANCELAR</span>
+                                        <span className="flex items-center gap-2"><Save size={16} /> Guardar Cambios</span>
+                                    </div>
                                 ) : (
                                     <span className="flex items-center gap-2"><Edit2 size={16} /> Editar Perfil</span>
                                 )
@@ -397,44 +412,44 @@ const ClientProfile = () => {
                             )}
                         </div>
                     </div>
-                    {/* Add Patient Inline Form */}
+                    {/* Add Patient Modal Overlay */}
                     {showAddPatientModal && (
-                        <div className="card !p-10 border-none shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden animate-fade-in-up bg-[#fcfdff]">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--primary-color)]/5 rounded-full translate-x-1/3 -translate-y-1/3 blur-[80px]"></div>
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                            <div className="card w-full max-w-2xl max-h-[90vh] overflow-y-auto !p-8 border-none shadow-2xl relative animate-fade-in-up bg-[#fcfdff]">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--primary-color)]/5 rounded-full translate-x-1/3 -translate-y-1/3 blur-[80px]"></div>
 
-                            <div className="flex justify-between items-center mb-10 relative z-10">
-                                <h3 className="text-3xl font-brand font-bold text-[var(--primary-color)] tracking-tight">
-                                    {editingPatientId ? 'Actualizar Información' : 'Nuevo Familiar'}
-                                </h3>
-                                <button
-                                    onClick={() => setShowAddPatientModal(false)}
-                                    className="p-3 bg-white text-gray-400 hover:text-[var(--primary-color)] hover:shadow-lg rounded-[16px] transition-all border border-gray-100"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
+                                <div className="flex justify-between items-center mb-8 relative z-10 sticky top-0 bg-[#fcfdff]/95 backdrop-blur-sm py-2 border-b border-gray-100">
+                                    <h3 className="text-2xl md:text-3xl font-brand font-bold text-[var(--primary-color)] tracking-tight">
+                                        {editingPatientId ? 'Actualizar Información' : 'Nuevo Familiar'}
+                                    </h3>
+                                    <button
+                                        onClick={() => setShowAddPatientModal(false)}
+                                        className="p-2 bg-gray-100 text-gray-500 hover:text-[var(--primary-color)] hover:bg-gray-200 rounded-full transition-all"
+                                    >
+                                        <X size={24} />
+                                    </button>
+                                </div>
 
-                            <form onSubmit={handleAddPatient} className="space-y-8 relative z-10 max-w-2xl mx-auto">
-                                <div className="space-y-6">
+                                <form onSubmit={handleAddPatient} className="space-y-6 relative z-10">
                                     <div>
-                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Nombre Completo</label>
+                                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Nombre Completo</label>
                                         <input
                                             type="text"
                                             required
-                                            className="w-full px-6 py-4 rounded-[16px] border border-gray-100 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
+                                            className="w-full px-5 py-3 rounded-[12px] border border-gray-200 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
                                             value={newPatient.full_name}
                                             onChange={e => setNewPatient({ ...newPatient, full_name: e.target.value })}
                                             placeholder="Nombre completo del familiar"
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-8">
+                                    <div className="grid grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Parentesco</label>
+                                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Parentesco</label>
                                             <div className="relative">
                                                 <select
                                                     required
-                                                    className="w-full px-6 py-4 rounded-[16px] border border-gray-100 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm appearance-none bg-white"
+                                                    className="w-full px-5 py-3 rounded-[12px] border border-gray-200 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm appearance-none bg-white"
                                                     value={newPatient.relation}
                                                     onChange={e => setNewPatient({ ...newPatient, relation: e.target.value })}
                                                 >
@@ -446,18 +461,18 @@ const ClientProfile = () => {
                                                     <option value="Hijo/a">Hijo/a</option>
                                                     <option value="Otro">Otro</option>
                                                 </select>
-                                                <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none text-[var(--secondary-color)]">
+                                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-[var(--secondary-color)]">
                                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
                                                 </div>
                                             </div>
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Edad Actual</label>
+                                            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 ml-1">Edad Actual</label>
                                             <input
                                                 type="number"
                                                 required
                                                 min="0"
-                                                className="w-full px-6 py-4 rounded-[16px] border border-gray-100 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
+                                                className="w-full px-5 py-3 rounded-[12px] border border-gray-200 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
                                                 value={newPatient.age || ''}
                                                 onChange={e => {
                                                     const age = e.target.value;
@@ -470,35 +485,52 @@ const ClientProfile = () => {
                                             />
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="flex gap-4 pt-6">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowAddPatientModal(false)}
-                                        className="flex-1 py-5 text-[10px] font-black uppercase tracking-widest text-gray-400 bg-[var(--base-bg)] rounded-[16px] hover:bg-gray-100 transition-all border border-gray-50"
-                                    >
-                                        Cancelar
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={addingPatient || !newPatient.full_name || !newPatient.relation}
-                                        className="flex-[2] py-5 text-[10px] font-black uppercase tracking-widest bg-[var(--secondary-color)] !text-[#FAFAF7] rounded-[16px] hover:bg-emerald-600 shadow-xl shadow-green-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 border-none"
-                                    >
-                                        {addingPatient ? (
-                                            <>
-                                                <Loader2 size={16} className="animate-spin" /> Procesando...
-                                            </>
-                                        ) : (
-                                            editingPatientId ? (
-                                                <><Check size={16} strokeWidth={4} /> Actualizar Datos</>
-                                            ) : (
-                                                <><Plus size={16} strokeWidth={4} /> Guardar Familiar</>
-                                            )
+                                    <div className="flex flex-col-reverse sm:flex-row gap-4 pt-6 mt-4 border-t border-gray-100">
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowAddPatientModal(false)}
+                                            className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest text-gray-500 bg-gray-100 rounded-[12px] hover:bg-gray-200 transition-all border border-transparent"
+                                        >
+                                            Cancelar
+                                        </button>
+
+                                        {/* Delete Button (Only in Edit Mode) */}
+                                        {editingPatientId && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (window.confirm('¿Estás seguro de eliminar este familiar?')) {
+                                                        handleDeletePatient(editingPatientId);
+                                                        setShowAddPatientModal(false);
+                                                    }
+                                                }}
+                                                className="flex-1 py-4 text-[11px] font-black uppercase tracking-widest text-red-500 bg-red-50 rounded-[12px] hover:bg-red-100 transition-all border border-red-100 flex items-center justify-center gap-2"
+                                            >
+                                                <Trash2 size={16} /> Eliminar
+                                            </button>
                                         )}
-                                    </button>
-                                </div>
-                            </form>
+
+                                        <button
+                                            type="submit"
+                                            disabled={addingPatient || !newPatient.full_name || !newPatient.relation}
+                                            className="flex-[2] py-4 text-[11px] font-black uppercase tracking-widest bg-[var(--secondary-color)] !text-[#FAFAF7] rounded-[12px] hover:bg-emerald-600 shadow-xl shadow-green-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 border-none"
+                                        >
+                                            {addingPatient ? (
+                                                <>
+                                                    <Loader2 size={18} className="animate-spin" /> Guardando...
+                                                </>
+                                            ) : (
+                                                editingPatientId ? (
+                                                    <><Check size={18} strokeWidth={3} /> Actualizar Datos</>
+                                                ) : (
+                                                    <><Plus size={18} strokeWidth={3} /> Guardar Familiar</>
+                                                )
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     )}
                 </div>
