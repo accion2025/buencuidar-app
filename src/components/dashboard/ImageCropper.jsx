@@ -81,8 +81,8 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] bg-black/90 flex flex-col animate-fade-in">
-            <div className="relative flex-1 bg-black">
+        <div className="fixed inset-0 z-[200] bg-black flex flex-col animate-fade-in safe-area-inset-bottom">
+            <div className="relative flex-1 bg-black overflow-hidden">
                 <Cropper
                     image={imageSrc}
                     crop={crop}
@@ -97,8 +97,8 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                 />
             </div>
 
-            <div className="bg-white p-6 pb-12 rounded-t-[24px]">
-                <div className="max-w-md mx-auto space-y-6">
+            <div className="bg-white p-6 pb-8 md:pb-12 rounded-t-[24px] shrink-0 z-50">
+                <div className="max-w-md mx-auto space-y-4 md:space-y-6">
                     <div className="space-y-2">
                         <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-gray-500">
                             <span>Zoom</span>
@@ -133,18 +133,18 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                         />
                     </div>
 
-                    <div className="flex gap-4 pt-4">
+                    <div className="flex gap-4 pt-2 md:pt-4">
                         <button
                             onClick={onCancel}
-                            className="flex-1 bg-gray-100 text-gray-500 font-bold py-4 rounded-[16px] uppercase tracking-widest text-xs hover:bg-gray-200"
+                            className="flex-1 bg-gray-100 text-gray-500 font-bold py-3 md:py-4 rounded-[16px] uppercase tracking-widest text-xs hover:bg-gray-200"
                         >
                             Cancelar
                         </button>
                         <button
                             onClick={handleSave}
-                            className="flex-1 bg-[var(--primary-color)] !text-[#FAFAF7] font-bold py-4 rounded-[16px] uppercase tracking-widest text-xs shadow-xl shadow-green-900/20"
+                            className="flex-1 bg-[var(--primary-color)] !text-[#FAFAF7] font-bold py-3 md:py-4 rounded-[16px] uppercase tracking-widest text-xs shadow-xl shadow-green-900/20"
                         >
-                            Guardar Foto
+                            Guardar
                         </button>
                     </div>
                 </div>
