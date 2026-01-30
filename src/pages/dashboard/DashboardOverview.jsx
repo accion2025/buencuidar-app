@@ -194,8 +194,13 @@ const DashboardOverview = () => {
             setAppointments(appointmentsData);
 
         } catch (error) {
+            // Ignore AbortError (benign, usually due to navigation/cleanup)
+            if (error.name === 'AbortError' || error.message?.includes('aborted')) {
+                console.log('Dashboard fetch aborted');
+                return;
+            }
             console.error('Error fetching dashboard data:', error);
-            alert("Error cargando el dashboard: " + error.message);
+            // alert("Error cargando el dashboard: " + error.message); // Commented out to reduce noise, or keep only for real errors
         }
     };
 
@@ -468,7 +473,8 @@ const DashboardOverview = () => {
     const historyAppointments = appointments
         .filter(a =>
             a.status === 'cancelled' ||
-            ((a.status === 'completed' || a.status === 'paid') && a.date <= todayLocal) ||
+            a.status === 'completed' ||
+            a.status === 'paid' ||
             (a.status === 'confirmed' && a.date < todayLocal)
         )
     // Filter for "Citas Programadas" (Modal & Stat Card)
