@@ -168,10 +168,9 @@ return createPortal(
                     </button>
                 </div>
             </div>
-        </div>
-    </div>,
-    document.body
-);
+        </div>,
+        document.body
+        );
 };
 
-export default ImageCropper;
+        export default ImageCropper;
