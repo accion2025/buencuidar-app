@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import Cropper from 'react-easy-crop';
 import { Sliders } from 'lucide-react';
 
@@ -80,9 +81,9 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-[200] bg-black flex flex-col">
-            <div className="relative w-full bg-black" style={{ height: 'calc(100% - 220px)' }}>
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] bg-black flex flex-col">
+            <div className="relative w-full bg-black flex-1">
                 <Cropper
                     image={imageSrc}
                     crop={crop}
@@ -101,7 +102,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                 />
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 bg-white p-6 pb-safe pt-6 rounded-t-[24px] z-[210] shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+            <div className="bg-white p-6 pb-safe pt-6 rounded-t-[24px] z-[9999] shadow-[0_-4px_20px_rgba(0,0,0,0.3)] shrink-0 safe-area-inset-bottom">
                 <div className="max-w-md mx-auto space-y-4">
                     <div className="space-y-4">
                         <div className="flex items-center gap-4">
@@ -149,7 +150,8 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
