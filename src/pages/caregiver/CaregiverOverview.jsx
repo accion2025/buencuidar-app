@@ -502,19 +502,21 @@ const CaregiverOverview = () => {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                onClick={() => navigate('/caregiver/jobs')}
-                                className="btn bg-[var(--secondary-color)] hover:bg-emerald-600 !text-[#FAFAF7] px-8 py-5 rounded-[16px] font-black uppercase tracking-widest shadow-2xl shadow-green-900/40 border-none group transition-all"
-                            >
-                                Buscar Nuevos Turnos
-                                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform ml-2" />
-                            </button>
                         </div>
                     </div>
+                    <button
+                        onClick={() => navigate('/caregiver/jobs')}
+                        className="btn bg-[var(--secondary-color)] hover:bg-emerald-600 !text-[#FAFAF7] px-8 py-5 rounded-[16px] font-black uppercase tracking-widest shadow-2xl shadow-green-900/40 border-none group transition-all"
+                    >
+                        Buscar Nuevos Turnos
+                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform ml-2" />
+                    </button>
                 </div>
+            </div>
+        </div>
 
 
-                {/* Main Content Split */}
+                {/* Main Content Split */ }
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Left Primary Column */}
                     <div className="lg:col-span-2 space-y-10">
@@ -1021,32 +1023,34 @@ const CaregiverOverview = () => {
                     }}
                 />
 
-                {/* Care Log Modal */}
-                {nextShifts.length > 0 && nextShifts[0].status === 'in_progress' && (
-                    <>
-                        <AddCareLogModal
-                            isOpen={isLogModalOpen}
-                            onClose={() => setIsLogModalOpen(false)}
-                            appointmentId={nextShifts[0].id}
-                            caregiverId={user.id}
-                            clientName={nextShifts[0].client?.full_name}
-                            appointmentDetails={nextShifts[0].details}
-                            careAgenda={nextShifts[0].care_agenda}
-                            clientId={nextShifts[0].client_id}
-                        />
-                        <WellnessReportModal
-                            isOpen={showWellnessModal}
-                            onClose={() => setShowWellnessModal(false)}
-                            appointmentId={nextShifts[0].id}
-                            caregiverId={user.id}
-                            onSaved={() => {
-                                // Optional hook
-                            }}
-                        />
-                    </>
-                )}
+    {/* Care Log Modal */ }
+    {
+        nextShifts.length > 0 && nextShifts[0].status === 'in_progress' && (
+            <>
+                <AddCareLogModal
+                    isOpen={isLogModalOpen}
+                    onClose={() => setIsLogModalOpen(false)}
+                    appointmentId={nextShifts[0].id}
+                    caregiverId={user.id}
+                    clientName={nextShifts[0].client?.full_name}
+                    appointmentDetails={nextShifts[0].details}
+                    careAgenda={nextShifts[0].care_agenda}
+                    clientId={nextShifts[0].client_id}
+                />
+                <WellnessReportModal
+                    isOpen={showWellnessModal}
+                    onClose={() => setShowWellnessModal(false)}
+                    appointmentId={nextShifts[0].id}
+                    caregiverId={user.id}
+                    onSaved={() => {
+                        // Optional hook
+                    }}
+                />
+            </>
+        )
+    }
             </div >
             );
 };
 
-            export default CaregiverOverview;
+export default CaregiverOverview;
