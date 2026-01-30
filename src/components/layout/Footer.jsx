@@ -4,23 +4,20 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react
 
 const Footer = () => {
     return (
-        <footer className="bg-[var(--primary-color)] !text-[#FAFAF7] pt-16 pb-8">
+        <footer className="bg-[var(--primary-color)] !text-[#FAFAF7] pt-[10px] pb-8">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col items-center text-center gap-[10px] mb-8 w-full">
-                    {/* Brand & Socials */}
-                    <div className="flex flex-col items-center gap-[10px]">
-                        <h4 className="text-3xl font-bold tracking-tight font-brand">BuenCuidar</h4>
-                        <div className="flex gap-4 justify-center">
-                            <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-[var(--secondary-color)] transition-all">
-                                <Facebook size={16} />
-                            </a>
-                            <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-[var(--secondary-color)] transition-all">
-                                <Instagram size={16} />
-                            </a>
-                            <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-[var(--secondary-color)] transition-all">
-                                <Linkedin size={16} />
-                            </a>
-                        </div>
+                    {/* Socials */}
+                    <div className="flex gap-4 justify-center">
+                        <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-[var(--secondary-color)] transition-all">
+                            <Facebook size={16} />
+                        </a>
+                        <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-[var(--secondary-color)] transition-all">
+                            <Instagram size={16} />
+                        </a>
+                        <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-[var(--secondary-color)] transition-all">
+                            <Linkedin size={16} />
+                        </a>
                     </div>
 
                     {/* Purpose */}
@@ -31,23 +28,20 @@ const Footer = () => {
                     </div>
 
                     {/* Contact Info */}
-                    <div className="flex flex-col gap-[10px] items-center">
-                        <h5 className="font-brand font-bold uppercase tracking-widest text-[10px] text-[var(--secondary-color)]">Contacto</h5>
-                        <ul className="flex flex-col md:flex-row gap-4 md:gap-6 items-center justify-center text-xs font-secondary">
-                            <li className="flex items-center gap-2">
-                                <MapPin size={14} className="text-[var(--secondary-color)]" />
-                                <span className="text-gray-300">Asunción, Paraguay</span>
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <Phone size={14} className="text-[var(--secondary-color)]" />
-                                <span className="text-gray-300">+595 (900) 000 000</span>
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <Mail size={14} className="text-[var(--secondary-color)]" />
-                                <span className="text-gray-300">hola@buencuidar.com</span>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul className="flex flex-col md:flex-row gap-4 md:gap-6 items-center justify-center text-xs font-secondary">
+                        <li className="flex items-center gap-2">
+                            <MapPin size={14} className="text-[var(--secondary-color)]" />
+                            <span className="text-gray-300">Asunción, Paraguay</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <Phone size={14} className="text-[var(--secondary-color)]" />
+                            <span className="text-gray-300">+595 (900) 000 000</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <Mail size={14} className="text-[var(--secondary-color)]" />
+                            <span className="text-gray-300">hola@buencuidar.com</span>
+                        </li>
+                    </ul>
                 </div>
 
                 <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
