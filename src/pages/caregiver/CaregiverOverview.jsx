@@ -1038,10 +1038,10 @@ const CaregiverOverview = () => {
                                 }}
                             />
                         </>
-                    )
-                }
-            </div >
-            );
+                </div>
+            )}
+        </div>
+    );
 };
 
-            export default CaregiverOverview;
+export default CaregiverOverview;
