@@ -228,6 +228,11 @@ const CalendarPage = () => {
     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
     const getEventColor = (event) => {
+        // Status overrides date logic
+        if (['completed', 'paid', 'cancelled'].includes(event.status)) {
+            return 'bg-gray-100 text-gray-500 border-gray-200 opacity-70';
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -399,16 +404,21 @@ const CalendarPage = () => {
                         {appointments.filter(a => a.date === selectedDate).length > 0 ? (
                             <>
                                 <button onClick={() => openModal(selectedDate)} className="w-full mb-4 py-2 border border-dashed border-blue-600 text-blue-600 rounded-[16px] font-medium hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"><Plus size={16} /> Agregar otra cita</button>
-                                {appointments.filter(a => a.date === selectedDate).map(event => (
-                                    <div key={event.id} className="bg-white p-4 rounded-[16px] shadow-sm border border-gray-100 relative group/event">
-                                        <div className="flex gap-1 absolute top-2 right-2">
-                                            <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-[16px]"><Edit2 size={16} /></button>
-                                            <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
+                                {appointments.filter(a => a.date === selectedDate).map(event => {
+                                    const isGray = ['completed', 'paid', 'cancelled'].includes(event.status);
+                                    return (
+                                        <div key={event.id} className={`p-4 rounded-[16px] shadow-sm border relative group/event ${isGray ? 'bg-gray-50 border-gray-200 opacity-60' : 'bg-white border-gray-100'}`}>
+                                            <div className="flex gap-1 absolute top-2 right-2">
+                                                {!isGray && (
+                                                    <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-[16px]"><Edit2 size={16} /></button>
+                                                )}
+                                                <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
+                                            </div>
+                                            <h4 className={`font-bold mb-1 pr-8 ${isGray ? 'text-gray-500' : 'text-gray-800'}`}>{event.title} {isGray && `(${event.status === 'cancelled' ? 'Cancelada' : 'Finalizada'})`}</h4>
+                                            <div className="text-sm text-gray-600 flex items-center gap-2"><Clock size={14} /> {event.time} {event.end_time ? `- ${event.end_time.substring(0, 5)}` : ''}</div>
                                         </div>
-                                        <h4 className="font-bold text-gray-800 mb-1 pr-8">{event.title}</h4>
-                                        <div className="text-sm text-gray-600 flex items-center gap-2"><Clock size={14} /> {event.time} {event.end_time ? `- ${event.end_time.substring(0, 5)}` : ''}</div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </>
                         ) : (
                             <div className="text-center py-10 text-gray-400">
