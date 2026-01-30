@@ -52,7 +52,7 @@ const DashboardLayout = () => {
             path: profile?.role === 'caregiver' ? '/caregiver' : '/dashboard'
         },
         // 'PULSO' y 'Calendario' comunes, o ajustar según se requiera
-        { icon: Activity, label: <span>BC <span className="text-[#2FAE8F]">PULSO</span></span>, path: '/dashboard/pulso' },
+        { icon: Activity, label: <span>B<span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span></span>, path: '/dashboard/pulso' },
         { icon: Calendar, label: 'Calendario', path: '/dashboard/calendar' },
         { icon: MessageSquare, label: 'Mensajes', path: '/dashboard/messages', badge: unreadCount },
         {
