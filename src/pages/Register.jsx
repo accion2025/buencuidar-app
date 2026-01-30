@@ -59,7 +59,7 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[var(--base-bg)] flex flex-col">
+        <div className="min-h-screen bg-red-500 flex flex-col">
             <Navbar />
 
             <main className="flex-grow container mx-auto px-4 py-12 md:py-24 flex items-start md:items-center justify-center relative">
