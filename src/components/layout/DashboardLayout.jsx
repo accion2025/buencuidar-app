@@ -76,12 +76,13 @@ const DashboardLayout = () => {
     };
 
     const handleLogout = async () => {
+        setIsMobileMenuOpen(false);
         await signOut();
         navigate('/login');
     };
 
     return (
-        <div className="flex h-screen bg-gray-100 overflow-hidden">
+        <div className="flex h-[100dvh] bg-gray-100 overflow-hidden">
             {/* Sidebar - Desktop & Mobile */}
             <aside
                 className={`

@@ -53,6 +53,7 @@ const CaregiverLayout = () => {
     };
 
     const handleLogout = async () => {
+        setIsSidebarOpen(false);
         await signOut();
         navigate('/login');
     };
@@ -60,7 +61,7 @@ const CaregiverLayout = () => {
     if (loading) return null;
 
     return (
-        <div className="min-h-screen bg-gray-50 flex font-sans overflow-hidden h-screen">
+        <div className="min-h-[100dvh] bg-gray-50 flex font-sans overflow-hidden h-[100dvh]">
             {/* Sidebar */}
             <aside
                 className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 !text-[#FAFAF7] transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
