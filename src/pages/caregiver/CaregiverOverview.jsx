@@ -266,28 +266,13 @@ const CaregiverOverview = () => {
             let monthlyHours = 0;
 
             (completedThisMonth || []).forEach(app => {
-                // Calculate Earnings (Prefer payment_amount, fallback to offered_rate, else 0)
-                const pay = app.payment_amount || app.offered_rate || 0;
-                // Only count earnings if Marked as Paid? Or just accrued? 
-                // Usually "Ganancias" implies accrued, but user wants to "edit payments".
-                // Let's count it if status is 'paid' OR just accrue it. 
-                // Better to show ACCRUED EARNINGS for the month regardless of payment status, or purely PAID.
-                // Let's assume Accrued for now, or sum only 'paid'. 
-                // Given the prompt "payments received", let's sum ALL completed, but maybe distinguish?
-                // Simple approach: Sum all 'payment_amount' (if set) + 'offered_rate' (if not set) for completed.
+                // Logic: Use payment_amount ONLY if status is 'paid'. Otherwise use offered_rate.
+                const pay = app.payment_status === 'paid' && app.payment_amount
+                    ? parseFloat(app.payment_amount)
+                    : parseFloat(app.offered_rate || 0);
 
-                // However, if we want "Pagos Recibidos", we should strictly check payment_status === 'paid'.
-                // But "Ganancias (Mes)" typically means Income Generated.
-                // Let's stick to Income Generated (Accrued) but utilize payment_amount if customized.
-                if (app.payment_status === 'paid') {
-                    monthlyEarnings += parseFloat(pay);
-                } else {
-                    // Optionally count pending payments? For now let's only count PAID for "Ganancias Reales"
-                    // Or maybe the user wants to see potential. Let's count PAID for safety as "Earnings" usually means "Money in pocket".
-                    // Actually, usually "Earnings" in gig apps shows total completed value.
-                    // modifying logic:
-                    monthlyEarnings += parseFloat(pay);
-                }
+                // Add to monthly earnings
+                monthlyEarnings += pay;
 
                 // Calculate Hours
                 if (app.time && app.end_time) {
