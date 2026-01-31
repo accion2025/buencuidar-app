@@ -702,12 +702,23 @@ const DashboardOverview = () => {
                         <div className="space-y-6 relative z-10">
                             {appointments.flatMap(a =>
                                 (a.job_applications || [])
-                                    .filter(app => app.status === 'pending')
+                                    .filter(app => {
+                                        if (app.status !== 'pending') return false;
+                                        // Grace Period: Only show if created > 5 minutes ago
+                                        const createdTime = new Date(app.created_at).getTime();
+                                        const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+                                        return createdTime < fiveMinutesAgo;
+                                    })
                                     .map(app => ({ ...app, appointment: a }))
                             ).length > 0 ? (
                                 appointments.flatMap(a =>
                                     (a.job_applications || [])
-                                        .filter(app => app.status === 'pending')
+                                        .filter(app => {
+                                            if (app.status !== 'pending') return false;
+                                            const createdTime = new Date(app.created_at).getTime();
+                                            const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+                                            return createdTime < fiveMinutesAgo;
+                                        })
                                         .map(app => ({ ...app, appointment: a }))
                                 ).map((req) => (
                                     <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
