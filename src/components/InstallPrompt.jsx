@@ -17,6 +17,7 @@ const InstallPrompt = ({ className }) => {
         }
 
         // 2. Detect iOS (including iPads requesting desktop site)
+        const userAgent = window.navigator.userAgent;
         const isIosDevice = /iPad|iPhone|iPod/.test(userAgent) ||
             (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
         setIsIOS(isIosDevice);
