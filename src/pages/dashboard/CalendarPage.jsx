@@ -272,18 +272,22 @@ const CalendarPage = () => {
                 .select('date, status')
                 .or(`client_id.eq.${user.id},caregiver_id.eq.${user.id}`)
                 .gte('date', startOfYear)
-                .lte('date', endOfYear);
+                .lte('date', endOfYear)
+                .neq('status', 'cancelled'); // Exclude cancelled from stats
 
             if (error) throw error;
 
             const stats = {};
+            // Get local date string YYYY-MM-DD for accurate comparison (ignoring time)
+            const todayVal = new Date().toLocaleDateString('en-CA');
+
             data.forEach(app => {
                 const month = parseInt(app.date.split('-')[1]) - 1; // 0-indexed
                 if (!stats[month]) stats[month] = { count: 0, hasUpcoming: false };
                 stats[month].count++;
 
-                // Check if upcoming (future date and confirmed/pending)
-                if (new Date(app.date) >= new Date().setHours(0, 0, 0, 0) && (app.status === 'confirmed' || app.status === 'pending')) {
+                // Check if upcoming (future date and confirmed/pending/in_progress) using string comparison
+                if (app.date >= todayVal && (app.status === 'confirmed' || app.status === 'pending' || app.status === 'in_progress')) {
                     stats[month].hasUpcoming = true;
                 }
             });
