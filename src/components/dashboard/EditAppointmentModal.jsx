@@ -179,56 +179,51 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                                             <option key={p.id} value={p.id}>{p.full_name}</option>
                                         ))}
                                     </select>
-                                </select>
-                            </div>
+                                </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Dirección del Servicio</label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej. Calle 123, Colonia Centro"
-                                    className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30"
-                                    value={formData.address}
-                                    onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                />
-                            </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 ml-1">Dirección del Servicio</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Ej. Calle 123, Colonia Centro"
+                                        className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold focus:border-blue-500 outline-none transition-all bg-gray-50/30"
+                                        value={formData.address}
+                                        onChange={e => setFormData({ ...formData, address: e.target.value })}
+                                    />
+                                </div>
+                        </section>
 
-
-
+                        <button
+                            type="submit"
+                            disabled={saving || !isDirty}
+                            className="w-full bg-slate-900 !text-[#FAFAF7] py-5 rounded-[16px] font-black text-lg shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {saving ? <Loader2 className="animate-spin" size={24} /> : 'Guardar Cambios'}
+                        </button>
                     </div>
-                </section>
 
-                <button
-                    type="submit"
-                    disabled={saving || !isDirty}
-                    className="w-full bg-slate-900 !text-[#FAFAF7] py-5 rounded-[16px] font-black text-lg shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {saving ? <Loader2 className="animate-spin" size={24} /> : 'Guardar Cambios'}
-                </button>
-            </div>
+                    {/* Right Side: Service Explorer */}
+                    <div className="flex-1 p-10 bg-gray-50/30">
+                        <div className="mb-6 flex justify-between items-center">
+                            <h4 className="text-xs font-black text-blue-600 uppercase tracking-widest flex items-center gap-2">
+                                <div className="w-1.5 h-4 bg-blue-600 rounded-full"></div>
+                                Explorador de Servicios ({formData.selectedServices.length})
+                            </h4>
+                        </div>
 
-            {/* Right Side: Service Explorer */}
-            <div className="flex-1 p-10 bg-gray-50/30">
-                <div className="mb-6 flex justify-between items-center">
-                    <h4 className="text-xs font-black text-blue-600 uppercase tracking-widest flex items-center gap-2">
-                        <div className="w-1.5 h-4 bg-blue-600 rounded-full"></div>
-                        Explorador de Servicios ({formData.selectedServices.length})
-                    </h4>
-                </div>
+                        <ServiceSelector
+                            selectedServices={formData.selectedServices}
+                            onChange={(services) => setFormData({ ...formData, selectedServices: services })}
+                        />
 
-                <ServiceSelector
-                    selectedServices={formData.selectedServices}
-                    onChange={(services) => setFormData({ ...formData, selectedServices: services })}
-                />
-
-                <div className="mt-6 p-4 bg-blue-50 rounded-[16px] border border-blue-100 flex items-start gap-3">
-                    <Info size={18} className="text-blue-600 mt-0.5" />
-                    <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
-                        Estas selecciones actualizarán el plan de trabajo para el cuidador. Puedes seleccionar múltiples servicios.
-                    </p>
-                </div>
-            </div>
-        </form>
+                        <div className="mt-6 p-4 bg-blue-50 rounded-[16px] border border-blue-100 flex items-start gap-3">
+                            <Info size={18} className="text-blue-600 mt-0.5" />
+                            <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
+                                Estas selecciones actualizarán el plan de trabajo para el cuidador. Puedes seleccionar múltiples servicios.
+                            </p>
+                        </div>
+                    </div>
+                </form>
             </div >
         </div >
     );
