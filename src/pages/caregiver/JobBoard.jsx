@@ -297,8 +297,12 @@ const JobBoard = () => {
                                 </div>
 
                                 <div className="space-y-2 text-sm text-gray-600 mb-4">
-                                    <div className="flex items-center gap-2">
-                                        <MapPin size={16} className="text-gray-400" /> {job.address || job.client?.address || 'Ubicación remota'}
+                                    <div className="flex flex-col gap-1 mb-2">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Dirección del Servicio</span>
+                                        <div className="flex items-center gap-2">
+                                            <MapPin size={16} className="text-gray-400" />
+                                            <span className="font-bold text-gray-700">{job.address || 'Dirección no especificada'}</span>
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {new Date(job.date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
