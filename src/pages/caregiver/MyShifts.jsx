@@ -80,6 +80,10 @@ const MyShifts = () => {
         return true;
     });
 
+    const upcomingCount = shifts.filter(s => ['confirmed', 'pending'].includes(s.status)).length;
+    const completedCount = shifts.filter(s => s.status === 'completed').length;
+    const cancelledCount = shifts.filter(s => s.status === 'cancelled').length;
+
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -94,19 +98,19 @@ const MyShifts = () => {
                     onClick={() => setActiveTab('upcoming')}
                     className={`pb-4 border-b-2 font-brand font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'upcoming' ? 'border-[var(--secondary-color)] text-[var(--secondary-color)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
                 >
-                    Próximos
+                    Próximos <span className="ml-1 bg-gray-100 px-2 py-0.5 rounded-full text-[10px] text-gray-600">{upcomingCount}</span>
                 </button>
                 <button
                     onClick={() => setActiveTab('completed')}
                     className={`pb-4 border-b-2 font-brand font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'completed' ? 'border-[var(--secondary-color)] text-[var(--secondary-color)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
                 >
-                    Completados
+                    Completados <span className="ml-1 bg-gray-100 px-2 py-0.5 rounded-full text-[10px] text-gray-600">{completedCount}</span>
                 </button>
                 <button
                     onClick={() => setActiveTab('cancelled')}
                     className={`pb-4 border-b-2 font-brand font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'cancelled' ? 'border-[var(--secondary-color)] text-[var(--secondary-color)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
                 >
-                    Cancelados
+                    Cancelados <span className="ml-1 bg-gray-100 px-2 py-0.5 rounded-full text-[10px] text-gray-600">{cancelledCount}</span>
                 </button>
             </div>
 
