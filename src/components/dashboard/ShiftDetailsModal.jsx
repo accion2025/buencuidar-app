@@ -140,12 +140,17 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                         <div className="flex-1 relative z-10">
                             <h4 className="font-black !text-[#FAFAF7]/40 text-[10px] uppercase tracking-[0.2em] mb-2 leading-none">Dirección del Servicio</h4>
                             <p className="text-base !text-[#FAFAF7] font-brand font-bold leading-tight mb-6">
-                                {shift.location || 'Calle Principal 123, Colonia Centro, CDMX'}
+                                {shift.address || 'Dirección no especificada'}
                             </p>
-                            <button className="text-[10px] font-black bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-3 rounded-[16px] flex items-center gap-2 hover:bg-emerald-600 transition-all w-fit uppercase tracking-widest shadow-xl shadow-green-900/40">
+                            <a
+                                href={shift.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shift.address)}` : '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`text-[10px] font-black bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-3 rounded-[16px] flex items-center gap-2 hover:bg-emerald-600 transition-all w-fit uppercase tracking-widest shadow-xl shadow-green-900/40 ${!shift.address ? 'opacity-50 pointer-events-none' : ''}`}
+                            >
                                 <Navigation size={12} fill="currentColor" />
                                 Ver Ruta en el Mapa
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
