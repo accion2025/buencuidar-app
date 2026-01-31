@@ -191,6 +191,7 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
                                         onChange={e => setFormData({ ...formData, address: e.target.value })}
                                     />
                                 </div>
+                            </div>
                         </section>
 
                         <button
