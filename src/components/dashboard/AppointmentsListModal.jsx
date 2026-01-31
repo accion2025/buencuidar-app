@@ -55,11 +55,10 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                         <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded">
                                             <Clock size={12} /> {app.time?.substring(0, 5)} {app.end_time ? `- ${app.end_time.substring(0, 5)}` : ''}
                                         </span>
-                                        {app.caregiver?.address && (
-                                            <span className="flex items-center gap-1 truncate max-w-[150px]">
-                                                <MapPin size={12} /> {app.caregiver.address}
-                                            </span>
-                                        )}
+                                        <span className="flex items-center gap-1 truncate max-w-[250px]" title={app.address || 'Dirección no especificada'}>
+                                            <MapPin size={12} className="shrink-0" />
+                                            {app.address || 'Dirección no especificada'}
+                                        </span>
                                     </div>
                                 </div>
 
