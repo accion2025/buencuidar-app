@@ -26,6 +26,7 @@ const CalendarPage = () => {
         endTime: '',
         type: 'medical',
         patient_id: '',
+        address: '',
         selectedServices: []
     });
 
@@ -117,6 +118,7 @@ const CalendarPage = () => {
             endTime: appointment.end_time || '',
             type: appointment.type,
             patient_id: appointment.patient_id || '',
+            address: appointment.address || '',
             selectedServices: services
         });
 
@@ -156,6 +158,7 @@ const CalendarPage = () => {
                 type: newAppointment.type,
                 client_id: user.id,
                 patient_id: newAppointment.patient_id || null,
+                address: newAppointment.address || null,
                 details: formattedDetails,
                 status: 'pending'
             };
@@ -174,7 +177,7 @@ const CalendarPage = () => {
             }
 
             setShowModal(false);
-            setNewAppointment({ title: '', time: '', endTime: '', type: 'medical', patient_id: '', details: '', selectedServices: [] });
+            setNewAppointment({ title: '', time: '', endTime: '', type: 'medical', patient_id: '', address: '', details: '', selectedServices: [] });
             setEditingId(null);
             await loadAppointments();
         } catch (error) {
@@ -468,6 +471,19 @@ const CalendarPage = () => {
                                             <option value="">Seleccionar familiar...</option>
                                             {patients.map(p => (<option key={p.id} value={p.id}>{p.full_name}</option>))}
                                         </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 ml-1">Dirección del servicio</label>
+                                        <div className="relative">
+                                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                            <input
+                                                type="text"
+                                                className="w-full pl-12 pr-6 py-4 rounded-[16px] border-2 border-gray-100 font-bold"
+                                                placeholder="Ej. Av. Siempre Viva 123"
+                                                value={newAppointment.address}
+                                                onChange={e => setNewAppointment({ ...newAppointment, address: e.target.value })}
+                                            />
+                                        </div>
                                     </div>
 
                                 </div>
