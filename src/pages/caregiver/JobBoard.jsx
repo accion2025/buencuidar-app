@@ -298,7 +298,7 @@ const JobBoard = () => {
 
                                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                                     <div className="flex items-center gap-2">
-                                        <MapPin size={16} className="text-gray-400" /> {job.client?.address || 'Ubicación remota'}
+                                        <MapPin size={16} className="text-gray-400" /> {job.address || job.client?.address || 'Ubicación remota'}
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {new Date(job.date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
