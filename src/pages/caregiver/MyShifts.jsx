@@ -11,6 +11,7 @@ const MyShifts = () => {
     const [shifts, setShifts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedShift, setSelectedShift] = useState(null);
+    const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming', 'completed', 'cancelled'
 
     useEffect(() => {
         if (user) {
@@ -72,6 +73,13 @@ const MyShifts = () => {
         'completed': 'Completado'
     };
 
+    const filteredShifts = shifts.filter(shift => {
+        if (activeTab === 'upcoming') return ['confirmed', 'pending'].includes(shift.status);
+        if (activeTab === 'completed') return shift.status === 'completed';
+        if (activeTab === 'cancelled') return shift.status === 'cancelled';
+        return true;
+    });
+
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -80,11 +88,26 @@ const MyShifts = () => {
                 <p className="text-gray-500 font-secondary mt-1">Gestiona tu agenda y confirma tus próximas visitas.</p>
             </header>
 
-            {/* Tabs (Mock) */}
+            {/* Tabs */}
             <div className="flex gap-8 border-b border-gray-100">
-                <button className="pb-4 border-b-2 border-[var(--secondary-color)] text-[var(--secondary-color)] font-black uppercase text-xs tracking-widest transition-all">Próximos</button>
-                <button className="pb-4 border-b-2 border-transparent text-gray-400 hover:text-gray-600 font-black uppercase text-xs tracking-widest transition-all">Completados</button>
-                <button className="pb-4 border-b-2 border-transparent text-gray-400 hover:text-gray-600 font-black uppercase text-xs tracking-widest transition-all">Cancelados</button>
+                <button
+                    onClick={() => setActiveTab('upcoming')}
+                    className={`pb-4 border-b-2 font-brand font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'upcoming' ? 'border-[var(--secondary-color)] text-[var(--secondary-color)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                >
+                    Próximos
+                </button>
+                <button
+                    onClick={() => setActiveTab('completed')}
+                    className={`pb-4 border-b-2 font-brand font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'completed' ? 'border-[var(--secondary-color)] text-[var(--secondary-color)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                >
+                    Completados
+                </button>
+                <button
+                    onClick={() => setActiveTab('cancelled')}
+                    className={`pb-4 border-b-2 font-brand font-black uppercase text-xs tracking-widest transition-all ${activeTab === 'cancelled' ? 'border-[var(--secondary-color)] text-[var(--secondary-color)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+                >
+                    Cancelados
+                </button>
             </div>
 
             <div className="space-y-4">
@@ -92,8 +115,8 @@ const MyShifts = () => {
                     <div className="flex justify-center py-12">
                         <Loader2 className="animate-spin text-blue-600" size={32} />
                     </div>
-                ) : shifts.length > 0 ? (
-                    shifts.map((shift) => {
+                ) : filteredShifts.length > 0 ? (
+                    filteredShifts.map((shift) => {
                         const { day, month } = formatDate(shift.date);
                         return (
                             <div key={shift.id} className={`bg-white rounded-[16px] border border-slate-100 border-l-[6px] ${shift.status === 'confirmed' ? 'border-l-[var(--secondary-color)]' : 'border-l-[var(--primary-color)]'} shadow-xl shadow-slate-200/50 p-8 flex flex-col md:flex-row gap-8 hover:shadow-2xl transition-all group`}>
@@ -136,7 +159,11 @@ const MyShifts = () => {
                     })
                 ) : (
                     <div className="bg-white rounded-[16px] p-12 text-center border border-gray-100 italic text-gray-400">
-                        No tienes turnos programados próximamente.
+                        {activeTab === 'upcoming'
+                            ? 'No tienes turnos programados próximamente.'
+                            : activeTab === 'completed'
+                                ? 'No tienes turnos completados aún.'
+                                : 'No tienes turnos cancelados.'}
                     </div>
                 )}
             </div>
