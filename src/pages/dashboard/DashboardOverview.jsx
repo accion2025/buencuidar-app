@@ -486,8 +486,7 @@ const DashboardOverview = () => {
         });
     // Filter for "Citas Programadas" (Modal & Stat Card)
     const upcomingAppointmentsList = appointments.filter(a =>
-        a.status !== 'completed' &&
-        a.status !== 'paid' &&
+        (a.status === 'confirmed' || a.status === 'pending' || a.status === 'in_progress') &&
         a.status !== 'cancelled' &&
         a.date >= todayLocal
     );
