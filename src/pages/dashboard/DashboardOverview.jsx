@@ -296,7 +296,12 @@ const DashboardOverview = () => {
                 alert("¡Solicitud aprobada con éxito! El turno ha sido confirmado.");
 
             } else {
-                // REJECT Flow: Just mark application as rejected
+                // REJECT Flow: Ask for confirmation first
+                if (!window.confirm("¿Estás seguro de que quieres rechazar esta solicitud? Esta acción no se puede deshacer.")) {
+                    return;
+                }
+
+                // Just mark application as rejected
                 const { error } = await supabase
                     .from('job_applications')
                     .update({ status: 'rejected' })
@@ -746,7 +751,7 @@ const DashboardOverview = () => {
                                             <p className="text-xs italic text-[var(--text-light)] leading-relaxed">"{req.appointment.title}"</p>
                                         </div>
 
-                                        <div className="flex gap-3">
+                                        <div className="flex gap-3 flex-wrap sm:flex-nowrap">
                                             <button
                                                 onClick={() => handleMessage(req.caregiver)}
                                                 className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--base-bg)] transition-all shadow-sm group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100"
@@ -762,7 +767,7 @@ const DashboardOverview = () => {
                                             </button>
                                             <button
                                                 onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, false)}
-                                                className="px-4 bg-white border border-gray-100 text-gray-400 rounded-[16px] hover:text-[var(--error-color)] hover:bg-red-50 hover:border-red-100 transition-all"
+                                                className="px-4 bg-white border border-gray-100 text-gray-400 rounded-[16px] hover:text-[var(--error-color)] hover:bg-red-50 hover:border-red-100 transition-all flex-shrink-0"
                                                 title="Rechazar"
                                             >
                                                 <Check size={20} className="rotate-45" />
