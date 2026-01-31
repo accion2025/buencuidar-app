@@ -3,9 +3,12 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { Heart, Activity, UserCheck, Clock, ShieldCheck, Home as HomeIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Services = () => {
     const navigate = useNavigate();
+    const { profile } = useAuth();
+    const isCaregiver = profile?.role === 'caregiver';
 
     const services = [
         {
@@ -104,15 +107,17 @@ const Services = () => {
                                 <p className="text-xs text-gray-500 italic text-center leading-relaxed">
                                     El costo depende de la ubicación, duración y nivel de acompañamiento.
                                 </p>
-                                <button
-                                    onClick={() => navigate('/search')}
-                                    className={`w-full py-2 rounded-[16px] font-bold text-sm transition-colors ${service.isSpecial
-                                        ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
-                                        : 'bg-green-50 text-[var(--primary-color)] hover:bg-green-100'
-                                        }`}
-                                >
-                                    Reservar
-                                </button>
+                                {!isCaregiver && (
+                                    <button
+                                        onClick={() => navigate('/search')}
+                                        className={`w-full py-2 rounded-[16px] font-bold text-sm transition-colors ${service.isSpecial
+                                            ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                                            : 'bg-green-50 text-[var(--primary-color)] hover:bg-green-100'
+                                            }`}
+                                    >
+                                        Reservar
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}
