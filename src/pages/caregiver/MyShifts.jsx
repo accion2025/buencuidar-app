@@ -131,7 +131,10 @@ const MyShifts = () => {
                                 </div>
                                 <div className="flex-1 space-y-2">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <div className={`px-2 py-0.5 rounded text-xs font-bold ${shift.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                                        <div className={`px-2 py-0.5 rounded text-xs font-bold ${shift.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                                                shift.status === 'cancelled' ? 'bg-red-100 text-red-600' :
+                                                    'bg-blue-100 text-blue-700'
+                                            }`}>
                                             {(statusMap[shift.status] || shift.status).toUpperCase()}
                                         </div>
                                         <span className="text-xs text-gray-400">ID: #{shift.id.slice(0, 5)}</span>

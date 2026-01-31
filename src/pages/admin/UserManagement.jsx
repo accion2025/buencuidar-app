@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreHorizontal, Shield, User } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Shield, ShieldOff, User } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const UserManagement = () => {
@@ -33,6 +33,26 @@ const UserManagement = () => {
         if (filter === 'all') return true;
         return u.role === filter;
     });
+
+    const handleToggleBan = async (userId, currentStatus) => {
+        const action = currentStatus ? 'desbloquear' : 'bloquear';
+        if (!window.confirm(`¿Estás seguro de que deseas ${action} a este usuario?`)) return;
+
+        try {
+            const { error } = await supabase.rpc('toggle_user_ban', { target_user_id: userId });
+
+            if (error) throw error;
+
+            // Optimistic update
+            setUsers(prev => prev.map(u =>
+                u.id === userId ? { ...u, is_banned: !currentStatus } : u
+            ));
+
+        } catch (error) {
+            console.error('Error toggling ban:', error);
+            alert('Error al cambiar el estado del usuario. Asegúrate de haber corrido el script SQL setup_blocking_policy.sql');
+        }
+    };
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -92,18 +112,25 @@ const UserManagement = () => {
                                     </td>
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded-[16px] text-xs font-bold border ${user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
-                                                user.role === 'caregiver' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                                    'bg-green-50 text-green-700 border-green-100'
+                                            user.role === 'caregiver' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                'bg-green-50 text-green-700 border-green-100'
                                             }`}>
                                             {user.role === 'admin' ? 'Administrador' :
                                                 user.role === 'caregiver' ? 'Cuidador' : 'Familia'}
                                         </span>
                                     </td>
                                     <td className="p-4">
-                                        <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-                                            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                            Activo
-                                        </span>
+                                        {user.is_banned ? (
+                                            <span className="flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 px-2.5 py-1 rounded-full border border-red-100 w-fit">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                                                Bloqueado
+                                            </span>
+                                        ) : (
+                                            <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 w-fit">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                Activo
+                                            </span>
+                                        )}
                                     </td>
                                     <td className="p-4">
                                         <span className="text-xs text-gray-500 font-medium capitalize">
@@ -111,9 +138,22 @@ const UserManagement = () => {
                                         </span>
                                     </td>
                                     <td className="p-4 text-right">
-                                        <button className="p-2 hover:bg-gray-100 rounded-[16px] text-gray-400 hover:text-gray-600 transition-colors">
-                                            <MoreHorizontal size={18} />
-                                        </button>
+                                        <div className="flex justify-end gap-2">
+                                            <button
+                                                onClick={() => handleToggleBan(user.id, user.is_banned)}
+                                                className={`p-2 rounded-[16px] transition-all border ${user.is_banned
+                                                    ? 'bg-red-50 text-red-500 border-red-100 hover:bg-red-100'
+                                                    : 'bg-white text-gray-400 border-gray-100 hover:bg-gray-50 hover:text-[var(--primary-color)] hover:border-gray-200'
+                                                    }`}
+                                                title={user.is_banned ? "Desbloquear usuario" : "Bloquear usuario"}
+                                            >
+                                                {user.is_banned ? <ShieldOff size={18} /> : <Shield size={18} />}
+                                            </button>
+
+                                            <button className="p-2 hover:bg-gray-100 rounded-[16px] text-gray-400 hover:text-gray-600 transition-colors">
+                                                <MoreHorizontal size={18} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

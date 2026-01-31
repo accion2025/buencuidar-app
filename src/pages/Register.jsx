@@ -23,9 +23,16 @@ const Register = () => {
         }));
     };
 
-    const { signUp } = useAuth();
+    const { signUp, user } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // Pre-fill email if user exists
+    useState(() => {
+        if (user?.email) {
+            setFormData(prev => ({ ...prev, email: user.email }));
+        }
+    }, [user]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,25 +44,56 @@ const Register = () => {
         setLoading(true);
         setError('');
 
-        const { data, error: signUpError } = await signUp(formData.email, formData.password, {
-            full_name: formData.fullName,
-            role: 'family'
-        });
+        try {
+            if (user) {
+                // User exists (Magic Link case), just create profile
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: user.id,
+                        email: user.email,
+                        full_name: formData.fullName,
+                        role: 'family',
+                        created_at: new Date().toISOString()
+                    }, { onConflict: 'id' });
 
-        if (signUpError) {
-            setError(translateSupabaseError(signUpError.message));
-            setLoading(false);
-            return;
-        }
+                if (profileError) throw profileError;
 
-        navigate('/registration-success', {
-            state: {
-                fullName: formData.fullName,
-                email: formData.email,
-                requiresConfirmation: true,
-                role: 'family'
+                // Force profile refresh
+                window.location.href = '/dashboard';
+                return;
             }
-        });
+
+            // New User Registration
+            const { data, error: signUpError } = await signUp(formData.email, formData.password, {
+                full_name: formData.fullName,
+                role: 'family'
+            });
+
+            if (signUpError) {
+                if (signUpError.message.includes('already registered')) {
+                    setError('Este correo ya está registrado. Intenta iniciar sesión.');
+                } else {
+                    setError(translateSupabaseError(signUpError.message));
+                }
+                setLoading(false);
+                return;
+            }
+
+            navigate('/registration-success', {
+                state: {
+                    fullName: formData.fullName,
+                    email: formData.email,
+                    requiresConfirmation: true,
+                    role: 'family'
+                }
+            });
+
+        } catch (err) {
+            console.error("Error registration:", err);
+            setError(err.message);
+            setLoading(false);
+        }
     };
 
     return (
@@ -116,38 +154,50 @@ const Register = () => {
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label htmlFor="password" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
-                                    Contraseña
-                                </label>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    required
-                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
-                                    placeholder="••••••••"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                />
+                        {user ? (
+                            <div className="bg-green-50 p-4 rounded-xl border border-green-100 flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                    ✓
+                                </div>
+                                <div>
+                                    <p className="text-xs font-bold text-green-800 uppercase tracking-widest">Cuenta Verificada</p>
+                                    <p className="text-sm text-green-700">{user.email}</p>
+                                </div>
                             </div>
-                            <div>
-                                <label htmlFor="confirmPassword" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
-                                    Confirmar Contraseña
-                                </label>
-                                <input
-                                    type="password"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    required
-                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
-                                    placeholder="••••••••"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                />
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label htmlFor="password" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
+                                        Contraseña
+                                    </label>
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        required
+                                        className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
+                                        placeholder="••••••••"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="confirmPassword" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
+                                        Confirmar Contraseña
+                                    </label>
+                                    <input
+                                        type="password"
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        required
+                                        className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
+                                        placeholder="••••••••"
+                                        value={formData.confirmPassword}
+                                        onChange={handleChange}
+                                    />
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         <div className="flex items-center">
                             <input
@@ -174,11 +224,11 @@ const Register = () => {
                                         <span>Registrando...</span>
                                     </span>
                                 ) : (
-                                    <span>Registrarse Now</span>
+                                    <span>{user ? 'Completar Perfil' : 'Registrarse Now'}</span>
                                 )}
                             </button>
                         </div>
-                    </form>
+                    </form >
 
                     <div className="mt-12 text-center space-y-4 border-t border-gray-50 pt-10">
                         <div>
@@ -197,11 +247,11 @@ const Register = () => {
                             </p>
                         </div>
                     </div>
-                </div>
-            </main>
+                </div >
+            </main >
 
             <Footer />
-        </div>
+        </div >
     );
 };
 

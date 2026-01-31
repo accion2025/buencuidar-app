@@ -78,6 +78,16 @@ export const AuthProvider = ({ children }) => {
             console.log("Datos del perfil recibidos:", data);
 
             if (data) {
+                // BLOCKING POLICY
+                if (data.is_banned) {
+                    console.warn("Usuario bloqueado intentando acceder. Cerrando sesión...");
+                    await supabase.auth.signOut();
+                    setUser(null);
+                    setProfile(null);
+                    window.location.href = '/login?error=banned'; // Force redirect with flag
+                    return;
+                }
+
                 console.log("Datos de profiles (incluido avatar_url):", data.avatar_url);
 
                 // caregiver_details puede venir como objeto o array

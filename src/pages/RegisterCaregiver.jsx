@@ -79,15 +79,17 @@ const RegisterCaregiver = () => {
             let authData;
 
             if (user) {
-                // UPDATE/UPGRADE EXISTING USER
+                // UPDATE/UPGRADE EXISTING USER or RESTORE PROFILE
                 const { error: updateError } = await supabase
                     .from('profiles')
-                    .update({
+                    .upsert({
+                        id: user.id,
+                        email: user.email,
                         role: 'caregiver',
                         phone: formData.phone,
-                        full_name: formData.fullName
-                    })
-                    .eq('id', user.id);
+                        full_name: formData.fullName,
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'id' });
 
                 if (updateError) throw updateError;
 
