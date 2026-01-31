@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageCircle, User } from 'lucide-react';
+import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageCircle, User, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -108,6 +108,36 @@ const JobBoard = () => {
     const handleApply = async (job) => {
         if (!user) {
             alert("Error: No se detecta usuario conectado. (User is null)");
+            return;
+        }
+
+        const isCancelling = appliedJobs[job.id] === 'pending';
+
+        if (isCancelling) {
+            if (!window.confirm("¿Deseas cancelar tu solicitud para esta oferta?")) return;
+
+            setApplying(job.id);
+            try {
+                const { error } = await supabase
+                    .from('job_applications')
+                    .delete()
+                    .eq('appointment_id', job.id)
+                    .eq('caregiver_id', user.id);
+
+                if (error) throw error;
+
+                // Update local state
+                setAppliedJobs(prev => {
+                    const next = { ...prev };
+                    delete next[job.id];
+                    return next;
+                });
+            } catch (error) {
+                console.error("Error cancelling:", error);
+                alert("Error al cancelar la solicitud.");
+            } finally {
+                setApplying(null);
+            }
             return;
         }
 
@@ -313,22 +343,28 @@ const JobBoard = () => {
                                         Solicitud Rechazada
                                     </div>
                                 ) : (
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => handleApply(job)}
-                                            disabled={applying === job.id || !!applicationStatus}
-                                            className={`flex-grow py-5 rounded-[16px] font-black uppercase tracking-widest text-xs transition-all disabled:cursor-not-allowed shadow-xl ${applicationStatus === 'pending'
-                                                ? 'bg-[var(--secondary-color)] !text-[#FAFAF7] border-none shadow-green-900/20 disabled:opacity-100'
-                                                : 'bg-[var(--primary-color)] !text-[#FAFAF7] border-none hover:bg-[#1a5a70] shadow-blue-900/20 disabled:opacity-50'
-                                                }`}
-                                        >
-                                            {applicationStatus === 'pending'
-                                                ? '¡SOLICITUD ENVIADA!'
-                                                : applying === job.id
-                                                    ? 'PROCESANDO...'
-                                                    : 'ENVIAR SOLICITUD'
-                                            }
-                                        </button>
+                                    <div className="flex flex-col gap-3 w-full">
+                                        {applicationStatus === 'pending' ? (
+                                            <>
+                                                <div className="w-full py-4 rounded-[16px] font-black uppercase tracking-widest text-xs text-center bg-green-100 text-green-700 border border-green-200 shadow-sm flex items-center justify-center gap-2">
+                                                    <Briefcase size={16} /> ¡SOLICITUD ENVIADA!
+                                                </div>
+                                                <button
+                                                    onClick={() => handleApply(job)}
+                                                    className="w-full py-3 rounded-[16px] font-bold uppercase tracking-widest text-[10px] border border-red-200 text-red-500 hover:bg-red-50 transition-all flex items-center justify-center gap-2"
+                                                >
+                                                    <X size={14} /> CANCELAR SOLICITUD
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleApply(job)}
+                                                disabled={applying === job.id}
+                                                className="w-full py-5 rounded-[16px] font-black uppercase tracking-widest text-xs transition-all disabled:cursor-not-allowed shadow-xl bg-[var(--primary-color)] !text-[#FAFAF7] border-none hover:bg-[#1a5a70] shadow-blue-900/20 disabled:opacity-50"
+                                            >
+                                                {applying === job.id ? 'PROCESANDO...' : 'ENVIAR SOLICITUD'}
+                                            </button>
+                                        )}
                                     </div>
                                 )}
                             </div>
