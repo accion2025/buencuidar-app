@@ -16,9 +16,9 @@ const InstallPrompt = ({ className }) => {
             setShowPrompt(true);
         }
 
-        // 2. Detect iOS
-        const userAgent = window.navigator.userAgent.toLowerCase();
-        const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
+        // 2. Detect iOS (including iPads requesting desktop site)
+        const isIosDevice = /iPad|iPhone|iPod/.test(userAgent) ||
+            (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
         setIsIOS(isIosDevice);
 
         // 3. Listen for the native Android install event
@@ -47,7 +47,7 @@ const InstallPrompt = ({ className }) => {
                 }
             } else {
                 // Fallback implementation instructions
-                alert("Para instalar en iPhone/iPad:\n1. Pulsa el botón 'Compartir' (cuadrado con flecha)\n2. Selecciona 'Agregar a Inicio'");
+                alert("Para instalar en iPhone/iPad:\n1. Pulsa el botón 'Compartir' (icono cuadrado con flecha)\n2. Desliza hacia abajo y selecciona 'Agregar a Inicio'");
             }
         } else {
             // Android/Desktop standard install

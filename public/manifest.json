@@ -1,0 +1,23 @@
+{
+    "name": "BuenCuidar",
+    "short_name": "BuenCuidar",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#0F4C5C",
+    "description": "Plataforma de conexión entre familias y cuidadores certificados.",
+    "icons": [
+        {
+            "src": "/pwa-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/pwa-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
