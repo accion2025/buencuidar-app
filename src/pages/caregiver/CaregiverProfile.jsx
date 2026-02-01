@@ -35,6 +35,14 @@ const CaregiverProfile = () => {
     const [newCert, setNewCert] = useState({ title: '', org: '', year: '' });
     const [documents, setDocuments] = useState([]);
     const [ratingStats, setRatingStats] = useState({ average: 5.0, count: 0 });
+    const [debugLogs, setDebugLogs] = useState([]);
+
+    const addLog = (msg, obj = null) => {
+        const time = new Date().toLocaleTimeString();
+        const fullMsg = `${time} - ${msg}${obj ? ' ' + JSON.stringify(obj).substring(0, 100) : ''}`;
+        setDebugLogs(prev => [fullMsg, ...prev].slice(0, 10)); // Keep last 10
+        console.log("UI_DEBUG:", fullMsg);
+    };
 
     useEffect(() => {
         if (user?.id) {
@@ -42,6 +50,17 @@ const CaregiverProfile = () => {
             fetchRatings();
         }
     }, [user?.id]);
+
+    useEffect(() => {
+        let interval;
+        if (uploading) {
+            addLog("Iniciando monitor de vida (Heartbeat)...");
+            interval = setInterval(() => {
+                addLog("Ejecutando... (Heartbeat)");
+            }, 5000);
+        }
+        return () => clearInterval(interval);
+    }, [uploading]);
 
     const fetchDocuments = async () => {
         const { data } = await supabase
@@ -156,10 +175,10 @@ const CaregiverProfile = () => {
             URL.revokeObjectURL(selectedImage);
         }
 
-        const MAX_RETRIES = 3;
+        addLog("Iniciando flujo de carga...");
         let attempt = 0;
         let success = false;
-        let currentStep = "inicio"; // Local tracking for accurate error reporting
+        let currentStep = "inicio";
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
@@ -202,6 +221,7 @@ const CaregiverProfile = () => {
                 setUploadStep(2);
                 const fileName = `avatar-${Date.now()}.jpg`;
                 const filePath = `${user.id}/${fileName}`;
+                addLog(`Paso 2: Iniciando carga... Intento: ${attempt}`);
 
                 // Definimos el intento TUS con SEÑAL DE ABORTO
                 const uploadWithTus = supabase.storage
@@ -212,8 +232,10 @@ const CaregiverProfile = () => {
                         resumable: true,
                         signal: controller.signal,
                         onUploadProgress: (progress) => {
-                            const percent = Math.round((progress.loaded / progress.total) * 100);
+                            const total = progress.total || fileToUpload.size;
+                            const percent = Math.round((progress.loaded / total) * 100);
                             setUploadProgress(percent);
+                            if (percent % 20 === 0) console.log(`DEBUG: Progreso TUS ${percent}%`);
                         }
                     });
 
@@ -227,33 +249,37 @@ const CaregiverProfile = () => {
                     // Carrera 1: TUS vs 15s
                     uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
                 } catch (raceError) {
-                    if (raceError.name === 'AbortError' || raceError.message === "TUS_HANDSHAKE_TIMEOUT") {
-                        console.log("Fallback Genuino Samsung: Pasando a Canal Alternativo...");
-                        setUploadStep("2 (Alternativo)");
-                        controller.abort();
-                        const newController = new AbortController();
+                    addLog("HANDSHAKE_TIMEOUT -> Forzando modo Estándar...");
+                    setUploadStep("2 (Alternativo)");
+                    controller.abort();
 
-                        // Alarma 30s para el canal estándar
-                        const fallbackTimeout = new Promise((_, reject) =>
-                            setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 30000)
-                        );
+                    // Respiro MUCHO más largo para el A10s (2.5 segundos)
+                    // Esto permite que el navegador libere memoria del intento fallido
+                    await new Promise(r => setTimeout(r, 2500));
+                    addLog("Iniciando canal alternativo...");
 
-                        const uploadStandard = supabase.storage
-                            .from('avatars')
-                            .upload(filePath, fileToUpload, {
-                                contentType: 'image/jpeg',
-                                upsert: true,
-                                resumable: false,
-                                signal: newController.signal
-                            });
+                    const newController = new AbortController();
 
-                        uploadResult = await Promise.race([uploadStandard, fallbackTimeout]);
-                    } else {
-                        throw raceError;
-                    }
+                    // Alarma 45s (más generosa) para el canal estándar en A10s
+                    const fallbackTimeout = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 45000)
+                    );
+
+                    const uploadStandard = supabase.storage
+                        .from('avatars')
+                        .upload(filePath, fileToUpload, {
+                            contentType: 'image/jpeg',
+                            upsert: true,
+                            resumable: false,
+                            signal: newController.signal
+                        });
+
+                    addLog("Paso 2 Alt: Iniciando Fetch...");
+                    uploadResult = await Promise.race([uploadStandard, fallbackTimeout]);
+                    addLog("Paso 2 Alt: Respuesta recibida!");
                 }
 
-                if (uploadResult.error) throw uploadResult.error;
+                if (uploadResult?.error) throw uploadResult.error;
 
                 clearTimeout(timeoutId);
 
@@ -283,6 +309,7 @@ const CaregiverProfile = () => {
                 success = true;
 
             } catch (error) {
+                addLog(`ERROR ${currentStep}:`, error);
                 clearTimeout(timeoutId);
                 console.error(`Error attempt ${attempt}:`, error);
                 lastError = error;
@@ -302,10 +329,20 @@ const CaregiverProfile = () => {
 
         if (!success) {
             let errorMsg = "No se pudo subir la foto.";
-            if (lastError?.name === 'AbortError') {
+            if (lastError?.name === 'AbortError' || lastError?.message?.includes('TIMEOUT')) {
                 errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
+            } else if (lastError?.status === 403 || lastError?.message?.includes('security policy')) {
+                errorMsg = "Error de Permisos (RLS). El servidor denegó la subida.";
             }
-            alert(`${errorMsg}\n\nDetalle Técnico: ${lastError?.message}\nPaso Fallido: ${currentStep}`);
+
+            const debugInfo = `
+                Status: ${lastError?.status || 'N/A'}
+                Name: ${lastError?.name || 'N/A'}
+                Code: ${lastError?.code || 'N/A'}
+                Msg: ${lastError?.message}
+            `.trim();
+
+            alert(`${errorMsg}\n\nDETALLE TÉCNICO:\n${debugInfo}\n\nPASO FALLIDO: ${currentStep}`);
             setUploading(false);
             setUploadStep(0);
         }
@@ -372,7 +409,7 @@ const CaregiverProfile = () => {
                             <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight">{profile.full_name}</h1>
                             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md text-[var(--accent-color)] px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit mx-auto lg:mx-0 border border-white/10 uppercase">
                                 <Award size={14} />
-                                <span>PERFIL PRO VERIFICADO</span>
+                                <span>PERFIL PRO VERIFICADO - V2.1</span>
                             </div>
                         </div>
 
@@ -832,6 +869,20 @@ const CaregiverProfile = () => {
                                 />
                             </div>
                         </form>
+
+                        {/* SECCIÓN DE DEBUG PARA USUARIO */}
+                        <div className="mx-10 mb-6 p-4 bg-slate-900 rounded-[12px] font-mono text-[9px] text-green-400 overflow-hidden border border-slate-800">
+                            <p className="text-slate-500 mb-1 font-black uppercase tracking-widest text-[8px]">Registro de Actividad (Debug) - V2.1:</p>
+                            {debugLogs.length === 0 ? (
+                                <p className="opacity-40 italic">Esperando actividad...</p>
+                            ) : (
+                                debugLogs.map((log, i) => (
+                                    <div key={i} className="mb-1 border-l border-green-900 pl-2 leading-tight">
+                                        {log}
+                                    </div>
+                                ))
+                            )}
+                        </div>
 
                         <div className="p-10 border-t border-gray-100 bg-white flex gap-6">
                             <button

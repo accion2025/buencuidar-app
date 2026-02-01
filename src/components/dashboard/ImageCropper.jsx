@@ -25,7 +25,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                     alert('Error al procesar la imagen.');
                 }
                 setIsSaving(false);
-            }, 'image/jpeg', 0.7);
+            }, 'image/jpeg', 0.4);
 
         } catch (e) {
             console.error('Error saving cropped image:', e);

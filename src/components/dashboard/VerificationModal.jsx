@@ -18,12 +18,31 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     const [success, setSuccess] = useState(null);
     const [userDocs, setUserDocs] = useState([]);
     const [loadingDocs, setLoadingDocs] = useState(false);
+    const [debugLogs, setDebugLogs] = useState([]);
+
+    const addLog = (msg, obj = null) => {
+        const time = new Date().toLocaleTimeString();
+        const fullMsg = `${time} - ${msg}${obj ? ' ' + JSON.stringify(obj).substring(0, 100) : ''}`;
+        setDebugLogs(prev => [fullMsg, ...prev].slice(0, 10)); // Keep last 10
+        console.log("UI_DEBUG:", fullMsg);
+    };
 
     React.useEffect(() => {
         if (isOpen && caregiverId) {
             fetchUserDocs();
         }
     }, [isOpen, caregiverId]);
+
+    React.useEffect(() => {
+        let interval;
+        if (uploading) {
+            addLog("Iniciando monitor de vida (Heartbeat)...");
+            interval = setInterval(() => {
+                addLog("Ejecutando... (Heartbeat)");
+            }, 5000);
+        }
+        return () => clearInterval(interval);
+    }, [uploading]);
 
     const fetchUserDocs = async () => {
         setLoadingDocs(true);
@@ -58,11 +77,11 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         setUploadProgress(0);
         setError(null);
         setSuccess(null);
+        addLog(`Iniciando carga de ${docType}...`);
 
-        const MAX_RETRIES = 3;
         let attempt = 0;
         let success = false;
-        let currentStep = "inicio"; // Seguimiento local para reporte preciso
+        let currentStep = "inicio";
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
@@ -104,6 +123,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 const fileName = `${docType}-${Date.now()}.${fileExt}`;
                 const filePath = `${caregiverId}/${fileName}`;
 
+                addLog(`Paso 2: Subiendo... Intento: ${attempt}`);
+
                 const isPdf = fileExt.toLowerCase() === 'pdf';
                 const contentType = isPdf ? 'application/pdf' : `image/${fileExt === 'png' ? 'png' : 'jpeg'}`;
 
@@ -116,8 +137,10 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                         resumable: true,
                         signal: controller.signal,
                         onUploadProgress: (progress) => {
-                            const percent = Math.round((progress.loaded / progress.total) * 100);
+                            const total = progress.total || fileToUpload.size;
+                            const percent = Math.round((progress.loaded / total) * 100);
                             setUploadProgress(percent);
+                            if (percent % 25 === 0) console.log(`DEBUG: Progreso Docs ${percent}%`);
                         }
                     });
 
@@ -131,14 +154,19 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                     uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
                 } catch (raceError) {
                     if (raceError.name === 'AbortError' || raceError.message === "TUS_HANDSHAKE_TIMEOUT") {
-                        console.log("Fallback Docs Genuino Samsung: Pasando a Canal Alternativo...");
+                        addLog("HANDSHAKE_TIMEOUT -> Modo Alternativo");
                         setUploadStep("2 (Alternativo)");
                         controller.abort();
+
+                        // Respiro largo para el A10s
+                        await new Promise(r => setTimeout(r, 2500));
+                        addLog("Iniciando canal alternativo...");
+
                         const newController = new AbortController();
 
-                        // Alarma canal estándar 30s
+                        // Alarma canal estándar 45s
                         const fallbackTimeout = new Promise((_, reject) =>
-                            setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 30000)
+                            setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 45000)
                         );
 
                         const uploadStandard = supabase.storage
@@ -151,12 +179,10 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                             });
 
                         uploadResult = await Promise.race([uploadStandard, fallbackTimeout]);
-                    } else {
-                        throw raceError;
                     }
                 }
 
-                if (uploadResult.error) throw uploadResult.error;
+                if (uploadResult?.error) throw uploadResult.error;
 
                 clearTimeout(timeoutId);
                 currentStep = "3";
@@ -186,6 +212,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 success = true;
 
             } catch (err) {
+                addLog(`ERROR EN ${currentStep}:`, err);
                 clearTimeout(timeoutId);
                 console.error(`Error attempt ${attempt}:`, err);
                 lastError = err;
@@ -209,12 +236,21 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             if (lastError?.message === 'AUTH_TIMEOUT') {
                 setError("⚠️ Error de Autenticación (Servidor en mantenimiento).");
             } else {
-                if (lastError?.name === 'AbortError') {
+                if (lastError?.name === 'AbortError' || lastError?.message?.includes('TIMEOUT')) {
                     errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
+                } else if (lastError?.status === 403 || lastError?.message?.includes('security policy')) {
+                    errorMsg = "Error de Permisos (RLS). El servidor denegó la carga de documentos.";
                 } else if (lastError?.message?.includes('storage')) {
                     errorMsg += " Error en el servidor de archivos.";
                 }
-                setError(`${errorMsg}\n\nDetalle: ${lastError?.message}\nPaso Fallido: ${currentStep}`);
+
+                const debugInfo = `
+                    Status: ${lastError?.status || 'N/A'}
+                    Msg: ${lastError?.message}
+                    Step: ${currentStep}
+                `.trim();
+
+                setError(`${errorMsg}\n\nDETALLE:\n${debugInfo}`);
             }
         }
         setUploading(null);
@@ -250,6 +286,20 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                             {success}
                         </div>
                     )}
+
+                    {/* Registro de Actividad (Debug) */}
+                    <div className="mb-4 p-4 bg-slate-900 rounded-[12px] font-mono text-[9px] text-green-400 overflow-hidden border border-slate-800">
+                        <p className="text-slate-500 mb-1 font-black uppercase tracking-widest text-[8px]">Registro de Actividad (Debug) - V2.1:</p>
+                        {debugLogs.length === 0 ? (
+                            <p className="opacity-40 italic">Esperando actividad...</p>
+                        ) : (
+                            debugLogs.map((log, i) => (
+                                <div key={i} className="mb-1 border-l border-green-900 pl-2 leading-tight">
+                                    {log}
+                                </div>
+                            ))
+                        )}
+                    </div>
 
                     <div className="grid gap-4">
                         {DOCUMENT_TYPES.map((doc) => {
