@@ -3,14 +3,19 @@ import { createPortal } from 'react-dom';
 import AvatarEditor from 'react-avatar-editor';
 import { Loader2 } from 'lucide-react';
 
-const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
+const ImageCropper = ({ imageSrc, onCropComplete, onCancel, addLog = () => { } }) => {
     const editorRef = useRef(null);
     const [scale, setScale] = useState(1);
     const [isSaving, setIsSaving] = useState(false);
 
-    const handleSave = async () => {
+    const handleSave = async (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (!editorRef.current || isSaving) return;
 
+        addLog("⏳ Procesando recorte (toBlob)...");
         setIsSaving(true);
         try {
             // Get the canvas with the cropped image
@@ -70,23 +75,26 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel }) => {
                         />
                     </div>
 
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex gap-4 pt-4">
                         <button
-                            onClick={onCancel}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onCancel();
+                            }}
                             disabled={isSaving}
-                            className="flex-1 bg-gray-50 border border-gray-100 text-gray-500 font-bold py-4 rounded-[16px] uppercase tracking-widest text-[10px] hover:bg-gray-100 transition-colors disabled:opacity-50"
+                            className="flex-1 bg-gray-50 border-2 border-gray-100 text-gray-500 font-black py-5 rounded-[20px] uppercase tracking-widest text-[10px] hover:bg-gray-100 transition-all disabled:opacity-50"
                         >
                             Cancelar
                         </button>
                         <button
                             onClick={handleSave}
                             disabled={isSaving}
-                            className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-bold py-4 rounded-[16px] uppercase tracking-widest text-[10px] shadow-lg shadow-green-900/20 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[20px] uppercase tracking-widest text-[10px] shadow-xl shadow-green-900/10 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 border-none"
                         >
                             {isSaving ? (
                                 <>
                                     <Loader2 size={16} className="animate-spin" />
-                                    Procesando
+                                    Procesando...
                                 </>
                             ) : (
                                 'Guardar Foto'

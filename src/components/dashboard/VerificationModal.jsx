@@ -83,8 +83,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         setError(null);
         setSuccess(null);
 
-        // Yield for UI update
-        await new Promise(r => setTimeout(r, 150));
+        // Yield for UI update (Aumentado para A10s)
+        await new Promise(r => setTimeout(r, 300));
 
         addLog(`Iniciando carga de ${docType} V2.1...`);
 

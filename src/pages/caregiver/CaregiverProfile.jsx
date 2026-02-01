@@ -170,21 +170,32 @@ const CaregiverProfile = () => {
         setShowCropper(true);
     };
 
-    const handleCropComplete = async (croppedBlob) => {
+    const handleCropComplete = (croppedBlob) => {
+        try {
+            addLog("✅ Recorte completado. Cerrando editor...");
+            setShowCropper(false);
+
+            // Retardo vital para el A10s: Dejar que la UI se limpie antes de lanzar el heavy-upload
+            setTimeout(() => {
+                processAndUploadImage(croppedBlob);
+            }, 400);
+        } catch (err) {
+            addLog("❌ Error fatal al cerrar cropper:", err);
+            setShowCropper(false);
+        }
+    };
+
+    const processAndUploadImage = async (croppedBlob) => {
         setUploading(true);
         setUploadStep(1);
         setUploadProgress(0);
         setError(null);
-        setShowCropper(false);
-
-        // Yield for UI update
-        await new Promise(r => setTimeout(r, 150));
 
         if (selectedImage && selectedImage.startsWith('blob:')) {
             URL.revokeObjectURL(selectedImage);
         }
 
-        addLog("Iniciando flujo de carga V2.1...");
+        addLog("🚀 Lanzando Carga V2.1.2...");
         let attempt = 0;
         let success = false;
         let currentStep = "inicio";
@@ -374,7 +385,9 @@ const CaregiverProfile = () => {
                 <ImageCropper
                     imageSrc={selectedImage}
                     onCropComplete={handleCropComplete}
+                    addLog={addLog}
                     onCancel={() => {
+                        addLog("⚠️ Carga cancelada por el usuario.");
                         setShowCropper(false);
                         setSelectedImage(null);
                     }}
