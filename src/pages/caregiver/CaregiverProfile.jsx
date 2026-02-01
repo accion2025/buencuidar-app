@@ -131,6 +131,12 @@ const CaregiverProfile = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Punto 2: Limitar tamaño a 5MB
+        if (file.size > 5 * 1024 * 1024) {
+            alert("⚠️ La foto es demasiado grande (máximo 5MB). Por favor, selecciona una imagen más pequeña.");
+            return;
+        }
+
         const reader = new FileReader();
         reader.addEventListener('load', () => {
             setSelectedImage(reader.result);
@@ -177,7 +183,11 @@ const CaregiverProfile = () => {
 
         } catch (error) {
             console.error("Error uploading avatar:", error);
-            alert("No se pudo subir la foto: " + error.message);
+            // Punto 4: Feedback de error más claro
+            let errorMsg = "No se pudo subir la foto.";
+            if (error.message?.includes('storage')) errorMsg += " Problema con el almacenamiento.";
+            if (error.message?.includes('Network')) errorMsg += " Revisa tu conexión a internet.";
+            alert(`${errorMsg}\nDetalle: ${error.message}`);
         } finally {
             setUploading(false);
             setSelectedImage(null);

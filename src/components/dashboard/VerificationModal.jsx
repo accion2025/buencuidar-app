@@ -14,12 +14,43 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     const [uploading, setUploading] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [userDocs, setUserDocs] = useState([]);
+    const [loadingDocs, setLoadingDocs] = useState(false);
+
+    React.useEffect(() => {
+        if (isOpen && caregiverId) {
+            fetchUserDocs();
+        }
+    }, [isOpen, caregiverId]);
+
+    const fetchUserDocs = async () => {
+        setLoadingDocs(true);
+        try {
+            const { data, error } = await supabase
+                .from('caregiver_documents')
+                .select('*')
+                .eq('caregiver_id', caregiverId);
+
+            if (error) throw error;
+            setUserDocs(data || []);
+        } catch (err) {
+            console.error("Error fetching docs:", err);
+        } finally {
+            setLoadingDocs(false);
+        }
+    };
 
     if (!isOpen) return null;
 
     const handleUpload = async (e, docType) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
+        // Punto 2: Limitar tamaño a 5MB
+        if (file.size > 5 * 1024 * 1024) {
+            setError("⚠️ El archivo es demasiado grande. El límite permitido es de 5MB.");
+            return;
+        }
 
         setUploading(docType);
         setError(null);
@@ -57,10 +88,15 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 .eq('verification_status', 'pending');
 
             setSuccess(`Documento "${docType}" subido correctamente.`);
+            await fetchUserDocs(); // Refresh status list
             if (onComplete) onComplete();
         } catch (err) {
             console.error(err);
-            setError(`Error al subir ${docType}: ${err.message}`);
+            // Punto 4: Feedback de error más específico
+            let errorMsg = `No se pudo subir el documento "${docType}".`;
+            if (err.message?.includes('storage')) errorMsg += " Error en el servidor de archivos.";
+            if (err.status === 413) errorMsg = "El archivo es demasiado grande para el servidor.";
+            setError(`${errorMsg}\nError: ${err.message}`);
         } finally {
             setUploading(null);
         }
@@ -97,44 +133,74 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                     )}
 
                     <div className="grid gap-4">
-                        {DOCUMENT_TYPES.map((doc) => (
-                            <div key={doc.id} className="p-6 rounded-[16px] border border-gray-100 hover:border-[var(--secondary-color)]/20 transition-all bg-[var(--base-bg)]/30 group">
-                                <div className="flex items-start justify-between gap-6">
-                                    <div className="flex items-start gap-4">
-                                        <div className="p-3 bg-white rounded-[16px] shadow-sm border border-gray-100 text-[var(--primary-color)] group-hover:scale-110 transition-transform">
-                                            <doc.icon size={24} />
+                        {DOCUMENT_TYPES.map((doc) => {
+                            const existingDoc = userDocs.find(d => d.document_type === doc.id);
+
+                            return (
+                                <div key={doc.id} className={`p-6 rounded-[24px] border transition-all ${existingDoc ? 'bg-emerald-50/20 border-emerald-100' : 'bg-[var(--base-bg)]/30 border-gray-100'
+                                    } hover:shadow-md group relative overflow-hidden`}>
+                                    {existingDoc?.status === 'verified' && (
+                                        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                                    )}
+
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                                        <div className="flex items-start gap-4">
+                                            <div className={`p-3 rounded-[16px] shadow-sm border transition-transform group-hover:scale-105 ${existingDoc?.status === 'verified' ? 'bg-emerald-500 text-white border-emerald-400' : 'bg-white text-[var(--primary-color)] border-gray-100'
+                                                }`}>
+                                                {existingDoc?.status === 'verified' ? <Check size={24} strokeWidth={3} /> : <doc.icon size={24} />}
+                                            </div>
+                                            <div>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <h4 className="font-brand font-bold text-[var(--primary-color)] text-sm tracking-tight">{doc.label}</h4>
+                                                    {existingDoc && (
+                                                        <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest border ${existingDoc.status === 'verified' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                                                            existingDoc.status === 'rejected' ? 'bg-red-100 text-red-700 border-red-200' :
+                                                                'bg-orange-100 text-orange-700 border-orange-200'
+                                                            }`}>
+                                                            {existingDoc.status === 'verified' ? 'Verificado' :
+                                                                existingDoc.status === 'rejected' ? 'Rechazado' :
+                                                                    'En Revisión'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-[var(--text-light)] font-secondary mt-1 leading-relaxed max-w-md">{doc.description}</p>
+                                                {existingDoc?.rejection_reason && (
+                                                    <p className="text-[10px] text-red-600 font-bold mt-2 bg-red-50 p-2 rounded-lg border border-red-100">
+                                                        Motivo: {existingDoc.rejection_reason}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="font-brand font-bold text-[var(--primary-color)] text-sm tracking-tight">{doc.label}</h4>
-                                            <p className="text-xs text-[var(--text-light)] font-secondary mt-1 leading-relaxed">{doc.description}</p>
-                                        </div>
+
+                                        <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                            : existingDoc?.status === 'verified'
+                                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100'
+                                                : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
+                                            }`}>
+                                            {uploading === doc.id ? (
+                                                <>
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                    Subiendo...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload size={16} />
+                                                    {existingDoc ? 'Actualizar' : 'Elegir Archivo'}
+                                                </>
+                                            )}
+                                            <input
+                                                type="file"
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                accept="image/*,application/pdf"
+                                                onChange={(e) => handleUpload(e, doc.id)}
+                                                disabled={uploading !== null}
+                                            />
+                                        </label>
                                     </div>
-                                    <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
-                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                        : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
-                                        }`}>
-                                        {uploading === doc.id ? (
-                                            <>
-                                                <Loader2 size={16} className="animate-spin" />
-                                                Subiendo...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Upload size={16} />
-                                                Elegir Archivo
-                                            </>
-                                        )}
-                                        <input
-                                            type="file"
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                            accept="image/*,application/pdf"
-                                            onChange={(e) => handleUpload(e, doc.id)}
-                                            disabled={uploading !== null}
-                                        />
-                                    </label>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
 
                     <div className="p-6 bg-blue-50/50 rounded-[16px] border border-blue-100">

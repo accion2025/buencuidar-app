@@ -80,9 +80,20 @@ const AdminVerification = () => {
         }
     };
 
-    const getFullUrl = (path) => {
-        const { data } = supabase.storage.from('documents').getPublicUrl(path);
-        return data.publicUrl;
+    const handleViewDocument = async (path) => {
+        try {
+            const { data, error } = await supabase.storage
+                .from('documents')
+                .createSignedUrl(path, 3600); // 1 hour expiry
+
+            if (error) throw error;
+            if (data?.signedUrl) {
+                window.open(data.signedUrl, '_blank');
+            }
+        } catch (error) {
+            console.error("Error generating signed URL:", error);
+            alert("No se pudo generar el enlace al documento.");
+        }
     };
 
     if (loading) {
@@ -137,16 +148,14 @@ const AdminVerification = () => {
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <a
-                                        href={getFullUrl(doc.file_path)}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                    <button
+                                        onClick={() => handleViewDocument(doc.file_path)}
                                         className="btn btn-outline flex items-center gap-2 py-4 px-6 text-[10px] font-black uppercase tracking-widest"
                                     >
                                         <FileText size={18} />
                                         Ver Documento
                                         <ExternalLink size={14} />
-                                    </a>
+                                    </button>
 
                                     <div className="flex gap-2">
                                         <button
