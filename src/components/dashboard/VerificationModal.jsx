@@ -13,6 +13,7 @@ const DOCUMENT_TYPES = [
 const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     const [uploading, setUploading] = useState(null);
     const [uploadStep, setUploadStep] = useState(0);
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [userDocs, setUserDocs] = useState([]);
@@ -47,76 +48,101 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Punto 2: Limitar tamaño a 5MB
         if (file.size > 5 * 1024 * 1024) {
             setError("⚠️ El archivo es demasiado grande. El límite permitido es de 5MB.");
             return;
         }
 
         setUploading(docType);
-        setUploadStep(1); // Paso 1: Procesando...
+        setUploadStep(1);
+        setUploadProgress(0);
         setError(null);
         setSuccess(null);
 
-        try {
-            // Conversión Binaria
-            const arrayBuffer = await file.arrayBuffer();
+        const MAX_RETRIES = 3;
+        let attempt = 0;
+        let success = false;
+        let lastError = null;
 
-            setUploadStep(2); // Paso 2: Subiendo...
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${docType}-${Date.now()}.${fileExt}`;
-            const filePath = `${caregiverId}/${fileName}`;
+        while (attempt < MAX_RETRIES && !success) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-            const isPdf = fileExt.toLowerCase() === 'pdf';
-            const contentType = isPdf ? 'application/pdf' : `image/${fileExt === 'png' ? 'png' : 'jpeg'}`;
+            try {
+                attempt++;
+                setUploadStep(1); // Paso 1: Procesando...
+                const arrayBuffer = await file.arrayBuffer();
 
-            const uploadTask = supabase.storage
-                .from('documents')
-                .upload(filePath, arrayBuffer, {
-                    contentType: contentType,
-                    upsert: true
-                });
+                setUploadStep(2); // Paso 2: Subiendo...
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${docType}-${Date.now()}.${fileExt}`;
+                const filePath = `${caregiverId}/${fileName}`;
 
-            // Timeout de 60 segundos
-            const { error: uploadError } = await Promise.race([
-                uploadTask,
-                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 60000))
-            ]);
+                const isPdf = fileExt.toLowerCase() === 'pdf';
+                const contentType = isPdf ? 'application/pdf' : `image/${fileExt === 'png' ? 'png' : 'jpeg'}`;
 
-            if (uploadError) throw uploadError;
+                const { data, error: uploadError } = await supabase.storage
+                    .from('documents')
+                    .upload(filePath, arrayBuffer, {
+                        contentType: contentType,
+                        upsert: true,
+                        onUploadProgress: (progress) => {
+                            const percent = Math.round((progress.loaded / progress.total) * 100);
+                            setUploadProgress(percent);
+                        }
+                    });
 
-            setUploadStep(3); // Paso 3: Guardando registro...
-            const { error: dbError } = await supabase
-                .from('caregiver_documents')
-                .upsert({
-                    caregiver_id: caregiverId,
-                    document_type: docType,
-                    file_path: filePath,
-                    status: 'pending'
-                }, { onConflict: 'caregiver_id,document_type' }); // Ensure unique doc per type
+                clearTimeout(timeoutId);
+                if (uploadError) throw uploadError;
 
-            if (dbError) throw dbError;
+                setUploadStep(3); // Paso 3: Guardando registro...
+                const { error: dbError } = await supabase
+                    .from('caregiver_documents')
+                    .upsert({
+                        caregiver_id: caregiverId,
+                        document_type: docType,
+                        file_path: filePath,
+                        status: 'pending'
+                    }, { onConflict: 'caregiver_id,document_type' });
 
-            await supabase
-                .from('profiles')
-                .update({ verification_status: 'in_review' })
-                .eq('id', caregiverId)
-                .eq('verification_status', 'pending');
+                if (dbError) throw dbError;
 
-            setUploadStep(4); // Paso 4: Finalizando...
-            setSuccess(`Documento "${docType}" subido correctamente.`);
-            await fetchUserDocs();
-            if (onComplete) onComplete();
-        } catch (err) {
-            console.error(err);
-            let errorMsg = `No se pudo subir el documento "${docType}".`;
-            if (err.message === 'TIMEOUT') {
-                errorMsg = "La subida tardó más de 1 minuto. El servidor está saturado o tu conexión falló.";
-            } else {
-                if (err.message?.includes('storage')) errorMsg += " Error en el servidor de archivos.";
+                await supabase
+                    .from('profiles')
+                    .update({ verification_status: 'in_review' })
+                    .eq('id', caregiverId)
+                    .eq('verification_status', 'pending');
+
+                setUploadStep(4); // Paso 4: Finalizando...
+                setSuccess(`Documento "${docType}" subido correctamente.`);
+                await fetchUserDocs();
+                if (onComplete) onComplete();
+                success = true;
+
+            } catch (err) {
+                clearTimeout(timeoutId);
+                console.error(`Error attempt ${attempt}:`, err);
+                lastError = err;
+
+                if (attempt < MAX_RETRIES) {
+                    setUploadStep(2);
+                    setUploadProgress(0);
+                    await new Promise(r => setTimeout(r, 2000 * attempt));
+                }
             }
-            setError(`${errorMsg}\n(Detalle: ${err.message} - Paso ${uploadStep})`);
-        } finally {
+        }
+
+        if (!success) {
+            let errorMsg = `No se pudo subir el documento "${docType}" tras varios intentos.`;
+            if (lastError?.name === 'AbortError') {
+                errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
+            } else {
+                if (lastError?.message?.includes('storage')) errorMsg += " Error en el servidor de archivos.";
+            }
+            setError(`${errorMsg}\n(Detalle: ${lastError?.message} - Paso ${uploadStep})`);
+            setUploading(null);
+            setUploadStep(0);
+        } else {
             setUploading(null);
             setUploadStep(0);
         }
@@ -201,7 +227,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                             {uploading === doc.id ? (
                                                 <>
                                                     <Loader2 size={16} className="animate-spin" />
-                                                    Paso {uploadStep}/4...
+                                                    Paso {uploadStep}/4 {uploadStep === 2 && `${uploadProgress}%`}
                                                 </>
                                             ) : (
                                                 <>

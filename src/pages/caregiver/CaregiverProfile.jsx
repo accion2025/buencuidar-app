@@ -26,6 +26,7 @@ const CaregiverProfile = () => {
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [uploadStep, setUploadStep] = useState(0); // 0: idle, 1: processing, 2: uploading, 3: saving, 4: refreshing
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [showVerificationModal, setShowVerificationModal] = useState(false);
     const [formData, setFormData] = useState(null);
     // Cropper State
@@ -147,75 +148,93 @@ const CaregiverProfile = () => {
 
     const handleCropComplete = async (croppedBlob) => {
         setUploading(true);
-        setUploadStep(1); // Paso 1: Procesando imagen...
+        setUploadStep(1);
+        setUploadProgress(0);
         setShowCropper(false);
 
-        // Limpiar memoria de la imagen seleccionada
         if (selectedImage && selectedImage.startsWith('blob:')) {
             URL.revokeObjectURL(selectedImage);
         }
 
-        try {
-            // Conversión Binaria: Usar ArrayBuffer para evitar errores de multipart en móviles
-            const arrayBuffer = await croppedBlob.arrayBuffer();
+        const MAX_RETRIES = 3;
+        let attempt = 0;
+        let success = false;
+        let lastError = null;
 
-            setUploadStep(2); // Paso 2: Subiendo a la nube...
-            const fileName = `avatar-${Date.now()}.jpg`;
-            const filePath = `${user.id}/${fileName}`;
+        while (attempt < MAX_RETRIES && !success) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s hard timeout
 
-            // Robustez: Timeout de 60 segundos (ajustado por mantenimiento)
-            const uploadTask = supabase.storage
-                .from('avatars')
-                .upload(filePath, arrayBuffer, {
-                    contentType: 'image/jpeg',
-                    upsert: true
-                });
+            try {
+                attempt++;
+                setUploadStep(1); // Paso 1: Procesando...
+                const arrayBuffer = await croppedBlob.arrayBuffer();
 
-            const { error: uploadError } = await Promise.race([
-                uploadTask,
-                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 60000))
-            ]);
+                setUploadStep(2); // Paso 2: Subiendo...
+                const fileName = `avatar-${Date.now()}.jpg`;
+                const filePath = `${user.id}/${fileName}`;
 
-            if (uploadError) throw uploadError;
+                const { data, error: uploadError } = await supabase.storage
+                    .from('avatars')
+                    .upload(filePath, arrayBuffer, {
+                        contentType: 'image/jpeg',
+                        upsert: true,
+                        onUploadProgress: (progress) => {
+                            const percent = Math.round((progress.loaded / progress.total) * 100);
+                            setUploadProgress(percent);
+                        }
+                    });
 
-            setUploadStep(3); // Paso 3: Registrando cambios...
-            const { data: { publicUrl } } = supabase.storage
-                .from('avatars')
-                .getPublicUrl(filePath);
+                clearTimeout(timeoutId);
+                if (uploadError) throw uploadError;
 
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update({ avatar_url: publicUrl })
-                .eq('id', user.id);
+                setUploadStep(3); // Paso 3: Registrando...
+                const { data: { publicUrl } } = supabase.storage
+                    .from('avatars')
+                    .getPublicUrl(filePath);
 
-            if (updateError) throw updateError;
+                const { error: updateError } = await supabase
+                    .from('profiles')
+                    .update({ avatar_url: publicUrl })
+                    .eq('id', user.id);
 
-            setUploadStep(4); // Paso 4: Actualizando perfil...
-            // 1. ACTUALIZACIÓN INSTANTÁNEA
-            setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
+                if (updateError) throw updateError;
 
-            // 2. REFRESCO DIFERIDO
-            setTimeout(async () => {
-                await refreshProfile();
-                setUploadStep(0);
-                setUploading(false);
-            }, 1000);
+                setUploadStep(4); // Paso 4: Finalizando...
+                setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
 
-        } catch (error) {
-            console.error("Error uploading avatar:", error);
-            let errorMsg = "No se pudo subir la foto.";
-            if (error.message === 'TIMEOUT') {
-                errorMsg = "La subida tardó más de 1 minuto. El servidor está saturado o tu conexión falló.";
-            } else {
-                if (error.message?.includes('storage')) errorMsg += " Error de almacenamiento.";
-                if (error.message?.includes('Network')) errorMsg += " Error de conexión.";
+                setTimeout(async () => {
+                    await refreshProfile();
+                    setUploadStep(0);
+                    setUploading(false);
+                }, 1000);
+
+                success = true;
+
+            } catch (error) {
+                clearTimeout(timeoutId);
+                console.error(`Error attempt ${attempt}:`, error);
+                lastError = error;
+
+                if (attempt < MAX_RETRIES) {
+                    setUploadStep(2);
+                    setUploadProgress(0);
+                    await new Promise(r => setTimeout(r, 2000 * attempt));
+                }
             }
-            alert(`${errorMsg}\n(Detalle: ${error.message} - Paso ${uploadStep})`);
+        }
+
+        if (!success) {
+            let errorMsg = "No se pudo subir la foto tras varios intentos.";
+            if (lastError?.name === 'AbortError') {
+                errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
+            }
+            alert(`${errorMsg}\n(Detalle: ${lastError?.message} - Paso ${uploadStep})`);
             setUploading(false);
             setUploadStep(0);
-        } finally {
-            setSelectedImage(null);
         }
+
+        setSelectedImage(null);
     };
 
     return (
@@ -251,7 +270,9 @@ const CaregiverProfile = () => {
                             {uploading ? (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-20">
                                     <Loader2 className="animate-spin text-white mb-2" size={40} />
-                                    <span className="text-white text-[10px] font-black uppercase tracking-widest">Paso {uploadStep}/4</span>
+                                    <span className="text-white text-[10px] font-black uppercase tracking-widest">
+                                        Paso {uploadStep}/4 {uploadStep === 2 && `${uploadProgress}%`}
+                                    </span>
                                 </div>
                             ) : null}
                             <img
@@ -757,7 +778,7 @@ const CaregiverProfile = () => {
                                 ) : uploading ? (
                                     <div className="flex items-center gap-3">
                                         <Loader2 className="animate-spin" size={20} />
-                                        <span>Paso {uploadStep}/4...</span>
+                                        <span>Paso {uploadStep}/4 {uploadStep === 2 && `${uploadProgress}%`}</span>
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-3">
