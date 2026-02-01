@@ -159,17 +159,17 @@ const CaregiverProfile = () => {
         const MAX_RETRIES = 3;
         let attempt = 0;
         let success = false;
-        let lastError = null;
+        let currentStep = "inicio"; // Local tracking for accurate error reporting
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
-            // Timeout de 2 minutos total para TUS, pero con chequeos internos más rápidos
             const timeoutId = setTimeout(() => controller.abort(), 120000);
 
             try {
                 attempt++;
 
-                // --- PASO 1a: Verificación de Sesión Ultra-Rápida ---
+                // --- PASO 1a: Sesión ---
+                currentStep = "1a";
                 setUploadStep("1a");
                 const sessionPromise = supabase.auth.getSession();
                 const authTimeout = new Promise((_, reject) =>
@@ -182,14 +182,16 @@ const CaregiverProfile = () => {
                 ]);
 
                 if (authError || !session) {
-                    throw new Error("Sesión no disponible o expirada. Por favor, cierra sesión y vuelve a entrar.");
+                    throw new Error("Sesión no disponible. Reingresa a la app.");
                 }
 
                 // --- PASO 1b: Procesamiento de Imagen ---
+                currentStep = "1b";
                 setUploadStep("1b");
                 const arrayBuffer = await croppedBlob.arrayBuffer();
 
                 // --- PASO 2: Subida TUS ---
+                currentStep = "2";
                 setUploadStep(2);
                 const fileName = `avatar-${Date.now()}.jpg`;
                 const filePath = `${user.id}/${fileName}`;
@@ -209,6 +211,7 @@ const CaregiverProfile = () => {
                 clearTimeout(timeoutId);
                 if (uploadError) throw uploadError;
 
+                currentStep = "3";
                 setUploadStep(3); // Paso 3: Registrando...
                 const { data: { publicUrl } } = supabase.storage
                     .from('avatars')
@@ -221,6 +224,7 @@ const CaregiverProfile = () => {
 
                 if (updateError) throw updateError;
 
+                currentStep = "4";
                 setUploadStep(4); // Paso 4: Finalizando...
                 setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
 
@@ -238,25 +242,24 @@ const CaregiverProfile = () => {
                 lastError = error;
 
                 if (error.message === "AUTH_TIMEOUT") {
-                    alert("El servidor de autenticación no responde. Intenta cerrar sesión y volver a entrar.");
-                    break; // No tiene sentido reintentar si el auth está muerto
+                    alert("⚠️ SERVIDOR EN MANTENIMIENTO\nLa llave de acceso no respondió en 8s.\n\nPor favor:\n1. Cierra sesión y vuelve a entrar.\n2. Si persiste, intenta en 10 minutos.");
+                    break;
                 }
 
                 if (attempt < MAX_RETRIES) {
                     setUploadStep(2);
                     setUploadProgress(0);
-                    // Esperar un poco antes de reintentar (exponential backoff)
-                    await new Promise(r => setTimeout(r, 3000 * attempt));
+                    await new Promise(r => setTimeout(r, 4000 * attempt));
                 }
             }
         }
 
         if (!success) {
-            let errorMsg = "No se pudo subir la foto tras varios intentos.";
+            let errorMsg = "No se pudo subir la foto.";
             if (lastError?.name === 'AbortError') {
                 errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
             }
-            alert(`${errorMsg}\n(Detalle: ${lastError?.message} - Paso ${uploadStep})`);
+            alert(`${errorMsg}\n\nDetalle Técnico: ${lastError?.message}\nPaso Fallido: ${currentStep}`);
             setUploading(false);
             setUploadStep(0);
         }

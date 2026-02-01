@@ -62,7 +62,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         const MAX_RETRIES = 3;
         let attempt = 0;
         let success = false;
-        let lastError = null;
+        let currentStep = "inicio"; // Seguimiento local para reporte preciso
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
@@ -71,7 +71,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             try {
                 attempt++;
 
-                // --- PASO 1a: Verificación de Sesión Ultra-Rápida ---
+                // --- PASO 1a: Sesión ---
+                currentStep = "1a";
                 setUploadStep("1a");
                 const sessionPromise = supabase.auth.getSession();
                 const authTimeout = new Promise((_, reject) =>
@@ -84,14 +85,16 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 ]);
 
                 if (authError || !session) {
-                    throw new Error("Sesión inválida o expirada. Por favor, reingresa a la app.");
+                    throw new Error("Sesión inválida o expirada.");
                 }
 
                 // --- PASO 1b: Procesamiento de Archivo ---
+                currentStep = "1b";
                 setUploadStep("1b");
                 const arrayBuffer = await file.arrayBuffer();
 
                 // --- PASO 2: Subida TUS ---
+                currentStep = "2";
                 setUploadStep(2);
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${docType}-${Date.now()}.${fileExt}`;
@@ -115,6 +118,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 clearTimeout(timeoutId);
                 if (uploadError) throw uploadError;
 
+                currentStep = "3";
                 setUploadStep(3); // Paso 3: Guardando registro...
                 const { error: dbError } = await supabase
                     .from('caregiver_documents')
@@ -133,6 +137,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                     .eq('id', caregiverId)
                     .eq('verification_status', 'pending');
 
+                currentStep = "4";
                 setUploadStep(4); // Paso 4: Finalizando...
                 setSuccess(`Documento "${docType}" subido correctamente.`);
                 await fetchUserDocs();
@@ -145,32 +150,34 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 lastError = err;
 
                 if (err.message === "AUTH_TIMEOUT") {
-                    setError("Error de autenticación: El servidor no responde. Por favor, reingresa a tu cuenta.");
+                    setError("⚠️ SERVIDOR EN MANTENIMIENTO: La autenticación no respondió. Cierra sesión y vuelve a entrar.");
                     break;
                 }
 
                 if (attempt < MAX_RETRIES) {
                     setUploadStep(2);
                     setUploadProgress(0);
-                    await new Promise(r => setTimeout(r, 3000 * attempt));
+                    // Esperar un poco antes de reintentar (exponential backoff)
+                    await new Promise(r => setTimeout(r, 4000 * attempt));
                 }
             }
         }
 
         if (!success) {
-            let errorMsg = `No se pudo subir el documento "${docType}" tras varios intentos.`;
-            if (lastError?.name === 'AbortError') {
-                errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
+            let errorMsg = `No se pudo subir el documento "${docType}".`;
+            if (lastError?.message === 'AUTH_TIMEOUT') {
+                setError("⚠️ Error de Autenticación (Servidor en mantenimiento).");
             } else {
-                if (lastError?.message?.includes('storage')) errorMsg += " Error en el servidor de archivos.";
+                if (lastError?.name === 'AbortError') {
+                    errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
+                } else if (lastError?.message?.includes('storage')) {
+                    errorMsg += " Error en el servidor de archivos.";
+                }
+                setError(`${errorMsg}\n\nDetalle: ${lastError?.message}\nPaso Fallido: ${currentStep}`);
             }
-            setError(`${errorMsg}\n(Detalle: ${lastError?.message} - Paso ${uploadStep})`);
-            setUploading(null);
-            setUploadStep(0);
-        } else {
-            setUploading(null);
-            setUploadStep(0);
         }
+        setUploading(null);
+        setUploadStep(0);
     };
 
     return createPortal(
