@@ -195,26 +195,57 @@ const CaregiverProfile = () => {
                 setUploadStep("1b");
                 const arrayBuffer = await croppedBlob.arrayBuffer();
 
-                // --- PASO 2: Subida TUS ---
+                // --- PASO 2: Subida (Doble Protocolo TUS -> Standard) ---
                 currentStep = "2";
                 setUploadStep(2);
                 const fileName = `avatar-${Date.now()}.jpg`;
                 const filePath = `${user.id}/${fileName}`;
+
+                // Monitor de progreso para fallback
+                let progressDetected = false;
+                const progressTimeout = setTimeout(() => {
+                    if (!progressDetected && !success) {
+                        console.log("TUS hang detectado al 0%. Intentando abortar para fallback...");
+                        controller.abort("TUS_HANG");
+                    }
+                }, 15000); // 15 segundos antes de rendirse con TUS
 
                 const { data, error: uploadError } = await supabase.storage
                     .from('avatars')
                     .upload(filePath, arrayBuffer, {
                         contentType: 'image/jpeg',
                         upsert: true,
-                        resumable: true,
+                        resumable: true, // Intento primario con TUS
                         onUploadProgress: (progress) => {
+                            progressDetected = true;
                             const percent = Math.round((progress.loaded / progress.total) * 100);
                             setUploadProgress(percent);
                         }
                     });
 
+                clearTimeout(progressTimeout);
+
+                if (uploadError) {
+                    // Si el error fue por el timeout de 15s o fallo de TUS, intentamos el canal estándar
+                    if (uploadError.message?.includes("TUS_HANG") || uploadError.name === 'AbortError') {
+                        console.log("Fallback: Iniciando subida estándar (canal alternativo)...");
+                        setUploadStep("2 (Alternativo)");
+
+                        const { data: stdData, error: stdError } = await supabase.storage
+                            .from('avatars')
+                            .upload(filePath, arrayBuffer, {
+                                contentType: 'image/jpeg',
+                                upsert: true,
+                                resumable: false // Canal estándar
+                            });
+
+                        if (stdError) throw stdError;
+                    } else {
+                        throw uploadError;
+                    }
+                }
+
                 clearTimeout(timeoutId);
-                if (uploadError) throw uploadError;
 
                 currentStep = "3";
                 setUploadStep(3); // Paso 3: Registrando...
