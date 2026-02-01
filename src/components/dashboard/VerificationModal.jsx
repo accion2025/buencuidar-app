@@ -66,19 +66,33 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s para TUS
+            const timeoutId = setTimeout(() => controller.abort(), 120000); // 120s total
 
             try {
                 attempt++;
-                setUploadStep(1); // Paso 1: Procesando...
 
-                // Verificación de Sesión Activa
-                const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-                if (authError || !currentUser) throw new Error("Sesión expirada o inválida.");
+                // --- PASO 1a: Verificación de Sesión Ultra-Rápida ---
+                setUploadStep("1a");
+                const sessionPromise = supabase.auth.getSession();
+                const authTimeout = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error("AUTH_TIMEOUT")), 8000)
+                );
 
+                const { data: { session }, error: authError } = await Promise.race([
+                    sessionPromise,
+                    authTimeout
+                ]);
+
+                if (authError || !session) {
+                    throw new Error("Sesión inválida o expirada. Por favor, reingresa a la app.");
+                }
+
+                // --- PASO 1b: Procesamiento de Archivo ---
+                setUploadStep("1b");
                 const arrayBuffer = await file.arrayBuffer();
 
-                setUploadStep(2); // Paso 2: Subiendo...
+                // --- PASO 2: Subida TUS ---
+                setUploadStep(2);
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${docType}-${Date.now()}.${fileExt}`;
                 const filePath = `${caregiverId}/${fileName}`;
@@ -129,6 +143,11 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 clearTimeout(timeoutId);
                 console.error(`Error attempt ${attempt}:`, err);
                 lastError = err;
+
+                if (err.message === "AUTH_TIMEOUT") {
+                    setError("Error de autenticación: El servidor no responde. Por favor, reingresa a tu cuenta.");
+                    break;
+                }
 
                 if (attempt < MAX_RETRIES) {
                     setUploadStep(2);

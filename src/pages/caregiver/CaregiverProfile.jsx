@@ -163,29 +163,43 @@ const CaregiverProfile = () => {
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s hard timeout para TUS
+            // Timeout de 2 minutos total para TUS, pero con chequeos internos más rápidos
+            const timeoutId = setTimeout(() => controller.abort(), 120000);
 
             try {
                 attempt++;
-                setUploadStep(1); // Paso 1: Procesando...
 
-                // Verificación de Sesión Activa (Evita cuelgues por sesión muerta)
-                const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-                if (authError || !currentUser) throw new Error("Sesión expirada o inválida. Reingresa a la app.");
+                // --- PASO 1a: Verificación de Sesión Ultra-Rápida ---
+                setUploadStep("1a");
+                const sessionPromise = supabase.auth.getSession();
+                const authTimeout = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error("AUTH_TIMEOUT")), 8000)
+                );
 
+                const { data: { session }, error: authError } = await Promise.race([
+                    sessionPromise,
+                    authTimeout
+                ]);
+
+                if (authError || !session) {
+                    throw new Error("Sesión no disponible o expirada. Por favor, cierra sesión y vuelve a entrar.");
+                }
+
+                // --- PASO 1b: Procesamiento de Imagen ---
+                setUploadStep("1b");
                 const arrayBuffer = await croppedBlob.arrayBuffer();
 
-                setUploadStep(2); // Paso 2: Subiendo...
+                // --- PASO 2: Subida TUS ---
+                setUploadStep(2);
                 const fileName = `avatar-${Date.now()}.jpg`;
                 const filePath = `${user.id}/${fileName}`;
 
-                // PROTOCOLO TUS (Resumable): Mucho más estable para móviles
                 const { data, error: uploadError } = await supabase.storage
                     .from('avatars')
                     .upload(filePath, arrayBuffer, {
                         contentType: 'image/jpeg',
                         upsert: true,
-                        resumable: true, // ACTIVA TUS
+                        resumable: true,
                         onUploadProgress: (progress) => {
                             const percent = Math.round((progress.loaded / progress.total) * 100);
                             setUploadProgress(percent);
@@ -222,6 +236,11 @@ const CaregiverProfile = () => {
                 clearTimeout(timeoutId);
                 console.error(`Error attempt ${attempt}:`, error);
                 lastError = error;
+
+                if (error.message === "AUTH_TIMEOUT") {
+                    alert("El servidor de autenticación no responde. Intenta cerrar sesión y volver a entrar.");
+                    break; // No tiene sentido reintentar si el auth está muerto
+                }
 
                 if (attempt < MAX_RETRIES) {
                     setUploadStep(2);
