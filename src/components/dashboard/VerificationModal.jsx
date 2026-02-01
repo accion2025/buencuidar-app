@@ -130,13 +130,18 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 try {
                     uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
                 } catch (raceError) {
-                    if (raceError.message === "TUS_HANDSHAKE_TIMEOUT" || raceError.name === 'AbortError') {
-                        console.log("Fallback Docs Genuino Samsung: TUS no respondió; cambiando...");
+                    if (raceError.name === 'AbortError' || raceError.message === "TUS_HANDSHAKE_TIMEOUT") {
+                        console.log("Fallback Docs Genuino Samsung: Pasando a Canal Alternativo...");
                         setUploadStep("2 (Alternativo)");
                         controller.abort();
                         const newController = new AbortController();
 
-                        uploadResult = await supabase.storage
+                        // Alarma canal estándar 30s
+                        const fallbackTimeout = new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 30000)
+                        );
+
+                        const uploadStandard = supabase.storage
                             .from('documents')
                             .upload(filePath, fileToUpload, {
                                 contentType: contentType,
@@ -144,6 +149,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                 resumable: false,
                                 signal: newController.signal
                             });
+
+                        uploadResult = await Promise.race([uploadStandard, fallbackTimeout]);
                     } else {
                         throw raceError;
                     }

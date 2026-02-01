@@ -224,24 +224,30 @@ const CaregiverProfile = () => {
 
                 let uploadResult;
                 try {
-                    // Carrera: O el TUS responde rápido, o el cronómetro salta
+                    // Carrera 1: TUS vs 15s
                     uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
                 } catch (raceError) {
-                    if (raceError.message === "TUS_HANDSHAKE_TIMEOUT" || raceError.name === 'AbortError') {
-                        console.log("Fallback Genuino Samsung: TUS no respondió; cambiando a Canal Alternativo...");
+                    if (raceError.name === 'AbortError' || raceError.message === "TUS_HANDSHAKE_TIMEOUT") {
+                        console.log("Fallback Genuino Samsung: Pasando a Canal Alternativo...");
                         setUploadStep("2 (Alternativo)");
-                        controller.abort(); // Cancelamos el intento anterior
+                        controller.abort();
                         const newController = new AbortController();
 
-                        // Si TUS falló o tardó, intentamos la subida binaria clásica sin TUS
-                        uploadResult = await supabase.storage
+                        // Alarma 30s para el canal estándar
+                        const fallbackTimeout = new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 30000)
+                        );
+
+                        const uploadStandard = supabase.storage
                             .from('avatars')
                             .upload(filePath, fileToUpload, {
                                 contentType: 'image/jpeg',
                                 upsert: true,
-                                resumable: false, // Canal estándar
+                                resumable: false,
                                 signal: newController.signal
                             });
+
+                        uploadResult = await Promise.race([uploadStandard, fallbackTimeout]);
                     } else {
                         throw raceError;
                     }
