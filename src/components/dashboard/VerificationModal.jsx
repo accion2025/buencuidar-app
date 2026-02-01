@@ -61,10 +61,22 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             const fileName = `${docType}-${Date.now()}.${fileExt}`;
             const filePath = `${caregiverId}/${fileName}`;
 
-            // Upload to storage
-            const { error: uploadError } = await supabase.storage
+            // Robustez: Determinar contentType explícitamente y añadir timeout
+            const isPdf = fileExt.toLowerCase() === 'pdf';
+            const contentType = isPdf ? 'application/pdf' : `image/${fileExt === 'png' ? 'png' : 'jpeg'}`;
+
+            const uploadTask = supabase.storage
                 .from('documents')
-                .upload(filePath, file);
+                .upload(filePath, file, {
+                    contentType: contentType,
+                    upsert: true
+                });
+
+            // Timeout de 30 segundos
+            const { error: uploadError } = await Promise.race([
+                uploadTask,
+                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 30000))
+            ]);
 
             if (uploadError) throw uploadError;
 
@@ -92,10 +104,13 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             if (onComplete) onComplete();
         } catch (err) {
             console.error(err);
-            // Punto 4: Feedback de error más específico
             let errorMsg = `No se pudo subir el documento "${docType}".`;
-            if (err.message?.includes('storage')) errorMsg += " Error en el servidor de archivos.";
-            if (err.status === 413) errorMsg = "El archivo es demasiado grande para el servidor.";
+            if (err.message === 'TIMEOUT') {
+                errorMsg = "La subida tardó demasiado (30s). Revisa tu conexión.";
+            } else {
+                if (err.message?.includes('storage')) errorMsg += " Error en el servidor de archivos.";
+                if (err.status === 413) errorMsg = "El archivo es demasiado grande para el servidor.";
+            }
             setError(`${errorMsg}\nError: ${err.message}`);
         } finally {
             setUploading(null);

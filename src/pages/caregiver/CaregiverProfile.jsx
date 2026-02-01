@@ -137,27 +137,37 @@ const CaregiverProfile = () => {
             return;
         }
 
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-            setSelectedImage(reader.result);
-            setShowCropper(true);
-        });
-        reader.readAsDataURL(file);
+        // Optimización de Memoria: Usar ObjectURL en lugar de FileReader (mucho más ligero para móviles)
+        const objectUrl = URL.createObjectURL(file);
+        setSelectedImage(objectUrl);
+        setShowCropper(true);
     };
 
     const handleCropComplete = async (croppedBlob) => {
         setUploading(true);
         setShowCropper(false);
+
+        // Limpiar memoria de la imagen seleccionada
+        if (selectedImage && selectedImage.startsWith('blob:')) {
+            URL.revokeObjectURL(selectedImage);
+        }
+
         try {
             const fileName = `avatar-${Date.now()}.jpg`;
             const filePath = `${user.id}/${fileName}`;
 
-            const { error: uploadError } = await supabase.storage
+            // Robustez: Timeout de 30 segundos para evitar "hangs" en móvil
+            const uploadTask = supabase.storage
                 .from('avatars')
                 .upload(filePath, croppedBlob, {
                     contentType: 'image/jpeg',
                     upsert: true
                 });
+
+            const { error: uploadError } = await Promise.race([
+                uploadTask,
+                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 30000))
+            ]);
 
             if (uploadError) throw uploadError;
 
@@ -183,10 +193,13 @@ const CaregiverProfile = () => {
 
         } catch (error) {
             console.error("Error uploading avatar:", error);
-            // Punto 4: Feedback de error más claro
             let errorMsg = "No se pudo subir la foto.";
-            if (error.message?.includes('storage')) errorMsg += " Problema con el almacenamiento.";
-            if (error.message?.includes('Network')) errorMsg += " Revisa tu conexión a internet.";
+            if (error.message === 'TIMEOUT') {
+                errorMsg = "La subida tardó demasiado (30s). Revisa tu conexión e intenta de nuevo.";
+            } else {
+                if (error.message?.includes('storage')) errorMsg += " Problema con el almacenamiento.";
+                if (error.message?.includes('Network')) errorMsg += " Revisa tu conexión a internet.";
+            }
             alert(`${errorMsg}\nDetalle: ${error.message}`);
         } finally {
             setUploading(false);
