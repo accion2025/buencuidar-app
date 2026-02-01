@@ -94,7 +94,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 // --- PASO 1b: Procesamiento de Archivo ---
                 currentStep = "1b";
                 setUploadStep("1b");
-                const arrayBuffer = await file.arrayBuffer();
+                await new Promise(r => setTimeout(r, 200)); // Respiro UI
+                const fileToUpload = file;
 
                 // --- PASO 2: Subida (Doble Protocolo TUS -> Standard) ---
                 currentStep = "2";
@@ -106,40 +107,42 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 const isPdf = fileExt.toLowerCase() === 'pdf';
                 const contentType = isPdf ? 'application/pdf' : `image/${fileExt === 'png' ? 'png' : 'jpeg'}`;
 
-                // Definimos el intento TUS como promesa que podemos "gritar" (race)
+                // Definimos el intento TUS con SEÑAL
                 const uploadWithTus = supabase.storage
                     .from('documents')
-                    .upload(filePath, arrayBuffer, {
+                    .upload(filePath, fileToUpload, {
                         contentType: contentType,
                         upsert: true,
                         resumable: true,
+                        signal: controller.signal,
                         onUploadProgress: (progress) => {
                             const percent = Math.round((progress.loaded / progress.total) * 100);
                             setUploadProgress(percent);
                         }
                     });
 
-                // Alarma de 15 segundos para el "saludo inicial" (handshake)
+                // Alarma de 15 segundos
                 const handshakeTimeout = new Promise((_, reject) =>
                     setTimeout(() => reject(new Error("TUS_HANDSHAKE_TIMEOUT")), 15000)
                 );
 
                 let uploadResult;
                 try {
-                    // Carrera: O el TUS responde rápido, o el cronómetro salta
                     uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
                 } catch (raceError) {
                     if (raceError.message === "TUS_HANDSHAKE_TIMEOUT" || raceError.name === 'AbortError') {
-                        console.log("Fallback Docs Genuino: TUS no respondió; cambiando a Canal Alternativo...");
+                        console.log("Fallback Docs Genuino Samsung: TUS no respondió; cambiando...");
                         setUploadStep("2 (Alternativo)");
+                        controller.abort();
+                        const newController = new AbortController();
 
-                        // Si TUS falló o tardó, intentamos la subida binaria clásica sin TUS
                         uploadResult = await supabase.storage
                             .from('documents')
-                            .upload(filePath, arrayBuffer, {
+                            .upload(filePath, fileToUpload, {
                                 contentType: contentType,
                                 upsert: true,
-                                resumable: false // Canal estándar
+                                resumable: false,
+                                signal: newController.signal
                             });
                     } else {
                         throw raceError;

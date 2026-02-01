@@ -193,7 +193,9 @@ const CaregiverProfile = () => {
                 // --- PASO 1b: Procesamiento de Imagen ---
                 currentStep = "1b";
                 setUploadStep("1b");
-                const arrayBuffer = await croppedBlob.arrayBuffer();
+                await new Promise(r => setTimeout(r, 200)); // Breve respiro para la UI
+                // Pasamos el BLOB directo para ahorrar RAM
+                const fileToUpload = croppedBlob;
 
                 // --- PASO 2: Subida (Doble Protocolo TUS -> Standard) ---
                 currentStep = "2";
@@ -201,13 +203,14 @@ const CaregiverProfile = () => {
                 const fileName = `avatar-${Date.now()}.jpg`;
                 const filePath = `${user.id}/${fileName}`;
 
-                // Definimos el intento TUS como una promesa que podemos "gritar" (race)
+                // Definimos el intento TUS con SEÑAL DE ABORTO
                 const uploadWithTus = supabase.storage
                     .from('avatars')
-                    .upload(filePath, arrayBuffer, {
+                    .upload(filePath, fileToUpload, {
                         contentType: 'image/jpeg',
                         upsert: true,
                         resumable: true,
+                        signal: controller.signal,
                         onUploadProgress: (progress) => {
                             const percent = Math.round((progress.loaded / progress.total) * 100);
                             setUploadProgress(percent);
@@ -225,16 +228,19 @@ const CaregiverProfile = () => {
                     uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
                 } catch (raceError) {
                     if (raceError.message === "TUS_HANDSHAKE_TIMEOUT" || raceError.name === 'AbortError') {
-                        console.log("Fallback Genuino: TUS no respondió; cambiando a Canal Alternativo...");
+                        console.log("Fallback Genuino Samsung: TUS no respondió; cambiando a Canal Alternativo...");
                         setUploadStep("2 (Alternativo)");
+                        controller.abort(); // Cancelamos el intento anterior
+                        const newController = new AbortController();
 
                         // Si TUS falló o tardó, intentamos la subida binaria clásica sin TUS
                         uploadResult = await supabase.storage
                             .from('avatars')
-                            .upload(filePath, arrayBuffer, {
+                            .upload(filePath, fileToUpload, {
                                 contentType: 'image/jpeg',
                                 upsert: true,
-                                resumable: false // Canal estándar
+                                resumable: false, // Canal estándar
+                                signal: newController.signal
                             });
                     } else {
                         throw raceError;
