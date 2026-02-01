@@ -477,12 +477,12 @@ const CaregiverProfile = () => {
                                     <div className="w-10 h-10 rounded-[16px] bg-blue-100 text-blue-600 flex items-center justify-center">
                                         <Edit2 size={20} />
                                     </div>
-                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-xs">Información General</h4>
+                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-sm">Información General</h4>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Nombre Completo</label>
+                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Nombre Completo</label>
                                         <input
                                             required
                                             className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)]"
@@ -491,7 +491,7 @@ const CaregiverProfile = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Especialidad</label>
+                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Especialidad</label>
                                         <select
                                             className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none"
                                             value={formData.specialization}
@@ -510,7 +510,7 @@ const CaregiverProfile = () => {
                                         </select>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-widest ml-1">WhatsApp</label>
+                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">WhatsApp</label>
                                         <input
                                             type="tel"
                                             className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)]"
@@ -519,7 +519,7 @@ const CaregiverProfile = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Zona / Localidad</label>
+                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Zona / Localidad</label>
                                         <input
                                             type="text"
                                             className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)]"
@@ -528,7 +528,7 @@ const CaregiverProfile = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Tarifa por Hora ($)</label>
+                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Tarifa por Hora ($)</label>
                                         <input
                                             type="number"
                                             min="0"
@@ -539,7 +539,7 @@ const CaregiverProfile = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Años de Experiencia</label>
+                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Años de Experiencia</label>
                                         <input
                                             type="number"
                                             min="0"
@@ -560,7 +560,7 @@ const CaregiverProfile = () => {
                                     <div className="w-10 h-10 rounded-[16px] bg-purple-100 text-purple-600 flex items-center justify-center">
                                         <BookOpen size={20} />
                                     </div>
-                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-xs">Formación Académica</h4>
+                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-sm">Formación Académica</h4>
                                 </div>
 
                                 <div className="space-y-6">
@@ -573,7 +573,7 @@ const CaregiverProfile = () => {
                                                     </div>
                                                     <div>
                                                         <p className="font-brand font-bold text-[var(--primary-color)] text-sm tracking-tight">{cert.title}</p>
-                                                        <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest">{cert.org} • {cert.year}</p>
+                                                        <p className="text-xs text-[var(--text-light)] font-black uppercase tracking-widest">{cert.org} • {cert.year}</p>
                                                     </div>
                                                 </div>
                                                 <button
@@ -591,10 +591,10 @@ const CaregiverProfile = () => {
                                     </div>
 
                                     <div className="bg-blue-50/30 p-8 rounded-[16px] border-2 border-dashed border-blue-200 space-y-6">
-                                        <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] text-center">Añadir Nuevo Certificado</p>
+                                        <p className="text-xs font-black text-blue-600 uppercase tracking-[0.2em] text-center">Añadir Nuevo Certificado</p>
                                         <div className="grid grid-cols-2 gap-6">
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Título</label>
+                                                <label className="text-xs font-black text-blue-400 uppercase tracking-widest ml-1">Título</label>
                                                 <input
                                                     type="text"
                                                     placeholder="Ej. Licenciatura"
@@ -604,7 +604,7 @@ const CaregiverProfile = () => {
                                                 />
                                             </div>
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Institución</label>
+                                                <label className="text-xs font-black text-blue-400 uppercase tracking-widest ml-1">Institución</label>
                                                 <input
                                                     type="text"
                                                     placeholder="Ej. UNAM"
@@ -616,7 +616,7 @@ const CaregiverProfile = () => {
                                         </div>
                                         <div className="flex gap-6">
                                             <div className="w-32 space-y-1">
-                                                <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest ml-1">Año</label>
+                                                <label className="text-xs font-black text-blue-400 uppercase tracking-widest ml-1">Año</label>
                                                 <input
                                                     type="text"
                                                     placeholder="2024"
@@ -633,7 +633,7 @@ const CaregiverProfile = () => {
                                                         setNewCert({ title: '', org: '', year: '' });
                                                     }
                                                 }}
-                                                className="flex-1 bg-blue-600 !text-[#FAFAF7] font-black rounded-[16px] hover:bg-blue-700 transition-all text-[10px] uppercase tracking-[0.15em] shadow-lg shadow-blue-200"
+                                                className="flex-1 bg-blue-600 !text-[#FAFAF7] font-black rounded-[16px] hover:bg-blue-700 transition-all text-xs uppercase tracking-[0.15em] shadow-lg shadow-blue-200"
                                             >
                                                 Añadir Certificado
                                             </button>
@@ -650,7 +650,7 @@ const CaregiverProfile = () => {
                                     <div className="w-10 h-10 rounded-[16px] bg-emerald-100 text-emerald-600 flex items-center justify-center">
                                         <Star size={20} />
                                     </div>
-                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-xs">Habilidades Técnicas</h4>
+                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-sm">Habilidades Técnicas</h4>
                                 </div>
                                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                                     {AVAILABLE_SKILLS.map((skill) => {
@@ -674,7 +674,7 @@ const CaregiverProfile = () => {
                                                     <div className={`w-8 h-8 rounded-[16px] border-2 flex items-center justify-center transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-100'}`}>
                                                         {isSelected && <Check size={16} strokeWidth={4} />}
                                                     </div>
-                                                    <span className={`text-[10px] font-black uppercase tracking-widest leading-tight ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
+                                                    <span className={`text-xs font-black uppercase tracking-widest leading-tight ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
                                                 </div>
                                             </button>
                                         );
@@ -690,7 +690,7 @@ const CaregiverProfile = () => {
                                     <div className="w-10 h-10 rounded-[16px] bg-amber-100 text-amber-600 flex items-center justify-center">
                                         <Briefcase size={20} />
                                     </div>
-                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-xs">Biografía Detallada</h4>
+                                    <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-sm">Biografía Detallada</h4>
                                 </div>
                                 <textarea
                                     className="w-full px-8 py-8 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all min-h-[200px] bg-gray-50/30 text-base font-secondary font-medium text-[var(--primary-color)] leading-relaxed shadow-inner"
@@ -705,14 +705,14 @@ const CaregiverProfile = () => {
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
-                                className="flex-1 bg-white border-2 border-gray-100 text-[var(--text-light)] font-black py-5 rounded-[24px] hover:bg-gray-50 transition-all uppercase tracking-[0.2em] text-[10px]"
+                                className="flex-1 bg-white border-2 border-gray-100 text-[var(--text-light)] font-black py-5 rounded-[24px] hover:bg-gray-50 transition-all uppercase tracking-[0.2em] text-xs"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-[10px] border-none"
+                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-xs border-none"
                             >
                                 {saving ? (
                                     <div className="flex items-center gap-3">

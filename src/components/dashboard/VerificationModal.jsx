@@ -67,7 +67,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     };
 
     return createPortal(
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-0 md:p-4 text-left overflow-hidden">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-0 md:p-6 text-left overflow-hidden">
             <div className="bg-white rounded-none md:rounded-[24px] shadow-2xl w-full max-w-2xl h-full md:h-auto md:max-h-[90dvh] flex flex-col animate-slide-up border-none md:border border-white/20 relative">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 sticky top-0 z-10 backdrop-blur-sm">
                     <div>
@@ -75,7 +75,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                             <ShieldCheck size={24} className="text-[var(--secondary-color)]" />
                             Portal de Verificación
                         </h3>
-                        <p className="text-[10px] text-[var(--text-light)] mt-1 font-secondary font-bold">Documentación oficial requerida.</p>
+                        <p className="text-xs text-[var(--text-light)] mt-1 font-secondary font-bold">Documentación oficial requerida.</p>
                     </div>
                     <button onClick={onClose} className="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-all">
                         <X size={20} />
@@ -106,10 +106,10 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                         </div>
                                         <div>
                                             <h4 className="font-brand font-bold text-[var(--primary-color)] text-sm tracking-tight">{doc.label}</h4>
-                                            <p className="text-[10px] text-[var(--text-light)] font-secondary mt-1 leading-relaxed">{doc.description}</p>
+                                            <p className="text-xs text-[var(--text-light)] font-secondary mt-1 leading-relaxed">{doc.description}</p>
                                         </div>
                                     </div>
-                                    <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-[10px] uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
+                                    <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
                                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                         : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
                                         }`}>
@@ -141,8 +141,8 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                         <div className="flex gap-4">
                             <AlertCircle size={24} className="text-blue-600 shrink-0" />
                             <div>
-                                <h5 className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Información de Seguridad</h5>
-                                <p className="text-[10px] text-blue-700/70 leading-relaxed font-secondary">
+                                <h5 className="text-xs font-black text-blue-600 uppercase tracking-widest mb-1">Información de Seguridad</h5>
+                                <p className="text-xs text-blue-700/70 leading-relaxed font-secondary">
                                     Tus documentos son procesados de forma segura y solo son visibles para nuestro equipo de auditoría para fines de validación de perfil.
                                 </p>
                             </div>
@@ -153,7 +153,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 <div className="p-8 border-t border-gray-100 bg-white">
                     <button
                         onClick={onClose}
-                        className="w-full bg-[var(--base-bg)] text-[var(--primary-color)] font-black py-4 rounded-[16px] hover:bg-gray-100 transition-all uppercase tracking-widest text-[10px]"
+                        className="w-full bg-[var(--base-bg)] text-[var(--primary-color)] font-black py-4 rounded-[16px] hover:bg-gray-100 transition-all uppercase tracking-widest text-xs"
                     >
                         Cerrar y Revisar Después
                     </button>

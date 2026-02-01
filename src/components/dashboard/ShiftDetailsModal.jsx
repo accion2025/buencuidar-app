@@ -13,7 +13,7 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-start justify-center pt-20 p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-start justify-center pt-20 p-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-lg overflow-hidden relative border border-white/20 flex flex-col animate-slide-up">
 
                 {/* Header Map/Gradient */}
@@ -35,7 +35,7 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                         <div>
                             <h2 className="text-3xl font-brand font-bold !text-[#0F3C4C] leading-tight mb-2 tracking-tight">{shift.title || translateAppointmentType(shift.type)}</h2>
                         </div>
-                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${statusColors[shift.status] || 'bg-gray-100'}`}>
+                        <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-[0.2em] border ${statusColors[shift.status] || 'bg-gray-100'}`}>
                             {translateAppointmentStatus(shift.status)}
                         </span>
                     </div>
@@ -43,7 +43,7 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                     {/* Date Time Grid */}
                     <div className="grid grid-cols-2 gap-4 mt-6">
                         <div className="bg-slate-50 p-4 rounded-[16px] border border-slate-100 flex flex-col justify-center">
-                            <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase mb-1">
+                            <div className="flex items-center gap-2 text-slate-400 text-xs font-black uppercase mb-1">
                                 <Calendar size={12} /> Fecha
                             </div>
                             <p className="text-slate-800 font-bold text-sm">
@@ -51,7 +51,7 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                             </p>
                         </div>
                         <div className="bg-slate-50 p-4 rounded-[16px] border border-slate-100 flex flex-col justify-center">
-                            <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase mb-1">
+                            <div className="flex items-center gap-2 text-slate-400 text-xs font-black uppercase mb-1">
                                 <Clock size={12} /> Horario
                             </div>
                             <p className="text-slate-800 font-bold text-sm">
@@ -138,7 +138,7 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                             <MapPin size={28} />
                         </div>
                         <div className="flex-1 relative z-10">
-                            <h4 className="font-black !text-[#FAFAF7]/40 text-[10px] uppercase tracking-[0.2em] mb-2 leading-none">Dirección del Servicio</h4>
+                            <h4 className="font-black !text-[#FAFAF7]/40 text-xs uppercase tracking-[0.2em] mb-2 leading-none">Dirección del Servicio</h4>
                             <p className="text-base !text-[#FAFAF7] font-brand font-bold leading-tight mb-6">
                                 {shift.address || 'Dirección no especificada'}
                             </p>
@@ -146,7 +146,7 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                                 href={shift.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shift.address)}` : '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`text-[10px] font-black bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-3 rounded-[16px] flex items-center gap-2 hover:bg-emerald-600 transition-all w-fit uppercase tracking-widest shadow-xl shadow-green-900/40 ${!shift.address ? 'opacity-50 pointer-events-none' : ''}`}
+                                className={`text-xs font-black bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-3 rounded-[16px] flex items-center gap-2 hover:bg-emerald-600 transition-all w-fit uppercase tracking-widest shadow-xl shadow-green-900/40 ${!shift.address ? 'opacity-50 pointer-events-none' : ''}`}
                             >
                                 <Navigation size={12} fill="currentColor" />
                                 Ver Ruta en el Mapa

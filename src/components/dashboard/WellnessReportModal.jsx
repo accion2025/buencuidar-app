@@ -65,7 +65,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm pt-5 px-4 pb-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm pt-5 px-6 pb-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] w-full max-w-sm shadow-2xl p-6 relative overflow-hidden">
                 <button
                     onClick={onClose}
@@ -75,12 +75,12 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                 </button>
 
                 <h2 className="text-xl font-bold text-gray-800 mb-1">Reporte de Bienestar</h2>
-                <p className="text-xs text-gray-500 mb-6">Indica cómo se encuentra el paciente ahora.</p>
+                <p className="text-sm text-gray-500 mb-6">Indica cómo se encuentra el paciente ahora.</p>
 
                 <div className="space-y-6">
                     {/* General State */}
                     <div>
-                        <label className="text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
+                        <label className="text-sm font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
                             <Heart size={12} /> Estado General
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -88,7 +88,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                                 <button
                                     key={opt}
                                     onClick={() => setGeneralState(opt)}
-                                    className={`py-2 px-1 text-xs font-bold rounded-[16px] border transition-all ${generalState === opt
+                                    className={`py-2 px-1 text-sm font-bold rounded-[16px] border transition-all ${generalState === opt
                                         ? 'bg-green-100 text-green-700 border-green-200 shadow-sm'
                                         : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
                                         }`}
@@ -101,7 +101,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
 
                     {/* Energy Level */}
                     <div>
-                        <label className="text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
+                        <label className="text-sm font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
                             <Activity size={12} /> Nivel de Energía
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -109,7 +109,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                                 <button
                                     key={opt}
                                     onClick={() => setEnergyLevel(opt)}
-                                    className={`py-2 px-1 text-xs font-bold rounded-[16px] border transition-all ${energyLevel === opt
+                                    className={`py-2 px-1 text-sm font-bold rounded-[16px] border transition-all ${energyLevel === opt
                                         ? 'bg-blue-100 text-blue-700 border-blue-200 shadow-sm'
                                         : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
                                         }`}
@@ -122,7 +122,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
 
                     {/* Mood */}
                     <div>
-                        <label className="text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
+                        <label className="text-sm font-bold text-gray-400 uppercase mb-2 flex items-center gap-1">
                             <Wind size={12} /> Ánimo / Bienestar
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -130,7 +130,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                                 <button
                                     key={opt}
                                     onClick={() => setMood(opt)}
-                                    className={`py-2 px-1 text-xs font-bold rounded-[16px] border transition-all ${mood === opt
+                                    className={`py-2 px-1 text-sm font-bold rounded-[16px] border transition-all ${mood === opt
                                         ? 'bg-indigo-100 text-indigo-700 border-indigo-200 shadow-sm'
                                         : 'bg-white text-gray-600 border-gray-100 hover:bg-gray-50'
                                         }`}

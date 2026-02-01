@@ -4,7 +4,7 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-24 p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-24 p-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl">
                 {/* Header */}
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 rounded-t-lg">
@@ -27,13 +27,13 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                             <div key={app.id} className="bg-white border border-gray-100 rounded-[16px] p-5 hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-4 sm:items-center group">
                                 {/* Date Box */}
                                 <div className="bg-blue-50 rounded-[16px] p-3 flex flex-col items-center justify-center min-w-[80px] text-blue-600">
-                                    <span className="text-xs font-bold uppercase tracking-wider">
+                                    <span className="text-sm font-bold uppercase tracking-wider">
                                         {new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { month: 'short' }).replace('.', '')}
                                     </span>
                                     <span className="text-2xl font-black leading-none">
                                         {new Date(app.date + 'T00:00:00').getDate()}
                                     </span>
-                                    <span className="text-xs font-medium text-blue-400">
+                                    <span className="text-sm font-medium text-blue-400">
                                         {new Date(app.date + 'T00:00:00').getFullYear()}
                                     </span>
                                 </div>
@@ -51,7 +51,7 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                     <h3 className="font-bold text-lg text-gray-900 leading-tight">
                                         {app.title || 'Servicio de Cuidado'}
                                     </h3>
-                                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                                    <div className="flex items-center gap-4 text-sm text-gray-500">
                                         <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded">
                                             <Clock size={12} /> {app.time?.substring(0, 5)} {app.end_time ? `- ${app.end_time.substring(0, 5)}` : ''}
                                         </span>

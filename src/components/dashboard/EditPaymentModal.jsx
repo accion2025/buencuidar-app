@@ -47,7 +47,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-5 px-4 pb-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] flex items-start justify-center pt-5 px-6 pb-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-xl w-full max-w-md overflow-hidden animate-slide-up">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                     <h3 className="font-bold text-gray-800 flex items-center gap-2">
@@ -66,7 +66,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                             <User size={14} className="text-blue-500" />
                             {appointment.client?.full_name || 'Cliente'}
                         </div>
-                        <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex items-center justify-between text-sm text-gray-500">
                             <div className="flex items-center gap-1">
                                 <Calendar size={12} /> {appointment.date}
                             </div>
@@ -81,13 +81,13 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                         <div className="space-y-2">
                             <label className="text-sm font-bold text-gray-700 flex items-center justify-between">
                                 Horario Real
-                                <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-normal">
+                                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-normal">
                                     Ajustar si varió
                                 </span>
                             </label>
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="text-xs text-gray-400 mb-1 block">Inicio</label>
+                                    <label className="text-sm text-gray-400 mb-1 block">Inicio</label>
                                     <input
                                         type="time"
                                         required
@@ -97,7 +97,7 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-xs text-gray-400 mb-1 block">Fin</label>
+                                    <label className="text-sm text-gray-400 mb-1 block">Fin</label>
                                     <input
                                         type="time"
                                         required

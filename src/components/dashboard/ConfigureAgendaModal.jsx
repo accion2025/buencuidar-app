@@ -63,7 +63,7 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-10 p-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-10 p-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-3xl flex flex-col border border-white/20 overflow-hidden max-h-[90vh] relative">
                 {/* Header */}
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-[var(--base-bg)]">
@@ -98,12 +98,12 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                                         </div>
                                         <div className="text-left">
                                             <h4 className={`font-brand font-bold text-lg ${selectedCount > 0 ? 'text-[var(--primary-color)]' : 'text-gray-700'}`}>{cat.name}</h4>
-                                            <p className="text-xs text-[var(--text-light)] font-secondary font-medium">{cat.description}</p>
+                                            <p className="text-sm text-[var(--text-light)] font-secondary font-medium">{cat.description}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         {selectedCount > 0 && (
-                                            <span className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+                                            <span className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
                                                 <Check size={12} strokeWidth={4} />
                                                 {selectedCount}
                                             </span>
@@ -121,7 +121,7 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                                             <div className="space-y-6">
                                                 {cat.sections.map((section, sIdx) => (
                                                     <div key={sIdx}>
-                                                        <h5 className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-[0.2em] mb-4 border-l-4 border-[var(--secondary-color)] pl-3">{section.name}</h5>
+                                                        <h5 className="text-xs font-black text-[var(--text-light)] uppercase tracking-[0.2em] mb-4 border-l-4 border-[var(--secondary-color)] pl-3">{section.name}</h5>
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                             {section.activities.map((act, aIdx) => {
                                                                 const isSelected = selectedActivities.has(act);
@@ -171,7 +171,7 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
 
                 {/* Footer */}
                 <div className="absolute bottom-0 left-0 right-0 p-8 border-t border-gray-100 bg-white/95 backdrop-blur-xl flex justify-between items-center z-10">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-[var(--text-light)]">
+                    <div className="text-xs font-black uppercase tracking-widest text-[var(--text-light)]">
                         {selectedActivities.size} actividades seleccionadas
                     </div>
                     <div className="flex gap-4">

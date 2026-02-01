@@ -121,7 +121,7 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm pt-5 px-4 pb-4 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm pt-5 px-6 pb-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] w-full max-w-md shadow-2xl p-6 relative overflow-hidden flex flex-col max-h-[80vh]">
                 <button
                     onClick={onClose}
@@ -136,14 +136,14 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                     </div>
                     <div>
                         <h2 className="text-xl font-bold text-gray-800">Agenda de Cuidado</h2>
-                        <p className="text-xs text-gray-500">Objetivos con {clientName}</p>
+                        <p className="text-sm text-gray-500">Objetivos con {clientName}</p>
                     </div>
                 </div>
 
                 <div className="mt-6 mb-6 overflow-y-auto flex-grow pr-2 custom-scrollbar">
                     {checklistItems.length > 0 ? (
                         <div className="space-y-3">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tareas Asignadas</p>
+                            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Tareas Asignadas</p>
                             {loadingLogs ? (
                                 <div className="flex justify-center py-4"><Loader2 className="animate-spin text-gray-400" /></div>
                             ) : (
@@ -174,7 +174,7 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                         <div className="text-center py-8 bg-gray-50 rounded-[16px] border border-dashed border-gray-200">
                             <ListTodo size={32} className="mx-auto text-gray-300 mb-2" />
                             <p className="text-sm text-gray-500 font-medium">No hay tareas específicas configuradas.</p>
-                            <p className="text-xs text-gray-400">Todo el registro será manual.</p>
+                            <p className="text-sm text-gray-400">Todo el registro será manual.</p>
                         </div>
                     )}
                 </div>
