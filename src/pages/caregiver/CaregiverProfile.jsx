@@ -168,22 +168,27 @@ const CaregiverProfile = () => {
             try {
                 attempt++;
 
-                // --- PASO 1a: Sesión ---
+                // --- PASO 1a: Sesión (Bypass Inteligente) ---
                 currentStep = "1a";
                 setUploadStep("1a");
-                const sessionPromise = supabase.auth.getSession();
-                const authTimeout = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("AUTH_TIMEOUT")), 8000)
-                );
 
-                const { data: { session }, error: authError } = await Promise.race([
-                    sessionPromise,
-                    authTimeout
-                ]);
+                // Si ya tenemos el ID por props (Contexto), no bloqueamos esperando al servidor
+                if (!user?.id) {
+                    const sessionPromise = supabase.auth.getSession();
+                    const authTimeout = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error("AUTH_TIMEOUT")), 5000)
+                    );
 
-                if (authError || !session) {
-                    throw new Error("Sesión no disponible. Reingresa a la app.");
+                    const { data: { session }, error: authError } = await Promise.race([
+                        sessionPromise,
+                        authTimeout
+                    ]);
+
+                    if (authError || !session) {
+                        throw new Error("Sesión no disponible. Reingresa a la app.");
+                    }
                 }
+                // Si llegamos aquí con user.id, el Paso 1a se considera exitoso por bypass
 
                 // --- PASO 1b: Procesamiento de Imagen ---
                 currentStep = "1b";
