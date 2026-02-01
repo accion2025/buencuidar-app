@@ -38,10 +38,15 @@ const CaregiverProfile = () => {
     const [debugLogs, setDebugLogs] = useState([]);
 
     const addLog = (msg, obj = null) => {
-        const time = new Date().toLocaleTimeString();
-        const fullMsg = `${time} - ${msg}${obj ? ' ' + JSON.stringify(obj).substring(0, 100) : ''}`;
-        setDebugLogs(prev => [fullMsg, ...prev].slice(0, 10)); // Keep last 10
-        console.log("UI_DEBUG:", fullMsg);
+        try {
+            const time = new Date().toLocaleTimeString();
+            const dataStr = obj ? (typeof obj === 'object' ? JSON.stringify(obj).substring(0, 100) : String(obj)) : '';
+            const fullMsg = `${time} - ${msg} ${dataStr}`;
+            setDebugLogs(prev => Array.isArray(prev) ? [fullMsg, ...prev].slice(0, 15) : [fullMsg]);
+            console.log("UI_DEBUG:", fullMsg);
+        } catch (e) {
+            console.error("Log error:", e);
+        }
     };
 
     useEffect(() => {
@@ -169,13 +174,17 @@ const CaregiverProfile = () => {
         setUploading(true);
         setUploadStep(1);
         setUploadProgress(0);
+        setError(null);
         setShowCropper(false);
+
+        // Yield for UI update
+        await new Promise(r => setTimeout(r, 150));
 
         if (selectedImage && selectedImage.startsWith('blob:')) {
             URL.revokeObjectURL(selectedImage);
         }
 
-        addLog("Iniciando flujo de carga...");
+        addLog("Iniciando flujo de carga V2.1...");
         let attempt = 0;
         let success = false;
         let currentStep = "inicio";
@@ -639,6 +648,25 @@ const CaregiverProfile = () => {
                             </button>
                         </div>
 
+                        {/* REGISTRO DE ACTIVIDAD (DEBUG) V2.1 */}
+                        <div className="bg-slate-900 border-b border-white/10 p-4 font-mono text-[10px] text-green-400">
+                            <div className="flex justify-between items-center mb-1">
+                                <p className="text-slate-500 font-black uppercase tracking-widest text-[8px]">Logs de Actividad (PRO V2.1)</p>
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                            </div>
+                            <div className="max-h-[80px] overflow-y-auto">
+                                {debugLogs.length === 0 ? (
+                                    <p className="opacity-40 italic">Esperando actividad...</p>
+                                ) : (
+                                    debugLogs.map((log, i) => (
+                                        <div key={i} className="mb-0.5 border-l border-green-900 pl-2 leading-tight py-0.5">
+                                            {log}
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
                         <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-10 space-y-12">
                             {/* Basic Info */}
                             <div className="space-y-8">
@@ -870,21 +898,7 @@ const CaregiverProfile = () => {
                             </div>
                         </form>
 
-                        {/* SECCIÓN DE DEBUG PARA USUARIO */}
-                        <div className="mx-10 mb-6 p-4 bg-slate-900 rounded-[12px] font-mono text-[9px] text-green-400 overflow-hidden border border-slate-800">
-                            <p className="text-slate-500 mb-1 font-black uppercase tracking-widest text-[8px]">Registro de Actividad (Debug) - V2.1:</p>
-                            {debugLogs.length === 0 ? (
-                                <p className="opacity-40 italic">Esperando actividad...</p>
-                            ) : (
-                                debugLogs.map((log, i) => (
-                                    <div key={i} className="mb-1 border-l border-green-900 pl-2 leading-tight">
-                                        {log}
-                                    </div>
-                                ))
-                            )}
-                        </div>
-
-                        <div className="p-10 border-t border-gray-100 bg-white flex gap-6">
+                        <div className="p-10 border-t border-gray-100 bg-white flex gap-6 mt-auto">
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
