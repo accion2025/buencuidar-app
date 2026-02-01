@@ -12,6 +12,7 @@ const CaregiverSettings = () => {
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [isAvailable, setIsAvailable] = useState(true);
 
     useEffect(() => {
         if (user) {
@@ -36,6 +37,17 @@ const CaregiverSettings = () => {
                     radius: data.work_radius || 10,
                 });
             }
+
+            // Fetch availability from profiles
+            const { data: profileData } = await supabase
+                .from('profiles')
+                .select('is_available')
+                .eq('id', user.id)
+                .single();
+
+            if (profileData) {
+                setIsAvailable(profileData.is_available);
+            }
         } catch (error) {
             console.error("Error fetching settings:", error);
         } finally {
@@ -59,6 +71,26 @@ const CaregiverSettings = () => {
         } catch (error) {
             console.error("Error saving setting:", error);
             alert("No se pudo guardar la configuración. " + error.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleAvailabilityToggle = async (newValue) => {
+        setSaving(true);
+        // Optimistic update
+        setIsAvailable(newValue);
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ is_available: newValue })
+                .eq('id', user.id);
+
+            if (error) throw error;
+        } catch (error) {
+            console.error("Error updating availability:", error);
+            alert("Error al actualizar disponibilidad");
+            setIsAvailable(!newValue); // Rollback
         } finally {
             setSaving(false);
         }
@@ -109,6 +141,28 @@ const CaregiverSettings = () => {
                                 className="sr-only peer"
                             />
                             <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--secondary-color)]"></div>
+                        </label>
+                    </div>
+
+                    {/* Availability Toggle */}
+                    <div className="flex items-center justify-between border-t border-gray-50 pt-8">
+                        <div>
+                            <p className="font-brand font-bold text-[#0F3C4C] text-lg">Estado de Disponibilidad</p>
+                            <p className="text-sm text-gray-500 font-secondary mt-1">
+                                {isAvailable
+                                    ? <span className="text-green-600 font-bold">Visible en búsquedas</span>
+                                    : <span className="text-gray-400 font-bold">Oculto temporalmente</span>
+                                }
+                            </p>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={isAvailable}
+                                onChange={(e) => handleAvailabilityToggle(e.target.checked)}
+                                className="sr-only peer"
+                            />
+                            <div className={`w-14 h-8 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all ${isAvailable ? 'peer-checked:bg-green-500' : ''}`}></div>
                         </label>
                     </div>
 
