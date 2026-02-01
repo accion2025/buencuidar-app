@@ -17,13 +17,16 @@ export const AuthProvider = ({ children }) => {
             if (!isMounted || initialized) return;
             initialized = true;
 
-            setUser(session?.user ?? null);
-            if (session?.user) {
-                setProfileLoading(true);
-                await fetchProfile(session.user.id);
+            try {
+                setUser(session?.user ?? null);
+                if (session?.user) {
+                    setProfileLoading(true);
+                    await fetchProfile(session.user.id);
+                }
+            } finally {
                 setProfileLoading(false);
+                if (isMounted) setLoading(false);
             }
-            if (isMounted) setLoading(false);
         };
 
         // 1. Check current session
@@ -36,13 +39,16 @@ export const AuthProvider = ({ children }) => {
             if (!initialized) {
                 initialize(session);
             } else {
-                setUser(session?.user ?? null);
-                if (session?.user) {
-                    setProfileLoading(true);
-                    await fetchProfile(session.user.id);
+                try {
+                    setUser(session?.user ?? null);
+                    if (session?.user) {
+                        setProfileLoading(true);
+                        await fetchProfile(session.user.id);
+                    } else {
+                        setProfile(null);
+                    }
+                } finally {
                     setProfileLoading(false);
-                } else {
-                    setProfile(null);
                 }
             }
         });
@@ -88,8 +94,6 @@ export const AuthProvider = ({ children }) => {
                     return;
                 }
 
-                console.log("Datos de profiles (incluido avatar_url):", data.avatar_url);
-
                 // caregiver_details puede venir como objeto o array
                 if (data.caregiver_details) {
                     const caregiverData = Array.isArray(data.caregiver_details)
@@ -97,14 +101,12 @@ export const AuthProvider = ({ children }) => {
                         : data.caregiver_details;
 
                     if (caregiverData) {
-                        // FIX: Asegurar que el avatar_url de 'profiles' NO sea sobrescrito por null en 'caregiver_details'
                         const flattened = {
                             ...data,
                             ...caregiverData,
                             avatar_url: data.avatar_url || caregiverData.avatar_url
                         };
                         delete flattened.caregiver_details;
-                        console.log("Perfil aplanado con avatar_url prioritario:", flattened.avatar_url);
                         setProfile(flattened);
                     } else {
                         setProfile(data);
@@ -115,7 +117,6 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error("Error fetching profile details:", error);
-            // Si el error es 'Anonymous logins are disabled', puede ser que el usuario no esté aún authed
             if (error.message?.includes('anonymous')) {
                 console.warn("Intento de acceso anónimo detectado. Esperando a autenticación completa.");
             }

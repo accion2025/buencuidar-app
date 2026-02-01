@@ -12,6 +12,7 @@ const DOCUMENT_TYPES = [
 
 const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     const [uploading, setUploading] = useState(null);
+    const [uploadStep, setUploadStep] = useState(0);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [userDocs, setUserDocs] = useState([]);
@@ -53,67 +54,71 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         }
 
         setUploading(docType);
+        setUploadStep(1); // Paso 1: Procesando...
         setError(null);
         setSuccess(null);
 
         try {
+            // Conversión Binaria
+            const arrayBuffer = await file.arrayBuffer();
+
+            setUploadStep(2); // Paso 2: Subiendo...
             const fileExt = file.name.split('.').pop();
             const fileName = `${docType}-${Date.now()}.${fileExt}`;
             const filePath = `${caregiverId}/${fileName}`;
 
-            // Robustez: Determinar contentType explícitamente y añadir timeout
             const isPdf = fileExt.toLowerCase() === 'pdf';
             const contentType = isPdf ? 'application/pdf' : `image/${fileExt === 'png' ? 'png' : 'jpeg'}`;
 
             const uploadTask = supabase.storage
                 .from('documents')
-                .upload(filePath, file, {
+                .upload(filePath, arrayBuffer, {
                     contentType: contentType,
                     upsert: true
                 });
 
-            // Timeout de 30 segundos
+            // Timeout de 60 segundos
             const { error: uploadError } = await Promise.race([
                 uploadTask,
-                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 30000))
+                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 60000))
             ]);
 
             if (uploadError) throw uploadError;
 
-            // Register in database
+            setUploadStep(3); // Paso 3: Guardando registro...
             const { error: dbError } = await supabase
                 .from('caregiver_documents')
-                .insert({
+                .upsert({
                     caregiver_id: caregiverId,
                     document_type: docType,
                     file_path: filePath,
                     status: 'pending'
-                });
+                }, { onConflict: 'caregiver_id,document_type' }); // Ensure unique doc per type
 
             if (dbError) throw dbError;
 
-            // Update profile overall status to in_review if it was pending
             await supabase
                 .from('profiles')
                 .update({ verification_status: 'in_review' })
                 .eq('id', caregiverId)
                 .eq('verification_status', 'pending');
 
+            setUploadStep(4); // Paso 4: Finalizando...
             setSuccess(`Documento "${docType}" subido correctamente.`);
-            await fetchUserDocs(); // Refresh status list
+            await fetchUserDocs();
             if (onComplete) onComplete();
         } catch (err) {
             console.error(err);
             let errorMsg = `No se pudo subir el documento "${docType}".`;
             if (err.message === 'TIMEOUT') {
-                errorMsg = "La subida tardó demasiado (30s). Revisa tu conexión.";
+                errorMsg = "La subida tardó más de 1 minuto. El servidor está saturado o tu conexión falló.";
             } else {
                 if (err.message?.includes('storage')) errorMsg += " Error en el servidor de archivos.";
-                if (err.status === 413) errorMsg = "El archivo es demasiado grande para el servidor.";
             }
-            setError(`${errorMsg}\nError: ${err.message}`);
+            setError(`${errorMsg}\n(Detalle: ${err.message} - Paso ${uploadStep})`);
         } finally {
             setUploading(null);
+            setUploadStep(0);
         }
     };
 
@@ -196,7 +201,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                             {uploading === doc.id ? (
                                                 <>
                                                     <Loader2 size={16} className="animate-spin" />
-                                                    Subiendo...
+                                                    Paso {uploadStep}/4...
                                                 </>
                                             ) : (
                                                 <>

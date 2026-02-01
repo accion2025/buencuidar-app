@@ -25,6 +25,7 @@ const CaregiverProfile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [uploadStep, setUploadStep] = useState(0); // 0: idle, 1: processing, 2: uploading, 3: saving, 4: refreshing
     const [showVerificationModal, setShowVerificationModal] = useState(false);
     const [formData, setFormData] = useState(null);
     // Cropper State
@@ -104,7 +105,8 @@ const CaregiverProfile = () => {
 
             const { error: detailsError } = await supabase
                 .from('caregiver_details')
-                .update({
+                .upsert({
+                    id: user.id, // Primary key
                     specialization: formData.specialization,
                     experience: formData.experience,
                     bio: formData.bio,
@@ -145,6 +147,7 @@ const CaregiverProfile = () => {
 
     const handleCropComplete = async (croppedBlob) => {
         setUploading(true);
+        setUploadStep(1); // Paso 1: Procesando imagen...
         setShowCropper(false);
 
         // Limpiar memoria de la imagen seleccionada
@@ -153,24 +156,29 @@ const CaregiverProfile = () => {
         }
 
         try {
+            // Conversión Binaria: Usar ArrayBuffer para evitar errores de multipart en móviles
+            const arrayBuffer = await croppedBlob.arrayBuffer();
+
+            setUploadStep(2); // Paso 2: Subiendo a la nube...
             const fileName = `avatar-${Date.now()}.jpg`;
             const filePath = `${user.id}/${fileName}`;
 
-            // Robustez: Timeout de 30 segundos para evitar "hangs" en móvil
+            // Robustez: Timeout de 60 segundos (ajustado por mantenimiento)
             const uploadTask = supabase.storage
                 .from('avatars')
-                .upload(filePath, croppedBlob, {
+                .upload(filePath, arrayBuffer, {
                     contentType: 'image/jpeg',
                     upsert: true
                 });
 
             const { error: uploadError } = await Promise.race([
                 uploadTask,
-                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 30000))
+                new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 60000))
             ]);
 
             if (uploadError) throw uploadError;
 
+            setUploadStep(3); // Paso 3: Registrando cambios...
             const { data: { publicUrl } } = supabase.storage
                 .from('avatars')
                 .getPublicUrl(filePath);
@@ -182,27 +190,30 @@ const CaregiverProfile = () => {
 
             if (updateError) throw updateError;
 
-            // 1. ACTUALIZACIÓN INSTANTÁNEA: Forzar el estado local antes del refresco
+            setUploadStep(4); // Paso 4: Actualizando perfil...
+            // 1. ACTUALIZACIÓN INSTANTÁNEA
             setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
-            console.log("Avatar actualizado localmente:", publicUrl);
 
-            // 2. REFRESCO DIFERIDO: Esperar un poco para asegurar consistencia en Supabase
+            // 2. REFRESCO DIFERIDO
             setTimeout(async () => {
                 await refreshProfile();
-            }, 2000);
+                setUploadStep(0);
+                setUploading(false);
+            }, 1000);
 
         } catch (error) {
             console.error("Error uploading avatar:", error);
             let errorMsg = "No se pudo subir la foto.";
             if (error.message === 'TIMEOUT') {
-                errorMsg = "La subida tardó demasiado (30s). Revisa tu conexión e intenta de nuevo.";
+                errorMsg = "La subida tardó más de 1 minuto. El servidor está saturado o tu conexión falló.";
             } else {
-                if (error.message?.includes('storage')) errorMsg += " Problema con el almacenamiento.";
-                if (error.message?.includes('Network')) errorMsg += " Revisa tu conexión a internet.";
+                if (error.message?.includes('storage')) errorMsg += " Error de almacenamiento.";
+                if (error.message?.includes('Network')) errorMsg += " Error de conexión.";
             }
-            alert(`${errorMsg}\nDetalle: ${error.message}`);
-        } finally {
+            alert(`${errorMsg}\n(Detalle: ${error.message} - Paso ${uploadStep})`);
             setUploading(false);
+            setUploadStep(0);
+        } finally {
             setSelectedImage(null);
         }
     };
@@ -238,8 +249,9 @@ const CaregiverProfile = () => {
                     <div className="relative group shrink-0">
                         <div className="w-48 h-48 rounded-[16px] border-[6px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40">
                             {uploading ? (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20">
-                                    <Loader2 className="animate-spin text-white" size={40} />
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-20">
+                                    <Loader2 className="animate-spin text-white mb-2" size={40} />
+                                    <span className="text-white text-[10px] font-black uppercase tracking-widest">Paso {uploadStep}/4</span>
                                 </div>
                             ) : null}
                             <img
@@ -734,13 +746,18 @@ const CaregiverProfile = () => {
                             </button>
                             <button
                                 onClick={handleSave}
-                                disabled={saving}
+                                disabled={saving || uploading}
                                 className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-xs border-none"
                             >
                                 {saving ? (
                                     <div className="flex items-center gap-3">
                                         <Loader2 className="animate-spin" size={20} />
-                                        <span>Guardando...</span>
+                                        <span>Guardando Perfil...</span>
+                                    </div>
+                                ) : uploading ? (
+                                    <div className="flex items-center gap-3">
+                                        <Loader2 className="animate-spin" size={20} />
+                                        <span>Paso {uploadStep}/4...</span>
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-3">
