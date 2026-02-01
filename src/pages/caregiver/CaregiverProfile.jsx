@@ -163,22 +163,29 @@ const CaregiverProfile = () => {
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s hard timeout
+            const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s hard timeout para TUS
 
             try {
                 attempt++;
                 setUploadStep(1); // Paso 1: Procesando...
+
+                // Verificación de Sesión Activa (Evita cuelgues por sesión muerta)
+                const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
+                if (authError || !currentUser) throw new Error("Sesión expirada o inválida. Reingresa a la app.");
+
                 const arrayBuffer = await croppedBlob.arrayBuffer();
 
                 setUploadStep(2); // Paso 2: Subiendo...
                 const fileName = `avatar-${Date.now()}.jpg`;
                 const filePath = `${user.id}/${fileName}`;
 
+                // PROTOCOLO TUS (Resumable): Mucho más estable para móviles
                 const { data, error: uploadError } = await supabase.storage
                     .from('avatars')
                     .upload(filePath, arrayBuffer, {
                         contentType: 'image/jpeg',
                         upsert: true,
+                        resumable: true, // ACTIVA TUS
                         onUploadProgress: (progress) => {
                             const percent = Math.round((progress.loaded / progress.total) * 100);
                             setUploadProgress(percent);
@@ -219,7 +226,8 @@ const CaregiverProfile = () => {
                 if (attempt < MAX_RETRIES) {
                     setUploadStep(2);
                     setUploadProgress(0);
-                    await new Promise(r => setTimeout(r, 2000 * attempt));
+                    // Esperar un poco antes de reintentar (exponential backoff)
+                    await new Promise(r => setTimeout(r, 3000 * attempt));
                 }
             }
         }

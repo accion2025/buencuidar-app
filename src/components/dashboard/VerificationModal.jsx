@@ -66,11 +66,16 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
         while (attempt < MAX_RETRIES && !success) {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 60000);
+            const timeoutId = setTimeout(() => controller.abort(), 90000); // 90s para TUS
 
             try {
                 attempt++;
                 setUploadStep(1); // Paso 1: Procesando...
+
+                // Verificación de Sesión Activa
+                const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
+                if (authError || !currentUser) throw new Error("Sesión expirada o inválida.");
+
                 const arrayBuffer = await file.arrayBuffer();
 
                 setUploadStep(2); // Paso 2: Subiendo...
@@ -86,6 +91,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                     .upload(filePath, arrayBuffer, {
                         contentType: contentType,
                         upsert: true,
+                        resumable: true, // PROTOCOLO TUS
                         onUploadProgress: (progress) => {
                             const percent = Math.round((progress.loaded / progress.total) * 100);
                             setUploadProgress(percent);
@@ -127,7 +133,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 if (attempt < MAX_RETRIES) {
                     setUploadStep(2);
                     setUploadProgress(0);
-                    await new Promise(r => setTimeout(r, 2000 * attempt));
+                    await new Promise(r => setTimeout(r, 3000 * attempt));
                 }
             }
         }
