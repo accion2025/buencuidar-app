@@ -72,17 +72,15 @@ const Landing = () => {
             </header>
 
             <main className="w-full max-w-[1440px] relative z-10 flex-grow flex flex-col gap-20">
-                {/* Hero Section Wrapper (Sección 1) */}
+                {/* SECCIÓN 1: Hero Section */}
                 <div className="w-full px-[15px] md:px-12 lg:px-[100px] py-10">
-
-                    {/* Hero Section: Rebalanced to avoid overlap */}
                     <section className="grid lg:grid-cols-[1fr_auto] gap-6 lg:gap-4 items-center">
                         <div className="space-y-12 order-2 lg:order-1 text-center lg:text-left">
                             <div className="space-y-6">
                                 <h1 className="text-4xl md:text-6xl font-primary font-bold text-[var(--primary-color)] leading-tight transform -translate-x-1">
                                     Centroamérica Envejece
                                 </h1>
-                                <div className="space-y-6 text-gray-700 leading-relaxed text-lg md:text-xl font-medium lg:max-w-2xl lg:mx-0 w-full text-center lg:text-left">
+                                <div className="space-y-6 text-gray-700 leading-relaxed text-lg md:text-xl font-medium w-full text-center lg:text-left">
                                     <p>
                                         Centroamérica vive un proceso silencioso pero profundo: cada año aumenta el número de adultos mayores y disminuye el apoyo familiar disponible. La migración, el trabajo informal y los cambios en la estructura familiar han reducido el tiempo y los recursos para el cuidado.
                                     </p>
@@ -95,8 +93,8 @@ const Landing = () => {
                                 </div>
                             </div>
 
-                            {/* Stats - Single Line Horizontal aligned with text width */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 items-start justify-between lg:justify-start border-t border-gray-100/50 lg:max-w-2xl lg:mx-0 w-full">
+                            {/* Stats */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 items-start justify-between lg:justify-start border-t border-gray-100/50 w-full">
                                 <div className="flex flex-col gap-1">
                                     <span className="text-3xl font-black text-[var(--secondary-color)]">25%</span>
                                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight">Pob. mayor <br /> en 10 años</span>
@@ -116,10 +114,9 @@ const Landing = () => {
                             </div>
                         </div>
 
-                        {/* Image Area - High contrast and visibility */}
+                        {/* Image Area */}
                         <div className="order-1 lg:order-2 flex justify-center lg:justify-start">
                             <div className="relative w-full max-w-[440px]">
-                                {/* Decorative background for the image to ensure it pops */}
                                 <div className="absolute inset-0 bg-[var(--secondary-color)]/5 -m-6 rounded-[50px] blur-3xl opacity-70"></div>
                                 <div className="relative z-10 p-4 bg-white image-mask-brand border-4 border-white/50">
                                     <div className="w-full aspect-[4/5] overflow-hidden rounded-[32px]">
@@ -137,26 +134,24 @@ const Landing = () => {
                 </div>
 
 
-                {/* Section: Explanation (Sección 2) - True Full Width Background */}
+                {/* SECCIÓN 2: Explanation (Section 2) */}
                 <section className="w-full flex flex-col py-28 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-[600px] bg-[var(--secondary-color)]/5 blur-[120px] -z-10"></div>
 
-                    {/* Contenedor del Título: Centrado en la sección */}
-                    <div className="w-full px-[15px] md:px-12 lg:px-[100px] mb-12 flex justify-center">
-                        <h2 className="text-4xl md:text-7xl font-primary font-bold text-[var(--primary-color)] tracking-tight text-center">
+                    <div className="w-full px-[15px] md:px-12 lg:px-[100px] mb-12 flex justify-center text-center">
+                        <h2 className="text-4xl md:text-7xl font-primary font-bold text-[var(--primary-color)] tracking-tight">
                             ¿Qué es Buen<span className="text-[var(--secondary-color)]">Cuidar</span>?
                         </h2>
                     </div>
 
-                    {/* Contenedor de la Descripción: Centrado en la pantalla */}
-                    <div className="w-full flex flex-col items-center justify-center px-[15px] md:px-12">
-                        <p className="text-xl md:text-4xl text-gray-700 lg:max-w-5xl leading-relaxed font-medium text-center !text-center w-full">
+                    <div className="w-full px-[15px] md:px-12 lg:px-[100px] flex justify-center text-center">
+                        <p className="text-xl md:text-4xl text-gray-700 max-w-[1240px] leading-relaxed font-medium">
                             <span className="font-bold text-[var(--primary-color)]">Buen<span className="text-[var(--secondary-color)]">Cuidar</span></span> es una plataforma digital que conecta a familias con cuidadores verificados en Centroamérica.
                         </p>
                     </div>
                 </section>
 
-                <div className="w-full px-[15px] lg:px-[100px] Secc3">
+                <div className="w-full px-[15px] md:px-12 lg:px-[100px]">
 
                     {/* Pillars Grid */}
                     <section className="grid md:grid-cols-2 gap-16">
@@ -179,8 +174,8 @@ const Landing = () => {
                         </div>
                     </section>
                     <div className="h-10"></div>
-                    {/* Action Buttons */}
-                    <section className="flex flex-col sm:flex-row items-center justify-center gap-[30px] pb-32 w-full px-[15px]">
+                    {/* SECCIÓN 4: Botones de Acción */}
+                    <section className="flex flex-col sm:flex-row items-center justify-center gap-[30px] pb-32 w-full px-[15px] md:px-12 lg:px-[100px]">
                         <button
                             onClick={() => navigate('/home')}
                             className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full sm:max-w-sm flex items-center justify-center gap-3"
@@ -205,6 +200,7 @@ const Landing = () => {
                 <Logo className="h-12 md:h-16 grayscale opacity-30 hover:opacity-100 transition-opacity" />
                 <div className="text-center space-y-1">
                     <p className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.6em] text-gray-500">Tecnología con corazón.</p>
+                    <p className="text-[10px] text-gray-400 font-mono">v1.0.5-margins-locked</p>
                 </div>
             </footer >
 
