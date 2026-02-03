@@ -175,7 +175,7 @@ const Landing = () => {
                     </section>
                     <div className="h-10"></div>
                     {/* SECCIÓN 4: Botones de Acción */}
-                    <section className="flex flex-col sm:flex-row items-center justify-center gap-[25px] pb-32 w-full px-[15px] md:px-12 lg:px-[100px]">
+                    <section className="flex flex-col sm:flex-row items-center justify-center gap-[25px] pb-32 w-full md:px-12 lg:px-[100px]">
                         <button
                             onClick={() => {
                                 navigate('/home');
@@ -203,6 +203,7 @@ const Landing = () => {
                 <Logo className="h-12 md:h-16 grayscale opacity-30 hover:opacity-100 transition-opacity" />
                 <div className="text-center space-y-1">
                     <p className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.6em] text-gray-500">Tecnología con corazón.</p>
+                    <p className="text-[10px] text-gray-400 font-mono">v1.0.6-margins-fixed-15px</p>
                 </div>
             </footer >
 
