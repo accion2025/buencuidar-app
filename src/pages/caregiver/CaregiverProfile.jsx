@@ -407,11 +407,8 @@ const CaregiverProfile = () => {
                     <div className="relative group shrink-0">
                         <div className="w-48 h-48 rounded-[16px] border-[6px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40">
                             {uploading ? (
-                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-20">
-                                    <Loader2 className="animate-spin text-white mb-2" size={40} />
-                                    <span className="text-white text-[10px] font-black uppercase tracking-widest">
-                                        Paso {uploadStep}/4 {uploadStep === 2 && `${uploadProgress}%`}
-                                    </span>
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20">
+                                    <Loader2 className="animate-spin text-white" size={40} />
                                 </div>
                             ) : null}
                             <img
@@ -419,9 +416,11 @@ const CaregiverProfile = () => {
                                 alt="Profile"
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center !text-[#FAFAF7] backdrop-blur-sm">
-                                <span className="text-[10px] font-black uppercase tracking-widest">Foto de Perfil</span>
-                            </div>
+                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer !text-[#FAFAF7] backdrop-blur-sm">
+                                <Camera size={32} className="mb-2" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Cambiar Foto</span>
+                                <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
+                            </label>
                         </div>
                         <div className="absolute -bottom-2 -right-2 bg-[var(--secondary-color)] w-10 h-10 rounded-[16px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]" title="Activo ahora">
                             <Check size={20} strokeWidth={4} />
