@@ -1,13 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/layout/Navbar';
 import InstallPrompt from '../components/InstallPrompt';
+import { Download, Share, X } from 'lucide-react';
 
 const Home = () => {
     const navigate = useNavigate();
     const { user, profile, loading } = useAuth();
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
+    const [isIOS, setIsIOS] = useState(false);
+    const [showInstructions, setShowInstructions] = useState(false);
     const dashboardPath = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
+
+    useEffect(() => {
+        const userAgent = window.navigator.userAgent;
+        const isIosDevice = /iPad|iPhone|iPod/.test(userAgent) ||
+            (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+        setIsIOS(isIosDevice);
+
+        const handler = (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
+
+    const handleInstall = async () => {
+        if (isIOS) {
+            setShowInstructions(true);
+            return;
+        }
+        if (!deferredPrompt) {
+            alert("Usa el menú de tu navegador para 'Agregar a la pantalla de inicio'.");
+            return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') setDeferredPrompt(null);
+    };
 
     if (loading) {
         return <div className="min-h-screen flex items-center justify-center bg-[var(--base-bg)] text-[var(--primary-color)]">
@@ -49,11 +81,12 @@ const Home = () => {
                         </button>
 
                         <button
-                            onClick={() => navigate('/ecosistema-salud')}
-                            className="btn btn-outline text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm"
+                            onClick={handleInstall}
+                            className="btn btn-outline text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm flex items-center justify-center gap-3"
                             style={{ color: '#FAFAF7', fontFamily: 'Poppins, sans-serif' }}
                         >
-                            BC PULSO
+                            Instalar Aplicación
+                            <Download size={24} className="group-hover:translate-y-1 transition-transform" />
                         </button>
 
                         {/* Install Prompt - Positioned below buttons */}
@@ -175,6 +208,31 @@ const Home = () => {
                     </div>
                 </section>
             </main>
+            {/* IOS Modal */}
+            {
+                showInstructions && (
+                    <div className="fixed inset-0 z-[100] bg-[var(--primary-color)]/95 backdrop-blur-xl flex items-center justify-center p-6 px-4">
+                        <div className="bg-white p-12 rounded-[50px] max-w-sm w-full relative text-center shadow-2xl">
+                            <button onClick={() => setShowInstructions(false)} className="absolute top-8 right-8 text-gray-500"><X size={28} /></button>
+                            <div className="w-16 h-16 bg-[#E6F4F1] rounded-3xl flex items-center justify-center mx-auto mb-8 text-[var(--secondary-color)]">
+                                <Share size={32} />
+                            </div>
+                            <h4 className="text-2xl font-bold text-[var(--primary-color)] mb-10 tracking-tight">Lleva BuenCuidar contigo</h4>
+                            <div className="space-y-6 text-left text-gray-800 font-medium px-2">
+                                <div className="flex gap-6 items-center">
+                                    <div className="w-10 h-10 rounded-2xl bg-[var(--secondary-color)] text-white flex items-center justify-center font-black text-xl shadow-lg shadow-[#2FAE8F]/30">1</div>
+                                    <p className="text-lg">Toca 'Compartir' <Share size={18} className="inline mx-1 text-[var(--secondary-color)]" /></p>
+                                </div>
+                                <div className="flex gap-6 items-center">
+                                    <div className="w-10 h-10 rounded-2xl bg-[var(--primary-color)] text-white flex items-center justify-center font-black text-xl shadow-lg shadow-[#0F3C4C]/30">2</div>
+                                    <p className="text-lg">Busca 'Agregar a inicio'</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setShowInstructions(false)} className="w-full mt-12 bg-[var(--primary-color)] text-white py-6 rounded-full font-black uppercase tracking-widest text-xs">Entendido</button>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     );
 };
