@@ -70,8 +70,8 @@ const InstallPrompt = ({ className }) => {
                     onClick={isIOS ? () => setShowInstructions(true) : handleAndroidInstall}
                     className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-3"
                 >
+                    INSTALAR APLICACIÓN
                     <Download size={24} />
-                    Instalar App
                 </button>
             </div>
 
