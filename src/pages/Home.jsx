@@ -22,8 +22,8 @@ const Home = () => {
             <main>
                 {/* Hero Section */}
                 <section id="hero" className="hero-bg min-h-screen relative overflow-hidden">
-                    {/* Text Container - Top Left (60px top, 35px left) */}
-                    <div className="absolute top-[60px] left-[35px] z-10 text-left max-w-4xl">
+                    {/* Text Container - Top Left (Aligned with Navbar Padding) */}
+                    <div className="absolute top-[60px] left-4 md:left-12 lg:left-20 z-10 text-left max-w-4xl transform -translate-x-1.5">
                         <h1 style={{ color: '#FAFAF7' }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-xl">
                             El cuidado que <br />
                             tu <span className="text-[var(--secondary-color)]">familia merece</span>,<br />
