@@ -425,7 +425,7 @@ const CaregiverProfile = () => {
                             <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight">{profile.full_name}</h1>
                             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md text-[var(--accent-color)] px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit mx-auto lg:mx-0 border border-white/10 uppercase">
                                 <Award size={14} />
-                                <span>PERFIL PRO VERIFICADO - V2.1.5</span>
+                                <span>PERFIL PRO VERIFICADO - V2.1.6.1</span>
                             </div>
                         </div>
 
