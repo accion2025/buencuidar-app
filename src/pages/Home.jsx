@@ -22,8 +22,8 @@ const Home = () => {
             <main>
                 {/* Hero Section */}
                 <section id="hero" className="hero-bg min-h-screen relative overflow-hidden">
-                    {/* Text Container - Top Left (70px top, 40px left) */}
-                    <div className="absolute top-[70px] left-[40px] z-10 text-left max-w-4xl">
+                    {/* Text Container - Top Left (60px top, 40px left) */}
+                    <div className="absolute top-[60px] left-[40px] z-10 text-left max-w-4xl">
                         <h1 style={{ color: '#FAFAF7' }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-xl">
                             El cuidado que tu <br className="hidden md:block" />
                             <span className="text-[var(--secondary-color)]">familia merece</span>, la paz <br className="hidden md:block" />
