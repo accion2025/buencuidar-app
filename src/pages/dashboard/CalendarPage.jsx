@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Plus, MapPin, Clock, User, X, Loader2, CheckCircle, Trash2, Edit2, Info, BookOpen, Briefcase, Star, Lock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, MapPin, Clock, User, X, Loader2, CheckCircle, Trash2, Edit2, Info, BookOpen, Briefcase, Star, Lock, Settings } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import ServiceSelector, { SERVICE_CATEGORIES } from '../../components/dashboard/ServiceSelector';
+import ConfigureAgendaModal from '../../components/dashboard/ConfigureAgendaModal';
 
 const CalendarPage = () => {
     const { user, profile } = useAuth();
@@ -11,6 +12,11 @@ const CalendarPage = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(null);
     const [showModal, setShowModal] = useState(false);
+
+    // Agenda Modal States
+    const [showAgendaModal, setShowAgendaModal] = useState(false);
+    const [selectedAgendaId, setSelectedAgendaId] = useState(null);
+    const [currentCareAgenda, setCurrentCareAgenda] = useState([]);
 
     // Subscription Check
     const isSubscribed = profile?.subscription_status === 'active';
@@ -423,6 +429,19 @@ const CalendarPage = () => {
                                             </div>
                                             <h4 className={`font-bold mb-1 pr-8 ${isGray ? 'text-gray-500' : 'text-gray-800'}`}>{event.title} {isGray && `(${event.status === 'cancelled' ? 'Cancelada' : 'Finalizada'})`}</h4>
                                             <div className="text-sm text-gray-600 flex items-center gap-2"><Clock size={14} /> {event.time} {event.end_time ? `- ${event.end_time.substring(0, 5)}` : ''}</div>
+
+                                            {isSubscribed && !isGray && (
+                                                <button
+                                                    onClick={() => {
+                                                        setSelectedAgendaId(event.id);
+                                                        setCurrentCareAgenda(event.care_agenda || []);
+                                                        setShowAgendaModal(true);
+                                                    }}
+                                                    className="w-full mt-3 py-2 bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] rounded-[12px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)]/20 flex items-center justify-center gap-2 border border-[var(--secondary-color)]/20 transition-all font-primary"
+                                                >
+                                                    <Settings size={14} /> Configurar Agenda BC PULSO
+                                                </button>
+                                            )}
                                         </div>
                                     );
                                 })}
@@ -513,6 +532,17 @@ const CalendarPage = () => {
                     </div>
                 </div>
             )}
+
+            <ConfigureAgendaModal
+                isOpen={showAgendaModal}
+                onClose={() => setShowAgendaModal(false)}
+                appointmentId={selectedAgendaId}
+                currentAgenda={currentCareAgenda}
+                onSave={(newAgenda) => {
+                    loadAppointments(); // Refresh to get the update
+                    setShowAgendaModal(false);
+                }}
+            />
         </div>
     );
 };
