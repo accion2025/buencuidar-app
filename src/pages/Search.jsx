@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { supabase } from '../lib/supabase';
-import { Star, MapPin, Briefcase, Loader2, Search as SearchIcon } from 'lucide-react';
+import { Star, MapPin, Briefcase, Loader2, Search as SearchIcon, Globe, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CaregiverDetailModal from '../components/dashboard/CaregiverDetailModal';
 import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
+import { CENTRAL_AMERICA } from '../constants/locations';
 
 const Search = () => {
     const navigate = useNavigate();
@@ -13,11 +14,36 @@ const Search = () => {
     const [loading, setLoading] = useState(true);
     const [selectedCaregiver, setSelectedCaregiver] = useState(null);
     const [filters, setFilters] = useState({
-        location: '',
+        country: 'nicaragua',
+        department: '',
+        municipality: '',
         specialty: '',
         priceRange: 500,
         experience: '' // 'under1', '1-3', '3-5', 'over5'
     });
+
+    const [availableDepartments, setAvailableDepartments] = useState([]);
+    const [availableMunicipalities, setAvailableMunicipalities] = useState([]);
+
+    useEffect(() => {
+        const countryData = CENTRAL_AMERICA.find(c => c.id === filters.country);
+        if (countryData && countryData.departments) {
+            const depts = Object.keys(countryData.departments);
+            setAvailableDepartments(depts);
+        } else {
+            setAvailableDepartments([]);
+        }
+    }, [filters.country]);
+
+    useEffect(() => {
+        const countryData = CENTRAL_AMERICA.find(c => c.id === filters.country);
+        if (countryData && countryData.departments && filters.department) {
+            const munis = countryData.departments[filters.department] || [];
+            setAvailableMunicipalities(munis);
+        } else {
+            setAvailableMunicipalities([]);
+        }
+    }, [filters.department, filters.country]);
 
     useEffect(() => {
         fetchCaregivers();
@@ -35,9 +61,12 @@ const Search = () => {
                 .eq('role', 'caregiver')
                 .eq('is_available', true);
 
-            // Apply location filter (profiles)
-            if (filters.location) {
-                query = query.ilike('caregiver_details.location', `%${filters.location}%`);
+            // Apply location filters (profiles table)
+            if (filters.department) {
+                query = query.eq('department', filters.department);
+            }
+            if (filters.municipality) {
+                query = query.eq('municipality', filters.municipality);
             }
 
             // Apply specialty filter
@@ -125,7 +154,9 @@ const Search = () => {
 
     const handleClearFilters = () => {
         setFilters({
-            location: '',
+            country: 'nicaragua',
+            department: '',
+            municipality: '',
             specialty: '',
             priceRange: 500,
             experience: ''
@@ -154,22 +185,46 @@ const Search = () => {
                 <div className="container mx-auto px-4">
                     <h2 className="text-2xl font-bold mb-6">Encuentra al cuidador ideal</h2>
 
-                    <div className="bg-white p-4 rounded-[16px] shadow-md flex flex-col lg:flex-row gap-4 text-gray-800 items-center">
+                    <div className="bg-white p-4 rounded-[16px] shadow-md grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-800 items-end">
                         <div className="flex-grow">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Ubicación</label>
-                            <input
-                                type="text"
-                                placeholder="Ej. Ciudad de México"
-                                className="w-full border-b-2 border-transparent focus:border-[var(--primary-color)] outline-none font-medium"
-                                value={filters.location}
-                                onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-                            />
-                        </div>
-                        <div className="w-px bg-gray-200 hidden md:block"></div>
-                        <div className="flex-grow">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Especialidad</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
+                                <MapPin size={12} className="text-orange-400" /> Departamento
+                            </label>
                             <select
-                                className="w-full border-b-2 border-transparent focus:border-[var(--primary-color)] outline-none font-medium bg-transparent"
+                                className="w-full border-b-2 border-gray-100 focus:border-[var(--primary-color)] outline-none font-medium bg-transparent py-1"
+                                value={filters.department}
+                                onChange={(e) => setFilters({ ...filters, department: e.target.value, municipality: '' })}
+                            >
+                                <option value="">Todos</option>
+                                {availableDepartments.map(dept => (
+                                    <option key={dept} value={dept}>{dept}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="flex-grow">
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
+                                <Home size={12} className="text-blue-400" /> Municipio
+                            </label>
+                            <select
+                                className="w-full border-b-2 border-gray-100 focus:border-[var(--primary-color)] outline-none font-medium bg-transparent py-1 disabled:opacity-50"
+                                value={filters.municipality}
+                                disabled={!filters.department}
+                                onChange={(e) => setFilters({ ...filters, municipality: e.target.value })}
+                            >
+                                <option value="">Todos</option>
+                                {availableMunicipalities.map(muni => (
+                                    <option key={muni} value={muni}>{muni}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="flex-grow">
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
+                                <Briefcase size={12} className="text-green-500" /> Especialidad
+                            </label>
+                            <select
+                                className="w-full border-b-2 border-gray-100 focus:border-[var(--primary-color)] outline-none font-medium bg-transparent py-1"
                                 value={filters.specialty}
                                 onChange={(e) => setFilters({ ...filters, specialty: e.target.value })}
                             >
