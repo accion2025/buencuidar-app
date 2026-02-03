@@ -44,66 +44,69 @@ import AdminVerification from './pages/admin/AdminVerification';
 
 import { AuthProvider } from './context/AuthContext';
 import { MessageProvider } from './context/MessageContext';
+import { NotificationProvider } from './context/NotificationContext';
 
 function App() {
   return (
     <AuthProvider>
-      <MessageProvider>
-        <Router>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/ecosistema-salud" element={<SaludInfo />} />
+      <NotificationProvider>
+        <MessageProvider>
+          <Router>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/ecosistema-salud" element={<SaludInfo />} />
 
-            {/* Auth Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/register-caregiver" element={<Navigate to="/register" replace />} />
-            <Route path="/registration-success" element={<RegistrationSuccess />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/update-password" element={<UpdatePassword />} />
-            <Route path="/search" element={<Search />} />
+              {/* Auth Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/register-caregiver" element={<Navigate to="/register" replace />} />
+              <Route path="/registration-success" element={<RegistrationSuccess />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/update-password" element={<UpdatePassword />} />
+              <Route path="/search" element={<Search />} />
 
-            {/* Family Dashboard Routes (Protected) */}
-            <Route path="/dashboard" element={<DashboardLayout />}>
-              <Route index element={<DashboardOverview />} />
-              <Route path="pulso" element={<MonitoringCenter />} />
-              <Route path="calendar" element={<CalendarPage />} />
-              <Route path="messages" element={<Messages />} />
-              <Route path="caregivers" element={<CaregiverList />} />
-              <Route path="plans" element={<SubscriptionPlans />} />
-              <Route path="profile" element={<ClientProfile />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
-
-            {/* Caregiver Dashboard Routes (Protected) */}
-            <Route path="/caregiver" element={<CaregiverLayout />}>
-              <Route index element={<CaregiverOverview />} />
-              <Route path="jobs" element={<JobBoard />} />
-              <Route path="shifts" element={<MyShifts />} />
-              <Route path="messages" element={<Messages />} />
-              <Route path="payments" element={<CaregiverPayments />} />
-              <Route path="analytics" element={<CaregiverAnalytics />} />
-              <Route path="profile" element={<CaregiverProfile />} />
-              <Route path="settings" element={<CaregiverSettings />} />
-            </Route>
-
-            {/* Admin Routes (Protected) */}
-            <Route element={<AdminRoute />}>
-              <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="users" element={<UserManagement />} />
-                <Route path="verification" element={<AdminVerification />} />
-                <Route path="settings" element={<div className="p-8">Configuración (Próximamente)</div>} />
+              {/* Family Dashboard Routes (Protected) */}
+              <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<DashboardOverview />} />
+                <Route path="pulso" element={<MonitoringCenter />} />
+                <Route path="calendar" element={<CalendarPage />} />
+                <Route path="messages" element={<Messages />} />
+                <Route path="caregivers" element={<CaregiverList />} />
+                <Route path="plans" element={<SubscriptionPlans />} />
+                <Route path="profile" element={<ClientProfile />} />
+                <Route path="settings" element={<Settings />} />
               </Route>
-            </Route>
-          </Routes>
-        </Router>
-      </MessageProvider>
+
+              {/* Caregiver Dashboard Routes (Protected) */}
+              <Route path="/caregiver" element={<CaregiverLayout />}>
+                <Route index element={<CaregiverOverview />} />
+                <Route path="jobs" element={<JobBoard />} />
+                <Route path="shifts" element={<MyShifts />} />
+                <Route path="messages" element={<Messages />} />
+                <Route path="payments" element={<CaregiverPayments />} />
+                <Route path="analytics" element={<CaregiverAnalytics />} />
+                <Route path="profile" element={<CaregiverProfile />} />
+                <Route path="settings" element={<CaregiverSettings />} />
+              </Route>
+
+              {/* Admin Routes (Protected) */}
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="users" element={<UserManagement />} />
+                  <Route path="verification" element={<AdminVerification />} />
+                  <Route path="settings" element={<div className="p-8">Configuración (Próximamente)</div>} />
+                </Route>
+              </Route>
+            </Routes>
+          </Router>
+        </MessageProvider>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

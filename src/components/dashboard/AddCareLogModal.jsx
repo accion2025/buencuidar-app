@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check, FileText, Loader2, ListTodo, ClipboardList } from 'lucide-react';
+import { X, Check, FileText, Loader2, ListTodo, ClipboardList, Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientName, appointmentDetails, careAgenda, clientId }) => {
