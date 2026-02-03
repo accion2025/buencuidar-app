@@ -32,7 +32,7 @@ const Home = () => {
                     </div>
 
                     {/* Buttons Container - Bottom Center (100px from bottom) */}
-                    <div className="absolute bottom-[100px] left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-[30px] w-full z-10 px-4">
+                    <div className="absolute bottom-[100px] left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-[25px] w-full z-10 px-4">
                         <button
                             onClick={() => navigate('/search')}
                             className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm"
