@@ -10,6 +10,42 @@ const DOCUMENT_TYPES = [
     { id: 'human_evaluation', label: 'Evaluación de trato humano', icon: ShieldCheck, description: 'Certificado de evaluación de confianza y trato al paciente.' }
 ];
 
+// Reutilizamos la misma utilidad de redimensionamiento para ahorrar RAM en móviles
+const preprocessImage = async (file, maxDimension = 1500) => {
+    if (file.type === 'application/pdf') return file; // Los PDFs no se redimensionan
+
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            const canvas = document.createElement('canvas');
+            let { width, height } = img;
+
+            const ratio = Math.min(maxDimension / width, maxDimension / height, 1);
+            width *= ratio;
+            height *= ratio;
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+                resolve(blob);
+            }, 'image/jpeg', 0.8);
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error("Error al cargar la imagen"));
+        };
+
+        img.src = objectUrl;
+    });
+};
+
 const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     const [uploading, setUploading] = useState(null);
     const [uploadStep, setUploadStep] = useState(0);
@@ -122,74 +158,30 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 // --- PASO 1b: Procesamiento de Archivo ---
                 currentStep = "1b";
                 setUploadStep("1b");
-                await new Promise(r => setTimeout(r, 200)); // Respiro UI
-                const fileToUpload = file;
+                addLog("⚙️ Optimizando archivo para red...");
+                const fileToUpload = await preprocessImage(file);
 
-                // --- PASO 2: Subida (Doble Protocolo TUS -> Standard) ---
+                // --- PASO 2: Subida (Protocolo Binario Directo) ---
                 currentStep = "2";
                 setUploadStep(2);
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${docType}-${Date.now()}.${fileExt}`;
                 const filePath = `${caregiverId}/${fileName}`;
 
-                addLog(`Paso 2: Subiendo... Intento: ${attempt}`);
+                addLog(`Paso 2: Subiendo documento por canal directo...`);
 
                 const isPdf = fileExt.toLowerCase() === 'pdf';
-                const contentType = isPdf ? 'application/pdf' : `image/${fileExt === 'png' ? 'png' : 'jpeg'}`;
+                const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
 
-                // Definimos el intento TUS con SEÑAL
-                const uploadWithTus = supabase.storage
+                const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('documents')
                     .upload(filePath, fileToUpload, {
                         contentType: contentType,
                         upsert: true,
-                        resumable: true,
-                        signal: controller.signal,
-                        onUploadProgress: (progress) => {
-                            const total = progress.total || fileToUpload.size;
-                            const percent = Math.round((progress.loaded / total) * 100);
-                            setUploadProgress(percent);
-                            if (percent % 25 === 0) console.log(`DEBUG: Progreso Docs ${percent}%`);
-                        }
+                        resumable: false // CLAVE: No resumable para máxima estabilidad móvil
                     });
 
-                // Alarma de 15 segundos
-                const handshakeTimeout = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("TUS_HANDSHAKE_TIMEOUT")), 15000)
-                );
-
-                let uploadResult;
-                try {
-                    uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
-                } catch (raceError) {
-                    if (raceError.name === 'AbortError' || raceError.message === "TUS_HANDSHAKE_TIMEOUT") {
-                        addLog("HANDSHAKE_TIMEOUT -> Modo Alternativo");
-                        setUploadStep("2 (Alternativo)");
-                        controller.abort();
-
-                        // Respiro largo para el A10s
-                        await new Promise(r => setTimeout(r, 2500));
-                        addLog("Iniciando canal alternativo...");
-
-                        const newController = new AbortController();
-
-                        // Alarma canal estándar 45s
-                        const fallbackTimeout = new Promise((_, reject) =>
-                            setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 45000)
-                        );
-
-                        const uploadStandard = supabase.storage
-                            .from('documents')
-                            .upload(filePath, fileToUpload, {
-                                contentType: contentType,
-                                upsert: true,
-                                resumable: false,
-                                signal: newController.signal
-                            });
-
-                        uploadResult = await Promise.race([uploadStandard, fallbackTimeout]);
-                    }
-                }
+                let uploadResult = { data: uploadData, error: uploadError };
 
                 if (uploadResult?.error) throw uploadResult.error;
 
@@ -224,7 +216,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 addLog(`ERROR EN ${currentStep}:`, err);
                 clearTimeout(timeoutId);
                 console.error(`Error attempt ${attempt}:`, err);
-                lastError = err;
+                let lastError = err;
 
                 if (err.message === "AUTH_TIMEOUT") {
                     setError("⚠️ SERVIDOR EN MANTENIMIENTO: La autenticación no respondió. Cierra sesión y vuelve a entrar.");

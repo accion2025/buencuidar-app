@@ -245,6 +245,7 @@ const CaregiverProfile = () => {
         addLog("🚀 Lanzando Carga V2.1.2...");
         let attempt = 0;
         let success = false;
+        let lastError = null;
         let currentStep = "inicio";
 
         while (attempt < MAX_RETRIES && !success) {
