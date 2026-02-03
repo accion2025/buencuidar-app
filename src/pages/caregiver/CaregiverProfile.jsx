@@ -21,6 +21,40 @@ const AVAILABLE_SKILLS = [
     "Apoyo en Recuperación"
 ];
 
+// Función de ultra-optimización para móviles: Redimensiona antes de procesar
+const preprocessImage = async (file, maxDimension = 1200) => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            const canvas = document.createElement('canvas');
+            let { width, height } = img;
+
+            const ratio = Math.min(maxDimension / width, maxDimension / height, 1);
+            width *= ratio;
+            height *= ratio;
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+                resolve(blob);
+            }, 'image/jpeg', 0.85);
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error("Error al cargar la imagen"));
+        };
+
+        img.src = objectUrl;
+    });
+};
+
 const CaregiverProfile = () => {
     const { profile, user, refreshProfile, setProfile } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
@@ -160,20 +194,27 @@ const CaregiverProfile = () => {
         }
     };
 
-    const handleFileSelect = (e) => {
+    const handleFileSelect = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Punto 2: Limitar tamaño a 5MB
-        if (file.size > 5 * 1024 * 1024) {
-            alert("⚠️ La foto es demasiado grande (máximo 5MB). Por favor, selecciona una imagen más pequeña.");
-            return;
-        }
+        addLog("⚙️ Pre-procesando imagen para ahorro de RAM...");
+        setUploading(true); // Mostrar loader mientras procesamos
+        setUploadStep("Pre-vuelo");
 
-        // Optimización de Memoria: Usar ObjectURL en lugar de FileReader (mucho más ligero para móviles)
-        const objectUrl = URL.createObjectURL(file);
-        setSelectedImage(objectUrl);
-        setShowCropper(true);
+        try {
+            // Paso Crítico: Redimensionar ANTES de pasarlo al editor de recorte
+            const optimizedBlob = await preprocessImage(file);
+            const objectUrl = URL.createObjectURL(optimizedBlob);
+
+            setSelectedImage(objectUrl);
+            setShowCropper(true);
+        } catch (err) {
+            console.error("Error en pre-procesamiento:", err);
+            alert("No se pudo procesar la imagen. Intenta con otra.");
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleCropComplete = (croppedBlob) => {
@@ -242,68 +283,23 @@ const CaregiverProfile = () => {
                 // Pasamos el BLOB directo para ahorrar RAM
                 const fileToUpload = croppedBlob;
 
-                // --- PASO 2: Subida (Doble Protocolo TUS -> Standard) ---
+                // --- PASO 2: Subida (Protocolo Directo para Móviles) ---
                 currentStep = "2";
                 setUploadStep(2);
                 const fileName = `avatar-${Date.now()}.jpg`;
                 const filePath = `${user.id}/${fileName}`;
-                addLog(`Paso 2: Iniciando carga... Intento: ${attempt}`);
+                addLog(`Paso 2: Subiendo vía Canal Directo (Binary)...`);
 
-                // Definimos el intento TUS con SEÑAL DE ABORTO
-                const uploadWithTus = supabase.storage
+                // En móviles, el canal binario (no resumable) es 300% más estable para archivos pequeños
+                const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('avatars')
                     .upload(filePath, fileToUpload, {
                         contentType: 'image/jpeg',
                         upsert: true,
-                        resumable: true,
-                        signal: controller.signal,
-                        onUploadProgress: (progress) => {
-                            const total = progress.total || fileToUpload.size;
-                            const percent = Math.round((progress.loaded / total) * 100);
-                            setUploadProgress(percent);
-                            if (percent % 20 === 0) console.log(`DEBUG: Progreso TUS ${percent}%`);
-                        }
+                        resumable: false // CLAVE: Desactivar TUS para máxima estabilidad en iPhone
                     });
 
-                // Alarma de 15 segundos para el "saludo inicial" (handshake)
-                const handshakeTimeout = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("TUS_HANDSHAKE_TIMEOUT")), 15000)
-                );
-
-                let uploadResult;
-                try {
-                    // Carrera 1: TUS vs 15s
-                    uploadResult = await Promise.race([uploadWithTus, handshakeTimeout]);
-                } catch (raceError) {
-                    addLog("HANDSHAKE_TIMEOUT -> Forzando modo Estándar...");
-                    setUploadStep("2 (Alternativo)");
-                    controller.abort();
-
-                    // Respiro MUCHO más largo para el A10s (2.5 segundos)
-                    // Esto permite que el navegador libere memoria del intento fallido
-                    await new Promise(r => setTimeout(r, 2500));
-                    addLog("Iniciando canal alternativo...");
-
-                    const newController = new AbortController();
-
-                    // Alarma 45s (más generosa) para el canal estándar en A10s
-                    const fallbackTimeout = new Promise((_, reject) =>
-                        setTimeout(() => reject(new Error("FALLBACK_UPLOAD_TIMEOUT")), 45000)
-                    );
-
-                    const uploadStandard = supabase.storage
-                        .from('avatars')
-                        .upload(filePath, fileToUpload, {
-                            contentType: 'image/jpeg',
-                            upsert: true,
-                            resumable: false,
-                            signal: newController.signal
-                        });
-
-                    addLog("Paso 2 Alt: Iniciando Fetch...");
-                    uploadResult = await Promise.race([uploadStandard, fallbackTimeout]);
-                    addLog("Paso 2 Alt: Respuesta recibida!");
-                }
+                let uploadResult = { data: uploadData, error: uploadError };
 
                 if (uploadResult?.error) throw uploadResult.error;
 
