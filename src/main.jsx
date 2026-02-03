@@ -1,3 +1,4 @@
+console.log('--- BUENCUIDAR APP LOADED - VERSION 1.0.4-DEBUG ---');
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
