@@ -12,19 +12,21 @@ const DOCUMENT_TYPES = [
 
 const MAX_RETRIES = 3; // Constante vital para la estabilidad de la carga
 
-// Reutilizamos la misma utilidad de redimensionamiento para ahorrar RAM en móviles
+// Función de ultra-optimización para móviles: Redimensiona antes de procesar
 const preprocessImage = async (file, maxDimension = 1500) => {
-    if (file.type === 'application/pdf') return file; // Los PDFs no se redimensionan
+    if (file.type === 'application/pdf') return file;
 
-    return new Promise((resolve, reject) => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile) return file;
+
+    return new Promise((resolve) => {
+        const timeout = setTimeout(() => resolve(file), 5000);
         const img = new Image();
         const objectUrl = URL.createObjectURL(file);
 
         img.onload = () => {
-            URL.revokeObjectURL(objectUrl);
             const canvas = document.createElement('canvas');
             let { width, height } = img;
-
             const ratio = Math.min(maxDimension / width, maxDimension / height, 1);
             width *= ratio;
             height *= ratio;
@@ -35,13 +37,16 @@ const preprocessImage = async (file, maxDimension = 1500) => {
             ctx.drawImage(img, 0, 0, width, height);
 
             canvas.toBlob((blob) => {
-                resolve(blob);
+                clearTimeout(timeout);
+                URL.revokeObjectURL(objectUrl);
+                resolve(blob || file);
             }, 'image/jpeg', 0.8);
         };
 
         img.onerror = () => {
+            clearTimeout(timeout);
             URL.revokeObjectURL(objectUrl);
-            reject(new Error("Error al cargar la imagen"));
+            resolve(file);
         };
 
         img.src = objectUrl;
@@ -137,40 +142,21 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             try {
                 attempt++;
 
-                // --- PASO 1a: Sesión (Bypass Inteligente) ---
+                // --- PASO 1a: Sesión Garantizada ---
                 currentStep = "1a";
-                setUploadStep("1a");
+                const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+                if (authError || !authUser) throw new Error("Sesión expirada");
+                const activeUserId = authUser.id;
 
-                // Si ya tenemos el caregiverId por props, procedemos sin bloqueo
-                if (!caregiverId) {
-                    const sessionPromise = supabase.auth.getSession();
-                    const authTimeout = new Promise((_, reject) =>
-                        setTimeout(() => reject(new Error("AUTH_TIMEOUT")), 5000)
-                    );
-
-                    const { data: { session }, error: authError } = await Promise.race([
-                        sessionPromise,
-                        authTimeout
-                    ]);
-
-                    if (authError || !session) throw new Error("Sesión inválida.");
-                }
-                // Si tenemos caregiverId, el Paso 1a se considera validado por bypass
-
-                // --- PASO 1b: Procesamiento de Archivo ---
+                // --- PASO 1b: Procesamiento ---
                 currentStep = "1b";
-                setUploadStep("1b");
-                addLog("⚙️ Optimizando archivo para red...");
                 const fileToUpload = await preprocessImage(file);
 
-                // --- PASO 2: Subida (Protocolo Binario Directo) ---
+                // --- PASO 2: Subida ---
                 currentStep = "2";
-                setUploadStep(2);
                 const fileExt = file.name.split('.').pop();
                 const fileName = `${docType}-${Date.now()}.${fileExt}`;
-                const filePath = `${caregiverId}/${fileName}`;
-
-                addLog(`Paso 2: Subiendo documento por canal directo...`);
+                const filePath = `${activeUserId}/${fileName}`;
 
                 const isPdf = fileExt.toLowerCase() === 'pdf';
                 const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
@@ -180,9 +166,10 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                     .upload(filePath, fileToUpload, {
                         contentType: contentType,
                         upsert: true,
-                        resumable: false // CLAVE: No resumable para máxima estabilidad móvil
+                        resumable: false
                     });
 
+                if (uploadError) throw uploadError;
                 let uploadResult = { data: uploadData, error: uploadError };
 
                 if (uploadResult?.error) throw uploadResult.error;
@@ -193,7 +180,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 const { error: dbError } = await supabase
                     .from('caregiver_documents')
                     .upsert({
-                        caregiver_id: caregiverId,
+                        caregiver_id: activeUserId,
                         document_type: docType,
                         file_path: filePath,
                         status: 'pending'
@@ -204,7 +191,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 await supabase
                     .from('profiles')
                     .update({ verification_status: 'in_review' })
-                    .eq('id', caregiverId)
+                    .eq('id', activeUserId)
                     .eq('verification_status', 'pending');
 
                 currentStep = "4";
@@ -215,10 +202,11 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 success = true;
 
             } catch (err) {
-                addLog(`ERROR EN ${currentStep}:`, err);
                 clearTimeout(timeoutId);
                 console.error(`Error attempt ${attempt}:`, err);
-                let lastError = err;
+                let lastError = err; // Local para el alert posterior
+                const debugMsg = `ERROR EN ${currentStep}: ${err.message || err}`;
+                alert(debugMsg);
 
                 if (err.message === "AUTH_TIMEOUT") {
                     setError("⚠️ SERVIDOR EN MANTENIMIENTO: La autenticación no respondió. Cierra sesión y vuelve a entrar.");

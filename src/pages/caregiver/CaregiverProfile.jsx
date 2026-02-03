@@ -23,16 +23,25 @@ const AVAILABLE_SKILLS = [
 const MAX_RETRIES = 3; // Constante vital para el proceso de carga
 
 // Función de ultra-optimización para móviles: Redimensiona antes de procesar
+// AHORA CON PROTECCIÓN: Si falla o tarda más de 5s, devuelve el archivo original
 const preprocessImage = async (file, maxDimension = 1200) => {
-    return new Promise((resolve, reject) => {
+    // Si no es móvil o no es imagen, devolvemos el original para evitar fallos en PC
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (!isMobile || !file.type.startsWith('image/')) return file;
+
+    return new Promise((resolve) => {
+        // Alarma de 5s: Si no procesa, no bloqueamos la app
+        const timeout = setTimeout(() => {
+            console.warn("Pre-procesamiento timed out");
+            resolve(file);
+        }, 5000);
+
         const img = new Image();
         const objectUrl = URL.createObjectURL(file);
 
         img.onload = () => {
-            URL.revokeObjectURL(objectUrl);
             const canvas = document.createElement('canvas');
             let { width, height } = img;
-
             const ratio = Math.min(maxDimension / width, maxDimension / height, 1);
             width *= ratio;
             height *= ratio;
@@ -43,13 +52,16 @@ const preprocessImage = async (file, maxDimension = 1200) => {
             ctx.drawImage(img, 0, 0, width, height);
 
             canvas.toBlob((blob) => {
-                resolve(blob);
+                clearTimeout(timeout);
+                URL.revokeObjectURL(objectUrl);
+                resolve(blob || file);
             }, 'image/jpeg', 0.85);
         };
 
         img.onerror = () => {
+            clearTimeout(timeout);
             URL.revokeObjectURL(objectUrl);
-            reject(new Error("Error al cargar la imagen"));
+            resolve(file);
         };
 
         img.src = objectUrl;
@@ -256,50 +268,31 @@ const CaregiverProfile = () => {
             try {
                 attempt++;
 
-                // --- PASO 1a: Sesión (Bypass Inteligente) ---
+                // --- PASO 1a: Sesión Garantizada ---
                 currentStep = "1a";
-                setUploadStep("1a");
+                const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+                if (authError || !authUser) throw new Error("Sesión expirada. Por favor, reingresa.");
+                const activeUserId = authUser.id;
 
-                // Si ya tenemos el ID por props (Contexto), no bloqueamos esperando al servidor
-                if (!user?.id) {
-                    const sessionPromise = supabase.auth.getSession();
-                    const authTimeout = new Promise((_, reject) =>
-                        setTimeout(() => reject(new Error("AUTH_TIMEOUT")), 5000)
-                    );
-
-                    const { data: { session }, error: authError } = await Promise.race([
-                        sessionPromise,
-                        authTimeout
-                    ]);
-
-                    if (authError || !session) {
-                        throw new Error("Sesión no disponible. Reingresa a la app.");
-                    }
-                }
-                // Si llegamos aquí con user.id, el Paso 1a se considera exitoso por bypass
-
-                // --- PASO 1b: Procesamiento de Imagen ---
+                // --- PASO 1b: Preparación del BLOB ---
                 currentStep = "1b";
-                setUploadStep("1b");
-                await new Promise(r => setTimeout(r, 200)); // Breve respiro para la UI
-                // Pasamos el BLOB directo para ahorrar RAM
                 const fileToUpload = croppedBlob;
 
-                // --- PASO 2: Subida (Protocolo Directo para Móviles) ---
+                // --- PASO 2: Subida Directa ---
                 currentStep = "2";
-                setUploadStep(2);
                 const fileName = `avatar-${Date.now()}.jpg`;
-                const filePath = `${user.id}/${fileName}`;
-                addLog(`Paso 2: Subiendo vía Canal Directo (Binary)...`);
+                const filePath = `${activeUserId}/${fileName}`;
+                addLog(`Subiendo a avatars/${filePath}...`);
 
-                // En móviles, el canal binario (no resumable) es 300% más estable para archivos pequeños
                 const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('avatars')
                     .upload(filePath, fileToUpload, {
                         contentType: 'image/jpeg',
                         upsert: true,
-                        resumable: false // CLAVE: Desactivar TUS para máxima estabilidad en iPhone
+                        resumable: false // Protocolo binario directo
                     });
+
+                if (uploadError) throw uploadError;
 
                 let uploadResult = { data: uploadData, error: uploadError };
 
@@ -316,7 +309,7 @@ const CaregiverProfile = () => {
                 const { error: updateError } = await supabase
                     .from('profiles')
                     .update({ avatar_url: publicUrl })
-                    .eq('id', user.id);
+                    .eq('id', activeUserId);
 
                 if (updateError) throw updateError;
 
