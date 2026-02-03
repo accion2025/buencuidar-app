@@ -175,7 +175,7 @@ const Landing = () => {
                     </section>
                     <div className="h-10"></div>
                     {/* SECCIÓN 4: Botones de Acción */}
-                    <section className="flex flex-col sm:flex-row items-center justify-center gap-[25px] pb-32 w-full md:px-12 lg:px-[100px]">
+                    <section className="flex flex-col sm:flex-row items-center justify-center gap-[20px] pb-32 w-full md:px-12 lg:px-[100px]">
                         <button
                             onClick={() => {
                                 navigate('/home');
