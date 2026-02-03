@@ -21,7 +21,10 @@ const Register = () => {
         role: 'family', // Default to family
         country: 'nicaragua',
         department: '',
-        municipality: ''
+        municipality: '',
+        specialization: 'Acompañamiento Integral',
+        experience: '',
+        bio: ''
     });
 
     // Location lists based on selection
@@ -87,7 +90,10 @@ const Register = () => {
                 country: formData.country,
                 department: formData.department,
                 municipality: formData.municipality,
-                location: `${formData.municipality}, ${formData.department}`
+                location: `${formData.municipality}, ${formData.department}`,
+                specialization: formData.role === 'caregiver' ? formData.specialization : null,
+                experience: formData.role === 'caregiver' ? formData.experience : null,
+                bio: formData.role === 'caregiver' ? formData.bio : null
             });
 
             if (signUpError) {
@@ -217,6 +223,75 @@ const Register = () => {
                                 />
                             </div>
                         </div>
+
+                        {/* Caregiver specific fields */}
+                        {formData.role === 'caregiver' && (
+                            <div className="space-y-8 animate-fade-in py-4 bg-blue-50/30 rounded-[24px] px-6 border border-blue-100/50">
+                                <div className="flex items-center gap-2 border-b border-blue-100 pb-2">
+                                    <User size={16} className="text-[var(--primary-color)]" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--primary-color)]">Perfil Profesional del Cuidador</span>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label htmlFor="experience" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3 flex items-center gap-2">
+                                            Años de Experiencia
+                                        </label>
+                                        <input
+                                            type="number"
+                                            id="experience"
+                                            name="experience"
+                                            min="0"
+                                            required={formData.role === 'caregiver'}
+                                            className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-[16px] focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
+                                            placeholder="Ej. 5"
+                                            value={formData.experience}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="specialization" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
+                                            Especialización Principal
+                                        </label>
+                                        <select
+                                            id="specialization"
+                                            name="specialization"
+                                            required={formData.role === 'caregiver'}
+                                            className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-[16px] focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                            value={formData.specialization}
+                                            onChange={handleChange}
+                                        >
+                                            <option>Acompañamiento Integral</option>
+                                            <option>Cuidado Personal Avanzado</option>
+                                            <option>Recuperación Funcional</option>
+                                            <option>Movimiento y Autonomía</option>
+                                            <option>Acompañamiento Compasivo</option>
+                                            <option>Compañía Activa</option>
+                                            <option>Apoyo en el Hogar</option>
+                                            <option>Apoyo en Traslados</option>
+                                            <option>Organización Diaria</option>
+                                            <option>Apoyo Emocional</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="bio" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
+                                        Breve Biografía Profesional
+                                    </label>
+                                    <textarea
+                                        id="bio"
+                                        name="bio"
+                                        rows="4"
+                                        required={formData.role === 'caregiver'}
+                                        className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-[16px] focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 resize-none"
+                                        placeholder="Cuéntanos sobre tu experiencia y por qué amas tu trabajo..."
+                                        value={formData.bio}
+                                        onChange={handleChange}
+                                    ></textarea>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Location Fields */}
                         <div className="space-y-6">
