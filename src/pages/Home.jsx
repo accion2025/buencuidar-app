@@ -27,7 +27,7 @@ const Home = () => {
                         <h1 style={{ color: '#FAFAF7' }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-xl">
                             El cuidado que <br />
                             tu <span className="text-[var(--secondary-color)]">familia merece</span>,<br />
-                            la paz que tú necesitas.
+                            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600 }}>la paz que tú necesitas.</span>
                         </h1>
                     </div>
 
