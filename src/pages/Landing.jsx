@@ -68,7 +68,7 @@ const Landing = () => {
 
             {/* Header */}
             <header className="w-full max-w-[1440px] px-[15px] md:px-12 lg:px-[100px] py-10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 border-b border-gray-100/30">
-                <Logo className="h-16 md:h-20 w-auto drop-shadow-sm" />
+                <Logo className="h-16 md:h-20 w-auto" />
             </header>
 
             <main className="w-full max-w-[1440px] relative z-10 flex-grow flex flex-col gap-20">
