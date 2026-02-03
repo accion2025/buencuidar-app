@@ -17,9 +17,10 @@ const AVAILABLE_SKILLS = [
     "Apoyo en Rutina de Medicación",
     "Manejo de Grúa",
     "Acompañamiento a Citas",
-    "Registro de Signos Básicos",
     "Apoyo en Recuperación"
 ];
+
+const MAX_RETRIES = 3; // Constante vital para el proceso de carga
 
 // Función de ultra-optimización para móviles: Redimensiona antes de procesar
 const preprocessImage = async (file, maxDimension = 1200) => {
