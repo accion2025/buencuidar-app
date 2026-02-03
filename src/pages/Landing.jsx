@@ -8,10 +8,12 @@ const Landing = () => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [isIOS, setIsIOS] = useState(false);
     const [showInstructions, setShowInstructions] = useState(false);
+    const [isStandalone, setIsStandalone] = useState(false);
 
     useEffect(() => {
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-        if (isStandalone) navigate('/home');
+        const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        setIsStandalone(standalone);
+        if (standalone) navigate('/home');
 
         const userAgent = window.navigator.userAgent;
         const isIosDevice = /iPad|iPhone|iPod/.test(userAgent) ||
@@ -187,13 +189,15 @@ const Landing = () => {
                             <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
                         </button>
 
-                        <button
-                            onClick={handleInstall}
-                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
-                        >
-                            INSTALAR APLICACIÓN
-                            <Download size={24} className="group-hover:translate-y-1 transition-transform" />
-                        </button>
+                        {!isStandalone && (
+                            <button
+                                onClick={handleInstall}
+                                className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
+                            >
+                                INSTALAR APLICACIÓN
+                                <Download size={24} />
+                            </button>
+                        )}
                     </section>
                 </div>
             </main >

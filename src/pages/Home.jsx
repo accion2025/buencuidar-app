@@ -11,9 +11,13 @@ const Home = () => {
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [isIOS, setIsIOS] = useState(false);
     const [showInstructions, setShowInstructions] = useState(false);
+    const [isStandalone, setIsStandalone] = useState(false);
     const dashboardPath = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
 
     useEffect(() => {
+        const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        setIsStandalone(standalone);
+
         const userAgent = window.navigator.userAgent;
         const isIosDevice = /iPad|iPhone|iPod/.test(userAgent) ||
             (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
@@ -88,13 +92,15 @@ const Home = () => {
                             BC PULSO
                         </button>
 
-                        <button
-                            onClick={handleInstall}
-                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
-                        >
-                            INSTALAR APLICACIÓN
-                            <Download size={24} />
-                        </button>
+                        {!isStandalone && (
+                            <button
+                                onClick={handleInstall}
+                                className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
+                            >
+                                INSTALAR APLICACIÓN
+                                <Download size={24} />
+                            </button>
+                        )}
                     </div>
                 </section>
 
