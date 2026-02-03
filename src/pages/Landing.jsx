@@ -72,7 +72,7 @@ const Landing = () => {
 
             <main className="w-full max-w-[1440px] relative z-10 flex-grow flex flex-col gap-20">
                 {/* Hero Section Wrapper */}
-                <div className="w-full px-[15px] md:px-12 lg:px-[100px] py-10 mx-auto">
+                <div className="w-full px-[15px] md:px-12 lg:px-[100px] py-10">
 
                     {/* Hero Section: Rebalanced to avoid overlap */}
                     <section className="grid lg:grid-cols-[1fr_auto] gap-6 lg:gap-4 items-center">
@@ -155,7 +155,7 @@ const Landing = () => {
                     </div>
                 </section>
 
-                <div className="w-full px-[15px] lg:px-[100px] mx-auto">
+                <div className="w-full px-[15px] lg:px-[100px]">
 
                     {/* Pillars Grid */}
                     <section className="grid md:grid-cols-2 gap-16">
@@ -179,10 +179,10 @@ const Landing = () => {
                     </section>
                     <div className="h-10"></div>
                     {/* Action Buttons */}
-                    <section className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 pb-32 w-full px-[15px]">
+                    <section className="flex flex-col sm:flex-row items-center justify-center gap-[30px] pb-32 w-full px-[15px]">
                         <button
                             onClick={() => navigate('/home')}
-                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3 bg-[var(--secondary-color)] text-white border-none shadow-xl shadow-[#2FAE8F]/30 hover:bg-[var(--secondary-hover)] transition-all"
+                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
                         >
                             Ir a la aplicación
                             <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
@@ -190,7 +190,7 @@ const Landing = () => {
 
                         <button
                             onClick={handleInstall}
-                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#0F3C4C]/30"
+                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
                         >
                             Instalar Aplicación
                             <Download size={24} className="group-hover:translate-y-1 transition-transform" />
@@ -204,6 +204,7 @@ const Landing = () => {
                 <Logo className="h-12 md:h-16 grayscale opacity-30 hover:opacity-100 transition-opacity" />
                 <div className="text-center space-y-1">
                     <p className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.6em] text-gray-500">Tecnología con corazón.</p>
+                    <p className="text-[10px] text-gray-400 font-mono">v1.0.4-verified</p>
                 </div>
             </footer >
 
