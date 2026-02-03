@@ -72,7 +72,7 @@ const Landing = () => {
             </header>
 
             <main className="w-full max-w-[1440px] relative z-10 flex-grow flex flex-col gap-20">
-                {/* Hero Section Wrapper */}
+                {/* Hero Section Wrapper (Sección 1) */}
                 <div className="w-full px-[15px] md:px-12 lg:px-[100px] py-10">
 
                     {/* Hero Section: Rebalanced to avoid overlap */}
@@ -137,7 +137,7 @@ const Landing = () => {
                 </div>
 
 
-                {/* Section: Explanation - True Full Width Background */}
+                {/* Section: Explanation (Sección 2) - True Full Width Background */}
                 <section className="w-full flex flex-col py-28 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-[600px] bg-[var(--secondary-color)]/5 blur-[120px] -z-10"></div>
 
@@ -150,13 +150,13 @@ const Landing = () => {
 
                     {/* Contenedor de la Descripción: Centrado en la pantalla */}
                     <div className="w-full flex flex-col items-center justify-center px-[15px] md:px-12">
-                        <p className="text-xl md:text-4xl text-gray-700 lg:max-w-5xl leading-relaxed font-medium text-center mx-auto !text-center w-full">
+                        <p className="text-xl md:text-4xl text-gray-700 lg:max-w-5xl leading-relaxed font-medium text-center !text-center w-full">
                             <span className="font-bold text-[var(--primary-color)]">Buen<span className="text-[var(--secondary-color)]">Cuidar</span></span> es una plataforma digital que conecta a familias con cuidadores verificados en Centroamérica.
                         </p>
                     </div>
                 </section>
 
-                <div className="w-full px-[15px] lg:px-[100px]">
+                <div className="w-full px-[15px] lg:px-[100px] Secc3">
 
                     {/* Pillars Grid */}
                     <section className="grid md:grid-cols-2 gap-16">
