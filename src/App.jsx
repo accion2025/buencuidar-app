@@ -1,4 +1,4 @@
-import React from 'react'; // HMR Force Update 2
+import React from 'react'; // HMR Force Update 3
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Home from './pages/Home';

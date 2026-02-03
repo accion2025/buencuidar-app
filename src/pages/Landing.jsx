@@ -182,18 +182,18 @@ const Landing = () => {
                     <section className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 pb-32">
                         <button
                             onClick={() => navigate('/home')}
-                            className="w-full sm:w-[320px] h-[75px] bg-[var(--secondary-color)] text-white rounded-full font-bold uppercase tracking-[0.2em] text-[13px] shadow-xl shadow-[#2FAE8F]/30 hover:shadow-[#2FAE8F]/50 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 border-none group px-6"
+                            className="w-full sm:w-[320px] h-[75px] bg-[var(--secondary-color)] text-white rounded-[20px] font-black uppercase tracking-widest text-lg shadow-xl shadow-[#2FAE8F]/30 hover:shadow-[#2FAE8F]/50 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 border-none group px-6"
                         >
                             Ir a la aplicación
-                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
                         </button>
 
                         <button
                             onClick={handleInstall}
-                            className="w-full sm:w-[320px] h-[75px] bg-[var(--primary-color)] text-white rounded-full font-bold uppercase tracking-[0.2em] text-[13px] shadow-xl shadow-[#0F3C4C]/30 hover:shadow-[#0F3C4C]/50 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 border-none group px-6"
+                            className="w-full sm:w-[320px] h-[75px] bg-[var(--primary-color)] text-white rounded-[20px] font-black uppercase tracking-widest text-lg shadow-xl shadow-[#0F3C4C]/30 hover:shadow-[#0F3C4C]/50 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 border-none group px-6"
                         >
-                            Instalar aplicación
-                            <Download size={20} className="group-hover:translate-y-1 transition-transform" />
+                            Instalar Aplicación
+                            <Download size={24} className="group-hover:translate-y-1 transition-transform" />
                         </button>
                     </section>
                 </div>
