@@ -168,7 +168,7 @@ button {
 .hero-bg {
   background-image: linear-gradient(rgba(15, 60, 76, 0.4), rgba(0, 0, 0, 0.2)), url('/images/rebranding/hero_v2.png');
   background-size: cover;
-  background-position: center;
+  background-position: center calc(50% + 20px);
   background-attachment: scroll;
   /* Most compatible value */
 }
