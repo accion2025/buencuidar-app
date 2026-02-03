@@ -200,7 +200,6 @@ const Landing = () => {
                 <Logo className="h-12 md:h-16 grayscale opacity-30 hover:opacity-100 transition-opacity" />
                 <div className="text-center space-y-1">
                     <p className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.6em] text-gray-500">Tecnología con corazón.</p>
-                    <p className="text-[10px] text-gray-400 font-mono">v1.0.5-margins-locked</p>
                 </div>
             </footer >
 
