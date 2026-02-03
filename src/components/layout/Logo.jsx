@@ -7,15 +7,15 @@ const Logo = ({ className = "h-14", iconClassName = "h-full w-auto", textClassNa
             <img
                 src="/images/rebranding/official_logo_final.png"
                 alt="BuenCuidar Logo"
-                className={`${iconClassName} object-contain h-[70px]`}
+                className={`${iconClassName} object-contain h-[70px] mix-blend-multiply`}
             />
             <div className="flex flex-col items-start">
                 <span className={`font-brand font-bold text-[#0F3C4C] tracking-tight leading-none ${textClassName}`}>
                     Buen<span className="text-[#2FAE8F]">Cuidar</span>
                 </span>
-                <div className="flex items-center gap-1 mt-1 border border-[#2FAE8F]/30 bg-[#2FAE8F]/5 px-2 py-0.5 rounded-md">
+                <div className="flex items-center gap-1 mt-1 px-1">
                     <Shield size={12} className="text-[#2FAE8F] fill-[#2FAE8F]/10" />
-                    <span className="text-[10px] font-black tracking-tighter text-[#0F3C4C] uppercase">
+                    <span className="text-[10px] font-black tracking-tighter text-[#0F3C4C] uppercase opacity-70">
                         Cuidadores 100% Verificados
                     </span>
                 </div>
