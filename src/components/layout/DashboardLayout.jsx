@@ -93,7 +93,7 @@ const DashboardLayout = () => {
             >
                 {/* Logo Area */}
                 <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                    <h1 className="text-[19px] font-bold cursor-pointer font-brand !text-[#FAFAF7]" onClick={() => navigate('/')}>
+                    <h1 className="text-[19px] font-bold cursor-pointer font-brand !text-[#FAFAF7]" onClick={() => navigate('/home')}>
                         Buen<span className="text-[#2FAE8F]">Cuidar</span>
                     </h1>
 
