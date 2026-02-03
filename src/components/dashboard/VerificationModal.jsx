@@ -10,6 +10,8 @@ const DOCUMENT_TYPES = [
     { id: 'human_evaluation', label: 'Evaluación de trato humano', icon: ShieldCheck, description: 'Certificado de evaluación de confianza y trato al paciente.' }
 ];
 
+const MAX_RETRIES = 3; // Constante vital para la estabilidad de la carga
+
 // Reutilizamos la misma utilidad de redimensionamiento para ahorrar RAM en móviles
 const preprocessImage = async (file, maxDimension = 1500) => {
     if (file.type === 'application/pdf') return file; // Los PDFs no se redimensionan
