@@ -394,8 +394,9 @@ const CalendarPage = () => {
                                     <button onClick={(e) => { e.stopPropagation(); openModal(day); }} className="text-gray-300 hover:text-blue-600 group-hover:opacity-100 transition-opacity"><Plus size={16} /></button>
                                 </div>
                                 {dayEvents.map(event => (
-                                    <div key={event.id} className={`text-[10px] p-1 rounded border mb-0.5 truncate flex justify-between items-center group/dayevent ${getEventColor(event)}`}>
-                                        <span className="truncate flex-1">{event.time} - {event.title}</span>
+                                    <div key={event.id} className={`text-[10px] p-1 rounded border mb-0.5 truncate flex justify-between items-center group/dayevent ${getEventColor(event)} ${event.caregiver_id ? '!border-green-200 !bg-green-50/50' : ''}`}>
+                                        <span className={`truncate flex-1 ${event.caregiver_id ? 'text-green-800 font-bold' : ''}`}>{event.time} - {event.title}</span>
+                                        {event.caregiver_id && <User size={10} className="ml-1 text-green-600 shrink-0" />}
                                     </div>
                                 ))}
                             </div>
@@ -429,6 +430,17 @@ const CalendarPage = () => {
                                             </div>
                                             <h4 className={`font-bold mb-1 pr-8 ${isGray ? 'text-gray-500' : 'text-gray-800'}`}>{event.title} {isGray && `(${event.status === 'cancelled' ? 'Cancelada' : 'Finalizada'})`}</h4>
                                             <div className="text-sm text-gray-600 flex items-center gap-2"><Clock size={14} /> {event.time} {event.end_time ? `- ${event.end_time.substring(0, 5)}` : ''}</div>
+
+                                            <div className={`mt-3 p-3 rounded-[12px] flex items-center gap-3 border ${event.caregiver_id ? 'bg-green-50 border-green-100 text-green-700' : 'bg-amber-50 border-amber-100 text-amber-700'}`}>
+                                                <div className={`p-2 rounded-full ${event.caregiver_id ? 'bg-green-500' : 'bg-amber-500'} text-white`}>
+                                                    <User size={14} />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-[10px] uppercase font-black tracking-widest opacity-60">Cuidador</p>
+                                                    <p className="text-xs font-bold">{event.caregiver?.full_name || 'Sin asignar'}</p>
+                                                </div>
+                                                {!event.caregiver_id && <Info size={14} className="opacity-40" />}
+                                            </div>
 
                                             {isSubscribed && !isGray && (
                                                 <button
