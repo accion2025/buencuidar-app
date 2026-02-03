@@ -9,18 +9,25 @@ const IconMap = {
 };
 
 const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = [], onSave }) => {
-    const [selectedActivities, setSelectedActivities] = useState(new Set());
+    // State is now an object: { "Activity Name": "HH:MM" }
+    const [selectedActivities, setSelectedActivities] = useState({});
     const [openCategories, setOpenCategories] = useState({});
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
             // Load existing agenda
-            const initialSet = new Set();
+            const initialMap = {};
             if (Array.isArray(currentAgenda)) {
-                currentAgenda.forEach(item => initialSet.add(item));
+                currentAgenda.forEach(item => {
+                    if (typeof item === 'string') {
+                        initialMap[item] = "00:00"; // Default for legacy strings
+                    } else if (item && typeof item === 'object') {
+                        initialMap[item.activity] = item.time || "00:00";
+                    }
+                });
             }
-            setSelectedActivities(initialSet);
+            setSelectedActivities(initialMap);
         }
     }, [isOpen, currentAgenda]);
 
@@ -29,19 +36,32 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
     };
 
     const toggleActivity = (activity) => {
-        const newSet = new Set(selectedActivities);
-        if (newSet.has(activity)) {
-            newSet.delete(activity);
-        } else {
-            newSet.add(activity);
-        }
-        setSelectedActivities(newSet);
+        setSelectedActivities(prev => {
+            const next = { ...prev };
+            if (next[activity]) {
+                delete next[activity];
+            } else {
+                next[activity] = "00:00"; // Default time
+            }
+            return next;
+        });
+    };
+
+    const handleTimeChange = (activity, time) => {
+        setSelectedActivities(prev => ({
+            ...prev,
+            [activity]: time
+        }));
     };
 
     const handleSave = async () => {
         setSaving(true);
         try {
-            const agendaArray = Array.from(selectedActivities);
+            // Convert map to array of objects
+            const agendaArray = Object.entries(selectedActivities).map(([activity, time]) => ({
+                activity,
+                time
+            }));
 
             const { error } = await supabase
                 .from('appointments')
@@ -64,12 +84,12 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-10 p-6 animate-fade-in overflow-y-auto">
-            <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-3xl flex flex-col border border-white/20 overflow-hidden max-h-[90vh] relative">
+            <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-4xl flex flex-col border border-white/20 overflow-hidden max-h-[90vh] relative">
                 {/* Header */}
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-[var(--base-bg)]">
                     <div>
                         <h3 className="text-2xl font-brand font-bold text-[var(--primary-color)]">Configurar Agenda de Cuidado</h3>
-                        <p className="text-sm text-[var(--text-light)] font-secondary mt-1">Selecciona las actividades que el cuidador debe realizar hoy.</p>
+                        <p className="text-sm text-[var(--text-light)] font-secondary mt-1">Selecciona las actividades y asigna un horario para que el cuidador las realice hoy.</p>
                     </div>
                     <button onClick={onClose} className="p-3 bg-white text-gray-400 rounded-[16px] hover:bg-gray-50 border border-gray-100 transition-all shadow-sm">
                         <X size={20} />
@@ -84,7 +104,8 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
 
                         // Count selected in this category
                         const catActivities = cat.activities || (cat.sections ? cat.sections.flatMap(s => s.activities) : []);
-                        const selectedCount = catActivities.filter(a => selectedActivities.has(a)).length;
+                        const selectedInCat = catActivities.filter(a => !!selectedActivities[a]);
+                        const selectedCount = selectedInCat.length;
 
                         return (
                             <div key={cat.id} className={`border-[2px] rounded-[24px] transition-all duration-300 ${selectedCount > 0 ? 'border-[var(--secondary-color)]/20 bg-[var(--secondary-color)]/5' : 'border-gray-100 bg-white'}`}>
@@ -122,19 +143,33 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                                                 {cat.sections.map((section, sIdx) => (
                                                     <div key={sIdx}>
                                                         <h5 className="text-xs font-black text-[var(--text-light)] uppercase tracking-[0.2em] mb-4 border-l-4 border-[var(--secondary-color)] pl-3">{section.name}</h5>
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             {section.activities.map((act, aIdx) => {
-                                                                const isSelected = selectedActivities.has(act);
+                                                                const isSelected = !!selectedActivities[act];
                                                                 return (
                                                                     <div
                                                                         key={aIdx}
                                                                         onClick={() => toggleActivity(act)}
-                                                                        className={`flex items-center gap-4 p-4 rounded-[16px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-lg ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
+                                                                        className={`flex flex-col gap-3 p-4 rounded-[16px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-lg ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
                                                                     >
-                                                                        <div className={`w-6 h-6 rounded-[16px] border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
-                                                                            {isSelected && <Check size={14} className="!text-[#FAFAF7]" strokeWidth={4} />}
+                                                                        <div className="flex items-center gap-4 min-h-[48px]">
+                                                                            <div className={`w-7 h-7 rounded-[16px] border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
+                                                                                {isSelected && <Check size={16} className="!text-[#FAFAF7]" strokeWidth={4} />}
+                                                                            </div>
+                                                                            <span className={`text-sm ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
                                                                         </div>
-                                                                        <span className={`text-sm ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
+
+                                                                        {isSelected && (
+                                                                            <div className="flex items-center gap-3 animate-fade-in bg-gray-50/80 p-3 rounded-[12px] border border-gray-100" onClick={e => e.stopPropagation()}>
+                                                                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 whitespace-nowrap">Hora:</label>
+                                                                                <input
+                                                                                    type="time"
+                                                                                    value={selectedActivities[act]}
+                                                                                    onChange={(e) => handleTimeChange(act, e.target.value)}
+                                                                                    className="flex-1 bg-white border-2 border-gray-100 px-4 py-3 rounded-[12px] text-sm font-bold focus:border-[var(--secondary-color)] outline-none min-h-[44px] touch-manipulation"
+                                                                                />
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 );
                                                             })}
@@ -144,19 +179,33 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                                             </div>
                                         ) : (
                                             // Normal Activities
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 {cat.activities.map((act, idx) => {
-                                                    const isSelected = selectedActivities.has(act);
+                                                    const isSelected = !!selectedActivities[act];
                                                     return (
                                                         <div
                                                             key={idx}
                                                             onClick={() => toggleActivity(act)}
-                                                            className={`flex items-center gap-4 p-4 rounded-[16px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-lg ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
+                                                            className={`flex flex-col gap-3 p-4 rounded-[16px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-lg ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
                                                         >
-                                                            <div className={`w-6 h-6 rounded-[16px] border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
-                                                                {isSelected && <Check size={14} className="!text-[#FAFAF7]" strokeWidth={4} />}
+                                                            <div className="flex items-center gap-4 min-h-[48px]">
+                                                                <div className={`w-7 h-7 rounded-[16px] border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
+                                                                    {isSelected && <Check size={16} className="!text-[#FAFAF7]" strokeWidth={4} />}
+                                                                </div>
+                                                                <span className={`text-sm ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
                                                             </div>
-                                                            <span className={`text-sm ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
+
+                                                            {isSelected && (
+                                                                <div className="flex items-center gap-3 animate-fade-in bg-gray-50/80 p-3 rounded-[12px] border border-gray-100" onClick={e => e.stopPropagation()}>
+                                                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 whitespace-nowrap">Hora:</label>
+                                                                    <input
+                                                                        type="time"
+                                                                        value={selectedActivities[act]}
+                                                                        onChange={(e) => handleTimeChange(act, e.target.value)}
+                                                                        className="flex-1 bg-white border-2 border-gray-100 px-4 py-3 rounded-[12px] text-sm font-bold focus:border-[var(--secondary-color)] outline-none min-h-[44px] touch-manipulation"
+                                                                    />
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     );
                                                 })}
@@ -172,7 +221,7 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                 {/* Footer */}
                 <div className="absolute bottom-0 left-0 right-0 p-8 border-t border-gray-100 bg-white/95 backdrop-blur-xl flex justify-between items-center z-10">
                     <div className="text-xs font-black uppercase tracking-widest text-[var(--text-light)]">
-                        {selectedActivities.size} actividades seleccionadas
+                        {Object.keys(selectedActivities).length} actividades seleccionadas
                     </div>
                     <div className="flex gap-4">
                         <button onClick={onClose} className="btn bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 px-8">

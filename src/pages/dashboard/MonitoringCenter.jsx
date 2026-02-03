@@ -299,10 +299,13 @@ const MonitoringCenter = () => {
     const completedSet = new Set(careLogs.map(log => log.action));
 
     const careAgenda = agendaItems.map((item, idx) => {
-        const isDone = completedSet.has(item);
+        const activityName = typeof item === 'string' ? item : (item.activity || item.name);
+        const activityTime = typeof item === 'string' ? '---' : (item.time || '---');
+        const isDone = completedSet.has(activityName);
+
         return {
-            name: item,
-            time: 'Actividad del día',
+            name: activityName,
+            time: activityTime !== '---' ? `Programado: ${activityTime}` : 'Sin horario asignado',
             frequency: 'Según plan',
             status: isDone ? 'Completado' : 'Pendiente',
             icon: isDone ? CircleCheck : CircleDashed,

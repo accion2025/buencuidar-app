@@ -12,8 +12,17 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
     // Parse items from appointmentDetails or careAgenda
     useEffect(() => {
         if (careAgenda && Array.isArray(careAgenda) && careAgenda.length > 0) {
-            const items = careAgenda.map(item => typeof item === 'string' ? item : item.name);
-            setChecklistItems([...new Set(items)]);
+            // Keep the objects but filter duplicates by name (activity)
+            const seen = new Set();
+            const items = [];
+            careAgenda.forEach(item => {
+                const name = typeof item === 'string' ? item : (item.activity || item.name);
+                if (!seen.has(name)) {
+                    seen.add(name);
+                    items.push(typeof item === 'string' ? item : { activity: name, time: item.time });
+                }
+            });
+            setChecklistItems(items);
         } else if (appointmentDetails) {
             let items = [];
             if (appointmentDetails.includes('[PLAN DE CUIDADO]')) {
@@ -59,12 +68,13 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
 
     // Toggle local state only
     const toggleItem = (item) => {
+        const itemName = typeof item === 'string' ? item : item.activity;
         setCompletedItems(prev => {
             const next = new Set(prev);
-            if (next.has(item)) {
-                next.delete(item);
+            if (next.has(itemName)) {
+                next.delete(itemName);
             } else {
-                next.add(item);
+                next.add(itemName);
             }
             return next;
         });
@@ -148,12 +158,13 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                                 <div className="flex justify-center py-4"><Loader2 className="animate-spin text-gray-400" /></div>
                             ) : (
                                 checklistItems.map((item, idx) => {
-                                    const checked = completedItems.has(item);
+                                    const itemName = typeof item === 'string' ? item : item.activity;
+                                    const checked = completedItems.has(itemName);
                                     return (
                                         <div
                                             key={idx}
                                             onClick={() => toggleItem(item)}
-                                            className={`flex items-start gap-3 p-4 rounded-[16px] border transition-all cursor-pointer ${checked
+                                            className={`flex items-start gap-4 p-5 rounded-[16px] border transition-all cursor-pointer min-h-[72px] ${checked
                                                 ? 'bg-green-50 border-green-200 shadow-sm'
                                                 : 'bg-white border-gray-100 hover:border-blue-200 hover:shadow-md'
                                                 }`}
@@ -162,9 +173,16 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                                                 }`}>
                                                 {checked && <Check size={12} className="!text-[#FAFAF7]" />}
                                             </div>
-                                            <span className={`text-sm font-medium leading-tight ${checked ? 'text-green-800 line-through opacity-70' : 'text-gray-700'}`}>
-                                                {item}
-                                            </span>
+                                            <div className="flex-1">
+                                                <span className={`text-sm font-bold leading-tight block ${checked ? 'text-green-800 line-through opacity-70' : 'text-gray-700'}`}>
+                                                    {typeof item === 'string' ? item : item.activity}
+                                                </span>
+                                                {typeof item !== 'string' && item.time && (
+                                                    <span className={`text-[10px] font-black uppercase tracking-widest mt-1 flex items-center gap-1.5 ${checked ? 'text-green-600/50' : 'text-[var(--secondary-color)]'}`}>
+                                                        <Clock size={10} /> {item.time}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     );
                                 })
