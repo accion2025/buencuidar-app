@@ -191,7 +191,7 @@ const Landing = () => {
                             onClick={handleInstall}
                             className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
                         >
-                            Instalar aplicación
+                            INSTALAR APLICACIÓN
                             <Download size={24} className="group-hover:translate-y-1 transition-transform" />
                         </button>
                     </section>
