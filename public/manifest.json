@@ -1,7 +1,7 @@
 {
     "name": "BuenCuidar",
     "short_name": "BuenCuidar",
-    "start_url": "/",
+    "start_url": "/home",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#0F4C5C",
