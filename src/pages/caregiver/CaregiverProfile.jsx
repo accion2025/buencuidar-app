@@ -270,9 +270,14 @@ const CaregiverProfile = () => {
 
                 // --- PASO 1a: Sesión Garantizada ---
                 currentStep = "1a";
+                alert("Depuración: Obteniendo sesión de usuario...");
                 const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-                if (authError || !authUser) throw new Error("Sesión expirada. Por favor, reingresa.");
+                if (authError || !authUser) {
+                    alert("Error sesión: " + (authError?.message || "No hay usuario"));
+                    throw new Error("Sesión expirada. Por favor, reingresa.");
+                }
                 const activeUserId = authUser.id;
+                alert("Sesión confirmada: " + activeUserId);
 
                 // --- PASO 1b: Preparación del BLOB ---
                 currentStep = "1b";
@@ -289,10 +294,14 @@ const CaregiverProfile = () => {
                     .upload(filePath, fileToUpload, {
                         contentType: 'image/jpeg',
                         upsert: true,
-                        resumable: false // Protocolo binario directo
+                        resumable: false
                     });
 
-                if (uploadError) throw uploadError;
+                if (uploadError) {
+                    alert("Error Storage: " + uploadError.message);
+                    throw uploadError;
+                }
+                alert("¡Subida exitosa al storage!");
 
                 let uploadResult = { data: uploadData, error: uploadError };
 
@@ -306,12 +315,17 @@ const CaregiverProfile = () => {
                     .from('avatars')
                     .getPublicUrl(filePath);
 
+                alert("Actualizando perfil con URL: " + publicUrl);
                 const { error: updateError } = await supabase
                     .from('profiles')
                     .update({ avatar_url: publicUrl })
                     .eq('id', activeUserId);
 
-                if (updateError) throw updateError;
+                if (updateError) {
+                    alert("Error Base de Datos: " + updateError.message);
+                    throw updateError;
+                }
+                alert("¡Perfil actualizado con éxito!");
 
                 currentStep = "4";
                 setUploadStep(4); // Paso 4: Finalizando...
@@ -409,11 +423,9 @@ const CaregiverProfile = () => {
                                 alt="Profile"
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             />
-                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer !text-[#FAFAF7] backdrop-blur-sm">
-                                <Camera size={32} className="mb-2" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Cambiar Foto</span>
-                                <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
-                            </label>
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center !text-[#FAFAF7] backdrop-blur-sm">
+                                <span className="text-[10px] font-black uppercase tracking-widest">Foto de Perfil</span>
+                            </div>
                         </div>
                         <div className="absolute -bottom-2 -right-2 bg-[var(--secondary-color)] w-10 h-10 rounded-[16px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]" title="Activo ahora">
                             <Check size={20} strokeWidth={4} />
@@ -425,7 +437,7 @@ const CaregiverProfile = () => {
                             <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight">{profile.full_name}</h1>
                             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md text-[var(--accent-color)] px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit mx-auto lg:mx-0 border border-white/10 uppercase">
                                 <Award size={14} />
-                                <span>PERFIL PRO VERIFICADO - V2.1.6.1</span>
+                                <span>PERFIL PRO VERIFICADO - V2.2</span>
                             </div>
                         </div>
 

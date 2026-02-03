@@ -319,28 +319,15 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                             </div>
                                         </div>
 
-                                        <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : existingDoc?.status === 'verified'
-                                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100'
-                                                : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
+                                        <div className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-xs uppercase tracking-widest transition-all ${existingDoc?.status === 'verified'
+                                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+                                            : 'bg-gray-100 text-gray-400 border border-gray-200'
                                             }`}>
-                                            {uploading === doc.id ? (
-                                                <Loader2 size={16} className="animate-spin" />
-                                            ) : (
-                                                <>
-                                                    <Upload size={16} />
-                                                    {existingDoc ? 'Actualizar' : 'Elegir Archivo'}
-                                                </>
-                                            )}
-                                            <input
-                                                type="file"
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                                accept="image/*,application/pdf"
-                                                onChange={(e) => handleUpload(e, doc.id)}
-                                                disabled={uploading !== null}
-                                            />
-                                        </label>
+                                            {existingDoc?.status === 'verified' ? 'Verificado' :
+                                                existingDoc?.status === 'pending' ? 'En Revisión' :
+                                                    existingDoc?.status === 'rejected' ? 'Rechazado' :
+                                                        '---'}
+                                        </div>
                                     </div>
                                 </div>
                             );
