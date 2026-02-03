@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { Star, MapPin, Briefcase, Loader2, Search as SearchIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CaregiverDetailModal from '../components/dashboard/CaregiverDetailModal';
+import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
 
 const Search = () => {
     const navigate = useNavigate();
@@ -172,11 +173,12 @@ const Search = () => {
                                 value={filters.specialty}
                                 onChange={(e) => setFilters({ ...filters, specialty: e.target.value })}
                             >
-                                <option value="">Todas</option>
-                                <option value="Acompañamiento Integral">Acompañamiento</option>
-                                <option value="Cuidado Personal Avanzado">Cuidado Personal</option>
-                                <option value="Recuperación Funcional">Recuperación</option>
-                                <option value="Terapeuta Ocupacional">Terapia</option>
+                                <option value="">Todas las Especialidades</option>
+                                {CAREGIVER_SPECIALTIES.map(specialty => (
+                                    <option key={specialty} value={specialty}>
+                                        {specialty}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div className="flex items-end">

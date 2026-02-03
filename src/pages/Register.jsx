@@ -6,6 +6,7 @@ import { translateSupabaseError } from '../utils/translations';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { CENTRAL_AMERICA } from '../constants/locations';
+import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -261,16 +262,11 @@ const Register = () => {
                                             value={formData.specialization}
                                             onChange={handleChange}
                                         >
-                                            <option>Acompañamiento Integral</option>
-                                            <option>Cuidado Personal Avanzado</option>
-                                            <option>Recuperación Funcional</option>
-                                            <option>Movimiento y Autonomía</option>
-                                            <option>Acompañamiento Compasivo</option>
-                                            <option>Compañía Activa</option>
-                                            <option>Apoyo en el Hogar</option>
-                                            <option>Apoyo en Traslados</option>
-                                            <option>Organización Diaria</option>
-                                            <option>Apoyo Emocional</option>
+                                            {CAREGIVER_SPECIALTIES.map(specialty => (
+                                                <option key={specialty} value={specialty}>
+                                                    {specialty}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>

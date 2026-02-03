@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import VerificationModal from '../../components/dashboard/VerificationModal';
 import ImageCropper from '../../components/dashboard/ImageCropper';
+import { CAREGIVER_SPECIALTIES } from '../../constants/caregiver';
 
 const AVAILABLE_SKILLS = [
     "Primeros Auxilios",
@@ -707,16 +708,11 @@ const CaregiverProfile = () => {
                                             value={formData.specialization}
                                             onChange={e => setFormData({ ...formData, specialization: e.target.value })}
                                         >
-                                            <option>Acompañamiento Integral</option>
-                                            <option>Cuidado Personal Avanzado</option>
-                                            <option>Recuperación Funcional</option>
-                                            <option>Movimiento y Autonomía</option>
-                                            <option>Acompañamiento Compasivo</option>
-                                            <option>Compañía Activa</option>
-                                            <option>Apoyo en el Hogar</option>
-                                            <option>Apoyo en Traslados</option>
-                                            <option>Organización Diaria</option>
-                                            <option>Apoyo Emocional</option>
+                                            {CAREGIVER_SPECIALTIES.map(specialty => (
+                                                <option key={specialty} value={specialty}>
+                                                    {specialty}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="space-y-2">
