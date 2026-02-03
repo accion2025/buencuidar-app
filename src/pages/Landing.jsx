@@ -45,10 +45,7 @@ const Landing = () => {
         <div
             className="min-h-screen bg-[#FAFAF8] text-[#4A4F55] font-secondary selection:bg-[var(--secondary-color)] selection:text-white relative flex flex-col items-center"
         >
-            {/* DEBUG BANNER - IMPOSSIBLE TO MISS */}
-            <div className="w-full bg-red-600 text-white py-4 text-center font-black text-xl z-[9999] animate-pulse">
-                VERSIÓN 1.0.4 DETECTADA - SI VES ESTO, EL CÓDIGO ESTÁ ACTUALIZADO
-            </div>
+
             {/* Texture and Background Layers */}
             <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03] select-none"
                 style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/handmade-paper.png")' }}></div>
@@ -186,7 +183,7 @@ const Landing = () => {
                     <section className="flex flex-col sm:flex-row items-center justify-center gap-[30px] pb-32 w-full px-[15px]">
                         <button
                             onClick={() => navigate('/home')}
-                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
+                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full sm:max-w-sm flex items-center justify-center gap-3"
                         >
                             Ir a la aplicación
                             <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
@@ -194,7 +191,7 @@ const Landing = () => {
 
                         <button
                             onClick={handleInstall}
-                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
+                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full sm:max-w-sm flex items-center justify-center gap-3"
                         >
                             Instalar Aplicación
                             <Download size={24} className="group-hover:translate-y-1 transition-transform" />
@@ -208,7 +205,6 @@ const Landing = () => {
                 <Logo className="h-12 md:h-16 grayscale opacity-30 hover:opacity-100 transition-opacity" />
                 <div className="text-center space-y-1">
                     <p className="text-[10px] md:text-[12px] font-bold uppercase tracking-[0.6em] text-gray-500">Tecnología con corazón.</p>
-                    <p className="text-[10px] text-gray-400 font-mono">v1.0.4-verified</p>
                 </div>
             </footer >
 
