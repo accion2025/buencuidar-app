@@ -66,13 +66,13 @@ const Landing = () => {
             </style>
 
             {/* Header */}
-            <header className="w-full max-w-[1440px] px-6 md:px-12 lg:px-[100px] py-10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 border-b border-gray-100/30">
+            <header className="w-full max-w-[1440px] px-[5px] md:px-12 lg:px-[100px] py-10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 border-b border-gray-100/30">
                 <Logo className="h-16 md:h-20 w-auto drop-shadow-sm" />
             </header>
 
             <main className="w-full max-w-[1440px] relative z-10 flex-grow flex flex-col gap-20">
                 {/* Hero Section Wrapper */}
-                <div className="w-full px-6 md:px-12 lg:px-[100px] py-10 mx-auto">
+                <div className="w-full px-[5px] md:px-12 lg:px-[100px] py-10 mx-auto">
 
                     {/* Hero Section: Rebalanced to avoid overlap */}
                     <section className="grid lg:grid-cols-[1fr_auto] gap-6 lg:gap-4 items-center">
@@ -141,21 +141,21 @@ const Landing = () => {
                     <div className="absolute top-0 left-0 w-full h-[600px] bg-[var(--secondary-color)]/5 blur-[120px] -z-10"></div>
 
                     {/* Contenedor del Título: Centrado en la sección */}
-                    <div className="w-full px-6 md:px-12 lg:px-[100px] mb-12 flex justify-center">
+                    <div className="w-full px-[5px] md:px-12 lg:px-[100px] mb-12 flex justify-center">
                         <h2 className="text-4xl md:text-7xl font-primary font-bold text-[var(--primary-color)] tracking-tight text-center">
                             ¿Qué es Buen<span className="text-[var(--secondary-color)]">Cuidar</span>?
                         </h2>
                     </div>
 
                     {/* Contenedor de la Descripción: Centrado en la pantalla */}
-                    <div className="w-full flex flex-col items-center justify-center px-6 md:px-12">
+                    <div className="w-full flex flex-col items-center justify-center px-[5px] md:px-12">
                         <p className="text-xl md:text-4xl text-gray-700 max-w-5xl leading-relaxed font-medium text-center mx-auto !text-center">
                             <span className="font-bold text-[var(--primary-color)]">Buen<span className="text-[var(--secondary-color)]">Cuidar</span></span> es una plataforma digital que conecta a familias con cuidadores verificados en Centroamérica.
                         </p>
                     </div>
                 </section>
 
-                <div className="w-full px-6 lg:px-[100px] mx-auto">
+                <div className="w-full px-[5px] lg:px-[100px] mx-auto">
 
                     {/* Pillars Grid */}
                     <section className="grid md:grid-cols-2 gap-16">
