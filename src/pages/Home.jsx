@@ -21,7 +21,7 @@ const Home = () => {
 
             <main>
                 {/* Hero Section */}
-                <section className="hero-bg min-h-screen relative overflow-hidden">
+                <section id="hero" className="hero-bg min-h-screen relative overflow-hidden">
                     {/* Text Container - Top Left (70px top, 40px left) */}
                     <div className="absolute top-[70px] left-[40px] z-10 text-left max-w-4xl">
                         <h1 style={{ color: '#FAFAF7' }} className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-xl">

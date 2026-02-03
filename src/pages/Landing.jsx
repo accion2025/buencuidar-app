@@ -177,7 +177,10 @@ const Landing = () => {
                     {/* SECCIÓN 4: Botones de Acción */}
                     <section className="flex flex-col sm:flex-row items-center justify-center gap-[30px] pb-32 w-full px-[15px] md:px-12 lg:px-[100px]">
                         <button
-                            onClick={() => navigate('/home')}
+                            onClick={() => {
+                                navigate('/home');
+                                window.scrollTo(0, 0);
+                            }}
                             className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full sm:max-w-sm flex items-center justify-center gap-3"
                         >
                             Ir a la aplicación
