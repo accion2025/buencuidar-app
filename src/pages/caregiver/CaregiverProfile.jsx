@@ -129,19 +129,24 @@ const CaregiverProfile = () => {
 
             if (profileError) throw profileError;
 
+            // Failsafe: Siempre enviamos un código de cuidador válido para evitar errores de restricción
+            const caregiverCode = profile.caregiver_code || 'CUID-' + Math.floor(100000 + Math.random() * 900000);
+
+            const caregiverUpdates = {
+                id: user.id, // Necesario para upsert
+                specialization: formData.specialization,
+                experience: formData.experience,
+                bio: formData.bio,
+                location: formData.location,
+                hourly_rate: formData.hourly_rate,
+                certifications: formData.certifications,
+                skills: formData.skills,
+                caregiver_code: caregiverCode
+            };
+
             const { error: detailsError } = await supabase
                 .from('caregiver_details')
-                .upsert({
-                    id: user.id, // Primary key
-                    specialization: formData.specialization,
-                    experience: formData.experience,
-                    bio: formData.bio,
-                    location: formData.location,
-                    hourly_rate: formData.hourly_rate,
-                    certifications: formData.certifications,
-                    skills: formData.skills
-                })
-                .eq('id', user.id);
+                .upsert(caregiverUpdates);
 
             if (detailsError) throw detailsError;
 
