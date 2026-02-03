@@ -283,7 +283,7 @@ const Search = () => {
                             {loading ? (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm rounded-[16px] z-10">
                                     <Loader2 size={48} className="animate-spin text-[var(--primary-color)] mb-4" />
-                                    <p className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-xs">Cargando cuidadores reales...</p>
+                                    <p className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-xs">Cargando cuidadores...</p>
                                 </div>
                             ) : caregivers.length > 0 ? (
                                 caregivers.map((caregiver) => (
