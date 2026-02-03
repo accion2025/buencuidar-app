@@ -335,7 +335,6 @@ const DashboardOverview = () => {
                 time: updatedData.time,
                 end_time: updatedData.endTime || null,
                 type: updatedData.type,
-                type: updatedData.type,
                 patient_id: updatedData.patient_id || null, // Fix: Convert empty string to null
                 address: updatedData.address, // Added address
                 details: updatedData.details,
