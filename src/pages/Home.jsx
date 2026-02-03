@@ -42,7 +42,8 @@ const Home = () => {
 
                         <button
                             onClick={() => navigate('/services')}
-                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all"
+                            className="btn btn-outline text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm"
+                            style={{ color: '#FAFAF7', fontFamily: 'Poppins, sans-serif' }}
                         >
                             Servicios
                         </button>

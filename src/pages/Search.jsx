@@ -249,7 +249,7 @@ const Search = () => {
                 </div>
             </div>
 
-            <main className="flex-grow container mx-auto px-4 py-8">
+            <main className="flex-grow container mx-auto px-4 md:px-12 py-8">
                 <div className="flex flex-col lg:flex-row gap-8">
 
                     {/* Filters Sidebar */}

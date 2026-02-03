@@ -65,58 +65,14 @@ const InstallPrompt = ({ className }) => {
 
     return (
         <>
-            {/* Main Prompt Toast */}
-            <div className={className || "fixed bottom-4 left-4 right-4 md:left-auto md:right-6 z-[100] animate-slide-up"}>
-                <div className="bg-slate-900 !text-[#FAFAF7] p-4 rounded-[16px] shadow-2xl border border-white/10 flex flex-col sm:flex-row items-center gap-4 max-w-md ml-auto w-full">
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
-                        <div className="bg-blue-600 p-2 rounded-[16px] flex-shrink-0">
-                            {isIOS ? <Share size={24} /> : <Download size={24} />}
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="font-bold text-sm !text-[#2FAE8F]">
-                                {isIOS ? 'Instalar en iPhone' : 'Instalar App'}
-                            </h3>
-                            <p className="text-xs text-slate-300">
-                                {isIOS ? 'Agrega a inicio para mejor experiencia' : 'Accede más rápido desde tu inicio'}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                        {/* Close Button */}
-                        <button
-                            onClick={() => setShowPrompt(false)}
-                            className="p-2 hover:bg-white/10 rounded-[16px] text-slate-400 transition-colors sm:order-3"
-                        >
-                            <X size={18} />
-                        </button>
-
-                        {isIOS ? (
-                            <>
-                                <button
-                                    onClick={() => setShowInstructions(true)}
-                                    className="text-slate-300 px-3 py-2 rounded-[16px] text-xs font-medium hover:bg-white/5 transition-colors whitespace-nowrap"
-                                >
-                                    Instrucciones
-                                </button>
-                                <button
-                                    onClick={handleShareClick}
-                                    className="bg-blue-600 text-white px-4 py-2 rounded-[16px] text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-2 whitespace-nowrap"
-                                >
-                                    <Share size={14} />
-                                    Compartir
-                                </button>
-                            </>
-                        ) : (
-                            <button
-                                onClick={handleAndroidInstall}
-                                className="bg-white text-slate-900 px-4 py-2 rounded-[16px] text-xs font-bold hover:bg-gray-100 transition-colors whitespace-nowrap"
-                            >
-                                Instalar
-                            </button>
-                        )}
-                    </div>
-                </div>
+            <div className={className || "w-full max-w-sm"}>
+                <button
+                    onClick={isIOS ? () => setShowInstructions(true) : handleAndroidInstall}
+                    className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-3"
+                >
+                    <Download size={24} />
+                    Instalar App
+                </button>
             </div>
 
             {/* iOS Instructions Modal */}
@@ -175,7 +131,8 @@ const InstallPrompt = ({ className }) => {
                         </button>
                     </div>
                 </div>
-            )}
+            )
+            }
         </>
     );
 };

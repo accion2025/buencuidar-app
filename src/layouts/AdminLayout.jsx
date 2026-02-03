@@ -87,7 +87,7 @@ const AdminLayout = () => {
                         </div>
                     </div>
                 </header>
-                <div className="p-8">
+                <div className="p-4 md:p-10">
                     <Outlet />
                 </div>
             </main>

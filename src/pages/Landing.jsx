@@ -43,8 +43,7 @@ const Landing = () => {
 
     return (
         <div
-            style={{ paddingLeft: '100px', paddingRight: '100px' }}
-            className="min-h-screen bg-[#FAFAF8] text-[#4A4F55] font-secondary selection:bg-[var(--secondary-color)] selection:text-white relative flex flex-col"
+            className="min-h-screen bg-[#FAFAF8] text-[#4A4F55] font-secondary selection:bg-[var(--secondary-color)] selection:text-white relative flex flex-col items-center"
         >
             {/* Texture and Background Layers */}
             <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03] select-none"
@@ -67,13 +66,13 @@ const Landing = () => {
             </style>
 
             {/* Header */}
-            <header className="w-full py-10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 border-b border-gray-100/30">
+            <header className="w-full max-w-[1440px] px-6 lg:px-[100px] py-10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 border-b border-gray-100/30">
                 <Logo className="h-16 md:h-20 w-auto drop-shadow-sm" />
             </header>
 
-            <main className="w-full relative z-10 flex-grow flex flex-col gap-20">
+            <main className="w-full max-w-[1440px] relative z-10 flex-grow flex flex-col gap-20">
                 {/* Hero Section Wrapper */}
-                <div className="w-full py-10 mx-auto">
+                <div className="w-full px-6 lg:px-[100px] py-10 mx-auto">
 
                     {/* Hero Section: Rebalanced to avoid overlap */}
                     <section className="grid lg:grid-cols-[1fr_auto] gap-6 lg:gap-4 items-center">
@@ -138,17 +137,25 @@ const Landing = () => {
 
 
                 {/* Section: Explanation - True Full Width Background */}
-                <section className="w-full flex flex-col items-center justify-center text-center py-28 bg-white shadow-[0_0_50px_rgba(0,0,0,0.02)] border-y border-gray-100 relative overflow-hidden rounded-[80px]">
+                <section className="w-full flex flex-col py-28 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-[600px] bg-[var(--secondary-color)]/5 blur-[120px] -z-10"></div>
-                    <div className="max-w-7xl mx-auto px-6">
-                        <h2 className="text-4xl md:text-7xl font-primary font-bold text-[var(--primary-color)] mb-12 tracking-tight">¿Qué es Buen<span className="text-[var(--secondary-color)]">Cuidar</span>?</h2>
-                        <p className="text-xl md:text-4xl text-gray-700 max-w-5xl mx-auto leading-relaxed font-medium">
+
+                    {/* Contenedor del Título: Centrado en la sección */}
+                    <div className="w-full px-6 lg:px-[100px] mb-12 flex justify-center">
+                        <h2 className="text-4xl md:text-7xl font-primary font-bold text-[var(--primary-color)] tracking-tight text-center">
+                            ¿Qué es Buen<span className="text-[var(--secondary-color)]">Cuidar</span>?
+                        </h2>
+                    </div>
+
+                    {/* Contenedor de la Descripción: Centrado en la pantalla */}
+                    <div className="w-full flex flex-col items-center justify-center px-6">
+                        <p className="text-xl md:text-4xl text-gray-700 max-w-5xl leading-relaxed font-medium text-center mx-auto !text-center">
                             <span className="font-bold text-[var(--primary-color)]">Buen<span className="text-[var(--secondary-color)]">Cuidar</span></span> es una plataforma digital que conecta a familias con cuidadores verificados en Centroamérica.
                         </p>
                     </div>
                 </section>
 
-                <div className="w-full mx-auto">
+                <div className="w-full px-6 lg:px-[100px] mx-auto">
 
                     {/* Pillars Grid */}
                     <section className="grid md:grid-cols-2 gap-16">
