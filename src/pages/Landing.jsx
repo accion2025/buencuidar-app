@@ -66,13 +66,13 @@ const Landing = () => {
             </style>
 
             {/* Header */}
-            <header className="w-full max-w-[1440px] px-[5px] md:px-12 lg:px-[100px] py-10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 border-b border-gray-100/30">
+            <header className="w-full max-w-[1440px] px-[15px] md:px-12 lg:px-[100px] py-10 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10 border-b border-gray-100/30">
                 <Logo className="h-16 md:h-20 w-auto drop-shadow-sm" />
             </header>
 
             <main className="w-full max-w-[1440px] relative z-10 flex-grow flex flex-col gap-20">
                 {/* Hero Section Wrapper */}
-                <div className="w-full px-[5px] md:px-12 lg:px-[100px] py-10 mx-auto">
+                <div className="w-full px-[15px] md:px-12 lg:px-[100px] py-10 mx-auto">
 
                     {/* Hero Section: Rebalanced to avoid overlap */}
                     <section className="grid lg:grid-cols-[1fr_auto] gap-6 lg:gap-4 items-center">
@@ -141,21 +141,21 @@ const Landing = () => {
                     <div className="absolute top-0 left-0 w-full h-[600px] bg-[var(--secondary-color)]/5 blur-[120px] -z-10"></div>
 
                     {/* Contenedor del Título: Centrado en la sección */}
-                    <div className="w-full px-[5px] md:px-12 lg:px-[100px] mb-12 flex justify-center">
+                    <div className="w-full px-[15px] md:px-12 lg:px-[100px] mb-12 flex justify-center">
                         <h2 className="text-4xl md:text-7xl font-primary font-bold text-[var(--primary-color)] tracking-tight text-center">
                             ¿Qué es Buen<span className="text-[var(--secondary-color)]">Cuidar</span>?
                         </h2>
                     </div>
 
                     {/* Contenedor de la Descripción: Centrado en la pantalla */}
-                    <div className="w-full flex flex-col items-center justify-center px-[5px] md:px-12">
+                    <div className="w-full flex flex-col items-center justify-center px-[15px] md:px-12">
                         <p className="text-xl md:text-4xl text-gray-700 lg:max-w-5xl leading-relaxed font-medium text-center mx-auto !text-center w-full">
                             <span className="font-bold text-[var(--primary-color)]">Buen<span className="text-[var(--secondary-color)]">Cuidar</span></span> es una plataforma digital que conecta a familias con cuidadores verificados en Centroamérica.
                         </p>
                     </div>
                 </section>
 
-                <div className="w-full px-[5px] lg:px-[100px] mx-auto">
+                <div className="w-full px-[15px] lg:px-[100px] mx-auto">
 
                     {/* Pillars Grid */}
                     <section className="grid md:grid-cols-2 gap-16">
@@ -179,10 +179,10 @@ const Landing = () => {
                     </section>
                     <div className="h-10"></div>
                     {/* Action Buttons */}
-                    <section className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 pb-32 w-full px-[5px]">
+                    <section className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 pb-32 w-full px-[15px]">
                         <button
                             onClick={() => navigate('/home')}
-                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
+                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3 bg-[var(--secondary-color)] text-white border-none shadow-xl shadow-[#2FAE8F]/30 hover:bg-[var(--secondary-hover)] transition-all"
                         >
                             Ir a la aplicación
                             <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
@@ -190,7 +190,7 @@ const Landing = () => {
 
                         <button
                             onClick={handleInstall}
-                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-3"
+                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-3 shadow-xl shadow-[#0F3C4C]/30"
                         >
                             Instalar Aplicación
                             <Download size={24} className="group-hover:translate-y-1 transition-transform" />
