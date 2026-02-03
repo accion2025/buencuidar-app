@@ -115,7 +115,7 @@ const Landing = () => {
                         </div>
 
                         {/* Image Area */}
-                        <div className="order-1 lg:order-2 flex justify-center lg:justify-start">
+                        <div className="order-1 lg:order-2 flex justify-center lg:justify-start transform -translate-y-[20px]">
                             <div className="relative w-full max-w-[440px]">
                                 <div className="absolute inset-0 bg-[var(--secondary-color)]/5 -m-6 rounded-[50px] blur-3xl opacity-70"></div>
                                 <div className="relative z-10 p-4 bg-white image-mask-brand border-4 border-white/50">
