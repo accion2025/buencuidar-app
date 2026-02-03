@@ -125,19 +125,29 @@ const ClientProfile = () => {
     };
 
     const handleDeletePatient = async (id) => {
-        if (!window.confirm('¿Estás seguro de eliminar este familiar?')) return;
+        if (!window.confirm('¿Estás seguro de eliminar este familiar? Se eliminarán también todas sus citas programadas.')) return;
 
         try {
-            const { error } = await supabase
+            // 1. First delete associated appointments to maintain referential integrity
+            const { error: appointmentsError } = await supabase
+                .from('appointments')
+                .delete()
+                .eq('patient_id', id);
+
+            if (appointmentsError) throw appointmentsError;
+
+            // 2. Then delete the patient
+            const { error: patientError } = await supabase
                 .from('patients')
                 .delete()
                 .eq('id', id);
 
-            if (error) throw error;
+            if (patientError) throw patientError;
+
             await fetchPatients();
         } catch (error) {
-            console.error('Error deleting patient:', error);
-            alert('Error al eliminar');
+            console.error('Error in cascade delete:', error);
+            alert('Error al eliminar el familiar y sus citas asociadas');
         }
     };
 
