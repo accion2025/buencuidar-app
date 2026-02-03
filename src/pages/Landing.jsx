@@ -45,6 +45,10 @@ const Landing = () => {
         <div
             className="min-h-screen bg-[#FAFAF8] text-[#4A4F55] font-secondary selection:bg-[var(--secondary-color)] selection:text-white relative flex flex-col items-center"
         >
+            {/* DEBUG BANNER - IMPOSSIBLE TO MISS */}
+            <div className="w-full bg-red-600 text-white py-4 text-center font-black text-xl z-[9999] animate-pulse">
+                VERSIÓN 1.0.4 DETECTADA - SI VES ESTO, EL CÓDIGO ESTÁ ACTUALIZADO
+            </div>
             {/* Texture and Background Layers */}
             <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03] select-none"
                 style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/handmade-paper.png")' }}></div>
