@@ -81,7 +81,7 @@ const Landing = () => {
                                 <h1 className="text-4xl md:text-6xl font-primary font-bold text-[var(--primary-color)] leading-tight transform -translate-x-1">
                                     Centroamérica Envejece
                                 </h1>
-                                <div className="space-y-6 text-gray-700 leading-relaxed text-lg md:text-xl font-medium max-w-2xl mx-auto lg:mx-0">
+                                <div className="space-y-6 text-gray-700 leading-relaxed text-lg md:text-xl font-medium lg:max-w-2xl lg:mx-0 w-full text-center lg:text-left">
                                     <p>
                                         Centroamérica vive un proceso silencioso pero profundo: cada año aumenta el número de adultos mayores y disminuye el apoyo familiar disponible. La migración, el trabajo informal y los cambios en la estructura familiar han reducido el tiempo y los recursos para el cuidado.
                                     </p>
@@ -95,7 +95,7 @@ const Landing = () => {
                             </div>
 
                             {/* Stats - Single Line Horizontal aligned with text width */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 items-start justify-between lg:justify-start border-t border-gray-100/50 max-w-2xl lg:mx-0 mx-auto">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 items-start justify-between lg:justify-start border-t border-gray-100/50 lg:max-w-2xl lg:mx-0 w-full">
                                 <div className="flex flex-col gap-1">
                                     <span className="text-3xl font-black text-[var(--secondary-color)]">25%</span>
                                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-tight">Pob. mayor <br /> en 10 años</span>
@@ -149,7 +149,7 @@ const Landing = () => {
 
                     {/* Contenedor de la Descripción: Centrado en la pantalla */}
                     <div className="w-full flex flex-col items-center justify-center px-[5px] md:px-12">
-                        <p className="text-xl md:text-4xl text-gray-700 max-w-5xl leading-relaxed font-medium text-center mx-auto !text-center">
+                        <p className="text-xl md:text-4xl text-gray-700 lg:max-w-5xl leading-relaxed font-medium text-center mx-auto !text-center w-full">
                             <span className="font-bold text-[var(--primary-color)]">Buen<span className="text-[var(--secondary-color)]">Cuidar</span></span> es una plataforma digital que conecta a familias con cuidadores verificados en Centroamérica.
                         </p>
                     </div>
@@ -179,10 +179,10 @@ const Landing = () => {
                     </section>
                     <div className="h-10"></div>
                     {/* Action Buttons */}
-                    <section className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 pb-32">
+                    <section className="flex flex-col sm:flex-row items-center justify-center gap-8 md:gap-12 pb-32 w-full px-[5px]">
                         <button
                             onClick={() => navigate('/home')}
-                            className="w-full sm:w-[320px] h-[75px] bg-[var(--secondary-color)] text-white rounded-[20px] font-black uppercase tracking-widest text-lg shadow-xl shadow-[#2FAE8F]/30 hover:shadow-[#2FAE8F]/50 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 border-none group px-6"
+                            className="btn btn-primary animate-pulse-soft text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm flex items-center justify-center gap-3"
                         >
                             Ir a la aplicación
                             <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
@@ -190,7 +190,7 @@ const Landing = () => {
 
                         <button
                             onClick={handleInstall}
-                            className="w-full sm:w-[320px] h-[75px] bg-[var(--primary-color)] text-white rounded-[20px] font-black uppercase tracking-widest text-lg shadow-xl shadow-[#0F3C4C]/30 hover:shadow-[#0F3C4C]/50 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 border-none group px-6"
+                            className="btn btn-secondary text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm bg-[var(--primary-color)] text-white hover:bg-[var(--primary-hover)] transition-all flex items-center justify-center gap-3"
                         >
                             Instalar Aplicación
                             <Download size={24} className="group-hover:translate-y-1 transition-transform" />
