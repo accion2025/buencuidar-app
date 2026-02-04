@@ -46,7 +46,7 @@ const CaregiverPayments = () => {
                 <div className="bg-white p-8 rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50">
                     <h3 className="font-brand font-bold text-xl !text-[#0F3C4C] mb-6 flex items-center gap-3">
                         <div className="bg-blue-50 p-2 rounded-[16px] text-[var(--primary-color)]"><Shield size={20} /></div>
-                        Beneficios de tu Plan
+                        Beneficios Visibilidad PRO
                     </h3>
                     <ul className="space-y-4">
                         {[
