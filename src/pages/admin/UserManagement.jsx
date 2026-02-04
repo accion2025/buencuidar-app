@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreHorizontal, Shield, ShieldOff, User } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Shield, ShieldOff, User, Edit2, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const UserManagement = () => {
@@ -51,6 +51,54 @@ const UserManagement = () => {
         } catch (error) {
             console.error('Error toggling ban:', error);
             alert('Error al cambiar el estado del usuario. Asegúrate de haber corrido el script SQL setup_blocking_policy.sql');
+        }
+    };
+
+    const [editingId, setEditingId] = useState(null);
+    const [tempRole, setTempRole] = useState(null);
+
+    const handleStartEdit = (user) => {
+        setEditingId(user.id);
+        setTempRole(user.role);
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setTempRole(null);
+    };
+
+    const handleSaveRole = async (user) => {
+        if (!tempRole || tempRole === user.role) {
+            handleCancelEdit();
+            return;
+        }
+
+        const confirmMsg = tempRole === 'caregiver'
+            ? `¿Estás seguro de cambiar a ${user.email} al rol de CUIDADOR?\n\nSe creará una ficha pública vacía para este usuario.`
+            : `¿Estás seguro de cambiar el rol de ${user.email} a ${tempRole}?`;
+
+        if (!window.confirm(confirmMsg)) return;
+
+        try {
+            const { data, error } = await supabase.rpc('change_user_role', {
+                target_email: user.email,
+                new_role: tempRole
+            });
+
+            if (error) throw error;
+
+            alert("Rol actualizado correctamente.");
+
+            // Optimistic update
+            setUsers(prev => prev.map(u =>
+                u.id === user.id ? { ...u, role: tempRole } : u
+            ));
+
+            handleCancelEdit();
+
+        } catch (error) {
+            console.error("Error changing role:", error);
+            alert("Error al cambiar el rol: " + (error.message || error.details));
         }
     };
 
@@ -111,13 +159,41 @@ const UserManagement = () => {
                                         </div>
                                     </td>
                                     <td className="p-4">
-                                        <span className={`px-2 py-1 rounded-[16px] text-xs font-bold border ${user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
-                                            user.role === 'caregiver' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                                'bg-green-50 text-green-700 border-green-100'
-                                            }`}>
-                                            {user.role === 'admin' ? 'Administrador' :
-                                                user.role === 'caregiver' ? 'Cuidador' : 'Familia'}
-                                        </span>
+                                        {editingId === user.id ? (
+                                            <div className="flex items-center gap-2">
+                                                <select
+                                                    value={tempRole}
+                                                    onChange={(e) => setTempRole(e.target.value)}
+                                                    className="pl-2 pr-8 py-1 rounded-md text-sm border-gray-300 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm"
+                                                    autoFocus
+                                                >
+                                                    <option value="family">Familia</option>
+                                                    <option value="caregiver">Cuidador</option>
+                                                    <option value="admin">Admin</option>
+                                                </select>
+                                                <button onClick={() => handleSaveRole(user)} className="text-green-600 hover:text-green-800" title="Guardar">
+                                                    <CheckCircle size={18} />
+                                                </button>
+                                                <button onClick={handleCancelEdit} className="text-red-400 hover:text-red-600" title="Cancelar">
+                                                    <XCircle size={18} />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div
+                                                className="group flex items-center gap-2 cursor-pointer"
+                                                onClick={() => handleStartEdit(user)}
+                                                title="Clic para editar rol"
+                                            >
+                                                <span className={`px-2 py-1 rounded-[16px] text-xs font-bold border ${user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-100' :
+                                                    user.role === 'caregiver' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                        'bg-green-50 text-green-700 border-green-100'
+                                                    }`}>
+                                                    {user.role === 'admin' ? 'Administrador' :
+                                                        user.role === 'caregiver' ? 'Cuidador' : 'Familia'}
+                                                </span>
+                                                <Edit2 size={12} className="text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        )}
                                     </td>
                                     <td className="p-4">
                                         {user.is_banned ? (
