@@ -109,7 +109,7 @@ const SubscriptionPlans = () => {
                     <div className="bg-emerald-50 p-3 rounded-[16px] text-emerald-600">
                         <Check size={24} />
                     </div>
-                    <h2 className="text-2xl font-brand font-bold text-slate-800">Beneficios de premium PULSO:</h2>
+                    <h2 className="text-2xl font-brand font-bold text-slate-800">Todos los planes incluyen:</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2.5 gap-x-12">
