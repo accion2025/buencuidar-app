@@ -12,7 +12,7 @@ const SaludInfo = () => {
             <Navbar />
 
             {/* HERO INFOGRAFÍA */}
-            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] !py-[120px] !px-[60px] min-h-[40vh] flex items-center justify-center">
+            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] !py-[120px] !px-[15px] md:!px-[60px] min-h-[40vh] flex items-center justify-center">
                 <div className="w-full text-center space-y-8 flex flex-col items-center justify-center">
                     <div className="inline-flex flex-col items-center gap-1">
                         <div className="inline-flex items-center gap-2 bg-green-400 text-[var(--primary-color)] px-4 py-2 rounded-full text-sm font-black uppercase tracking-tighter animate-pulse">
@@ -20,7 +20,7 @@ const SaludInfo = () => {
                         </div>
                         <span className="text-xs font-black text-green-300 uppercase tracking-[0.2em]">Tu espacio de seguimiento del cuidado y la tranquilidad familiar</span>
                     </div>
-                    <h1 className="!text-[20px] md:!text-[33px] font-brand font-bold leading-tight tracking-tighter !text-[#FAFAF7] drop-shadow-sm">
+                    <h1 className="!text-[40px] md:!text-[66px] font-brand font-bold leading-tight tracking-tighter !text-[#FAFAF7] drop-shadow-sm">
                         B<span className="text-[var(--secondary-color)]">C PULSO</span> es el sistema central de monitoreo <br />
                         y acompañamiento de BuenCuidar.
                     </h1>
@@ -31,7 +31,7 @@ const SaludInfo = () => {
             </header>
 
             {/* LAS 3 COLUMNAS DEL PODER PULSO */}
-            <section className="py-20 !px-[60px] w-full">
+            <section className="py-20 !px-[15px] md:!px-[60px] w-full">
                 <div className="grid lg:grid-cols-3 gap-16">
                     {/* COLUMNA 1: MONITOREO */}
                     <div className="flex flex-col">
@@ -100,7 +100,7 @@ const SaludInfo = () => {
 
             {/* INFOGRAFÍA VISUAL (CONCEPTUAL) */}
             <section className="py-20 bg-white border-y border-gray-100">
-                <div className="w-full !px-[60px] grid md:grid-cols-3 gap-12 items-center">
+                <div className="w-full !px-[15px] md:!px-[60px] grid md:grid-cols-3 gap-12 items-center">
                     <div>
                         <h2 className="text-3xl md:text-5xl font-brand font-bold tracking-tighter mb-8 leading-tight !text-[#0F3C4C]">
                             <span className="uppercase">¿POR QUÉ ELEGIR</span> <br />
@@ -174,7 +174,7 @@ const SaludInfo = () => {
             </section>
 
             {/* CTA FINAL */}
-            <section className="py-20 !px-[60px] flex justify-center w-full">
+            <section className="py-20 !px-[15px] md:!px-[60px] flex justify-center w-full">
                 <div className="max-w-4xl w-full bg-[var(--primary-color)] p-12 rounded-[16px] text-center !text-[#FAFAF7] shadow-2xl relative overflow-hidden">
                     <div className="relative z-10 space-y-8">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
