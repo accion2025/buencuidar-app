@@ -448,9 +448,15 @@ const MonitoringCenter = () => {
 
             doc.save(`Reporte_Bienestar_${profile?.full_name || 'Usuario'}_Periodo.pdf`);
             setIsReportModalOpen(false);
+            console.log("PDF generado satisfactoriamente");
         } catch (err) {
-            console.error("Error detallado al generar reporte:", err);
-            alert(`Error al generar el reporte: ${err.message || 'Error desconocido'}`);
+            console.error("Error detallado al generar reporte (V2):", err);
+            // Si el error es una función no definida (como autoTable)
+            if (err instanceof TypeError && err.message.includes('autoTable')) {
+                alert("Error técnico: La librería de tablas PDF no cargó correctamente. Por favor, refresca la página (F5).");
+            } else {
+                alert(`Error al generar el reporte (V2): ${err.message || 'Error de conexión o datos'}`);
+            }
         } finally {
             setIsGeneratingReport(false);
         }
