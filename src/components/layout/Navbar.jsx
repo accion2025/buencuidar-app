@@ -47,7 +47,7 @@ const Navbar = () => {
     return (
         <React.Fragment>
             <header className="bg-white shadow-sm sticky top-0 z-40 transition-all duration-300 h-[70px]">
-                <div className="w-full px-[15px] h-full">
+                <div className="w-full !px-[60px] h-full">
                     <div className="flex justify-between items-center h-full">
                         <Link to="/home" className="flex-shrink-0 hover:opacity-80 transition-opacity flex items-center">
                             <Logo />
