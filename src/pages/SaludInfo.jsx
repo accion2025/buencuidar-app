@@ -51,12 +51,12 @@ const SaludInfo = () => {
                             BC Pulso es una herramienta de gestión, seguimiento y comunicación que conecta a familias, cuidadores y adultos mayores en un solo espacio. Permite supervisar:
                         </p>
                         <ul className="space-y-5">
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> El estado general de bienestar</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> Las rutinas diarias</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> La actividad del cuidador</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> Los registros básicos de atención</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> La evolución del cuidado en el tiempo</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> Todo desde una plataforma clara y fácil de usar.</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-blue-500" /> El estado general de bienestar</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-blue-500" /> Las rutinas diarias</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-blue-500" /> La actividad del cuidador</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-blue-500" /> Los registros básicos de atención</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-blue-500" /> La evolución del cuidado en el tiempo</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-blue-500" /> Todo desde una plataforma clara y fácil de usar.</li>
                         </ul>
                     </div>
 
@@ -85,11 +85,11 @@ const SaludInfo = () => {
                             Cada acción queda documentada:
                         </p>
                         <ul className="space-y-5 mb-6">
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Rutinas realizadas</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Observaciones</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Cambios de estado</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Reportes del cuidador</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Historial verificable</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-green-500" /> Rutinas realizadas</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-green-500" /> Observaciones</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-green-500" /> Cambios de estado</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-green-500" /> Reportes del cuidador</li>
+                            <li className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]"><CheckCircle size={20} className="text-green-500" /> Historial verificable</li>
                         </ul>
                         <p className="text-sm font-medium text-gray-500 italic">
                             Esto genera transparencia, confianza y trazabilidad real del cuidado.
