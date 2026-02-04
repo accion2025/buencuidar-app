@@ -30,6 +30,7 @@ const SidebarItem = ({ icon: Icon, label, path, active, onClick, badge, locked }
         >
             <Icon size={20} />
             <span className="font-medium flex-1">{label}</span>
+            {locked && <Lock size={14} className="text-gray-400" />}
             {badge > 0 && !locked && (
                 <span className="absolute right-3 bg-red-500 !text-[#FAFAF7] text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-bounce">
                     {badge}
