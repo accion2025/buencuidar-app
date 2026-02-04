@@ -386,7 +386,7 @@ const MonitoringCenter = () => {
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.text(`Periodo: ${new Date(reportStartDate).toLocaleDateString()} al ${new Date(reportEndDate).toLocaleDateString()}`, pageWidth - 20, 25, { align: 'right' });
+            doc.text(`Periodo: ${new Date(reportStartDate).toLocaleDateString()} al ${new Date(reportEndDate).toLocaleDateString()}`, pageWidth - 20, 33, { align: 'right' });
 
             // Patient & Profile Info
             doc.setTextColor(15, 60, 76);
