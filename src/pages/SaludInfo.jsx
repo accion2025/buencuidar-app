@@ -174,30 +174,28 @@ const SaludInfo = () => {
             </section>
 
             {/* CTA FINAL */}
-            <section className="py-20 !px-[15px] md:!px-[60px] flex justify-center w-full">
-                <div className="max-w-4xl w-full bg-[var(--primary-color)] p-8 md:p-12 rounded-[24px] text-center !text-[#FAFAF7] shadow-2xl relative overflow-hidden min-h-[250px] flex flex-col items-center justify-center">
-                    <div className="relative z-10 space-y-8 w-full flex flex-col items-center">
-                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase">
-                            Únete hoy a la revolución del cuidado
-                        </h2>
-                        <p className="text-lg text-green-50 font-medium">
-                            No esperes a una emergencia para desear haber tenido este sistema. Tu familia merece esta tranquilidad.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-2xl">
-                            <button
-                                onClick={() => navigate('/dashboard/plans')}
-                                className="btn btn-primary text-lg md:text-xl py-6 px-10 rounded-[20px] uppercase tracking-widest font-black w-full flex items-center justify-center gap-3 hover:scale-105 transition-transform"
-                            >
-                                Activar <span className="ml-1 mr-1">B<span style={{ color: 'var(--primary-color)' }}>C</span> <span className="text-[var(--primary-color)]">PULSO</span></span> ahora
-                                <ArrowRight size={24} />
-                            </button>
-                            <button
-                                onClick={() => navigate('/login')}
-                                className="btn btn-outline text-lg md:text-xl py-6 px-10 rounded-[20px] uppercase tracking-widest font-black w-full border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm !text-[#FAFAF7]"
-                            >
-                                Ya soy usuario
-                            </button>
-                        </div>
+            <section className="py-24 !px-[15px] md:!px-[60px] flex flex-col items-center text-center w-full bg-white border-t border-gray-100">
+                <div className="max-w-4xl w-full space-y-10 flex flex-col items-center">
+                    <h2 className="text-4xl md:text-5xl font-brand font-bold tracking-tighter uppercase !text-[#0F3C4C]">
+                        Únete hoy a la revolución del cuidado
+                    </h2>
+                    <p className="text-xl text-gray-600 font-medium max-w-2xl">
+                        No esperes a una emergencia para desear haber tenido este sistema. Tu familia merece esta tranquilidad.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-2xl">
+                        <button
+                            onClick={() => navigate('/dashboard/plans')}
+                            className="btn btn-primary text-lg md:text-xl py-6 px-10 rounded-[24px] uppercase tracking-widest font-black w-full flex items-center justify-center gap-3 hover:scale-105 transition-transform"
+                        >
+                            Activar <span className="ml-1 mr-1">B<span style={{ color: 'var(--primary-color)' }}>C</span> <span className="text-[var(--primary-color)]">PULSO</span></span> ahora
+                            <ArrowRight size={24} />
+                        </button>
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="btn btn-outline text-lg md:text-xl py-6 px-10 rounded-[24px] uppercase tracking-widest font-black w-full border-2 border-[var(--primary-color)] hover:bg-[var(--primary-color)]/5 transition-all !text-[var(--primary-color)]"
+                        >
+                            Ya soy usuario
+                        </button>
                     </div>
                 </div>
             </section>
