@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, MapPin, Star, Shield, Clock, Mail, MessageCircle, Award, Check, BookOpen } from 'lucide-react';
+import { X, MapPin, Star, Shield, Clock, Mail, MessageCircle, Award, Check, BookOpen, DollarSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
