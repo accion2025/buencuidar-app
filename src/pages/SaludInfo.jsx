@@ -175,12 +175,12 @@ const SaludInfo = () => {
 
             {/* CTA FINAL */}
             <section className="py-20 !px-[15px] md:!px-[60px] flex justify-center w-full">
-                <div className="max-w-4xl w-full bg-[var(--primary-color)] p-12 md:p-20 rounded-[24px] text-center !text-[#FAFAF7] shadow-2xl relative overflow-hidden min-h-[450px] flex flex-col items-center justify-center">
-                    <div className="relative z-10 space-y-10 w-full flex flex-col items-center">
-                        <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
+                <div className="max-w-4xl w-full bg-[var(--primary-color)] p-8 md:p-12 rounded-[24px] text-center !text-[#FAFAF7] shadow-2xl relative overflow-hidden min-h-[250px] flex flex-col items-center justify-center">
+                    <div className="relative z-10 space-y-8 w-full flex flex-col items-center">
+                        <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase">
                             Únete hoy a la revolución del cuidado
                         </h2>
-                        <p className="text-xl text-green-50 font-medium">
+                        <p className="text-lg text-green-50 font-medium">
                             No esperes a una emergencia para desear haber tenido este sistema. Tu familia merece esta tranquilidad.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-2xl">
@@ -188,7 +188,7 @@ const SaludInfo = () => {
                                 onClick={() => navigate('/dashboard/plans')}
                                 className="btn btn-primary text-lg md:text-xl py-6 px-10 rounded-[20px] uppercase tracking-widest font-black w-full flex items-center justify-center gap-3 hover:scale-105 transition-transform"
                             >
-                                Activar <span className="ml-1 mr-1">B<span style={{ color: '#FAFAF7' }}>C</span> <span className="text-[var(--primary-color)]">PULSO</span></span> ahora
+                                Activar <span className="ml-1 mr-1">B<span style={{ color: 'var(--primary-color)' }}>C</span> <span className="text-[var(--primary-color)]">PULSO</span></span> ahora
                                 <ArrowRight size={24} />
                             </button>
                             <button
