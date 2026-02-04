@@ -661,24 +661,6 @@ const CaregiverProfile = () => {
                             </button>
                         </div>
 
-                        {/* REGISTRO DE ACTIVIDAD (DEBUG) V2.1 */}
-                        <div className="bg-slate-900 border-b border-white/10 p-4 font-mono text-[10px] text-green-400">
-                            <div className="flex justify-between items-center mb-1">
-                                <p className="text-slate-500 font-black uppercase tracking-widest text-[8px]">Logs de Actividad (PRO V2.1)</p>
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                            </div>
-                            <div className="max-h-[80px] overflow-y-auto">
-                                {debugLogs.length === 0 ? (
-                                    <p className="opacity-40 italic">Esperando actividad...</p>
-                                ) : (
-                                    debugLogs.map((log, i) => (
-                                        <div key={i} className="mb-0.5 border-l border-green-900 pl-2 leading-tight py-0.5">
-                                            {log}
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        </div>
 
                         <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-10 space-y-12">
                             {/* Basic Info */}
