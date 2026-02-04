@@ -25,7 +25,7 @@ import { supabase } from '../../lib/supabase';
 import ConfigureAgendaModal from '../../components/dashboard/ConfigureAgendaModal';
 import { formatTimeAgo } from '../../utils/time';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 const MonitoringCenter = () => {
     const { profile, loading: authLoading } = useAuth();
@@ -406,7 +406,7 @@ const MonitoringCenter = () => {
                     log.detail
                 ]);
 
-                doc.autoTable({
+                autoTable(doc, {
                     startY: 75,
                     head: [['Fecha', 'Indicador', 'Valor']],
                     body: wellnessData.slice(-15), // Show last 15 for brevity or all if needed
@@ -427,7 +427,7 @@ const MonitoringCenter = () => {
                     log.detail || 'Sin observaciones'
                 ]);
 
-                doc.autoTable({
+                autoTable(doc, {
                     startY: startY + 5,
                     head: [['Fecha/Hora', 'Acción', 'Detalle/Observaciones']],
                     body: logData,
@@ -449,8 +449,8 @@ const MonitoringCenter = () => {
             doc.save(`Reporte_Bienestar_${profile?.full_name || 'Usuario'}_Periodo.pdf`);
             setIsReportModalOpen(false);
         } catch (err) {
-            console.error(err);
-            alert("Error al generar el reporte");
+            console.error("Error detallado al generar reporte:", err);
+            alert(`Error al generar el reporte: ${err.message || 'Error desconocido'}`);
         } finally {
             setIsGeneratingReport(false);
         }
