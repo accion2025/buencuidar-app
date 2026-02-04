@@ -12,86 +12,102 @@ const SaludInfo = () => {
             <Navbar />
 
             {/* HERO INFOGRAFÍA */}
-            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] pt-40 pb-20 px-6 min-h-[50vh] flex items-center justify-center">
-                <div className="max-w-[1600px] mx-auto text-center space-y-6">
+            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] py-[120px] px-[15px] min-h-[40vh] flex items-center justify-center">
+                <div className="w-full text-center space-y-8 flex flex-col items-center justify-center">
                     <div className="inline-flex flex-col items-center gap-1">
                         <div className="inline-flex items-center gap-2 bg-green-400 text-[var(--primary-color)] px-4 py-2 rounded-full text-sm font-black uppercase tracking-tighter animate-pulse">
                             <Activity size={18} /> Ecosistema BC PULSO
                         </div>
-                        <span className="text-xs font-black text-green-300 uppercase tracking-[0.2em]">Seguimiento diario del cuidado</span>
+                        <span className="text-xs font-black text-green-300 uppercase tracking-[0.2em]">Tu espacio de seguimiento del cuidado y la tranquilidad familiar</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-brand font-bold leading-tight tracking-tighter !text-[#FAFAF7] drop-shadow-sm">
-                        EL FUTURO DEL CUIDADO <br /> <span className="text-[var(--secondary-color)] uppercase">EN LA PALMA DE TU MANO</span>
+                    <h1 className="text-[30px] md:text-[50px] font-brand font-bold leading-tight tracking-tighter !text-[#FAFAF7] drop-shadow-sm">
+                        B<span className="text-[var(--secondary-color)]">C PULSO</span> es el sistema central de monitoreo <br />
+                        y acompañamiento de BuenCuidar.
                     </h1>
-                    <p className="text-xl text-green-50 max-w-3xl mx-auto opacity-90 font-medium">
-                        Mucho más que una red de cuidadores. Una plataforma tecnológica diseñada para prevenir, monitorear y actuar ante cualquier situación, garantizando la paz espiritual de toda la familia.
+                    <p className="text-xl text-green-50 max-w-3xl mx-auto opacity-90 font-medium text-center">
+                        Aquí, las familias pueden dar seguimiento continuo al bienestar, las rutinas y la calidad del cuidado que reciben sus adultos mayores, en un entorno digital seguro y confiable.
                     </p>
                 </div>
             </header>
 
             {/* LAS 3 COLUMNAS DEL PODER PULSO */}
-            <section className="py-20 px-6 max-w-[1600px] mx-auto">
-                <div className="grid lg:grid-cols-3 gap-8">
+            <section className="py-20 px-[15px] w-full">
+                <div className="grid lg:grid-cols-3 gap-16">
                     {/* COLUMNA 1: MONITOREO */}
-                    <div className="bg-white p-10 rounded-[16px] shadow-xl border border-gray-100 hover:scale-105 transition-transform">
+                    <div className="flex flex-col">
                         <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-[16px] flex items-center justify-center mb-8">
                             <Zap size={32} />
                         </div>
-                        <h3 className="text-2xl font-black mb-4 text-gray-900 tracking-tighter">SEGUIMIENTO DE BIENESTAR VIVO</h3>
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold mb-8 tracking-tighter leading-tight !text-[#0F3C4C]">
+                            <span className="uppercase">¿QUÉ ES</span> <br />
+                            <span className="not-italic inline-block">
+                                <span className="font-semibold" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                                    B<span style={{ color: '#2FAE8F' }}>C</span>
+                                </span>{' '}
+                                <span className="font-bold text-[var(--secondary-color)]" style={{ fontFamily: 'Poppins, sans-serif' }}>PULSO</span>
+                            </span>?
+                        </h2>
                         <p className="text-gray-600 mb-6 leading-relaxed">
-                            Integración con dispositivos inteligentes para ver **indicadores de bienestar, señales corporales y nivel de bienestar** en tiempo real desde tu móvil.
+                            BC Pulso es una herramienta de gestión, seguimiento y comunicación que conecta a familias, cuidadores y adultos mayores en un solo espacio. Permite supervisar:
                         </p>
                         <ul className="space-y-3">
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Alertas por anomalías</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Histórico semanal</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Reporte familiar</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> El estado general de bienestar</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> Las rutinas diarias</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> La actividad del cuidador</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> Los registros básicos de atención</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> La evolución del cuidado en el tiempo</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> Todo desde una plataforma clara y fácil de usar.</li>
                         </ul>
                     </div>
 
-                    {/* COLUMNA 2: BITÁCORA */}
-                    <div className="bg-white p-10 rounded-[16px] shadow-xl border border-gray-100 hover:scale-105 transition-transform border-t-8 border-t-green-400">
+                    {/* COLUMNA 2: EMERGENCIA (Ahora al centro - Con recuadro negro) */}
+                    <div className="bg-gray-900 p-10 rounded-[16px] shadow-2xl !text-[#FAFAF7] hover:scale-105 transition-transform rotate-1 flex flex-col items-center justify-center text-center">
+                        <div className="w-16 h-16 bg-red-500 !text-[#FAFAF7] rounded-[16px] flex items-center justify-center mb-8 animate-pulse mx-auto">
+                            <Bell size={32} />
+                        </div>
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold mb-8 tracking-tighter uppercase !text-[#FAFAF7] w-full leading-tight">
+                            Sistema de <br /> Alerta Familiar
+                        </h2>
+                        <p className="text-gray-300 mb-6 leading-relaxed w-full">
+                            Activa una COMUNICACIÓN INMEDIATA. Notifica a familiares, contactos de confianza.
+                        </p>
+                    </div>
+
+                    {/* COLUMNA 3: BITÁCORA (Ahora a la derecha) */}
+                    <div className="flex flex-col">
                         <div className="w-16 h-16 bg-green-100 text-green-600 rounded-[16px] flex items-center justify-center mb-8">
                             <Clock size={32} />
                         </div>
-                        <h3 className="text-2xl font-black mb-4 text-gray-900 tracking-tighter uppercase text-green-600">Bitácora de Cuidado Élite</h3>
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold mb-8 tracking-tighter uppercase !text-[#0F3C4C] leading-tight">
+                            Bitácora Digital <br /> de Cuidado
+                        </h2>
                         <p className="text-gray-600 mb-6 leading-relaxed">
-                            Cada comida, cada rutina personal y cada cambio de humor queda registrado con **evidencia fotográfica y notas del cuidador**.
+                            Cada acción queda documentada:
                         </p>
-                        <ul className="space-y-3">
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Seguimiento de rutinas</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Registro de hábitos</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Notificaciones push</li>
+                        <ul className="space-y-3 mb-6">
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Rutinas realizadas</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Observaciones</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Cambios de estado</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Reportes del cuidador</li>
+                            <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Historial verificable</li>
                         </ul>
-                    </div>
-
-                    {/* COLUMNA 3: EMERGENCIA */}
-                    <div className="bg-gray-900 p-10 rounded-[16px] shadow-2xl !text-[#FAFAF7] hover:scale-105 transition-transform rotate-1">
-                        <div className="w-16 h-16 bg-red-500 !text-[#FAFAF7] rounded-[16px] flex items-center justify-center mb-8 animate-pulse">
-                            <Bell size={32} />
-                        </div>
-                        <h3 className="text-2xl font-brand font-bold mb-4 tracking-tighter uppercase !text-[#FAFAF7]">Sistema de Alerta Familiar</h3>
-                        <p className="text-gray-300 mb-6 leading-relaxed">
-                            Activa una **comunicación inmediata**. Notifica a familiares, contactos de confianza y nuestro centro de monitoreo 24/7.
+                        <p className="text-sm font-medium text-gray-500 italic">
+                            Esto genera transparencia, confianza y trazabilidad real del cuidado.
                         </p>
-                        <ul className="space-y-3">
-                            <li className="flex items-center gap-2 text-sm font-bold text-red-200"><CheckCircle size={16} className="text-red-500" /> Un solo toque activa todo</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-red-200"><CheckCircle size={16} className="text-red-500" /> Geolocalización exacta</li>
-                            <li className="flex items-center gap-2 text-sm font-bold text-red-200"><CheckCircle size={16} className="text-red-500" /> Comunicación directa</li>
-                        </ul>
                     </div>
                 </div>
             </section>
 
             {/* INFOGRAFÍA VISUAL (CONCEPTUAL) */}
             <section className="py-20 bg-white border-y border-gray-100">
-                <div className="max-w-[1600px] mx-auto px-6 grid md:grid-cols-3 gap-12 items-center">
+                <div className="w-full px-[15px] grid md:grid-cols-3 gap-12 items-center">
                     <div>
                         <h2 className="text-3xl md:text-5xl font-brand font-bold tracking-tighter mb-8 leading-tight !text-[#0F3C4C]">
                             <span className="uppercase">¿POR QUÉ ELEGIR</span> <br />
                             <span className="font-semibold" style={{ fontFamily: 'Poppins, sans-serif' }}>
                                 B<span style={{ color: '#2FAE8F' }}>C</span>
                             </span>{' '}
-                            <span className="font-bold text-[var(--secondary-color)]" style={{ fontFamily: 'Poppins, sans-serif' }}>PULSO</span>
+                            <span className="font-bold text-[var(--secondary-color)]" style={{ fontFamily: 'Poppins, sans-serif' }}>PULSO</span>?
                         </h2>
                         <div className="space-y-6">
                             {[
@@ -117,43 +133,48 @@ const SaludInfo = () => {
                         <img
                             src="/images/rebranding/pulso_hogareno.png"
                             alt="Cuidado hogareño y profesional"
-                            className="relative rounded-[16px] shadow-2xl border-8 border-gray-50 -rotate-3 w-full object-cover"
+                            className="relative rounded-[16px] shadow-2xl border-8 border-gray-50 w-full object-cover"
                         />
                     </div>
 
                     <div className="flex flex-col">
                         <h2 className="text-3xl md:text-5xl font-brand font-bold tracking-tighter mb-8 leading-tight !text-[#0F3C4C]">
-                            <span className="uppercase">¿QUÉ MÁS OFRECE</span> <br />
+                            <span className="uppercase">¿Por qué</span> <br />
                             <span className="not-italic inline-block">
                                 <span className="font-semibold" style={{ fontFamily: 'Poppins, sans-serif' }}>
                                     B<span style={{ color: '#2FAE8F' }}>C</span>
                                 </span>{' '}
                                 <span className="font-bold text-[var(--secondary-color)]" style={{ fontFamily: 'Poppins, sans-serif' }}>PULSO</span>
-                            </span>?
+                            </span> ES DIFERENTE?
                         </h2>
                         <div className="space-y-6">
-                            {[
-                                { title: "UBICACIÓN EN TIEMPO REAL", text: "Sabes exactamente dónde está tu familiar en cualquier momento del día." },
-                                { title: "RED DE APOYO INMEDIATA", text: "Activación inmediata de servicios locales y aviso a toda la red familiar." },
-                                { title: "CUIDADO CERTIFICADO", text: "Cuidadores verificados con nuestro sello de calidad y compromiso BuenCuidar." }
-                            ].map((item, i) => (
-                                <div key={i} className="flex gap-4 items-start group">
-                                    <div className="bg-blue-50 p-2.5 rounded-[16px] text-[var(--primary-color)] mt-1 transition-colors group-hover:bg-[var(--secondary-color)] group-hover:text-white">
-                                        <CheckCircle size={22} />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-bold text-xl !text-[#0F3C4C] group-hover:text-[var(--secondary-color)] transition-colors uppercase">{item.title}</h4>
-                                        <p className="text-gray-600 leading-relaxed font-secondary">{item.text}</p>
-                                    </div>
-                                </div>
-                            ))}
+                            <p className="text-xl text-gray-700 font-medium">Porque no solo conecta cuidadores y familias, sino que:</p>
+                            <ul className="space-y-4">
+                                {[
+                                    "Organiza el cuidado",
+                                    "Profesionaliza el seguimiento",
+                                    "Digitaliza la confianza",
+                                    "Humaniza la tecnología",
+                                    "Fortalece el vínculo familiar"
+                                ].map((step, i) => (
+                                    <li key={i} className="flex items-center gap-3 text-lg font-bold text-[#0F3C4C]">
+                                        <div className="bg-green-100 p-1.5 rounded-full text-green-600">
+                                            <CheckCircle size={20} />
+                                        </div>
+                                        {step}
+                                    </li>
+                                ))}
+                            </ul>
+                            <p className="text-xl font-black text-[var(--secondary-color)] mt-8 uppercase tracking-tighter">
+                                Es tecnología al servicio del bienestar.
+                            </p>
                         </div>
                     </div>
                 </div>
             </section>
 
             {/* CTA FINAL */}
-            <section className="py-20 px-6 flex justify-center">
+            <section className="py-20 px-[15px] flex justify-center w-full">
                 <div className="max-w-4xl w-full bg-[var(--primary-color)] p-12 rounded-[16px] text-center !text-[#FAFAF7] shadow-2xl relative overflow-hidden">
                     <div className="relative z-10 space-y-8">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
