@@ -77,7 +77,7 @@ const SubscriptionPlans = () => {
     return (
         <div className="min-h-screen bg-gray-50/30 flex flex-col items-center py-20 px-4 mt-[-40px]">
             {/* Header Block */}
-            <div className="max-w-4xl w-full text-center space-y-6 mb-44 group">
+            <div className="max-w-4xl w-full text-center space-y-6 mb-5 md:mb-20 group">
                 <h1 className="text-5xl md:text-7xl font-brand font-bold !text-[#0F3C4C] tracking-tighter leading-[1.1] animate-fade-in-down">
                     Planes diseñados para tu <span className="text-[var(--secondary-color)]">tranquilidad</span>
                 </h1>

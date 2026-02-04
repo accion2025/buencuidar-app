@@ -23,6 +23,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import ConfigureAgendaModal from '../../components/dashboard/ConfigureAgendaModal';
 import { formatTimeAgo } from '../../utils/time';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 const MonitoringCenter = () => {
     const { profile, loading: authLoading } = useAuth();
@@ -107,6 +109,12 @@ const MonitoringCenter = () => {
     });
     const [hoursStats, setHoursStats] = useState({ confirmed: 0, pending: 0 });
     const [averageRating, setAverageRating] = useState(null);
+
+    // Report Range States
+    const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+    const [reportStartDate, setReportStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0]);
+    const [reportEndDate, setReportEndDate] = useState(new Date().toISOString().split('T')[0]);
+    const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
     useEffect(() => {
         if (isSubscribed) {
@@ -332,6 +340,121 @@ const MonitoringCenter = () => {
         { label: 'Calificación Promedio', value: averageRating || '-', sub: 'Otorgada a cuidadores', icon: Star, color: 'text-amber-600', bg: 'bg-amber-50', status: 'Nivel de confianza' },
     ];
 
+    const handleDownloadPDF = async () => {
+        setIsGeneratingReport(true);
+        try {
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const today = new Date().toLocaleDateString();
+
+            // 1. Fetch ALL appointments for this client in the range
+            const { data: rangeAppointments, error: appError } = await supabase
+                .from('appointments')
+                .select('id, date, status, caregiver_id')
+                .eq('client_id', profile.id)
+                .gte('date', reportStartDate)
+                .lte('date', reportEndDate);
+
+            if (appError) throw appError;
+
+            if (!rangeAppointments || rangeAppointments.length === 0) {
+                alert("No se encontraron registros en el periodo seleccionado.");
+                setIsReportModalOpen(false);
+                return;
+            }
+
+            const appointmentIds = rangeAppointments.map(a => a.id);
+
+            // 2. Fetch ALL logs for those appointments
+            const { data: rangeLogs, error: logsError } = await supabase
+                .from('care_logs')
+                .select('*')
+                .in('appointment_id', appointmentIds)
+                .order('created_at', { ascending: true });
+
+            if (logsError) throw logsError;
+
+            // Header & Logo Concept
+            doc.setFillColor(15, 60, 76);
+            doc.rect(0, 0, pageWidth, 40, 'F');
+
+            doc.setTextColor(250, 250, 247);
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.text('BuenCuidar - Reporte de Bienestar', 20, 25);
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Periodo: ${new Date(reportStartDate).toLocaleDateString()} al ${new Date(reportEndDate).toLocaleDateString()}`, pageWidth - 20, 25, { align: 'right' });
+
+            // Patient & Profile Info
+            doc.setTextColor(15, 60, 76);
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Paciente/Titular: ${profile?.full_name || 'No especificado'}`, 20, 55);
+
+            // Wellbeing Summary (Extract wellness logs)
+            const wellnessLogs = rangeLogs.filter(l => l.category === 'Wellness');
+            if (wellnessLogs.length > 0) {
+                doc.setFontSize(12);
+                doc.text('Resumen de Indicadores de Bienestar (Evolución):', 20, 70);
+
+                const wellnessData = wellnessLogs.map(log => [
+                    new Date(log.created_at).toLocaleDateString(),
+                    log.action,
+                    log.detail
+                ]);
+
+                doc.autoTable({
+                    startY: 75,
+                    head: [['Fecha', 'Indicador', 'Valor']],
+                    body: wellnessData.slice(-15), // Show last 15 for brevity or all if needed
+                    theme: 'striped',
+                    headStyles: { fillColor: [47, 174, 143] },
+                    margin: { left: 20, right: 20 }
+                });
+            }
+
+            // Historical Bitácora
+            const opLogs = rangeLogs.filter(l => l.category !== 'Wellness');
+            if (opLogs.length > 0) {
+                const startY = (doc.lastAutoTable?.finalY || 70) + 15;
+                doc.text('Bitácora Detallada de Actividades:', 20, startY);
+                const logData = opLogs.map(log => [
+                    new Date(log.created_at).toLocaleDateString() + ' ' + new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    log.action,
+                    log.detail || 'Sin observaciones'
+                ]);
+
+                doc.autoTable({
+                    startY: startY + 5,
+                    head: [['Fecha/Hora', 'Acción', 'Detalle/Observaciones']],
+                    body: logData,
+                    theme: 'grid',
+                    headStyles: { fillColor: [15, 60, 76] },
+                    columnStyles: {
+                        0: { cellWidth: 35 },
+                        1: { cellWidth: 45 }
+                    },
+                    margin: { left: 20, right: 20 }
+                });
+            }
+
+            // Footer
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            doc.text('Este reporte es generado automáticamente por la plataforma BuenCuidar BC PULSO.', pageWidth / 2, 285, { align: 'center' });
+
+            doc.save(`Reporte_Bienestar_${profile?.full_name || 'Usuario'}_Periodo.pdf`);
+            setIsReportModalOpen(false);
+        } catch (err) {
+            console.error(err);
+            alert("Error al generar el reporte");
+        } finally {
+            setIsGeneratingReport(false);
+        }
+    };
+
 
 
     return (
@@ -345,6 +468,59 @@ const MonitoringCenter = () => {
                     onSave={handleUpdateAgenda}
                 />
             )}
+
+            {/* Range Report Modal */}
+            {isReportModalOpen && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div className="bg-white rounded-[24px] w-full max-w-md shadow-2xl overflow-hidden animate-fade-in-up">
+                        <div className="bg-[var(--primary-color)] p-6 text-center pt-8">
+                            <History size={40} className="text-[var(--secondary-color)] mx-auto mb-4" />
+                            <h2 className="text-2xl font-brand font-bold text-white mb-2">Configurar Reporte</h2>
+                            <p className="text-white/60 text-sm font-secondary">Selecciona el periodo para generar tu reporte de bienestar.</p>
+                        </div>
+
+                        <div className="p-8 space-y-6">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fecha Inicio</label>
+                                    <input
+                                        type="date"
+                                        value={reportStartDate}
+                                        onChange={(e) => setReportStartDate(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-[12px] px-4 py-3 text-sm focus:ring-2 focus:ring-[var(--secondary-color)] focus:border-transparent outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fecha Fin</label>
+                                    <input
+                                        type="date"
+                                        value={reportEndDate}
+                                        onChange={(e) => setReportEndDate(e.target.value)}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-[12px] px-4 py-3 text-sm focus:ring-2 focus:ring-[var(--secondary-color)] focus:border-transparent outline-none transition-all"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={handleDownloadPDF}
+                                    disabled={isGeneratingReport}
+                                    className="w-full bg-[var(--primary-color)] hover:bg-[#0a2a36] text-white font-black py-4 rounded-[16px] uppercase tracking-widest text-xs transition-all shadow-xl shadow-slate-200"
+                                >
+                                    {isGeneratingReport ? 'Generando Archivo...' : 'Generar PDF'}
+                                </button>
+                                <button
+                                    onClick={() => setIsReportModalOpen(false)}
+                                    className="w-full bg-slate-50 text-slate-500 hover:bg-slate-100 font-bold py-3 rounded-[16px] text-xs transition-all uppercase tracking-widest border-none"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="space-y-10 animate-fade-in max-w-[1600px] mx-auto pb-16 pt-4 px-4">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[var(--primary-color)] p-8 rounded-[16px] shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
@@ -369,6 +545,12 @@ const MonitoringCenter = () => {
                     </div>
                     {/* Alerta Familiar Button */}
                     <div className="flex flex-col items-end gap-2 w-full md:w-auto relative z-10">
+                        <button
+                            onClick={() => setIsReportModalOpen(true)}
+                            className="w-full md:w-auto bg-white/10 hover:bg-white/20 !text-[#FAFAF7] px-6 py-3 rounded-[16px] font-black uppercase tracking-widest flex items-center justify-center gap-3 border border-white/20 transition-all hover:scale-105 active:scale-95 mb-2"
+                        >
+                            <Download size={20} /> Descargar Reporte
+                        </button>
                         <button className="w-full md:w-auto bg-[var(--error-color)] hover:bg-red-700 !text-[#FAFAF7] px-10 py-4 rounded-[16px] font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-red-900/40 transition-all hover:scale-105 active:scale-95 group border-none">
                             <AlertCircle size={24} className="group-hover:animate-bounce" /> ALERTA FAMILIAR
                         </button>
