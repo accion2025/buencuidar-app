@@ -12,7 +12,7 @@ const SaludInfo = () => {
             <Navbar />
 
             {/* HERO INFOGRAFÍA */}
-            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] py-[120px] px-[15px] min-h-[40vh] flex items-center justify-center">
+            <header className="bg-[var(--primary-color)] !text-[#FAFAF7] py-[145px] px-[15px] min-h-[40vh] flex items-center justify-center">
                 <div className="w-full text-center space-y-8 flex flex-col items-center justify-center">
                     <div className="inline-flex flex-col items-center gap-1">
                         <div className="inline-flex items-center gap-2 bg-green-400 text-[var(--primary-color)] px-4 py-2 rounded-full text-sm font-black uppercase tracking-tighter animate-pulse">
