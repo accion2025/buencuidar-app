@@ -175,25 +175,25 @@ const SaludInfo = () => {
 
             {/* CTA FINAL */}
             <section className="py-20 !px-[15px] md:!px-[60px] flex justify-center w-full">
-                <div className="max-w-4xl w-full bg-[var(--primary-color)] p-12 rounded-[16px] text-center !text-[#FAFAF7] shadow-2xl relative overflow-hidden">
-                    <div className="relative z-10 space-y-8">
+                <div className="max-w-4xl w-full bg-[var(--primary-color)] p-12 md:p-20 rounded-[24px] text-center !text-[#FAFAF7] shadow-2xl relative overflow-hidden min-h-[450px] flex flex-col items-center justify-center">
+                    <div className="relative z-10 space-y-10 w-full flex flex-col items-center">
                         <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">
                             Únete hoy a la revolución del cuidado
                         </h2>
                         <p className="text-xl text-green-50 font-medium">
                             No esperes a una emergencia para desear haber tenido este sistema. Tu familia merece esta tranquilidad.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <div className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-2xl">
                             <button
                                 onClick={() => navigate('/dashboard/plans')}
-                                className="bg-white text-[var(--primary-color)] px-10 py-5 rounded-[16px] font-black text-xl hover:scale-105 transition-transform flex items-center justify-center gap-3 shadow-xl"
+                                className="btn btn-primary text-lg md:text-xl py-6 px-10 rounded-[20px] uppercase tracking-widest font-black w-full flex items-center justify-center gap-3 hover:scale-105 transition-transform"
                             >
-                                Activar <span className="ml-1 mr-1">B<span style={{ color: '#2FAE8F' }}>C</span> <span className="text-[var(--secondary-color)]">PULSO</span></span> ahora
+                                Activar <span className="ml-1 mr-1">B<span style={{ color: '#FAFAF7' }}>C</span> <span className="text-[var(--primary-color)]">PULSO</span></span> ahora
                                 <ArrowRight size={24} />
                             </button>
                             <button
                                 onClick={() => navigate('/login')}
-                                className="bg-transparent border-2 border-white/30 !text-[#FAFAF7] px-10 py-5 rounded-[16px] font-bold text-xl hover:bg-white/10 transition-colors"
+                                className="btn btn-outline text-lg md:text-xl py-6 px-10 rounded-[20px] uppercase tracking-widest font-black w-full border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm !text-[#FAFAF7]"
                             >
                                 Ya soy usuario
                             </button>
