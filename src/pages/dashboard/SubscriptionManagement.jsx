@@ -11,17 +11,12 @@ const SubscriptionManagement = () => {
     const planName = isPremium ? 'Plan Premium PULSO' : 'Plan Básico';
     const renewalDate = "15 Feb, 2026"; // Mocked for now
 
-    const benefits = isPremium ? [
-        'Reportes de Salud en tiempo real (PULSO)',
-        'Notificaciones prioritarias',
-        'Cuidadores Verificados con insignia',
-        'Soporte Prioritario 24/7',
-        'Historial completo de alertas'
-    ] : [
-        'Búsqueda de cuidadores ilimitada',
-        'Gestión de citas básica',
-        'Soporte por email 24/48h',
-        'Acceso al marketplace de servicios'
+    const benefits = [
+        'El estado general de bienestar',
+        'Las rutinas diarias',
+        'La actividad del cuidador',
+        'Los registros básicos de atención',
+        'La evolución del cuidado en el tiempo'
     ];
 
     return (
@@ -84,6 +79,7 @@ const SubscriptionManagement = () => {
                         <div className="bg-blue-50 p-2 rounded-[16px] text-[var(--primary-color)]"><Shield size={20} /></div>
                         Beneficios {isPremium ? 'Actuales' : 'de PULSO'}
                     </h3>
+                    <p className="text-sm font-bold text-[#0F3C4C] mb-4">Permite supervisar:</p>
                     <ul className="space-y-4">
                         {benefits.map((benefit, idx) => (
                             <li key={idx} className="flex items-center gap-3 text-sm text-[#07212e] font-medium">
