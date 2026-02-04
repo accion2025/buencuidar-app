@@ -50,7 +50,7 @@ const SaludInfo = () => {
                         <p className="text-gray-600 mb-6 leading-relaxed">
                             BC Pulso es una herramienta de gestión, seguimiento y comunicación que conecta a familias, cuidadores y adultos mayores en un solo espacio. Permite supervisar:
                         </p>
-                        <ul className="space-y-3">
+                        <ul className="space-y-5">
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> El estado general de bienestar</li>
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> Las rutinas diarias</li>
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-blue-500" /> La actividad del cuidador</li>
@@ -84,7 +84,7 @@ const SaludInfo = () => {
                         <p className="text-gray-600 mb-6 leading-relaxed">
                             Cada acción queda documentada:
                         </p>
-                        <ul className="space-y-3 mb-6">
+                        <ul className="space-y-5 mb-6">
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Rutinas realizadas</li>
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Observaciones</li>
                             <li className="flex items-center gap-2 text-sm font-bold text-gray-800"><CheckCircle size={16} className="text-green-500" /> Cambios de estado</li>
