@@ -35,6 +35,7 @@ import CaregiverPayments from './pages/caregiver/CaregiverPayments';
 import CaregiverProfile from './pages/caregiver/CaregiverProfile';
 import CaregiverAnalytics from './pages/caregiver/CaregiverAnalytics'; // New Import
 import CaregiverSettings from './pages/caregiver/CaregiverSettings';
+import CaregiverPlans from './pages/caregiver/CaregiverPlans';
 
 // Admin Imports
 import AdminRoute from './components/AdminRoute';
@@ -91,6 +92,7 @@ function App() {
                 <Route path="shifts" element={<MyShifts />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="payments" element={<CaregiverPayments />} />
+                <Route path="plans" element={<CaregiverPlans />} />
                 <Route path="analytics" element={<CaregiverAnalytics />} />
                 <Route path="profile" element={<CaregiverProfile />} />
                 <Route path="settings" element={<CaregiverSettings />} />

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import { CheckCircle, Crown, Shield, CreditCard, Download } from 'lucide-react';
 
 const CaregiverPayments = () => {
@@ -27,9 +27,12 @@ const CaregiverPayments = () => {
                     <div className="text-center md:text-right bg-white/5 p-8 rounded-[16px] backdrop-blur-md border border-white/10">
                         <p className="text-[10px] font-black uppercase tracking-widest !text-[#FAFAF7]/50 mb-1">Próxima renovación</p>
                         <p className="text-2xl font-brand font-bold mb-6 !text-[#FAFAF7]">15 Feb, 2026</p>
-                        <button className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-3 rounded-[16px] font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all shadow-xl shadow-green-900/40 border-none w-full">
+                        <Link
+                            to="/caregiver/plans"
+                            className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-3 rounded-[16px] font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all shadow-xl shadow-green-900/40 border-none w-full inline-block text-center"
+                        >
                             Administrar
-                        </button>
+                        </Link>
                     </div>
                 </div>
                 {/* Background Decoration */}

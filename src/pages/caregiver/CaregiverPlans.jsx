@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Check, CreditCard, Shield, Star, Zap, Info, Lightbulb } from 'lucide-react';
+import { Check, Shield, Crown, Zap, Info, Lightbulb } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
@@ -11,7 +10,7 @@ const PlanCard = ({ title, price, period, monthlyPrice, features, savings, recom
         }`}>
         {recommended && (
             <div className={`absolute -top-5 left-1/2 transform -translate-x-1/2 ${color.badge} !text-[#FAFAF7] px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap`}>
-                MEJOR VALOR
+                MÁXIMA VISIBILIDAD
             </div>
         )}
 
@@ -56,41 +55,25 @@ const PlanCard = ({ title, price, period, monthlyPrice, features, savings, recom
     </div>
 );
 
-const SubscriptionPlans = () => {
+const CaregiverPlans = () => {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
     const commonFeatures = [
-        "BC Pulso completo",
-        "Bitácora de cuidado",
-        "Alertas y notificaciones",
-        "Mensajería con cuidadores",
-        "Reportes de bienestar",
-        "Historial",
-        "Soporte al usuario",
-        "Acceso a cuidadores verificados"
+        "Perfil Destacado en búsquedas",
+        "Insignia de Verificado PRO",
+        "Postulaciones ilimitadas",
+        "Estadísticas de perfil",
+        "Alertas de empleo inmediatas",
+        "Soporte preferencial",
+        "Acceso a capacitaciones",
+        "Herramientas de gestión"
     ];
 
     const handleSubscribe = async (planType) => {
         setLoading(true);
-        try {
-            // Demo insertion
-            const { error } = await supabase.from('subscriptions').insert({
-                user_id: user.id,
-                plan_type: planType,
-                status: 'active',
-                current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
-            });
-
-            if (error) throw error;
-            alert("¡Suscripción de prueba activada!");
-            window.location.reload();
-        } catch (err) {
-            console.error(err);
-            alert("Error al procesar la suscripción");
-        } finally {
-            setLoading(false);
-        }
+        // Logic for pilot phase or future implementation
+        setLoading(false);
     };
 
     return (
@@ -98,18 +81,18 @@ const SubscriptionPlans = () => {
             {/* Header Block */}
             <div className="max-w-4xl w-full text-center space-y-4 mb-16">
                 <h1 className="text-5xl md:text-6xl font-brand font-bold tracking-tighter leading-tight">
-                    Planes <span className="text-[#0F3C4C]">B</span><span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span> para Familias
+                    Planes <span className="text-[#0F3C4C]">B</span><span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span> para Profesionales
                 </h1>
-                <p className="text-xl md:text-2xl text-slate-500 font-medium font-secondary italic">Mismo Servicio, Más Ahorro</p>
+                <p className="text-xl md:text-2xl text-slate-500 font-medium font-secondary italic">Destaca tu Perfil, Encuentra más Clientes</p>
             </div>
 
             {/* Common Benefits Summary */}
             <div className="max-w-4xl w-full bg-white rounded-[24px] pt-8 md:pt-12 pb-8 md:pb-12 pl-12 md:pl-20 pr-8 md:pr-12 mb-32 shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="bg-emerald-50 p-3 rounded-[16px] text-emerald-600">
-                        <Check size={24} />
+                        <Crown size={24} />
                     </div>
-                    <h2 className="text-2xl font-brand font-bold text-slate-800">Beneficios de premium PULSO:</h2>
+                    <h2 className="text-2xl font-brand font-bold text-slate-800">Todos los planes PRO incluyen:</h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2.5 gap-x-12">
@@ -124,7 +107,7 @@ const SubscriptionPlans = () => {
                 <div className="mt-10 pt-8 border-t border-slate-50 flex items-start gap-4 text-amber-600 bg-amber-50/50 p-6 rounded-[20px]">
                     <Lightbulb className="flex-shrink-0" size={24} />
                     <p className="font-bold text-sm leading-snug">
-                        La única diferencia es el descuento por permanencia. Todos los planes acceden a la misma funcionalidad premium completa.
+                        El estatus PRO aumenta tus probabilidades de contratación en un 40%. La única diferencia entre planes es el ahorro por permanencia.
                     </p>
                 </div>
             </div>
@@ -135,10 +118,10 @@ const SubscriptionPlans = () => {
             {/* Grid Block */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl w-full mb-32 items-stretch">
                 <PlanCard
-                    title="PLAN 1 MES"
-                    price="15"
+                    title="PROFESIONAL 1 MES"
+                    price="199"
                     period="mes"
-                    features={["Acceso completo", "Sin compromiso", "Ideal para comenzar"]}
+                    features={["Acceso PRO mensual", "Sin permanencia", "Ideal para probar"]}
                     color={{
                         border: 'border-emerald-100',
                         bg: 'bg-emerald-50',
@@ -151,12 +134,12 @@ const SubscriptionPlans = () => {
                 />
 
                 <PlanCard
-                    title="PLAN 3 MESES"
-                    price="39"
+                    title="PROFESIONAL 3 MESES"
+                    price="499"
                     period="3 meses"
-                    monthlyPrice="13"
-                    savings="6"
-                    features={["Mismo servicio completo", "Ahorro del 13%", "Más tranquilidad, menos costo"]}
+                    monthlyPrice="166"
+                    savings="98"
+                    features={["Visibilidad continua", "Ahorro del 16%", "Perfil verificado PRO"]}
                     color={{
                         border: 'border-blue-200',
                         bg: 'bg-blue-50',
@@ -169,13 +152,13 @@ const SubscriptionPlans = () => {
                 />
 
                 <PlanCard
-                    title="PLAN 6 MESES"
-                    price="69"
+                    title="PROFESIONAL 6 MESES"
+                    price="899"
                     period="6 meses"
-                    monthlyPrice="11.50"
-                    savings="21"
+                    monthlyPrice="149"
+                    savings="295"
                     recommended={true}
-                    features={["Mismo servicio completo", "Ahorro máximo", "Mejor valor para tu familia"]}
+                    features={["Máxima prioridad", "Ahorro del 25%", "Posicionamiento Top 1"]}
                     color={{
                         border: 'border-indigo-600',
                         bg: 'bg-indigo-50',
@@ -209,4 +192,4 @@ const SubscriptionPlans = () => {
     );
 };
 
-export default SubscriptionPlans;
+export default CaregiverPlans;
