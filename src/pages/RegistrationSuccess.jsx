@@ -44,39 +44,11 @@ const RegistrationSuccess = () => {
 
                         <p className="text-xl text-[var(--text-light)] mb-14 max-w-2xl mx-auto font-secondary leading-relaxed">
                             {requiresConfirmation
-                                ? `Tu registro se ha iniciado correctamente. Para activar tu cuenta${role === 'caregiver' ? ' y obtener tu código' : ''}, por favor verifica tu correo.`
+                                ? `Tu registro se ha iniciado correctamente. Por favor verifica tu correo para activar tu cuenta.`
                                 : role === 'caregiver'
                                     ? "Tu registro ha sido exitoso. Ahora eres parte de la red de cuidadores más profesional y tecnológica."
                                     : "Tu registro ha sido exitoso. Bienvenido a la comunidad de familias que buscan el mejor cuidado."}
                         </p>
-
-                        {caregiverCode && (
-                            <div className="bg-[var(--primary-color)] rounded-[16px] p-12 mb-14 shadow-2xl relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px] opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                                <p className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-                                    {requiresConfirmation ? 'Código Pendiente de Verificación' : 'Tu Código de Identificación Único'}
-                                </p>
-                                <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-                                    <span className={`text-5xl md:text-8xl font-brand font-bold tracking-tighter bg-white/5 px-10 py-6 rounded-[24px] border border-white/10 ${requiresConfirmation ? 'text-gray-500 blur-md' : 'text-white shadow-[0_0_30px_rgba(255,255,255,0.05)]'}`}>
-                                        {caregiverCode}
-                                    </span>
-                                    {!requiresConfirmation && caregiverCode !== 'PENDIENTE' && (
-                                        <button
-                                            onClick={copyToClipboard}
-                                            className="bg-white/10 hover:bg-white/20 !text-[#FAFAF7] p-5 rounded-[16px] transition-all active:scale-90 border border-white/10 backdrop-blur-sm"
-                                            title="Copiar código"
-                                        >
-                                            <Copy size={28} />
-                                        </button>
-                                    )}
-                                </div>
-                                <p className="!text-[#FAFAF7]/40 text-xs mt-8 italic font-secondary">
-                                    {requiresConfirmation
-                                        ? "* El código será visible una vez que confirmes el enlace enviado a tu correo."
-                                        : "* Comparte este código con las familias para que puedan contratar tus servicios directamente."}
-                                </p>
-                            </div>
-                        )}
 
                         <div className="flex flex-col gap-8 mb-14 text-left">
                             <div className="bg-[var(--base-bg)] p-10 rounded-[16px] border border-gray-100 flex flex-col md:flex-row items-center gap-8 transform hover:scale-[1.01] transition-all">

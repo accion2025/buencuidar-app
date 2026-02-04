@@ -148,7 +148,7 @@ const DashboardLayout = () => {
                                 <p className="text-sm font-semibold text-gray-800">{profile?.full_name || 'Usuario'}</p>
                                 <p className="text-xs text-gray-500">
                                     {profile?.role === 'caregiver'
-                                        ? `CUIDADOR PRO • ${profile.caregiver_code || '---'}`
+                                        ? `CUIDADOR PRO`
                                         : profile?.role === 'admin'
                                             ? 'Administrador del Sistema'
                                             : 'Familia / Usuario'}

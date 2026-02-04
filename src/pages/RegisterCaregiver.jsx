@@ -64,9 +64,7 @@ const RegisterCaregiver = () => {
         }));
     };
 
-    const generateCaregiverCode = () => {
-        return 'CUID-' + Math.floor(100000 + Math.random() * 900000);
-    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -93,15 +91,14 @@ const RegisterCaregiver = () => {
 
                 if (updateError) throw updateError;
 
-                // Manually upsert details with generated code
+                // Manually upsert details
                 const { error: detailsError } = await supabase
                     .from('caregiver_details')
                     .upsert({
                         id: user.id,
                         bio: formData.bio,
                         specialization: formData.specialization,
-                        experience: formData.experience,
-                        caregiver_code: finalCode
+                        experience: formData.experience
                     }, { onConflict: 'id' });
 
                 if (detailsError) throw detailsError;
@@ -127,8 +124,6 @@ const RegisterCaregiver = () => {
                 authData = data;
 
                 // 3. OPTIONAL FAILSAFE: Manual insert (Client-side)
-                // Now that we have a robust Server-Side Trigger, this is just a backup.
-                // If it fails (e.g. due to RLS/Permissions), we ignore it and trust the server.
                 try {
                     const { error: profileError } = await supabase
                         .from('profiles')
@@ -150,8 +145,7 @@ const RegisterCaregiver = () => {
                             id: data.user.id,
                             bio: formData.bio,
                             specialization: formData.specialization,
-                            experience: formData.experience,
-                            caregiver_code: finalCode
+                            experience: formData.experience
                         }, { onConflict: 'id' });
 
                     if (newDetailsError) {
@@ -168,13 +162,10 @@ const RegisterCaregiver = () => {
                 }
             }
 
-
-
-            // Navigate to success immediately with the code we just generated
+            // Navigate to success immediately
             navigate('/registration-success', {
                 state: {
                     fullName: formData.fullName,
-                    caregiverCode: finalCode,
                     email: formData.email,
                     requiresConfirmation: !authData?.session,
                     role: 'caregiver'

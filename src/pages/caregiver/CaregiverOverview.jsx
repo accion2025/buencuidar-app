@@ -483,10 +483,6 @@ const CaregiverOverview = () => {
                                     </h1>
                                     <div className="flex flex-wrap items-center gap-4 mt-4">
                                         <p className="!text-[#FAFAF7]/80 text-lg font-secondary text-left">Aquí tienes el resumen de tu actividad profesional.</p>
-                                        <div className="bg-white/10 !text-[#FAFAF7] px-4 py-2 rounded-[16px] text-xs font-black border border-white/10 flex items-center gap-3 backdrop-blur-md">
-                                            <span className="opacity-80 uppercase tracking-tighter text-[10px]">MI CÓDIGO:</span>
-                                            <span className="font-mono text-base tracking-widest !text-[#FAFAF7]">{profile?.caregiver_code || '---'}</span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

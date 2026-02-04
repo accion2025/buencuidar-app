@@ -175,9 +175,6 @@ const CaregiverProfile = () => {
 
             if (profileError) throw profileError;
 
-            // Failsafe: Siempre enviamos un código de cuidador válido para evitar errores de restricción
-            const caregiverCode = profile.caregiver_code || 'CUID-' + Math.floor(100000 + Math.random() * 900000);
-
             const caregiverUpdates = {
                 id: user.id, // Necesario para upsert
                 specialization: formData.specialization,
@@ -186,8 +183,7 @@ const CaregiverProfile = () => {
                 location: formData.location,
                 hourly_rate: formData.hourly_rate,
                 certifications: formData.certifications,
-                skills: formData.skills,
-                caregiver_code: caregiverCode
+                skills: formData.skills
             };
 
             const { error: detailsError } = await supabase
@@ -443,12 +439,7 @@ const CaregiverProfile = () => {
                         </div>
 
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 mb-10">
-                            <div className="flex items-center gap-3 bg-black/20 px-6 py-4 rounded-[16px] border border-white/5">
-                                <div className="text-left">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-color)] leading-none mb-2">Código Cuidador</p>
-                                    <p className="text-2xl font-brand font-bold !text-[#FAFAF7] uppercase">{profile.caregiver_code || '---'}</p>
-                                </div>
-                            </div>
+
 
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-white/10 rounded-[16px] border border-white/10">
