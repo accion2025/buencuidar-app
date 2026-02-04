@@ -376,6 +376,8 @@ const CaregiverProfile = () => {
         setSelectedImage(null);
     };
 
+    const isPro = profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
+
     return (
         <div className="space-y-12 animate-fade-in pb-20">
             <VerificationModal
@@ -400,9 +402,9 @@ const CaregiverProfile = () => {
                 />
             )}
             {/* Premium Header Profile */}
-            <div className="bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[150px] opacity-20"></div>
-                <div className="absolute bottom-0 left-0 w-80 h-80 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[120px] opacity-10"></div>
+            <div className={`bg-gradient-to-br ${isPro ? 'from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F]' : 'from-slate-700 to-slate-900'} rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12 transition-all duration-700`}>
+                <div className={`absolute top-0 right-0 w-[500px] h-[500px] ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-400'} rounded-full -translate-y-1/2 translate-x-1/2 blur-[150px] opacity-20 transition-colors duration-700`}></div>
+                <div className={`absolute bottom-0 left-0 w-80 h-80 ${isPro ? 'bg-[var(--accent-color)]' : 'bg-slate-500'} rounded-full translate-y-1/2 -translate-x-1/2 blur-[120px] opacity-10 transition-colors duration-700`}></div>
 
                 <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-[auto_1fr_auto] items-center lg:items-end gap-10">
                     {/* Avatar Display */}
@@ -424,17 +426,17 @@ const CaregiverProfile = () => {
                                 <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
                             </label>
                         </div>
-                        <div className="absolute -bottom-2 -right-2 bg-[var(--secondary-color)] w-10 h-10 rounded-[16px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]" title="Activo ahora">
-                            <Check size={20} strokeWidth={4} />
+                        <div className={`absolute -bottom-2 -right-2 ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-500'} w-10 h-10 rounded-[16px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]`} title={isPro ? "Verificado PRO" : "Perfil Estándar"}>
+                            {isPro ? <Check size={20} strokeWidth={4} /> : <ShieldCheck size={20} strokeWidth={2.5} />}
                         </div>
                     </div>
 
                     <div className="text-center lg:text-left flex-1 w-full lg:w-auto">
                         <div className="flex flex-col lg:flex-row lg:items-center gap-6 mb-6">
                             <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight">{profile.full_name}</h1>
-                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md text-[var(--accent-color)] px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit mx-auto lg:mx-0 border border-white/10 uppercase">
-                                <Award size={14} />
-                                <span>PERFIL PRO VERIFICADO - V2.3 (Estabilidad)</span>
+                            <div className={`flex items-center gap-2 bg-white/10 backdrop-blur-md ${isPro ? 'text-[var(--accent-color)] border-white/10' : 'text-gray-400 border-white/5'} px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit mx-auto lg:mx-0 border uppercase`}>
+                                {isPro ? <Award size={14} /> : <ShieldCheck size={14} />}
+                                <span>{isPro ? 'PERFIL BC PRO' : 'PERFIL ESTÁNDAR'}</span>
                             </div>
                         </div>
 

@@ -129,8 +129,8 @@ const Search = () => {
                     }
 
                     // 3. TIE-BREAKER: Priority to PREMIUM caregivers (Suscripción PRO)
-                    const isAPremium = a.raw?.plan_type === 'premium';
-                    const isBPremium = b.raw?.plan_type === 'premium';
+                    const isAPremium = a.raw?.plan_type === 'premium' || a.raw?.plan_type === 'professional_pro';
+                    const isBPremium = b.raw?.plan_type === 'premium' || b.raw?.plan_type === 'professional_pro';
                     if (isAPremium && !isBPremium) return -1;
                     if (!isAPremium && isBPremium) return 1;
 

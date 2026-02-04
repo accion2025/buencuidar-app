@@ -33,7 +33,7 @@ const CaregiverAnalytics = () => {
     const [payments, setPayments] = useState([]);
 
     // Protection: Only Premium users can access Analytics
-    const isPremium = profile?.plan_type === 'premium';
+    const isPremium = profile?.plan_type === 'premium' || profile?.plan_type === 'professional_pro';
 
     useEffect(() => {
         if (user && isPremium) fetchAnalytics();

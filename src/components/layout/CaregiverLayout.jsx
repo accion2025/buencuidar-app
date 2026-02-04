@@ -11,7 +11,7 @@ import {
     Settings,
     LogOut,
     Menu,
-
+    Award,
     User,
     MessageSquare,
     Lock
@@ -42,7 +42,7 @@ const CaregiverLayout = () => {
         { icon: CalendarClock, label: 'Mis Turnos', path: '/caregiver/shifts' },
         { icon: MessageSquare, label: 'Mensajes', path: '/caregiver/messages', badge: unreadCount },
         { icon: CreditCard, label: 'Mi Suscripción', path: '/caregiver/payments' },
-        { icon: PieChart, label: 'Reportes & Finanzas', path: '/caregiver/analytics' },
+        { icon: Award, label: 'BC PRO', path: '/caregiver/analytics' },
         { icon: User, label: 'Mi Perfil PRO', path: '/caregiver/profile' },
         { icon: Settings, label: 'Configuración', path: '/caregiver/settings' },
     ];
@@ -80,7 +80,7 @@ const CaregiverLayout = () => {
                 <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto pb-24">
                     {menuItems.map((item) => {
                         const isPremiumOnly = item.path === '/caregiver/analytics';
-                        const isPremiumUser = profile?.plan_type === 'premium';
+                        const isPremiumUser = profile?.plan_type === 'premium' || profile?.plan_type === 'professional_pro';
                         const isBlocked = isPremiumOnly && !isPremiumUser;
 
                         return (

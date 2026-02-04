@@ -107,6 +107,8 @@ const CaregiverOverview = () => {
     const [loadingRequests, setLoadingRequests] = useState(true);
     const [isAvailable, setIsAvailable] = useState(true);
 
+    const isPro = profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
+
     useEffect(() => {
         if (user && !profileLoading) {
             const loadData = async () => {
@@ -301,7 +303,7 @@ const CaregiverOverview = () => {
             const newStats = [];
 
             // Only add Financial/Hours stats if user is PREMIUM (Reports & Finance package)
-            if (profile?.plan_type === 'premium') {
+            if (profile?.plan_type === 'premium' || profile?.plan_type === 'professional_pro') {
                 newStats.push(
                     { label: 'Ganancias (Mes)', value: `$${monthlyEarnings}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100' },
                     { label: 'Horas Trabajadas', value: `${Math.round(monthlyHours)}h`, icon: Clock, color: 'text-blue-600', bg: 'bg-blue-100' }
@@ -459,8 +461,8 @@ const CaregiverOverview = () => {
         <>
             <div className="space-y-10 animate-fade-in pb-12">
                 {/* Header */}
-                <div className="bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12">
-                    <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[120px] opacity-20"></div>
+                <div className={`bg-gradient-to-br ${isPro ? 'from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F]' : 'from-slate-700 to-slate-900'} rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12 transition-all duration-700`}>
+                    <div className={`absolute top-0 right-0 w-80 h-80 ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-400'} rounded-full -translate-y-1/2 translate-x-1/2 blur-[120px] opacity-20 transition-colors duration-700`}></div>
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[100px] opacity-10"></div>
 
                     <div className="relative z-10">
@@ -475,8 +477,8 @@ const CaregiverOverview = () => {
                                     />
                                 </div>
                                 <div>
-                                    <span className="bg-white/10 text-[var(--accent-color)] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block border border-white/10 backdrop-blur-md">
-                                        Panel del Cuidador
+                                    <span className={`bg-white/10 ${isPro ? 'text-[var(--accent-color)] border-white/20' : 'text-slate-400 border-white/5'} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block border backdrop-blur-md transition-colors`}>
+                                        {isPro ? 'PANEL BC PRO' : 'PANEL DEL CUIDADOR'}
                                     </span>
                                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-brand font-bold tracking-tight mb-3 text-left !text-[#FAFAF7] break-words drop-shadow-sm">
                                         Hola, <span className="!text-[#FAFAF7] font-black">{firstName}</span> 👋
@@ -696,6 +698,7 @@ const CaregiverOverview = () => {
                             <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 p-0 overflow-hidden divide-y divide-gray-50">
                                 {recentPayments.length > 0 ? (
                                     recentPayments.map((item, idx) => {
+                                        const isPremiumUser = profile?.plan_type === 'premium' || profile?.plan_type === 'professional_pro';
                                         const isReview = item.type === 'review';
                                         const Icon = isReview ? Star : DollarSign;
                                         const bgColor = isReview ? "bg-orange-50 text-orange-500" : (item.data.payment_status === 'paid' ? "bg-emerald-50 text-[var(--secondary-color)]" : "bg-blue-50 text-blue-600");

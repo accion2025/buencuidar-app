@@ -49,6 +49,19 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
     if (!isOpen || !caregiver) return null;
 
+    // Normalizar detalles (Supabase puede devolver un objeto o un array de un solo elemento en joins)
+    const details = Array.isArray(caregiver.caregiver_details)
+        ? caregiver.caregiver_details[0]
+        : caregiver.caregiver_details;
+
+    const specialization = details?.specialization || caregiver.specialization || "Cuidado General";
+    const experience = details?.experience || caregiver.experience || "1";
+    const location = details?.location || caregiver.location || "Ubicación no disponible";
+    const bio = caregiver.bio || details?.bio || "Este cuidador se especializa en brindar atención compasiva y profesional, enfocándose en el bienestar integral del paciente.";
+    const skills = details?.skills || caregiver.skills || ['Cuidados Básicos'];
+    const certifications = details?.certifications || caregiver.certifications || [];
+    const hourlyRate = details?.hourly_rate || caregiver.hourly_rate || 150;
+
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center pt-5 px-6 pb-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative flex flex-col border border-white/20">
@@ -85,10 +98,12 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                             <div className="text-center mt-4 mb-2">
                                 <h2 className="text-3xl font-black text-gray-800 tracking-tight">{caregiver.full_name}</h2>
                                 <div className="flex items-center justify-center gap-2 mt-1">
-                                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 !text-[#FAFAF7] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20">
-                                        <Award size={12} strokeWidth={3} />
-                                        <span>Cuidador PRO</span>
-                                    </div>
+                                    {(caregiver.plan_type === 'professional_pro' || caregiver.plan_type === 'premium') && (
+                                        <div className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 !text-[#FAFAF7] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20">
+                                            <Award size={12} strokeWidth={3} />
+                                            <span>BC PRO</span>
+                                        </div>
+                                    )}
                                     <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border ${realStats.count > 0 ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
                                         <Star size={12} className={realStats.count > 0 ? 'fill-current' : ''} />
                                         <span>{realStats.rating} ({realStats.count})</span>
@@ -96,32 +111,32 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 </div>
                             </div>
 
-                            <p className="text-center text-cyan-700 font-bold mb-6 font-mono text-sm opacity-80">
-                                {caregiver.caregiver_details?.specialization || caregiver.specialization || "Cuidado General"}
+                            <p className="text-center text-cyan-700 font-bold mb-6 font-mono text-sm opacity-80 uppercase tracking-widest">
+                                {specialization}
                             </p>
 
                             {/* Key Stats Row */}
                             <div className="flex justify-center gap-4 w-full mb-8">
                                 <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="mb-1 text-blue-500 mx-auto w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <Shield size={16} />
+                                    <div className="mb-1 text-emerald-500 mx-auto w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <DollarSign size={16} />
                                     </div>
-                                    <p className="text-xs uppercase font-black text-gray-400 tracking-wider">Status</p>
-                                    <p className="font-bold text-gray-800 text-xs">Verificado</p>
+                                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-wider">Tarifa</p>
+                                    <p className="font-bold text-gray-800 text-xs">${hourlyRate}/hr</p>
                                 </div>
                                 <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
                                     <div className="mb-1 text-indigo-500 mx-auto w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <Clock size={16} />
                                     </div>
-                                    <p className="text-xs uppercase font-black text-gray-400 tracking-wider">Exp.</p>
-                                    <p className="font-bold text-gray-800 text-xs">{caregiver.caregiver_details?.experience || caregiver.experience || '1'} Años</p>
+                                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-wider">Exp.</p>
+                                    <p className="font-bold text-gray-800 text-xs">{experience} Años</p>
                                 </div>
                                 <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
                                     <div className="mb-1 text-rose-500 mx-auto w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <MapPin size={16} />
                                     </div>
-                                    <p className="text-xs uppercase font-black text-gray-400 tracking-wider">Zona</p>
-                                    <p className="font-bold text-gray-800 text-xs truncate max-w-[80px] mx-auto">{caregiver.caregiver_details?.location || caregiver.location || 'CDMX'}</p>
+                                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-wider">Zona</p>
+                                    <p className="font-bold text-gray-800 text-xs truncate max-w-[80px] mx-auto">{location}</p>
                                 </div>
                             </div>
                         </div>
@@ -137,7 +152,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 Sobre Mí
                             </h3>
                             <p className="text-gray-600 leading-relaxed text-sm bg-gray-50/50 p-5 rounded-[16px] border border-gray-100">
-                                {caregiver.bio || caregiver.caregiver_details?.bio || "Este cuidador se especializa en brindar atención compasiva y profesional, enfocándose en el bienestar integral del paciente."}
+                                {bio}
                             </p>
                         </div>
 
@@ -150,7 +165,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                     Habilidades
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {(caregiver.skills || caregiver.caregiver_details?.skills || ['Cuidados Básicos']).map((skill, idx) => (
+                                    {skills.map((skill, idx) => (
                                         <span key={idx} className="bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-[16px] border border-emerald-100/50">
                                             {skill}
                                         </span>
@@ -165,7 +180,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                     Certificaciones
                                 </h3>
                                 <div className="space-y-2">
-                                    {(caregiver.certifications || caregiver.caregiver_details?.certifications || []).slice(0, 3).map((cert, idx) => (
+                                    {certifications.slice(0, 3).map((cert, idx) => (
                                         <div key={idx} className="flex items-start gap-3 p-2.5 rounded-[16px] border border-gray-100 hover:bg-gray-50 transition-colors">
                                             <div className="mt-0.5 text-blue-400 bg-blue-50 p-1 rounded-md">
                                                 <Award size={12} />
@@ -176,7 +191,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                             </div>
                                         </div>
                                     ))}
-                                    {(!caregiver.certifications && !caregiver.caregiver_details?.certifications) && (
+                                    {(certifications.length === 0) && (
                                         <p className="text-xs text-gray-400 italic">Sin certificaciones registradas</p>
                                     )}
                                 </div>
