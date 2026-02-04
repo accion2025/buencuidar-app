@@ -12,24 +12,24 @@ import {
     Menu,
     Bell,
     Activity,
-    Shield
+    Shield,
+    Lock
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import InstallPrompt from '../InstallPrompt';
 
-const SidebarItem = ({ icon: Icon, label, path, active, onClick, badge }) => {
-    const isSalud = path === '/dashboard/pulso';
+const SidebarItem = ({ icon: Icon, label, path, active, onClick, badge, locked }) => {
     return (
         <div
             onClick={onClick}
             className={`flex items-center gap-3 px-4 py-3 rounded-[16px] cursor-pointer transition-all duration-300 relative ${active
                 ? 'bg-[var(--primary-light)] !text-[#FAFAF7] shadow-lg translate-x-1'
                 : 'text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-1'
-                } ${isSalud ? 'border-l-4 border-green-400 font-black tracking-widest !text-[#FAFAF7] bg-white/5' : ''}`}
+                } ${locked ? 'opacity-50 grayscale' : ''}`}
         >
-            <Icon size={isSalud ? 24 : 20} className={isSalud ? 'text-green-400 animate-pulse' : ''} />
-            <span className={isSalud ? 'text-lg' : 'font-medium'}>{label}</span>
-            {badge > 0 && (
+            <Icon size={20} />
+            <span className="font-medium flex-1">{label}</span>
+            {badge > 0 && !locked && (
                 <span className="absolute right-3 bg-red-500 !text-[#FAFAF7] text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-bounce">
                     {badge}
                 </span>
@@ -45,14 +45,23 @@ const DashboardLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { unreadCount } = useMessage(); // Use global context
 
+    const isSubscribed = profile?.subscription_status === 'active';
+
     const menuItems = [
         {
             icon: LayoutDashboard,
             label: 'Resumen',
             path: profile?.role === 'caregiver' ? '/caregiver' : '/dashboard'
         },
-        // 'PULSO' y 'Calendario' comunes, o ajustar según se requiera
-        { icon: Activity, label: <span>B<span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span></span>, path: '/dashboard/pulso' },
+        {
+            icon: Activity,
+            label: <span className="font-brand font-bold">
+                <span className="!text-[#FAFAF7]">B</span>
+                <span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span>
+            </span>,
+            path: '/dashboard/pulso',
+            locked: profile?.role === 'family' && !isSubscribed
+        },
         { icon: Calendar, label: 'Calendario', path: '/dashboard/calendar' },
         { icon: MessageSquare, label: 'Mensajes', path: '/dashboard/messages', badge: unreadCount },
         {
@@ -62,9 +71,7 @@ const DashboardLayout = () => {
         },
         { icon: Settings, label: 'Configuración', path: '/dashboard/settings' },
         ...(profile?.role === 'admin' ? [{
-            icon: Shield, // Ensure Shield is imported or use Settings if Shield not available (checked imports: Shield NOT in imports, need to add it or use Lock/Settings) 
-            // Checking imports in DashboardLayout... Imports are: LayoutDashboard, Calendar, MessageSquare, User, Settings, LogOut, Menu, X, Bell, Activity.
-            // Shield is NOT imported. I will add it to imports first.
+            icon: Shield,
             label: 'Panel Admin',
             path: '/admin'
         }] : [])
@@ -110,6 +117,7 @@ const DashboardLayout = () => {
                             active={location.pathname === item.path}
                             onClick={() => handleNavigation(item.path)}
                             badge={item.badge}
+                            locked={item.locked}
                         />
                     ))}
                 </nav>
