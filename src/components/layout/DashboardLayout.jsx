@@ -13,7 +13,8 @@ import {
     Bell,
     Activity,
     Shield,
-    Lock
+    Lock,
+    CreditCard
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import InstallPrompt from '../InstallPrompt';
@@ -64,6 +65,7 @@ const DashboardLayout = () => {
         },
         { icon: Calendar, label: 'Calendario', path: '/dashboard/calendar' },
         { icon: MessageSquare, label: 'Mensajes', path: '/dashboard/messages', badge: unreadCount },
+        { icon: CreditCard, label: 'Mi Suscripción', path: '/dashboard/subscription' },
         {
             icon: User,
             label: profile?.role === 'caregiver' ? 'Mi Perfil PRO' : 'Mi Perfil',

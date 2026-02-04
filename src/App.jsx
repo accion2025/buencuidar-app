@@ -25,6 +25,7 @@ import Settings from './pages/dashboard/Settings';
 import MonitoringCenter from './pages/dashboard/MonitoringCenter';
 import CaregiverList from './pages/dashboard/CaregiverList';
 import SubscriptionPlans from './pages/dashboard/SubscriptionPlans';
+import SubscriptionManagement from './pages/dashboard/SubscriptionManagement';
 
 import CaregiverLayout from './components/layout/CaregiverLayout';
 import CaregiverOverview from './pages/caregiver/CaregiverOverview';
@@ -78,6 +79,7 @@ function App() {
                 <Route path="messages" element={<Messages />} />
                 <Route path="caregivers" element={<CaregiverList />} />
                 <Route path="plans" element={<SubscriptionPlans />} />
+                <Route path="subscription" element={<SubscriptionManagement />} />
                 <Route path="profile" element={<ClientProfile />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
