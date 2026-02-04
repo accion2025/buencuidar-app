@@ -30,9 +30,9 @@ const PlanCard = ({ title, price, period, monthlyPrice, features, savings, recom
 
         <div className="flex-grow space-y-4 mb-8">
             {features.map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-3 text-gray-600">
-                    <Check size={18} className={`${color.text} flex-shrink-0 mt-0.5`} />
-                    <span className="text-sm font-medium leading-relaxed">{feature}</span>
+                <div key={idx} className="flex items-center justify-center gap-2 text-gray-600 text-center">
+                    <Check size={16} className={`${color.text} flex-shrink-0`} />
+                    <span className="text-sm font-medium leading-tight">{feature}</span>
                 </div>
             ))}
         </div>
@@ -104,7 +104,7 @@ const SubscriptionPlans = () => {
             </div>
 
             {/* Common Benefits Summary */}
-            <div className="max-w-4xl w-full bg-white rounded-[24px] p-8 md:p-12 mb-32 shadow-xl shadow-slate-200/50 border border-slate-100">
+            <div className="max-w-4xl w-full bg-white rounded-[24px] pt-8 md:pt-12 pb-8 md:pb-12 pl-12 md:pl-20 pr-8 md:pr-12 mb-32 shadow-xl shadow-slate-200/50 border border-slate-100">
                 <div className="flex items-center gap-3 mb-8">
                     <div className="bg-emerald-50 p-3 rounded-[16px] text-emerald-600">
                         <Check size={24} />
@@ -190,13 +190,13 @@ const SubscriptionPlans = () => {
 
             {/* Footer Trust */}
             <div className="max-w-4xl w-full pb-20">
-                <div className="bg-[#0F3C4C] rounded-[24px] p-8 md:p-10 flex flex-col md:flex-row items-center justify-center gap-8 shadow-2xl relative overflow-hidden">
+                <div className="bg-[#0F3C4C] rounded-[24px] pt-8 md:pt-10 pb-8 md:pb-10 pl-12 md:pl-20 pr-8 md:pr-10 flex flex-col md:flex-row items-center justify-center gap-8 shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)] rounded-full -mr-32 -mt-32 opacity-10"></div>
                     <div className="bg-white/10 p-5 rounded-[20px] text-[var(--secondary-color)] z-10 flex items-center justify-center">
                         <Shield size={32} />
                     </div>
                     <div className="flex-1 text-center md:text-left z-10">
-                        <h3 className="font-brand font-bold text-2xl text-white mb-2">Garantía BuenCuidar</h3>
+                        <h3 className="font-brand font-bold text-2xl !text-white mb-2">Garantía BuenCuidar</h3>
                         <p className="text-white/60 font-medium">Pagos procesados de forma segura con encriptación de nivel bancario a través de Stripe.</p>
                     </div>
                     <div className="flex items-center gap-6 z-10 opacity-50 grayscale hover:grayscale-0 transition-all">
