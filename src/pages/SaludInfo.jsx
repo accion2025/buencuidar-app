@@ -174,7 +174,7 @@ const SaludInfo = () => {
             </section>
 
             {/* CTA FINAL */}
-            <section className="py-24 !px-[15px] md:!px-[60px] flex flex-col items-center text-center w-full bg-white border-t border-gray-100">
+            <section className="py-24 !px-[15px] md:!px-[60px] flex flex-col items-center justify-center text-center w-full bg-white border-t border-gray-100 min-h-[60vh]">
                 <div className="max-w-4xl w-full space-y-10 flex flex-col items-center">
                     <h2 className="text-4xl md:text-5xl font-brand font-bold tracking-tighter uppercase !text-[#0F3C4C]">
                         Únete hoy a la revolución del cuidado
