@@ -20,7 +20,7 @@ const SaludInfo = () => {
                         </div>
                         <span className="text-xs font-black text-green-300 uppercase tracking-[0.2em]">Tu espacio de seguimiento del cuidado y la tranquilidad familiar</span>
                     </div>
-                    <h1 className="text-[20px] md:text-[33px] font-brand font-bold leading-tight tracking-tighter !text-[#FAFAF7] drop-shadow-sm">
+                    <h1 className="!text-[20px] md:!text-[33px] font-brand font-bold leading-tight tracking-tighter !text-[#FAFAF7] drop-shadow-sm">
                         B<span className="text-[var(--secondary-color)]">C PULSO</span> es el sistema central de monitoreo <br />
                         y acompañamiento de BuenCuidar.
                     </h1>
