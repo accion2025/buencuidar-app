@@ -1,45 +1,57 @@
 
 import React, { useState } from 'react';
-import { Check, CreditCard, Shield, Star, Zap } from 'lucide-react';
+import { Check, CreditCard, Shield, Star, Zap, Info, Lightbulb } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
-const PlanCard = ({ title, price, features, recommended, onSelect, loading }) => (
-    <div className={`relative bg-white rounded-[16px] p-8 transition-all duration-500 flex flex-col ${recommended
-        ? 'border-2 border-blue-600 shadow-2xl scale-105 z-10'
+const PlanCard = ({ title, price, period, monthlyPrice, features, savings, recommended, color, onSelect, loading }) => (
+    <div className={`relative bg-white rounded-[24px] p-8 transition-all duration-500 flex flex-col h-full ${recommended
+        ? `border-2 ${color.border} shadow-2xl scale-105 z-10`
         : 'border border-gray-100 shadow-sm hover:shadow-xl'
         }`}>
         {recommended && (
-            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
-                MÁS POPULAR
+            <div className={`absolute -top-5 left-1/2 transform -translate-x-1/2 ${color.badge} !text-[#FAFAF7] px-6 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap`}>
+                MEJOR VALOR
             </div>
         )}
+
         <div className="text-center mb-8">
-            <h3 className="text-2xl font-black text-gray-900 mb-2 uppercase tracking-tight">{title}</h3>
-            <div className="flex items-center justify-center gap-1">
-                <span className="text-5xl font-black text-gray-900">${price}</span>
-                <span className="text-gray-400 font-bold text-lg mt-2">/mes</span>
+            <div className={`inline-block px-4 py-1 rounded-full ${color.bg} ${color.text} text-[10px] font-black uppercase tracking-widest mb-4`}>
+                {title}
             </div>
+            <div className="flex items-center justify-center gap-1 mb-1">
+                <span className="text-5xl font-black text-gray-900">${price}</span>
+                <span className="text-gray-400 font-bold text-sm mt-3">/ {period}</span>
+            </div>
+            {monthlyPrice && (
+                <p className="text-gray-500 font-bold text-sm">(${monthlyPrice} / mes)</p>
+            )}
         </div>
 
-        <ul className="space-y-4 mb-10 flex-grow">
+        <div className="flex-grow space-y-4 mb-8">
             {features.map((feature, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-gray-600 group">
-                    <Check size={20} className="text-green-500 flex-shrink-0 mt-0.5 transition-transform group-hover:scale-110" />
-                    <span className="text-[15px] font-medium leading-relaxed">{feature}</span>
-                </li>
+                <div key={idx} className="flex items-start gap-3 text-gray-600">
+                    <Check size={18} className={`${color.text} flex-shrink-0 mt-0.5`} />
+                    <span className="text-sm font-medium leading-relaxed">{feature}</span>
+                </div>
             ))}
-        </ul>
+        </div>
+
+        <div className={`mt-auto pt-6 border-t border-gray-50 mb-6 text-center`}>
+            <span className={`text-[10px] font-black uppercase tracking-widest ${savings ? color.text : 'text-gray-400'}`}>
+                {savings ? `👉 Ahorras $${savings}` : '👉 Ahorro: —'}
+            </span>
+        </div>
 
         <button
             onClick={onSelect}
-            disabled={loading}
-            className={`w-full py-5 rounded-[16px] font-black text-lg transition-all duration-300 transform active:scale-95 ${recommended
-                ? 'bg-blue-600 !text-[#FAFAF7] hover:bg-blue-700 shadow-xl shadow-blue-200 hover:shadow-2xl'
-                : 'bg-gray-50 text-gray-900 hover:bg-gray-100'
+            disabled={true}
+            className={`w-full py-4 rounded-[16px] font-black text-sm transition-all duration-300 transform uppercase tracking-widest ${recommended
+                ? 'bg-gray-300 !text-white cursor-not-allowed shadow-none'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
         >
-            {loading ? 'Procesando...' : 'Elegir Plan'}
+            PRÓXIMAMENTE
         </button>
     </div>
 );
@@ -48,102 +60,148 @@ const SubscriptionPlans = () => {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
+    const commonFeatures = [
+        "BC Pulso completo",
+        "Bitácora de cuidado",
+        "Alertas y notificaciones",
+        "Mensajería con cuidadores",
+        "Reportes de bienestar",
+        "Historial",
+        "Soporte al usuario",
+        "Acceso a cuidadores verificados"
+    ];
+
     const handleSubscribe = async (planType) => {
         setLoading(true);
-        console.log(`Iniciando suscripción a plan: ${planType}`);
-
         try {
+            // Demo insertion
             const { error } = await supabase.from('subscriptions').insert({
                 user_id: user.id,
                 plan_type: planType,
                 status: 'active',
-                stripe_customer_id: 'cus_demo_123',
-                stripe_subscription_id: 'sub_demo_456',
                 current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
             });
 
             if (error) throw error;
-
-            alert("¡Suscripción Simulada Exitosa!");
-            window.location.href = '/dashboard/settings';
+            alert("¡Suscripción de prueba activada!");
+            window.location.reload();
         } catch (err) {
             console.error(err);
-            alert("Error simulando suscripción");
+            alert("Error al procesar la suscripción");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-50/30 flex flex-col items-center py-20 px-4 mt-[-40px]">
+        <div className="min-h-screen bg-gray-50/50 flex flex-col items-center py-20 px-4">
             {/* Header Block */}
-            <div className="max-w-4xl w-full text-center space-y-6 mb-5 md:mb-20 group">
-                <h1 className="text-5xl md:text-7xl font-brand font-bold !text-[#0F3C4C] tracking-tighter leading-[1.1] animate-fade-in-down">
-                    Planes diseñados para tu <span className="text-[var(--secondary-color)]">tranquilidad</span>
+            <div className="max-w-4xl w-full text-center space-y-4 mb-16">
+                <h1 className="text-5xl md:text-6xl font-brand font-bold tracking-tighter leading-tight">
+                    Planes <span className="text-[#0F3C4C]">B</span><span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span> para Familias
                 </h1>
+                <p className="text-xl md:text-2xl text-slate-500 font-medium font-secondary italic">Mismo Servicio, Más Ahorro</p>
             </div>
+
+            {/* Common Benefits Summary */}
+            <div className="max-w-4xl w-full bg-white rounded-[24px] p-8 md:p-12 mb-32 shadow-xl shadow-slate-200/50 border border-slate-100">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="bg-emerald-50 p-3 rounded-[16px] text-emerald-600">
+                        <Check size={24} />
+                    </div>
+                    <h2 className="text-2xl font-brand font-bold text-slate-800">Todos los planes incluyen:</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-y-2.5 gap-x-12">
+                    {commonFeatures.map((item, i) => (
+                        <div key={i} className="flex items-center gap-3 text-slate-600 font-medium">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+                            <span className="leading-snug">{item}</span>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="mt-10 pt-8 border-t border-slate-50 flex items-start gap-4 text-amber-600 bg-amber-50/50 p-6 rounded-[20px]">
+                    <Lightbulb className="flex-shrink-0" size={24} />
+                    <p className="font-bold text-sm leading-snug">
+                        La única diferencia es el descuento por permanencia. Todos los planes acceden a la misma funcionalidad premium completa.
+                    </p>
+                </div>
+            </div>
+
+            {/* Spacer Box */}
+            <div className="max-w-4xl w-full h-8 bg-white rounded-[24px] border border-slate-100 shadow-sm mb-16"></div>
 
             {/* Grid Block */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-[1600px] w-full px-4 mb-40 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl w-full mb-32 items-stretch">
                 <PlanCard
-                    title="Básico"
-                    price="0"
-                    features={[
-                        "Búsqueda de cuidadores",
-                        "Gestión de citas básica",
-                        "Soporte por email"
-                    ]}
-                    onSelect={() => handleSubscribe('basic')}
+                    title="PLAN 1 MES"
+                    price="15"
+                    period="mes"
+                    features={["Acceso completo", "Sin compromiso", "Ideal para comenzar"]}
+                    color={{
+                        border: 'border-emerald-100',
+                        bg: 'bg-emerald-50',
+                        text: 'text-emerald-600',
+                        badge: 'bg-emerald-600',
+                        btn: 'bg-emerald-600'
+                    }}
+                    onSelect={() => handleSubscribe('monthly')}
                     loading={loading}
                 />
+
                 <PlanCard
-                    title="Premium"
-                    price="29"
+                    title="PLAN 3 MESES"
+                    price="39"
+                    period="3 meses"
+                    monthlyPrice="13"
+                    savings="6"
+                    features={["Mismo servicio completo", "Ahorro del 13%", "Más tranquilidad, menos costo"]}
+                    color={{
+                        border: 'border-blue-200',
+                        bg: 'bg-blue-50',
+                        text: 'text-blue-600',
+                        badge: 'bg-blue-600',
+                        btn: 'bg-blue-600'
+                    }}
+                    onSelect={() => handleSubscribe('quarterly')}
+                    loading={loading}
+                />
+
+                <PlanCard
+                    title="PLAN 6 MESES"
+                    price="69"
+                    period="6 meses"
+                    monthlyPrice="11.50"
+                    savings="21"
                     recommended={true}
-                    features={[
-                        "Todo lo del Básico",
-                        "Reportes de Salud (PULSO)",
-                        "Notificaciones en tiempo real",
-                        "Cuidadores Verificados (Badge)",
-                        "Soporte Prioritario 24/7"
-                    ]}
-                    onSelect={() => handleSubscribe('premium')}
-                    loading={loading}
-                />
-                <PlanCard
-                    title="Empresarial"
-                    price="99"
-                    features={[
-                        "Múltiples pacientes",
-                        "API Access",
-                        "Account Manager dedicado",
-                        "Facturación corporativa"
-                    ]}
-                    onSelect={() => alert("Contáctanos para planes corporativos")}
+                    features={["Mismo servicio completo", "Ahorro máximo", "Mejor valor para tu familia"]}
+                    color={{
+                        border: 'border-indigo-600',
+                        bg: 'bg-indigo-50',
+                        text: 'text-indigo-600',
+                        badge: 'bg-indigo-600',
+                        btn: 'bg-indigo-600'
+                    }}
+                    onSelect={() => handleSubscribe('semi-annual')}
                     loading={loading}
                 />
             </div>
 
-            {/* Bottom Trust Block */}
-            <div className="max-w-4xl w-full mt-60 pb-20">
-                <div className="bg-white rounded-[16px] p-8 flex flex-col md:flex-row items-center gap-12 border border-blue-50/50 shadow-xl shadow-blue-50/20 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
-
-                    <div className="bg-[var(--secondary-color)] p-6 rounded-[16px] shadow-xl shadow-blue-100 !text-[#FAFAF7] z-10 transition-transform group-hover:rotate-6">
-                        <Shield size={44} />
+            {/* Footer Trust */}
+            <div className="max-w-4xl w-full pb-20">
+                <div className="bg-[#0F3C4C] rounded-[24px] p-8 md:p-10 flex flex-col md:flex-row items-center justify-center gap-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)] rounded-full -mr-32 -mt-32 opacity-10"></div>
+                    <div className="bg-white/10 p-5 rounded-[20px] text-[var(--secondary-color)] z-10 flex items-center justify-center">
+                        <Shield size={32} />
                     </div>
-
                     <div className="flex-1 text-center md:text-left z-10">
-                        <h3 className="font-black text-3xl text-gray-900 mb-2 tracking-tight">Pagos Seguros vía Stripe</h3>
-                        <p className="text-lg text-gray-500 font-medium leading-relaxed">
-                            Procesamiento encriptado de nivel bancario. Tus datos están protegidos en todo momento.
-                        </p>
+                        <h3 className="font-brand font-bold text-2xl text-white mb-2">Garantía BuenCuidar</h3>
+                        <p className="text-white/60 font-medium">Pagos procesados de forma segura con encriptación de nivel bancario a través de Stripe.</p>
                     </div>
-
-                    <div className="flex items-center gap-10 opacity-30 group-hover:opacity-60 transition-opacity z-10">
-                        <span className="font-black text-4xl italic tracking-tighter text-gray-900">VISA</span>
-                        <div className="h-10 w-px bg-gray-200"></div>
-                        <span className="font-black text-3xl italic text-gray-900 tracking-tight">Mastercard</span>
+                    <div className="flex items-center gap-6 z-10 opacity-50 grayscale hover:grayscale-0 transition-all">
+                        <span className="text-white font-black text-2xl italic">VISA</span>
+                        <span className="text-white font-black text-xl italic">Mastercard</span>
                     </div>
                 </div>
             </div>
