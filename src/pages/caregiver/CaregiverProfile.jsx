@@ -539,7 +539,7 @@ const CaregiverProfile = () => {
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-10">
+                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-y-2 gap-x-3 lg:gap-10">
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-1">
                                     {[1, 2, 3, 4, 5].map((s) => (
@@ -553,18 +553,18 @@ const CaregiverProfile = () => {
                                         />
                                     ))}
                                 </div>
-                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{ratingStats.average}</span>
+                                <span className="text-lg lg:text-xl font-brand font-bold !text-[#FAFAF7]">{ratingStats.average}</span>
                                 <span className="text-xs font-secondary !text-[#FAFAF7]">({ratingStats.count} res)</span>
                             </div>
 
-                            <div className="flex items-center gap-3 border-l border-white/10 pl-8">
+                            <div className="flex items-center gap-2 lg:gap-3 border-l border-white/10 pl-4 lg:pl-8">
                                 <Briefcase size={20} className="text-[var(--secondary-color)]" />
-                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{profile.experience || '5'} Años de Exp.</span>
+                                <span className="text-lg lg:text-xl font-brand font-bold !text-[#FAFAF7]">{profile.experience || '5'} Años de Exp.</span>
                             </div>
 
-                            <div className={`flex items-center gap-3 ${isPro ? 'border-l border-white/10 pl-8' : 'pl-2'}`}>
+                            <div className={`flex items-center gap-2 lg:gap-3 ${isPro ? 'border-l border-white/10 pl-4 lg:pl-8' : 'pl-0'}`}>
                                 <MapPin size={20} className="text-orange-400" />
-                                <span className="text-xl font-brand font-normal !text-[#FAFAF7]">{getLocationString(profile)}</span>
+                                <span className="text-lg lg:text-xl font-brand font-normal !text-[#FAFAF7]">{getLocationString(profile)}</span>
                             </div>
 
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
