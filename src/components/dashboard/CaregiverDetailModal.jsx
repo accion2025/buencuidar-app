@@ -68,75 +68,125 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto">
-                    {/* Header PRO Style */}
+                    {/* Redesigned Header */}
                     <div className="relative">
-                        <div className="h-40 bg-gradient-to-br from-[#072a33] via-[#0F4C5C] to-[#125d6d] relative overflow-hidden">
-                            <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                        {/* 1. Reduced Height Banner (approx 60% reduction from original feel) */}
+                        <div className="h-40 bg-gradient-to-r from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F] relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px]"></div>
+                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-black opacity-10 rounded-full translate-y-1/2 -translate-x-1/2 blur-[60px]"></div>
+                            {/* Close Button at top right */}
                             <button
                                 onClick={onClose}
-                                className="absolute top-6 right-6 bg-white/10 !text-[#FAFAF7] p-2.5 rounded-[16px] hover:bg-white/20 transition-all backdrop-blur-md z-10"
+                                className="absolute top-6 right-6 bg-white/10 !text-[#FAFAF7] p-2.5 rounded-[16px] hover:bg-white/20 transition-all backdrop-blur-md z-30"
                             >
                                 <X size={24} />
                             </button>
                         </div>
 
-                        {/* Profile Summary Overlay */}
-                        <div className="px-8 -mt-16 flex flex-col items-center relative z-20">
-                            {/* Avatar */}
-                            <div className="w-32 h-32 rounded-full border-[5px] border-white shadow-2xl bg-white overflow-hidden relative group">
-                                {caregiver.avatar_url ? (
-                                    <img src={caregiver.avatar_url} alt={caregiver.full_name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-slate-100 text-[#0F4C5C] text-4xl font-black">
-                                        {caregiver.full_name?.charAt(0)}
-                                    </div>
-                                )}
-                                <div className="absolute bottom-2 right-2 bg-green-500 w-6 h-6 rounded-full border-[3px] border-white shadow-lg" title="Verificado"></div>
-                            </div>
-
-                            {/* Name & Badge */}
-                            <div className="text-center mt-4 mb-2">
-                                <h2 className="text-3xl font-black text-gray-800 tracking-tight">{caregiver.full_name}</h2>
-                                <div className="flex items-center justify-center gap-2 mt-1">
-                                    {(caregiver.plan_type === 'professional_pro' || caregiver.plan_type === 'premium') && (
-                                        <div className="flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 !text-[#FAFAF7] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/20">
-                                            <Award size={12} strokeWidth={3} />
-                                            <span>BC PRO</span>
+                        {/* 2. Avatar (Centered & Overlapping) */}
+                        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10 w-full flex justify-center">
+                            <div className="relative group/avatar">
+                                <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full border-[6px] border-white shadow-2xl bg-white overflow-hidden relative ring-1 ring-slate-100">
+                                    {caregiver.avatar_url ? (
+                                        <img src={caregiver.avatar_url} alt={caregiver.full_name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-slate-100 text-[#0F4C5C] text-4xl font-black">
+                                            {caregiver.full_name?.charAt(0)}
                                         </div>
                                     )}
-                                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border ${realStats.count > 0 ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
-                                        <Star size={12} className={realStats.count > 0 ? 'fill-current' : ''} />
-                                        <span>{realStats.rating} ({realStats.count})</span>
+                                </div>
+                                {/* Verification/Type Badge */}
+                                <div className="absolute bottom-2 right-2 bg-[var(--secondary-color)] w-8 h-8 rounded-full border-[3px] border-white shadow-lg flex items-center justify-center text-white" title="Perfil Verificado">
+                                    <Check size={16} strokeWidth={4} />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3. Name & Info Badges */}
+                        <div className="pt-24 pb-8 px-6 lg:px-12 text-center mt-2">
+                            {/* Name */}
+                            <h2 className="text-3xl font-brand font-bold text-slate-800 mb-2 tracking-tight">{caregiver.full_name}</h2>
+
+                            {/* Badges Row */}
+                            <div className="flex flex-col items-center gap-2 mb-8">
+                                <div className="flex items-center gap-2 bg-emerald-50 text-[var(--secondary-color)] border-emerald-100 px-4 py-1.5 rounded-full text-xs font-black tracking-[0.15em] border uppercase">
+                                    <Award size={14} />
+                                    <span>BC PRO</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-400">
+                                    <p className="text-cyan-700 font-bold font-mono text-xs opacity-80 uppercase tracking-widest mr-2">{specialization}</p>
+                                    <div className="flex items-center">
+                                        {[1, 2, 3, 4, 5].map((s) => (
+                                            <Star
+                                                key={s}
+                                                size={14}
+                                                className={`${realStats.count === 0
+                                                    ? 'text-gray-300'
+                                                    : (s <= Number(realStats.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200')
+                                                    }`}
+                                            />
+                                        ))}
                                     </div>
+                                    {realStats.count > 0 && <span className="text-xs font-bold text-slate-600">({realStats.count})</span>}
                                 </div>
                             </div>
 
-                            <p className="text-center text-cyan-700 font-bold mb-6 font-mono text-sm opacity-80 uppercase tracking-widest">
-                                {specialization}
-                            </p>
+                            {/* 4. Stats Grid (Recuadros) */}
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 w-full">
+                                {/* Tarifa Box */}
+                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
+                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-green-600">
+                                        <DollarSign size={18} />
+                                    </div>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Tarifa</p>
+                                        <p className="text-base font-brand font-bold text-slate-800">${hourlyRate}<span className="text-[10px] text-slate-400 font-normal">/hr</span></p>
+                                    </div>
+                                </div>
 
-                            {/* Key Stats Row */}
-                            <div className="flex justify-center gap-4 w-full mb-8">
-                                <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="mb-1 text-emerald-500 mx-auto w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <DollarSign size={16} />
+                                {/* Experiencia Box */}
+                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
+                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-blue-600">
+                                        <Clock size={18} />
                                     </div>
-                                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-wider">Tarifa</p>
-                                    <p className="font-bold text-gray-800 text-xs">${hourlyRate}/hr</p>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Experiencia</p>
+                                        <p className="text-base font-brand font-bold text-slate-800">{experience} <span className="text-[10px] text-slate-400 font-normal">Años</span></p>
+                                    </div>
                                 </div>
-                                <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="mb-1 text-indigo-500 mx-auto w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <Clock size={16} />
+
+                                {/* Ubicación Box */}
+                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
+                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-rose-500">
+                                        <MapPin size={18} />
                                     </div>
-                                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-wider">Exp.</p>
-                                    <p className="font-bold text-gray-800 text-xs">{experience} Años</p>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Ubicación</p>
+                                        <p className="text-xs font-brand font-bold text-slate-800 leading-tight max-w-[100px] truncate mx-auto">
+                                            {(() => {
+                                                const countryClean = (details?.country && typeof details.country === 'string')
+                                                    ? (details.country.charAt(0).toUpperCase() + details.country.slice(1))
+                                                    : (caregiver.country || 'Nicaragua');
+                                                return [details?.municipality, details?.department, countryClean].filter(Boolean).join(', ') || location;
+                                            })()}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="flex-1 bg-slate-50 p-3 rounded-[16px] border border-slate-100 text-center group hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="mb-1 text-rose-500 mx-auto w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <MapPin size={16} />
+
+                                {/* Contacto Box */}
+                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
+                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-purple-600">
+                                        <MessageCircle size={18} />
                                     </div>
-                                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-wider">Zona</p>
-                                    <p className="font-bold text-gray-800 text-xs truncate max-w-[80px] mx-auto">{location}</p>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Contacto</p>
+                                        <button
+                                            onClick={() => onContact(caregiver)}
+                                            className="text-xs font-brand font-bold text-[var(--secondary-color)] hover:underline"
+                                        >
+                                            Ver Perfil
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
