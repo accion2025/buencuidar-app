@@ -7,6 +7,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const [reviews, setReviews] = useState([]);
     const [realStats, setRealStats] = useState({ rating: '5.0', count: 0 });
     const scrollRef = useRef(null);
+    const backdropRef = useRef(null);
 
     useEffect(() => {
         const handleEsc = (e) => {
@@ -17,14 +18,23 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     }, [onClose]);
 
     useEffect(() => {
-        if (caregiver?.id && isOpen) {
-            fetchReviews();
-            // Scroll to top on mobile/all views when opening a new caregiver
-            if (scrollRef.current) {
-                scrollRef.current.scrollTop = 0;
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+            if (caregiver?.id) {
+                fetchReviews();
+                // Fail-safe scroll reset
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = 0;
+                }
             }
+        } else {
+            document.body.style.overflow = 'unset';
         }
-    }, [caregiver, isOpen]);
+
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [caregiver?.id, isOpen]);
 
     const fetchReviews = async () => {
         try {
@@ -90,11 +100,15 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const locationDisplay = getDetailedLocation();
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center sm:pt-5 sm:px-6 sm:pb-6 pt-0 px-0 pb-0 animate-fade-in sm:overflow-y-auto overflow-hidden">
+        <div
+            ref={backdropRef}
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center sm:pt-5 sm:px-6 sm:pb-6 pt-0 px-0 pb-0 animate-fade-in sm:overflow-y-auto overflow-hidden"
+        >
             <div className="bg-white sm:rounded-[16px] rounded-none shadow-2xl w-full max-w-2xl sm:max-h-[90vh] max-h-screen overflow-hidden relative flex flex-col border border-white/20 h-full sm:h-auto">
 
                 {/* Scrollable Content */}
                 <div
+                    key={`${caregiver?.id}-${isOpen}`}
                     ref={scrollRef}
                     className="flex-1 overflow-y-auto modal-scroll-container"
                 >
