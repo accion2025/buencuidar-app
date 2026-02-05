@@ -180,6 +180,19 @@ const CaregiverProfile = () => {
             profile.country
         ].filter(Boolean).join(', ');
 
+        // Populate dependent location lists for the modal
+        if (profile.country) {
+            const countryData = CENTRAL_AMERICA.find(c => c.id === profile.country);
+            if (countryData && countryData.departments) {
+                const depts = Object.keys(countryData.departments);
+                setAvailableDepartments(depts);
+                if (profile.department) {
+                    const munis = countryData.departments[profile.department] || [];
+                    setAvailableMunicipalities(munis);
+                }
+            }
+        }
+
         setFormData({
             full_name: profile.full_name || '',
             specialization: profile.specialization || '',
@@ -423,7 +436,7 @@ const CaregiverProfile = () => {
     const isPro = profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
 
     return (
-        <div className="space-y-12 animate-fade-in pb-20">
+        <div className="space-y-12 animate-fade-in pb-20 overflow-x-hidden">
             <VerificationModal
                 isOpen={showVerificationModal}
                 onClose={() => setShowVerificationModal(false)}
@@ -516,7 +529,9 @@ const CaregiverProfile = () => {
 
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
                                 <MapPin size={20} className="text-orange-400" />
-                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{profile.location || 'CDMX'}</span>
+                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">
+                                    {[profile.municipality, profile.department, profile.country].filter(Boolean).join(', ') || profile.location || 'Nicaragua'}
+                                </span>
                             </div>
 
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">

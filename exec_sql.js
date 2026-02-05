@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const sqlFile = 'restore_caregiver_code.sql';
-const sqlContent = fs.readFileSync(path.join(__dirname, sqlFile), 'utf8');
+const sqlFile = process.argv[2] || 'restore_caregiver_code.sql';
+const sqlContent = fs.readFileSync(path.resolve(__dirname, sqlFile), 'utf8');
 
 console.log(`Executing SQL from ${sqlFile}...`);
 
