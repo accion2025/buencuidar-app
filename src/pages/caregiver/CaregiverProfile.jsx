@@ -791,7 +791,7 @@ const CaregiverProfile = () => {
                         </div>
 
 
-                        <form onSubmit={handleSave} className="flex-1 overflow-y-auto overflow-x-hidden p-10 space-y-12">
+                        <form onSubmit={handleSave} className={`flex-1 overflow-y-auto overflow-x-hidden p-10 space-y-12 ${saving ? 'overflow-y-hidden' : ''}`}>
                             {/* Basic Info */}
                             <div className="space-y-8">
                                 <div className="flex items-center gap-4">
