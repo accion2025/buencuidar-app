@@ -143,11 +143,18 @@ const CaregiverProfile = () => {
     if (!profile) return null;
 
     const handleEditOpen = () => {
+        // Construir ubicación desde datos de registro si están disponibles
+        const registeredLocation = [
+            profile.municipality,
+            profile.department,
+            profile.country
+        ].filter(Boolean).join(', ');
+
         setFormData({
             full_name: profile.full_name || '',
             specialization: profile.specialization || '',
             phone: profile.phone || '',
-            location: profile.location || profile.caregiver_details?.location || '',
+            location: registeredLocation || profile.location || profile.caregiver_details?.location || '',
             experience: profile.experience || profile.caregiver_details?.experience || '',
             hourly_rate: profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150,
             bio: profile.bio || '',
@@ -649,7 +656,7 @@ const CaregiverProfile = () => {
 
             {isEditing && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center overflow-hidden safe-area-inset-bottom">
-                    <div className="bg-white w-full h-full max-w-none flex flex-col animate-slide-up">
+                    <div className="bg-white w-full max-w-4xl h-full flex flex-col animate-slide-up shadow-2xl">
                         {/* Modal Header */}
                         <div className="p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
