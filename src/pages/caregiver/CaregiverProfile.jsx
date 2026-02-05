@@ -440,6 +440,15 @@ const CaregiverProfile = () => {
 
     const isPro = profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
 
+    if (!profile || !user) {
+        return (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+                <Loader2 className="animate-spin text-[var(--secondary-color)]" size={48} />
+                <p className="text-gray-400 font-brand font-bold uppercase tracking-widest text-xs animate-pulse">Cargando Perfil...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-12 animate-fade-in pb-20 overflow-x-hidden">
             <VerificationModal
@@ -535,7 +544,7 @@ const CaregiverProfile = () => {
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
                                 <MapPin size={20} className="text-orange-400" />
                                 <span className="text-xl font-brand font-normal !text-[#FAFAF7]">
-                                    {[profile.municipality, profile.department, profile.country ? (profile.country.charAt(0).toUpperCase() + profile.country.slice(1)) : ''].filter(Boolean).join(', ') || profile.location || 'Nicaragua'}
+                                    {[profile?.municipality, profile?.department, profile?.country ? (profile.country.charAt(0).toUpperCase() + profile.country.slice(1)) : ''].filter(Boolean).join(', ') || profile?.location || 'Nicaragua'}
                                 </span>
                             </div>
 
