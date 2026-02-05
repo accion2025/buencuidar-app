@@ -287,8 +287,7 @@ const CaregiverProfile = () => {
                 location: fullLocation,
                 hourly_rate: numericRate,
                 certifications: formData.certifications,
-                skills: formData.skills,
-                updated_at: new Date().toISOString()
+                skills: formData.skills
             };
 
             const { error: detailsError } = await supabase
