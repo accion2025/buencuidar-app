@@ -535,7 +535,7 @@ const CaregiverProfile = () => {
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
                                 <MapPin size={20} className="text-orange-400" />
                                 <span className="text-xl font-brand font-semibold !text-[#FAFAF7]">
-                                    {[profile.municipality, profile.department, profile.country?.toUpperCase()].filter(Boolean).join(', ') || profile.location || 'NICARAGUA'}
+                                    {[profile.municipality, profile.department, profile.country ? (profile.country.charAt(0).toUpperCase() + profile.country.slice(1)) : ''].filter(Boolean).join(', ') || profile.location || 'Nicaragua'}
                                 </span>
                             </div>
 
