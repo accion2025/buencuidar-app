@@ -567,9 +567,9 @@ const CaregiverProfile = () => {
                                 <span className="text-lg lg:text-xl font-brand font-normal !text-[#FAFAF7]">{getLocationString(profile)}</span>
                             </div>
 
-                            <div className="flex items-center gap-2 lg:gap-3 border-l border-white/10 pl-4 lg:pl-8">
+                            <div className={`flex items-center gap-3 ${isPro ? 'w-full justify-center lg:w-auto lg:justify-start border-none lg:border-l lg:border-white/10 pl-0 lg:pl-8' : 'border-l border-white/10 pl-8'}`}>
                                 <CreditCard size={20} className="text-purple-400" />
-                                <span className="text-lg lg:text-xl font-brand font-bold !text-[#FAFAF7]">${profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150} /hr</span>
+                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">${profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150} /hr</span>
                             </div>
                         </div>
                     </div>
