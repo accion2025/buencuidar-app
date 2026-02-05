@@ -740,7 +740,7 @@ const CaregiverProfile = () => {
             </div>
 
             {isEditing && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center overflow-hidden safe-area-inset-bottom">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center safe-area-inset-bottom">
                     <div className="bg-white w-full max-w-4xl h-full flex flex-col animate-slide-up shadow-2xl">
                         {/* Modal Header */}
                         <div className="p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -754,7 +754,7 @@ const CaregiverProfile = () => {
                         </div>
 
 
-                        <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-10 space-y-12">
+                        <form onSubmit={handleSave} className="flex-1 overflow-y-auto overflow-x-hidden p-10 space-y-12">
                             {/* Basic Info */}
                             <div className="space-y-8">
                                 <div className="flex items-center gap-4">
@@ -997,7 +997,7 @@ const CaregiverProfile = () => {
                                                     <div className={`w-8 h-8 rounded-[16px] border-2 flex items-center justify-center transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-100'}`}>
                                                         {isSelected && <Check size={16} strokeWidth={4} />}
                                                     </div>
-                                                    <span className={`text-xs font-black uppercase tracking-widest leading-tight ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
+                                                    <span className={`text-xs font-black uppercase tracking-widest leading-tight break-words whitespace-normal ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
                                                 </div>
                                             </button>
                                         );
