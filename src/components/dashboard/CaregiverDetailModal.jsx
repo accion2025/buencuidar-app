@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, MapPin, Star, Shield, Clock, Mail, MessageCircle, Award, Check, BookOpen, DollarSign, User } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { formatLocation } from '../../utils/location';
@@ -6,6 +6,7 @@ import { formatLocation } from '../../utils/location';
 const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const [reviews, setReviews] = useState([]);
     const [realStats, setRealStats] = useState({ rating: '5.0', count: 0 });
+    const scrollRef = useRef(null);
 
     useEffect(() => {
         const handleEsc = (e) => {
@@ -19,9 +20,8 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
         if (caregiver?.id && isOpen) {
             fetchReviews();
             // Scroll to top on mobile/all views when opening a new caregiver
-            const scrollContainer = document.querySelector('.modal-scroll-container');
-            if (scrollContainer) {
-                scrollContainer.scrollTop = 0;
+            if (scrollRef.current) {
+                scrollRef.current.scrollTop = 0;
             }
         }
     }, [caregiver, isOpen]);
@@ -90,11 +90,14 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const locationDisplay = getDetailedLocation();
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center sm:pt-5 sm:px-6 sm:pb-6 pt-0 px-0 pb-0 animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center sm:pt-5 sm:px-6 sm:pb-6 pt-0 px-0 pb-0 animate-fade-in sm:overflow-y-auto overflow-hidden">
             <div className="bg-white sm:rounded-[16px] rounded-none shadow-2xl w-full max-w-2xl sm:max-h-[90vh] max-h-screen overflow-hidden relative flex flex-col border border-white/20 h-full sm:h-auto">
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto modal-scroll-container">
+                <div
+                    ref={scrollRef}
+                    className="flex-1 overflow-y-auto modal-scroll-container"
+                >
                     {/* Redesigned Header */}
                     <div className="relative">
                         {/* 1. Banner with Avatar Centered Fully inside */}
