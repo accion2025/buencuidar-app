@@ -30,8 +30,9 @@ const CaregiverPayments = () => {
         fetchSub();
     }, [profile?.id]);
 
-    const isActive = profile?.subscription_status === 'active';
-    const isPro = profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
+    const isActive = subDetails?.status === 'active' || profile?.subscription_status === 'active';
+    const isPro = subDetails?.plan_type === 'professional_pro' || subDetails?.plan_type === 'premium' || profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
+    const planName = isPro ? (profile?.plan_type === 'professional_pro' ? 'Profesional PRO' : 'Membresía Premium') : 'Plan Básico (Gratis)';
 
     if (loading) {
         return (
@@ -73,7 +74,7 @@ const CaregiverPayments = () => {
                                 {isActive ? 'Plan Activo' : 'Estatus Estándar'}
                             </span>
                         </div>
-                        <h2 className="text-4xl font-brand font-bold mb-4 tracking-tight !text-[#FAFAF7]">{isActive ? 'Membresía Visibilidad PRO' : 'Perfil Gratuito'}</h2>
+                        <h2 className="text-4xl font-brand font-bold mb-4 tracking-tight !text-[#FAFAF7]">{isActive ? planName : 'Perfil Gratuito'}</h2>
                         <p className="opacity-70 max-w-lg font-secondary text-base leading-relaxed !text-[#FAFAF7]">
                             {isActive
                                 ? 'Tu perfil aparece destacado en las búsquedas y tienes acceso ilimitado a la bolsa de trabajo para postularte a nuevas ofertas.'
@@ -114,7 +115,7 @@ const CaregiverPayments = () => {
                 <div className="bg-white p-8 rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50">
                     <h3 className="font-brand font-bold text-xl !text-[#0F3C4C] mb-6 flex items-center gap-3">
                         <div className="bg-blue-50 p-2 rounded-[16px] text-[var(--primary-color)]"><Shield size={20} /></div>
-                        {isActive ? 'Beneficios Visibilidad PRO' : '¿Por qué ser PRO?'}
+                        {isActive ? 'Beneficios Exclusivos BC PRO' : '¿Por qué ser BC PRO?'}
                     </h3>
                     <ul className="space-y-4">
                         {[
