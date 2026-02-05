@@ -648,8 +648,8 @@ const CaregiverProfile = () => {
             </div>
 
             {isEditing && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-start justify-center p-4 text-left overflow-y-auto safe-area-inset-bottom">
-                    <div className="bg-white rounded-[16px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-slide-up border border-white/20">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center overflow-hidden safe-area-inset-bottom">
+                    <div className="bg-white w-full h-full max-w-none flex flex-col animate-slide-up">
                         {/* Modal Header */}
                         <div className="p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
