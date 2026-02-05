@@ -109,15 +109,15 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     return (
         <div
             ref={backdropRef}
-            className="fixed inset-x-0 bottom-0 top-[70px] sm:top-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center sm:pt-5 sm:px-6 sm:pb-6 pt-0 px-0 pb-0 animate-fade-in sm:overflow-y-auto overflow-hidden"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center sm:p-6 p-0 animate-fade-in"
         >
-            <div className="bg-white sm:rounded-[16px] rounded-none shadow-2xl w-full max-w-2xl sm:max-h-[90vh] max-h-screen overflow-hidden relative flex flex-col border border-white/20 h-full sm:h-auto">
+            <div className="bg-white sm:rounded-[24px] rounded-none shadow-2xl w-full max-w-2xl sm:max-h-[90vh] max-h-screen overflow-hidden relative flex flex-col border border-white/20 h-full sm:h-auto">
 
                 {/* Scrollable Content */}
                 <div
-                    key={`${caregiver?.id}-${isOpen}`}
+                    key={`${caregiver?.id}`}
                     ref={scrollRef}
-                    className="flex-1 overflow-y-auto modal-scroll-container"
+                    className="flex-1 overflow-y-auto"
                 >
                     {/* Redesigned Header */}
                     <div className="relative">

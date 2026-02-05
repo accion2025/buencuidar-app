@@ -799,6 +799,26 @@ const CaregiverProfile = () => {
                                     </div>
                                     <div className="md:col-span-2 space-y-6">
                                         <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
+                                            <Award size={16} className="text-[var(--secondary-color)]" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Especialidad Profesional</span>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Especialidad Principal</label>
+                                            <select
+                                                className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                                value={formData.specialization}
+                                                onChange={e => setFormData({ ...formData, specialization: e.target.value })}
+                                            >
+                                                <option value="" disabled>Selecciona Especialidad</option>
+                                                {CAREGIVER_SPECIALTIES.map(spec => (
+                                                    <option key={spec} value={spec}>{spec}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="md:col-span-2 space-y-6">
+                                        <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
                                             <MapPin size={16} className="text-[var(--secondary-color)]" />
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Ubicación del Servicio</span>
                                         </div>
