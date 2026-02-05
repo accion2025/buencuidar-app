@@ -22,10 +22,17 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
             document.body.style.overflow = 'hidden';
             if (caregiver?.id) {
                 fetchReviews();
-                // Fail-safe scroll reset
-                if (scrollRef.current) {
-                    scrollRef.current.scrollTop = 0;
-                }
+                // Enhanced scroll reset: wait for re-mount then force top
+                const timeoutId = setTimeout(() => {
+                    if (scrollRef.current) {
+                        scrollRef.current.scrollTop = 0;
+                        scrollRef.current.scrollTo(0, 0);
+                    }
+                    if (backdropRef.current) {
+                        backdropRef.current.scrollTop = 0;
+                    }
+                }, 50);
+                return () => clearTimeout(timeoutId);
             }
         } else {
             document.body.style.overflow = 'unset';
@@ -102,7 +109,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     return (
         <div
             ref={backdropRef}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center sm:pt-5 sm:px-6 sm:pb-6 pt-0 px-0 pb-0 animate-fade-in sm:overflow-y-auto overflow-hidden"
+            className="fixed inset-x-0 bottom-0 top-[70px] sm:top-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center sm:pt-5 sm:px-6 sm:pb-6 pt-0 px-0 pb-0 animate-fade-in sm:overflow-y-auto overflow-hidden"
         >
             <div className="bg-white sm:rounded-[16px] rounded-none shadow-2xl w-full max-w-2xl sm:max-h-[90vh] max-h-screen overflow-hidden relative flex flex-col border border-white/20 h-full sm:h-auto">
 
