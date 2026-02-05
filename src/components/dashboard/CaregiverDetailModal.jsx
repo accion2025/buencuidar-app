@@ -63,7 +63,26 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const certifications = details?.certifications || caregiver.certifications || [];
     const hourlyRate = details?.hourly_rate || caregiver.hourly_rate || 150;
 
-    const locationDisplay = formatLocation(caregiver, details);
+    const isPro = caregiver.plan_type === 'premium' || caregiver.plan_type === 'professional_pro';
+
+    // Construir ubicación detallada (Municipio, Departamento, ABBR)
+    const getDetailedLocation = () => {
+        const countryRaw = (details?.country || caregiver?.country || 'Nicaragua').toLowerCase();
+        let abbr = 'NIC';
+        if (countryRaw.includes('costa')) abbr = 'CR';
+        else if (countryRaw.includes('hond')) abbr = 'HN';
+        else if (countryRaw.includes('salv')) abbr = 'SV';
+        else if (countryRaw.includes('guat')) abbr = 'GT';
+        else if (countryRaw.includes('panam')) abbr = 'PA';
+
+        const muni = details?.municipality || caregiver.municipality || '';
+        const dept = details?.department || caregiver.department || '';
+
+        const parts = [muni, dept, abbr].filter(Boolean);
+        return parts.join(', ');
+    };
+
+    const locationDisplay = getDetailedLocation();
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center pt-5 px-6 pb-6 animate-fade-in overflow-y-auto">
@@ -111,10 +130,17 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
                             {/* Badges Row */}
                             <div className="flex flex-col items-center gap-2 mb-8">
-                                <div className="flex items-center gap-2 bg-emerald-50 text-[var(--secondary-color)] border-emerald-100 px-4 py-1.5 rounded-full text-xs font-black tracking-[0.15em] border uppercase">
-                                    <Award size={14} />
-                                    <span>BC PRO</span>
-                                </div>
+                                {isPro ? (
+                                    <div className="flex items-center gap-2 bg-emerald-50 text-[var(--secondary-color)] border-emerald-100 px-4 py-1.5 rounded-full text-xs font-black tracking-[0.15em] border uppercase">
+                                        <Award size={14} />
+                                        <span>BC PRO</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2 bg-slate-50 text-slate-500 border-slate-200 px-4 py-1.5 rounded-full text-xs font-black tracking-[0.15em] border uppercase">
+                                        <User size={14} />
+                                        <span>Estándar</span>
+                                    </div>
+                                )}
                                 <div className="flex items-center gap-2 text-gray-400">
                                     <p className="text-cyan-700 font-bold font-mono text-xs opacity-80 uppercase tracking-widest mr-2">{specialization}</p>
                                     <div className="flex items-center">
@@ -136,54 +162,46 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                             {/* 4. Stats Grid (Recuadros) */}
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 w-full">
                                 {/* Tarifa Box */}
-                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-green-600">
-                                        <DollarSign size={18} />
+                                <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center gap-2 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all text-center">
+                                    <div className="flex items-center gap-2 text-green-600">
+                                        <DollarSign size={14} />
+                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Tarifa</p>
                                     </div>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Tarifa</p>
-                                        <p className="text-base font-brand font-bold text-slate-800">${hourlyRate}<span className="text-[10px] text-slate-400 font-normal">/hr</span></p>
-                                    </div>
+                                    <p className="text-lg font-brand font-bold text-slate-800">${hourlyRate}<span className="text-xs text-slate-400 font-normal ml-1">/hr</span></p>
                                 </div>
 
                                 {/* Experiencia Box */}
-                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-blue-600">
-                                        <Clock size={18} />
+                                <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center gap-2 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all text-center">
+                                    <div className="flex items-center gap-2 text-blue-600">
+                                        <Clock size={14} />
+                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Experiencia</p>
                                     </div>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Experiencia</p>
-                                        <p className="text-base font-brand font-bold text-slate-800">{experience} <span className="text-[10px] text-slate-400 font-normal">Años</span></p>
-                                    </div>
+                                    <p className="text-lg font-brand font-bold text-slate-800">{experience} <span className="text-xs text-slate-400 font-normal ml-1">Años</span></p>
                                 </div>
 
                                 {/* Ubicación Box */}
-                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-rose-500">
-                                        <MapPin size={18} />
+                                <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center gap-2 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all text-center">
+                                    <div className="flex items-center gap-2 text-rose-500">
+                                        <MapPin size={14} />
+                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Ubicación</p>
                                     </div>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Ubicación</p>
-                                        <p className="text-sm font-brand font-bold text-slate-800 leading-tight max-w-[120px] truncate mx-auto">
-                                            {locationDisplay}
-                                        </p>
-                                    </div>
+                                    <p className="text-xs lg:text-[13px] font-brand font-bold text-slate-800 leading-tight">
+                                        {locationDisplay}
+                                    </p>
                                 </div>
 
                                 {/* Contacto Box */}
-                                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col items-center justify-center gap-1.5 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all">
-                                    <div className="p-2.5 rounded-full bg-white shadow-sm text-purple-600">
-                                        <MessageCircle size={18} />
+                                <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center gap-2 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all text-center">
+                                    <div className="flex items-center gap-2 text-purple-600">
+                                        <MessageCircle size={14} />
+                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contacto</p>
                                     </div>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Contacto</p>
-                                        <button
-                                            onClick={() => onContact(caregiver)}
-                                            className="text-xs font-brand font-bold text-[var(--secondary-color)] hover:underline"
-                                        >
-                                            Ver Perfil
-                                        </button>
-                                    </div>
+                                    <a
+                                        href={`tel:${caregiver.phone}`}
+                                        className="text-sm font-brand font-bold text-[var(--secondary-color)] hover:underline truncate max-w-full"
+                                    >
+                                        {caregiver.phone || 'No disponible'}
+                                    </a>
                                 </div>
                             </div>
                         </div>
