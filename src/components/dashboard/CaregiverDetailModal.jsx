@@ -77,7 +77,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
         ? caregiver.caregiver_details[0]
         : caregiver.caregiver_details;
 
-    const specialization = details?.specialization || caregiver.specialization || "Cuidado General";
+    const specialization = details?.specialization || caregiver.specialization || "Cuidador Especializado";
     const experience = details?.experience || caregiver.experience || "1";
     const location = details?.location || caregiver.location || "Ubicación no disponible";
     const bio = caregiver.bio || details?.bio || "Este cuidador se especializa en brindar atención compasiva y profesional, enfocándose en el bienestar integral del paciente.";
