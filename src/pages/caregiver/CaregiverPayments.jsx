@@ -62,7 +62,7 @@ const CaregiverPayments = () => {
             )}
 
             {/* Current Plan Card */}
-            <div className={`rounded-[16px] p-10 !text-[#FAFAF7] relative overflow-hidden shadow-2xl border border-white/5 ${isActive ? 'bg-[#0F3C4C]' : 'bg-slate-700'}`}>
+            <div className={`rounded-[16px] p-10 !text-[#FAFAF7] relative overflow-hidden shadow-2xl border border-white/5 bg-[#0F3C4C]`}>
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
                     <div className="text-center md:text-left flex-1">
                         <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
