@@ -62,21 +62,19 @@ const CaregiverPayments = () => {
             )}
 
             {/* Current Plan Card */}
-            <div className={`${isActive ? 'bg-[#0F3C4C]' : 'bg-slate-100 border border-slate-200'} rounded-[16px] p-10 relative overflow-hidden shadow-2xl transition-all duration-500`}>
-                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
-                    <div className="flex-1">
+            <div className={`rounded-[16px] p-10 !text-[#FAFAF7] relative overflow-hidden shadow-2xl border border-white/5 ${isActive ? 'bg-[#0F3C4C]' : 'bg-slate-700'}`}>
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div className="text-center md:text-left flex-1">
                         <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
-                            <div className={`${isActive ? 'bg-[var(--secondary-color)]/20 text-[var(--secondary-color)]' : 'bg-gray-200 text-gray-500'} p-2 rounded-[16px]`}>
+                            <div className={`${isActive ? 'bg-[var(--secondary-color)]/20 text-[var(--secondary-color)]' : 'bg-gray-500/30 text-gray-300'} p-2 rounded-[16px]`}>
                                 {isActive ? <Crown size={24} /> : <Shield size={24} />}
                             </div>
-                            <span className={`font-black uppercase tracking-widest text-[10px] ${isActive ? 'text-[var(--secondary-color)]' : 'text-gray-500'}`}>
+                            <span className={`font-black uppercase tracking-widest text-[10px] ${isActive ? 'text-[var(--secondary-color)]' : 'text-gray-300'}`}>
                                 {isActive ? 'Plan Activo' : 'Estatus Estándar'}
                             </span>
                         </div>
-                        <h2 className={`text-4xl font-brand font-bold mb-4 tracking-tight ${isActive ? '!text-[#FAFAF7]' : 'text-slate-800'}`}>
-                            {isActive ? 'Membresía Visibilidad PRO' : 'Perfil Gratuito'}
-                        </h2>
-                        <p className={`max-w-lg font-secondary text-base leading-relaxed ${isActive ? '!text-[#FAFAF7]/70' : 'text-slate-600'}`}>
+                        <h2 className="text-4xl font-brand font-bold mb-4 tracking-tight !text-[#FAFAF7]">{isActive ? 'Membresía Visibilidad PRO' : 'Perfil Gratuito'}</h2>
+                        <p className="opacity-70 max-w-lg font-secondary text-base leading-relaxed !text-[#FAFAF7]">
                             {isActive
                                 ? 'Tu perfil aparece destacado en las búsquedas y tienes acceso ilimitado a la bolsa de trabajo para postularte a nuevas ofertas.'
                                 : 'Tu perfil está visible pero no cuenta con prioridad en los resultados de búsqueda ni insignia de verificación PRO.'
@@ -84,11 +82,11 @@ const CaregiverPayments = () => {
                         </p>
                     </div>
 
-                    <div className={`w-full md:w-auto p-8 rounded-[16px] backdrop-blur-md border ${isActive ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200 shadow-sm'}`}>
-                        <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${isActive ? '!text-[#FAFAF7]/50' : 'text-gray-400'}`}>
+                    <div className="text-center md:text-right bg-white/5 p-8 rounded-[24px] backdrop-blur-md border border-white/10 w-full md:w-auto min-w-[200px]">
+                        <p className="text-[10px] font-black uppercase tracking-widest !text-[#FAFAF7]/50 mb-1">
                             {isActive ? 'Próxima renovación' : 'Estado de cuenta'}
                         </p>
-                        <p className={`text-2xl font-brand font-bold mb-6 ${isActive ? '!text-[#FAFAF7]' : 'text-slate-800'}`}>
+                        <p className="text-2xl font-brand font-bold mb-6 !text-[#FAFAF7]">
                             {subDetails?.current_period_end
                                 ? new Date(subDetails.current_period_end).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
                                 : (isActive ? 'Renovación automática' : 'Sin cargos activos')
@@ -106,8 +104,8 @@ const CaregiverPayments = () => {
                     </div>
                 </div>
                 {/* Background Decoration */}
-                <div className={`absolute -right-20 -bottom-20 opacity-5 pointer-events-none ${isActive ? '!text-[#FAFAF7]' : 'text-slate-300'}`}>
-                    <Crown size={300} />
+                <div className="absolute -right-20 -bottom-20 opacity-5 !text-[#FAFAF7] pointer-events-none">
+                    {isActive ? <Crown size={300} /> : <Shield size={300} />}
                 </div>
             </div>
 
