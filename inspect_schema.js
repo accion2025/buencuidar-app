@@ -21,8 +21,8 @@ async function inspectSchema() {
         const { error: err } = await supabase.from('caregiver_details').select('trigger_error_list_columns');
         if (err) console.log("COLUMN LIST ERROR:", err.message);
 
-        console.log("--- Triggering Error on patients ---");
-        const { error: pErr } = await supabase.from('patients').select('trigger_error_list_columns');
+        console.log("--- Triggering Error on profiles ---");
+        const { error: pErr } = await supabase.from('profiles').select('trigger_error_list_columns');
         if (pErr) console.log("COLUMN LIST ERROR:", pErr.message);
     } catch (err) {
         console.error("Unexpected Error:", err);

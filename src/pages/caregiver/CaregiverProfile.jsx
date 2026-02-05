@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import VerificationModal from '../../components/dashboard/VerificationModal';
 import ImageCropper from '../../components/dashboard/ImageCropper';
 import { CAREGIVER_SPECIALTIES } from '../../constants/caregiver';
+import { CENTRAL_AMERICA } from '../../constants/locations';
 
 const AVAILABLE_SKILLS = [
     "Primeros Auxilios",
@@ -84,6 +85,35 @@ const CaregiverProfile = () => {
     const [ratingStats, setRatingStats] = useState({ average: 5.0, count: 0 });
     const [debugLogs, setDebugLogs] = useState([]);
 
+    // Location lists based on selection
+    const [availableDepartments, setAvailableDepartments] = useState([]);
+    const [availableMunicipalities, setAvailableMunicipalities] = useState([]);
+
+    useEffect(() => {
+        if (formData?.country) {
+            const countryData = CENTRAL_AMERICA.find(c => c.id === formData.country);
+            if (countryData && countryData.departments) {
+                const depts = Object.keys(countryData.departments);
+                setAvailableDepartments(depts);
+            } else {
+                setAvailableDepartments([]);
+                setAvailableMunicipalities([]);
+            }
+        }
+    }, [formData?.country]);
+
+    useEffect(() => {
+        if (formData?.country && formData?.department) {
+            const countryData = CENTRAL_AMERICA.find(c => c.id === formData.country);
+            if (countryData && countryData.departments && formData.department) {
+                const munis = countryData.departments[formData.department] || [];
+                setAvailableMunicipalities(munis);
+            } else {
+                setAvailableMunicipalities([]);
+            }
+        }
+    }, [formData?.department, formData?.country]);
+
     const addLog = (msg, obj = null) => {
         try {
             const time = new Date().toLocaleTimeString();
@@ -155,6 +185,9 @@ const CaregiverProfile = () => {
             specialization: profile.specialization || '',
             phone: profile.phone || '',
             location: registeredLocation || profile.location || profile.caregiver_details?.location || '',
+            country: profile.country || 'nicaragua',
+            department: profile.department || '',
+            municipality: profile.municipality || '',
             experience: profile.experience || profile.caregiver_details?.experience || '',
             hourly_rate: profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150,
             bio: profile.bio || '',
@@ -176,7 +209,11 @@ const CaregiverProfile = () => {
                 .from('profiles')
                 .update({
                     full_name: formData.full_name,
-                    phone: formData.phone
+                    phone: formData.phone,
+                    country: formData.country,
+                    department: formData.department,
+                    municipality: formData.municipality,
+                    location: `${formData.municipality}, ${formData.department}`
                 })
                 .eq('id', user.id);
 
@@ -712,14 +749,53 @@ const CaregiverProfile = () => {
                                             onChange={e => setFormData({ ...formData, phone: e.target.value })}
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Zona / Localidad</label>
-                                        <input
-                                            type="text"
-                                            className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)]"
-                                            value={formData.location}
-                                            onChange={e => setFormData({ ...formData, location: e.target.value })}
-                                        />
+                                    <div className="md:col-span-2 space-y-6">
+                                        <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
+                                            <MapPin size={16} className="text-[var(--secondary-color)]" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Ubicación del Servicio</span>
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">País</label>
+                                                <select
+                                                    className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                                    value={formData.country}
+                                                    onChange={e => setFormData({ ...formData, country: e.target.value })}
+                                                >
+                                                    {CENTRAL_AMERICA.map(c => (
+                                                        <option key={c.id} value={c.id} disabled={!c.active}>
+                                                            {c.name} {!c.active && '(Próximamente)'}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Departamento</label>
+                                                <select
+                                                    required
+                                                    className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                                    value={formData.department}
+                                                    onChange={e => setFormData({ ...formData, department: e.target.value })}
+                                                >
+                                                    {availableDepartments.map(dept => (
+                                                        <option key={dept} value={dept}>{dept}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Municipio</label>
+                                                <select
+                                                    required
+                                                    className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                                    value={formData.municipality}
+                                                    onChange={e => setFormData({ ...formData, municipality: e.target.value })}
+                                                >
+                                                    {availableMunicipalities.map(muni => (
+                                                        <option key={muni} value={muni}>{muni}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Tarifa por Hora ($)</label>
