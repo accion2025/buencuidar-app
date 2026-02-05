@@ -158,21 +158,21 @@ const CaregiverProfile = () => {
         return () => clearInterval(interval);
     }, [uploading]);
 
-    // Bloquear scroll de HTML y BODY para asegurar que no quede barra
+    // Bloquear scroll del contenedor principal (Layout) y Body
     useEffect(() => {
+        const scrollContainer = document.getElementById('main-scroll-container');
+
         if (isEditing) {
-            document.documentElement.style.setProperty('overflow', 'hidden', 'important');
-            document.body.style.setProperty('overflow', 'hidden', 'important');
+            if (scrollContainer) scrollContainer.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Fallback
         } else {
-            document.documentElement.style.removeProperty('overflow');
-            document.body.style.removeProperty('overflow');
-            // Fallback limpio
-            document.body.style.overflowX = 'hidden';
+            if (scrollContainer) scrollContainer.style.overflow = '';
+            document.body.style.overflow = '';
         }
+
         return () => {
-            document.documentElement.style.removeProperty('overflow');
-            document.body.style.removeProperty('overflow');
-            document.body.style.overflowX = 'hidden';
+            if (scrollContainer) scrollContainer.style.overflow = '';
+            document.body.style.overflow = '';
         };
     }, [isEditing]);
 

@@ -150,7 +150,7 @@ const CaregiverLayout = () => {
                 </header>
 
                 {/* Page Content */}
-                <main className="flex-1 p-4 md:p-10 overflow-y-auto">
+                <main id="main-scroll-container" className="flex-1 p-4 md:p-10 overflow-y-auto">
                     <div className="max-w-7xl mx-auto">
                         <Outlet />
                     </div>
