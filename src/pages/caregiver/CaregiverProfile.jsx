@@ -494,9 +494,9 @@ const CaregiverProfile = () => {
                     </div>
 
                     <div className="text-center lg:text-left flex-1 w-full lg:w-auto">
-                        <div className="flex flex-col lg:flex-row lg:items-center gap-6 mb-6">
+                        <div className="flex flex-col items-center lg:items-start gap-2 mb-8">
                             <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight">{profile.full_name}</h1>
-                            <div className={`flex items-center gap-2 bg-white/10 backdrop-blur-md ${isPro ? 'text-[var(--accent-color)] border-white/10' : 'text-gray-400 border-white/5'} px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit mx-auto lg:mx-0 border uppercase`}>
+                            <div className={`flex items-center gap-2 bg-white/10 backdrop-blur-md ${isPro ? 'text-[var(--accent-color)] border-white/10' : 'text-gray-400 border-white/5'} px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit border uppercase mt-2`}>
                                 {isPro ? <Award size={14} /> : <ShieldCheck size={14} />}
                                 <span>{isPro ? 'PERFIL BC PRO' : 'PERFIL ESTÁNDAR'}</span>
                             </div>
@@ -534,8 +534,8 @@ const CaregiverProfile = () => {
 
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
                                 <MapPin size={20} className="text-orange-400" />
-                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">
-                                    {[profile.municipality, profile.department, profile.country].filter(Boolean).join(', ') || profile.location || 'Nicaragua'}
+                                <span className="text-xl font-brand font-semibold !text-[#FAFAF7]">
+                                    {[profile.municipality, profile.department, profile.country?.toUpperCase()].filter(Boolean).join(', ') || profile.location || 'NICARAGUA'}
                                 </span>
                             </div>
 
