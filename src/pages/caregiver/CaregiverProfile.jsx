@@ -214,29 +214,41 @@ const CaregiverProfile = () => {
 
         setFormData({
             full_name: profile.full_name || '',
-            specialization: profile.specialization || '',
+            specialization: profile.specialization || profile.caregiver_details?.specialization || 'Acompañamiento Integral',
             phone: profile.phone || '',
             location: registeredLocation || profile.location || profile.caregiver_details?.location || '',
             country: initialCountry,
             department: initialDepartment,
             municipality: initialMunicipality,
-            experience: profile.experience || profile.caregiver_details?.experience || '',
+            experience: profile.experience || profile.caregiver_details?.experience || '1',
             hourly_rate: profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150,
-            bio: profile.bio || '',
-            certifications: profile.certifications || [
+            bio: profile.bio || profile.caregiver_details?.bio || '',
+            certifications: profile.certifications || profile.caregiver_details?.certifications || [
                 { title: "Enfermería General", org: "UNAM", year: "2018" },
                 { title: "RCP Avanzado", org: "Cruz Roja", year: "2023" },
                 { title: "Diplomado Geriatría", org: "ING", year: "2020" }
             ],
-            skills: profile.skills || ['Primeros Auxilios', 'Manejo de Sondas', 'Terapia Física', 'Cocina Básica', 'Licencia de Conducir']
+            skills: profile.skills || profile.caregiver_details?.skills || ['Primeros Auxilios', 'Higiene y Confort']
         });
         setIsEditing(true);
     };
 
     const handleSave = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
+        if (saving) return; // Prevent double clicks
+
         setSaving(true);
+        addLog("💾 Iniciando guardado de perfil...");
+
         try {
+            // 1. Validaciones y Saneamiento
+            const numericRate = Number(formData.hourly_rate) || 150;
+            const numericExperience = Number(formData.experience) || 1;
+            const fullLocation = [formData.municipality, formData.department, formData.country]
+                .filter(Boolean)
+                .join(', ') || formData.location;
+
+            addLog("Paso 1: Actualizando tabla 'profiles'...");
             const { error: profileError } = await supabase
                 .from('profiles')
                 .update({
@@ -245,34 +257,49 @@ const CaregiverProfile = () => {
                     country: formData.country,
                     department: formData.department,
                     municipality: formData.municipality,
-                    location: `${formData.municipality}, ${formData.department}`
+                    location: `${formData.municipality}, ${formData.department}`, // Para consistencia de búsqueda
+                    bio: formData.bio // Guardar bio también en profiles por redundancia útil
                 })
                 .eq('id', user.id);
 
-            if (profileError) throw profileError;
+            if (profileError) {
+                console.error("Error en profiles:", profileError);
+                throw new Error(`Error al actualizar datos básicos: ${profileError.message}`);
+            }
 
+            addLog("Paso 2: Upsert en tabla 'caregiver_details'...");
             const caregiverUpdates = {
-                id: user.id, // Necesario para upsert
+                id: user.id,
                 specialization: formData.specialization,
-                experience: formData.experience,
+                experience: numericExperience,
                 bio: formData.bio,
-                location: formData.location,
-                hourly_rate: formData.hourly_rate,
+                location: fullLocation,
+                hourly_rate: numericRate,
                 certifications: formData.certifications,
-                skills: formData.skills
+                skills: formData.skills,
+                updated_at: new Date().toISOString()
             };
 
             const { error: detailsError } = await supabase
                 .from('caregiver_details')
-                .upsert(caregiverUpdates);
+                .upsert(caregiverUpdates, { onConflict: 'id' });
 
-            if (detailsError) throw detailsError;
+            if (detailsError) {
+                console.error("Error en caregiver_details:", detailsError);
+                throw new Error(`Error al actualizar detalles profesionales: ${detailsError.message}`);
+            }
 
+            addLog("Paso 3: Refrescando datos locales...");
             await refreshProfile();
+
+            addLog("✅ Perfil guardado con éxito.");
             setIsEditing(false);
+            alert("¡Perfil actualizado correctamente!");
+
         } catch (error) {
-            console.error("Error updating profile:", error);
-            alert("No se pudo guardar el perfil: " + error.message);
+            console.error("Error fatal en handleSave:", error);
+            addLog("❌ Error en guardado:", error.message);
+            alert(`No se pudo guardar el perfil:\n\n${error.message}`);
         } finally {
             setSaving(false);
         }
