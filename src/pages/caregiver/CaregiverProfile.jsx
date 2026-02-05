@@ -486,104 +486,134 @@ const CaregiverProfile = () => {
                     }}
                 />
             )}
-            {/* Premium Header Profile */}
-            <div className={`bg-gradient-to-br ${isPro ? 'from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F]' : 'from-slate-700 to-slate-900'} rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12 transition-all duration-700`}>
-                <div className={`absolute top-0 right-0 w-[500px] h-[500px] ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-400'} rounded-full -translate-y-1/2 translate-x-1/2 blur-[150px] opacity-20 transition-colors duration-700`}></div>
-                <div className={`absolute bottom-0 left-0 w-80 h-80 ${isPro ? 'bg-[var(--accent-color)]' : 'bg-slate-500'} rounded-full translate-y-1/2 -translate-x-1/2 blur-[120px] opacity-10 transition-colors duration-700`}></div>
+            {/* Premium Header Layout Redesign */}
+            <div className="bg-white rounded-[24px] shadow-xl overflow-hidden mb-12 relative group border border-slate-100">
+                {/* 1. Reduced Height Banner (approx 60% reduction from original feel) */}
+                <div className={`h-40 bg-gradient-to-r ${isPro ? 'from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F]' : 'from-slate-700 to-slate-800'} relative overflow-hidden`}>
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px]"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-black opacity-10 rounded-full translate-y-1/2 -translate-x-1/2 blur-[60px]"></div>
+                </div>
 
-                <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-[auto_1fr_auto] items-center lg:items-end gap-10">
-                    {/* Avatar Display */}
-                    <div className="relative group shrink-0">
-                        <div className="w-48 h-48 rounded-[16px] border-[6px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40">
-                            {uploading ? (
+                {/* 2. Avatar (Centered & Overlapping) */}
+                <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10 w-full flex justify-center">
+                    <div className="relative group/avatar">
+                        <div className="w-40 h-40 rounded-full border-[6px] border-white shadow-2xl bg-slate-900 overflow-hidden relative ring-1 ring-slate-100">
+                            {uploading && (
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20">
-                                    <Loader2 className="animate-spin text-white" size={40} />
+                                    <Loader2 className="animate-spin text-white" size={32} />
                                 </div>
-                            ) : null}
+                            )}
                             <img
                                 src={profile.avatar_url || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"}
                                 alt="Profile"
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                className="w-full h-full object-cover group-hover/avatar:scale-110 transition-transform duration-700"
                             />
-                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer !text-[#FAFAF7] backdrop-blur-sm">
-                                <Camera size={32} className="mb-2" />
-                                <span className="text-[10px] font-black uppercase tracking-widest">Cambiar Foto</span>
+                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/avatar:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white backdrop-blur-sm">
+                                <Camera size={24} className="mb-1" />
+                                <span className="text-[10px] font-black uppercase tracking-widest">Cambiar</span>
                                 <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
                             </label>
                         </div>
-                        <div className={`absolute -bottom-2 -right-2 ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-500'} w-10 h-10 rounded-[16px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]`} title={isPro ? "Verificado PRO" : "Perfil Estándar"}>
-                            {isPro ? <Check size={20} strokeWidth={4} /> : <ShieldCheck size={20} strokeWidth={2.5} />}
+                        {/* Profile Type Badge (Absolute) */}
+                        <div className={`absolute bottom-2 right-2 ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-500'} w-8 h-8 rounded-full border-[3px] border-white shadow-lg flex items-center justify-center text-white`} title={isPro ? "Verificado PRO" : "Perfil Estándar"}>
+                            {isPro ? <Check size={16} strokeWidth={4} /> : <ShieldCheck size={16} strokeWidth={2.5} />}
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. Main Content Content */}
+                <div className="pt-24 pb-10 px-6 lg:px-12 text-center mt-4">
+                    {/* Name */}
+                    <h1 className="text-3xl lg:text-4xl font-brand font-bold text-slate-800 mb-2 tracking-tight">{profile.full_name}</h1>
+
+                    {/* Badge & Stars Row */}
+                    <div className="flex flex-col items-center gap-3 mb-8">
+                        <div className={`flex items-center gap-2 ${isPro ? 'bg-emerald-50 text-[var(--secondary-color)] border-emerald-100' : 'bg-slate-50 text-slate-500 border-slate-100'} px-4 py-1.5 rounded-full text-xs font-black tracking-[0.15em] border uppercase`}>
+                            {isPro ? <Award size={14} /> : <ShieldCheck size={14} />}
+                            <span>{isPro ? 'PERFIL BC PRO' : 'PERFIL ESTÁNDAR'}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2 text-gray-400">
+                            <div className="flex items-center">
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                    <Star
+                                        key={s}
+                                        size={16}
+                                        className={`${ratingStats.count === 0
+                                            ? 'text-gray-300'
+                                            : (s <= Number(ratingStats.average) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200')
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+                            {ratingStats.count > 0 && (
+                                <span className="text-sm font-bold text-slate-600">
+                                    {ratingStats.average} <span className="text-xs font-normal text-slate-400">({ratingStats.count})</span>
+                                </span>
+                            )}
                         </div>
                     </div>
 
-                    <div className="text-center lg:text-left flex-1 w-full lg:w-auto">
-                        <div className="flex flex-col items-center lg:items-start gap-2 mb-8">
-                            <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight">{profile.full_name}</h1>
-                            <div className={`flex items-center gap-2 bg-white/10 backdrop-blur-md ${isPro ? 'text-[var(--accent-color)] border-white/10' : 'text-gray-400 border-white/5'} px-4 py-2 rounded-full text-sm font-black tracking-[0.2em] w-fit border uppercase mt-2`}>
-                                {isPro ? <Award size={14} /> : <ShieldCheck size={14} />}
-                                <span>{isPro ? 'PERFIL BC PRO' : 'PERFIL ESTÁNDAR'}</span>
+                    {/* 4. Stats Grid (The "Recuadros") */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10 max-w-4xl mx-auto">
+                        {/* Tarifa Box */}
+                        <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-slate-100 group/box">
+                            <div className="p-3 rounded-full bg-white shadow-sm text-green-600 group-hover/box:bg-green-50 transition-colors">
+                                <CreditCard size={20} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Tarifa</p>
+                                <p className="text-lg font-brand font-bold text-slate-800">${profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150}<span className="text-xs text-slate-400 font-normal">/hr</span></p>
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 mb-10">
-
-
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-white/10 rounded-[16px] border border-white/10">
-                                    <Phone size={24} className="text-[var(--secondary-color)]" />
-                                </div>
-                                <div className="text-left">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-[var(--accent-color)] leading-none mb-1">Contacto</p>
-                                    <p className="text-xl font-brand font-bold !text-[#FAFAF7]">{profile.phone || 'Sin número'}</p>
-                                </div>
+                        {/* Experiencia Box */}
+                        <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-slate-100 group/box">
+                            <div className="p-3 rounded-full bg-white shadow-sm text-blue-600 group-hover/box:bg-blue-50 transition-colors">
+                                <Briefcase size={20} />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Experiencia</p>
+                                <p className="text-lg font-brand font-bold text-slate-800">{profile.experience || '5'} <span className="text-xs text-slate-400 font-normal">Años</span></p>
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-y-2 gap-x-3 lg:gap-10">
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-1">
-                                    {[1, 2, 3, 4, 5].map((s) => (
-                                        <Star
-                                            key={s}
-                                            size={16}
-                                            className={`${ratingStats.count === 0
-                                                ? 'text-gray-400'
-                                                : (s <= Number(ratingStats.average) ? 'text-yellow-400 fill-yellow-400' : 'text-white/20')
-                                                }`}
-                                        />
-                                    ))}
-                                </div>
-                                <span className="text-lg lg:text-xl font-brand font-bold !text-[#FAFAF7]">{ratingStats.average}</span>
-                                <span className="text-xs font-secondary !text-[#FAFAF7]">({ratingStats.count} res)</span>
+                        {/* Ubicacion Box */}
+                        <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-slate-100 group/box">
+                            <div className="p-3 rounded-full bg-white shadow-sm text-red-500 group-hover/box:bg-red-50 transition-colors">
+                                <MapPin size={20} />
                             </div>
-
-                            <div className="flex items-center gap-2 lg:gap-3 border-l border-white/10 pl-4 lg:pl-8">
-                                <Briefcase size={20} className="text-[var(--secondary-color)]" />
-                                <span className="text-lg lg:text-xl font-brand font-bold !text-[#FAFAF7]">{profile.experience || '5'} Años de Exp.</span>
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Zona</p>
+                                <p className="text-sm font-brand font-bold text-slate-800 leading-tight max-w-[140px] truncate">
+                                    {getLocationString(profile)}
+                                </p>
                             </div>
+                        </div>
 
-                            <div className={`flex items-center gap-2 lg:gap-3 ${isPro ? 'border-l border-white/10 pl-4 lg:pl-8' : 'pl-0'}`}>
-                                <MapPin size={20} className="text-orange-400" />
-                                <span className="text-lg lg:text-xl font-brand font-normal !text-[#FAFAF7]">{getLocationString(profile)}</span>
+                        {/* Contacto Box (Added) */}
+                        <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-transparent hover:border-slate-100 group/box">
+                            <div className="p-3 rounded-full bg-white shadow-sm text-purple-600 group-hover/box:bg-purple-50 transition-colors">
+                                <Phone size={20} />
                             </div>
-
-                            <div className={`flex items-center gap-3 ${isPro ? 'w-full justify-center lg:w-auto lg:justify-start border-none lg:border-l lg:border-white/10 pl-0 lg:pl-8' : 'border-l border-white/10 pl-8'}`}>
-                                <CreditCard size={20} className="text-purple-400" />
-                                <span className="text-xl font-brand font-bold !text-[#FAFAF7]">${profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150} /hr</span>
+                            <div>
+                                <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-1">Contacto</p>
+                                <p className="text-lg font-brand font-bold text-slate-800">{profile.phone || 'N/A'}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-4 min-w-[240px] w-full lg:w-auto">
+                    {/* Buttons */}
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <button
                             onClick={handleEditOpen}
-                            className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-2xl shadow-green-900/40 flex items-center justify-center gap-3 group border-none"
+                            className="bg-[var(--secondary-color)] text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 hover:shadow-xl hover:shadow-emerald-900/20 transition-all flex items-center gap-3 active:scale-95 w-full sm:w-auto justify-center"
                         >
-                            <Edit2 size={18} className="group-hover:rotate-12 transition-transform" />
-                            Editar Mi Perfil PRO
+                            <Edit2 size={16} />
+                            Editar Mi Perfil
                         </button>
-                        <button className="bg-white/10 backdrop-blur-md !text-[#FAFAF7] border border-white/10 px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-[var(--primary-color)] transition-all flex items-center justify-center gap-3">
-                            <BookOpen size={18} />
+                        <button className="bg-white text-slate-600 border border-slate-200 px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-50 hover:text-slate-800 hover:border-slate-300 transition-all flex items-center gap-3 active:scale-95 w-full sm:w-auto justify-center">
+                            <BookOpen size={16} />
                             Vista Pública
                         </button>
                     </div>
