@@ -70,6 +70,19 @@ const preprocessImage = async (file, maxDimension = 1200) => {
 
 const CaregiverProfile = () => {
     const { profile, user, refreshProfile, setProfile } = useAuth();
+
+    // Helper para obtener string de ubicación seguro/limpio
+    const getLocationString = (p) => {
+        try {
+            const countryClean = (p?.country && typeof p.country === 'string')
+                ? (p.country.charAt(0).toUpperCase() + p.country.slice(1))
+                : (p?.country || '');
+            return [p?.municipality, p?.department, countryClean].filter(Boolean).join(', ') || p?.location || 'Nicaragua';
+        } catch (e) {
+            return p?.location || 'Nicaragua';
+        }
+    };
+
     console.log("CaregiverProfile Component - Auth Data:", { profile, user });
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -506,7 +519,7 @@ const CaregiverProfile = () => {
                     <div className="text-center lg:text-left flex-1 w-full lg:w-auto">
                         <div className="flex flex-col items-center lg:items-start gap-2 mb-8">
                             <h1 className="text-4xl md:text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tight">{profile.full_name}</h1>
-                            <div className={`flex items-center gap-2 bg-white/10 backdrop-blur-md ${isPro ? 'text-[var(--accent-color)] border-white/10' : 'text-gray-400 border-white/5'} px-4 py-2 rounded-full text-[10px] font-black tracking-[0.2em] w-fit border uppercase mt-2`}>
+                            <div className={`flex items-center gap-2 bg-white/10 backdrop-blur-md ${isPro ? 'text-[var(--accent-color)] border-white/10' : 'text-gray-400 border-white/5'} px-4 py-2 rounded-full text-sm font-black tracking-[0.2em] w-fit border uppercase mt-2`}>
                                 {isPro ? <Award size={14} /> : <ShieldCheck size={14} />}
                                 <span>{isPro ? 'PERFIL BC PRO' : 'PERFIL ESTÁNDAR'}</span>
                             </div>
@@ -530,7 +543,14 @@ const CaregiverProfile = () => {
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-1">
                                     {[1, 2, 3, 4, 5].map((s) => (
-                                        <Star key={s} size={16} className={`${s <= Number(ratingStats.average) ? 'text-yellow-400 fill-yellow-400' : 'text-white/20'}`} />
+                                        <Star
+                                            key={s}
+                                            size={16}
+                                            className={`${ratingStats.count === 0
+                                                ? 'text-gray-400'
+                                                : (s <= Number(ratingStats.average) ? 'text-yellow-400 fill-yellow-400' : 'text-white/20')
+                                                }`}
+                                        />
                                     ))}
                                 </div>
                                 <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{ratingStats.average}</span>
@@ -542,21 +562,9 @@ const CaregiverProfile = () => {
                                 <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{profile.experience || '5'} Años de Exp.</span>
                             </div>
 
-                            <div className="flex items-center gap-3 border-l border-white/10 pl-8">
+                            <div className={`flex items-center gap-3 ${isPro ? 'border-l border-white/10 pl-8' : 'pl-2'}`}>
                                 <MapPin size={20} className="text-orange-400" />
-                                <span className="text-xl font-brand font-normal !text-[#FAFAF7]">
-                                    {(() => {
-                                        try {
-                                            const countryClean = (profile?.country && typeof profile.country === 'string')
-                                                ? (profile.country.charAt(0).toUpperCase() + profile.country.slice(1))
-                                                : (profile?.country || '');
-                                            return [profile?.municipality, profile?.department, countryClean].filter(Boolean).join(', ') || profile?.location || 'Nicaragua';
-                                        } catch (e) {
-                                            console.error("Location render error:", e);
-                                            return profile?.location || 'Nicaragua';
-                                        }
-                                    })()}
-                                </span>
+                                <span className="text-xl font-brand font-normal !text-[#FAFAF7]">{getLocationString(profile)}</span>
                             </div>
 
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
