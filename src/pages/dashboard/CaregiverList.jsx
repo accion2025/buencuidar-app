@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { Search, Filter, MapPin, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CaregiverDetailModal from '../../components/dashboard/CaregiverDetailModal';
+import { formatLocation } from '../../utils/location';
 
 const CaregiverList = () => {
     const [caregivers, setCaregivers] = useState([]);
@@ -161,7 +162,7 @@ const CaregiverList = () => {
                     {filteredCaregivers.map(bg => {
                         const details = Array.isArray(bg.caregiver_details) ? bg.caregiver_details[0] : bg.caregiver_details;
                         const displayBio = bg.bio || details?.bio;
-                        const displayLocation = bg.address || details?.location;
+                        const displayLocationFormatted = formatLocation(bg, details);
 
                         return (
                             <div key={bg.id} className="bg-white rounded-[16px] shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow flex flex-col items-center text-center">
@@ -184,7 +185,7 @@ const CaregiverList = () => {
                                 )}
                                 <p className="text-blue-600 text-sm font-medium mb-4 flex items-center justify-center gap-1">
 
-                                    <MapPin size={14} /> {displayLocation || 'Ubicación no disponible'}
+                                    <MapPin size={14} /> {displayLocationFormatted}
                                 </p>
 
                                 <p className="text-gray-500 text-sm mb-6 line-clamp-2">

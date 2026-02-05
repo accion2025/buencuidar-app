@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import CaregiverDetailModal from '../components/dashboard/CaregiverDetailModal';
 import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
 import { CENTRAL_AMERICA } from '../constants/locations';
+import { formatLocation } from '../utils/location';
 
 const Search = () => {
     const navigate = useNavigate();
@@ -111,7 +112,7 @@ const Search = () => {
                         rating: details?.rating || 5.0,
                         reviews: details?.reviews_count || 0,
                         experience: (details?.experience || 0) + ' años',
-                        location: details?.location || 'Ubicación no disponible',
+                        location: formatLocation(p, details),
                         price: details?.hourly_rate || 150,
                         image: p.avatar_url || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
                         tags: details?.skills || ['Acompañamiento', 'Cuidado Integral'],

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, MapPin, Star, Shield, Clock, Mail, MessageCircle, Award, Check, BookOpen, DollarSign } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { formatLocation } from '../../utils/location';
 
 const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const [reviews, setReviews] = useState([]);
@@ -62,21 +63,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const certifications = details?.certifications || caregiver.certifications || [];
     const hourlyRate = details?.hourly_rate || caregiver.hourly_rate || 150;
 
-    // Formatting Location logic (safe and outside JSX)
-    const getFormattedLocation = () => {
-        const country = (details?.country || caregiver.country || 'Nicaragua').toLowerCase();
-        let abbr = 'NIC';
-        if (country.includes('costa')) abbr = 'CR';
-        else if (country.includes('hond')) abbr = 'HN';
-        else if (country.includes('salv')) abbr = 'SV';
-        else if (country.includes('guat')) abbr = 'GT';
-        else if (country.includes('panam')) abbr = 'PA';
-        else if (!country.includes('nica')) abbr = country.substring(0, 3).toUpperCase();
-
-        const municipality = details?.municipality || '';
-        return municipality ? `${municipality}, ${abbr}` : (location || `Nicaragua, ${abbr}`);
-    };
-    const locationDisplay = getFormattedLocation();
+    const locationDisplay = formatLocation(caregiver, details);
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center pt-5 px-6 pb-6 animate-fade-in overflow-y-auto">
