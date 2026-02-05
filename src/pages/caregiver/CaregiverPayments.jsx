@@ -49,7 +49,7 @@ const CaregiverPayments = () => {
     return (
         <div className="space-y-6 animate-fade-in max-w-4xl mx-auto pb-12">
             <header className="text-center md:text-left">
-                <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Mi Suscripción Profesional <span className="text-[10px] text-gray-400 opacity-20">v2.0.1</span></h1>
+                <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Mi Membresía BC PRO <span className="text-[10px] text-gray-400 opacity-20">v2.0.2</span></h1>
                 <p className="text-gray-500 font-secondary mt-2">Gestiona tu plan para destacar ante las familias y acceder a beneficios PRO.</p>
             </header>
 
@@ -177,7 +177,7 @@ const CaregiverPayments = () => {
             {isActive && (
                 <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
                     <div className="p-8 border-b border-gray-50 bg-slate-50/50">
-                        <h3 className="font-brand font-bold text-xl !text-[#0F3C4C]">Historial de Facturación</h3>
+                        <h3 className="font-brand font-bold text-xl !text-[#0F3C4C]">Historial BC PRO</h3>
                     </div>
                     <div className="divide-y divide-gray-50 text-center py-12 text-gray-400 italic">
                         No se encontraron facturas recientes.

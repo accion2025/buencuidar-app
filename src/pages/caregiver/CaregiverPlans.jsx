@@ -81,7 +81,7 @@ const CaregiverPlans = () => {
             {/* Header Block */}
             <div className="max-w-4xl w-full text-center space-y-4 mb-16">
                 <h1 className="text-5xl md:text-6xl font-brand font-bold tracking-tighter leading-tight">
-                    Planes <span className="text-[#0F3C4C]">B</span><span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span> para Profesionales
+                    Membresía <span className="text-[#0F3C4C]">BC</span> <span className="text-[#2FAE8F]">PRO</span>
                 </h1>
                 <p className="text-xl md:text-2xl text-slate-500 font-medium font-secondary italic">Destaca tu Perfil, Encuentra más Clientes</p>
             </div>
@@ -118,10 +118,10 @@ const CaregiverPlans = () => {
             {/* Grid Block */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl w-full mb-32 items-stretch">
                 <PlanCard
-                    title="PROFESIONAL 1 MES"
+                    title="BC PRO 1 MES"
                     price="199"
                     period="mes"
-                    features={["Acceso PRO mensual", "Sin permanencia", "Ideal para probar"]}
+                    features={["Visibilidad PRO inmediata", "Insignia Verificado PRO", "Postulaciones ilimitadas"]}
                     color={{
                         border: 'border-emerald-100',
                         bg: 'bg-emerald-50',
@@ -134,12 +134,12 @@ const CaregiverPlans = () => {
                 />
 
                 <PlanCard
-                    title="PROFESIONAL 3 MESES"
+                    title="BC PRO 3 MESES"
                     price="499"
                     period="3 meses"
                     monthlyPrice="166"
                     savings="98"
-                    features={["Visibilidad continua", "Ahorro del 16%", "Perfil verificado PRO"]}
+                    features={["Visibilidad PRO inmediata", "Insignia Verificado PRO", "Postulaciones ilimitadas"]}
                     color={{
                         border: 'border-blue-200',
                         bg: 'bg-blue-50',
@@ -152,13 +152,13 @@ const CaregiverPlans = () => {
                 />
 
                 <PlanCard
-                    title="PROFESIONAL 6 MESES"
+                    title="BC PRO 6 MESES"
                     price="899"
                     period="6 meses"
                     monthlyPrice="149"
                     savings="295"
                     recommended={true}
-                    features={["Máxima prioridad", "Ahorro del 25%", "Posicionamiento Top 1"]}
+                    features={["Visibilidad PRO inmediata", "Insignia Verificado PRO", "Postulaciones ilimitadas"]}
                     color={{
                         border: 'border-indigo-600',
                         bg: 'bg-indigo-50',
