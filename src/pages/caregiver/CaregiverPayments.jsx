@@ -5,9 +5,13 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 
 const CaregiverPayments = () => {
-    const { profile } = useAuth();
+    const { profile, refreshProfile } = useAuth();
     const [subDetails, setSubDetails] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        refreshProfile();
+    }, []);
 
     useEffect(() => {
         const fetchSub = async () => {
@@ -45,7 +49,7 @@ const CaregiverPayments = () => {
     return (
         <div className="space-y-6 animate-fade-in max-w-4xl mx-auto pb-12">
             <header className="text-center md:text-left">
-                <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Mi Suscripción Profesional</h1>
+                <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Mi Suscripción Profesional <span className="text-[10px] text-gray-400 opacity-20">v2.0.1</span></h1>
                 <p className="text-gray-500 font-secondary mt-2">Gestiona tu plan para destacar ante las familias y acceder a beneficios PRO.</p>
             </header>
 
