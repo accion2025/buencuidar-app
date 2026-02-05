@@ -158,6 +158,18 @@ const CaregiverProfile = () => {
         return () => clearInterval(interval);
     }, [uploading]);
 
+    // Bloquear scroll del fondo cuando el modal de edición está abierto
+    useEffect(() => {
+        if (isEditing) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isEditing]);
+
     const fetchDocuments = async () => {
         const { data } = await supabase
             .from('caregiver_documents')
@@ -802,20 +814,6 @@ const CaregiverProfile = () => {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">Especialidad</label>
-                                        <select
-                                            className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none"
-                                            value={formData.specialization}
-                                            onChange={e => setFormData({ ...formData, specialization: e.target.value })}
-                                        >
-                                            {CAREGIVER_SPECIALTIES.map(specialty => (
-                                                <option key={specialty} value={specialty}>
-                                                    {specialty}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="space-y-2">
                                         <label className="text-xs font-black text-[var(--text-light)] uppercase tracking-widest ml-1">WhatsApp</label>
                                         <input
                                             type="tel"
@@ -1082,10 +1080,10 @@ const CaregiverProfile = () => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving || uploading}
-                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-xs border-none"
+                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-xs border-none min-h-[64px]"
                             >
                                 {saving ? (
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-3 animate-pulse">
                                         <Loader2 className="animate-spin" size={20} />
                                         <span>Guardando Perfil...</span>
                                     </div>
