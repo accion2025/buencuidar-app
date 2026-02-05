@@ -62,6 +62,22 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const certifications = details?.certifications || caregiver.certifications || [];
     const hourlyRate = details?.hourly_rate || caregiver.hourly_rate || 150;
 
+    // Formatting Location logic (safe and outside JSX)
+    const getFormattedLocation = () => {
+        const country = (details?.country || caregiver.country || 'Nicaragua').toLowerCase();
+        let abbr = 'NIC';
+        if (country.includes('costa')) abbr = 'CR';
+        else if (country.includes('hond')) abbr = 'HN';
+        else if (country.includes('salv')) abbr = 'SV';
+        else if (country.includes('guat')) abbr = 'GT';
+        else if (country.includes('panam')) abbr = 'PA';
+        else if (!country.includes('nica')) abbr = country.substring(0, 3).toUpperCase();
+
+        const municipality = details?.municipality || '';
+        return municipality ? `${municipality}, ${abbr}` : (location || `Nicaragua, ${abbr}`);
+    };
+    const locationDisplay = getFormattedLocation();
+
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-start justify-center pt-5 px-6 pb-6 animate-fade-in overflow-y-auto">
             <div className="bg-white rounded-[16px] shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden relative flex flex-col border border-white/20">
@@ -70,11 +86,29 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                 <div className="flex-1 overflow-y-auto">
                     {/* Redesigned Header */}
                     <div className="relative">
-                        {/* 1. Reduced Height Banner (approx 60% reduction from original feel) */}
-                        <div className="h-40 bg-gradient-to-r from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F] relative overflow-hidden">
+                        {/* 1. Banner with Avatar Centered Fully inside */}
+                        <div className="h-44 bg-gradient-to-r from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F] relative overflow-hidden flex items-center justify-center">
                             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white opacity-5 rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px]"></div>
                             <div className="absolute bottom-0 left-0 w-80 h-80 bg-black opacity-10 rounded-full translate-y-1/2 -translate-x-1/2 blur-[60px]"></div>
-                            {/* Close Button at top right */}
+
+                            {/* Avatar (Centered Fully on Banner) */}
+                            <div className="relative group/avatar">
+                                <div className="w-32 h-32 lg:w-36 lg:h-36 rounded-full border-[6px] border-white/20 shadow-2xl bg-white/10 backdrop-blur-sm overflow-hidden relative ring-1 ring-white/30">
+                                    {caregiver.avatar_url ? (
+                                        <img src={caregiver.avatar_url} alt={caregiver.full_name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-white/20 text-white text-4xl font-black">
+                                            {caregiver.full_name?.charAt(0)}
+                                        </div>
+                                    )}
+                                </div>
+                                {/* Verification Badge */}
+                                <div className="absolute bottom-1 right-1 bg-[var(--secondary-color)] w-7 h-7 rounded-full border-[3px] border-[#0F3C4C] shadow-lg flex items-center justify-center text-white" title="Perfil Verificado">
+                                    <Check size={14} strokeWidth={4} />
+                                </div>
+                            </div>
+
+                            {/* Close Button stayed at top right of the overall component, not the banner center */}
                             <button
                                 onClick={onClose}
                                 className="absolute top-6 right-6 bg-white/10 !text-[#FAFAF7] p-2.5 rounded-[16px] hover:bg-white/20 transition-all backdrop-blur-md z-30"
@@ -83,27 +117,8 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                             </button>
                         </div>
 
-                        {/* 2. Avatar (Centered & Overlapping) */}
-                        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10 w-full flex justify-center">
-                            <div className="relative group/avatar">
-                                <div className="w-32 h-32 lg:w-40 lg:h-40 rounded-full border-[6px] border-white shadow-2xl bg-white overflow-hidden relative ring-1 ring-slate-100">
-                                    {caregiver.avatar_url ? (
-                                        <img src={caregiver.avatar_url} alt={caregiver.full_name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-slate-100 text-[#0F4C5C] text-4xl font-black">
-                                            {caregiver.full_name?.charAt(0)}
-                                        </div>
-                                    )}
-                                </div>
-                                {/* Verification/Type Badge */}
-                                <div className="absolute bottom-2 right-2 bg-[var(--secondary-color)] w-8 h-8 rounded-full border-[3px] border-white shadow-lg flex items-center justify-center text-white" title="Perfil Verificado">
-                                    <Check size={16} strokeWidth={4} />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 3. Name & Info Badges */}
-                        <div className="pt-24 pb-8 px-6 lg:px-12 text-center mt-2">
+                        {/* 3. Name & Info Badges (Slightly less padding top since avatar moved up) */}
+                        <div className="pt-8 pb-8 px-6 lg:px-12 text-center">
                             {/* Name */}
                             <h2 className="text-3xl font-brand font-bold text-slate-800 mb-2 tracking-tight">{caregiver.full_name}</h2>
 
@@ -162,13 +177,8 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                     </div>
                                     <div>
                                         <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-0.5">Ubicación</p>
-                                        <p className="text-xs font-brand font-bold text-slate-800 leading-tight max-w-[100px] truncate mx-auto">
-                                            {(() => {
-                                                const countryClean = (details?.country && typeof details.country === 'string')
-                                                    ? (details.country.charAt(0).toUpperCase() + details.country.slice(1))
-                                                    : (caregiver.country || 'Nicaragua');
-                                                return [details?.municipality, details?.department, countryClean].filter(Boolean).join(', ') || location;
-                                            })()}
+                                        <p className="text-sm font-brand font-bold text-slate-800 leading-tight max-w-[120px] truncate mx-auto">
+                                            {locationDisplay}
                                         </p>
                                     </div>
                                 </div>
