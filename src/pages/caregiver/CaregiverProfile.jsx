@@ -269,8 +269,7 @@ const CaregiverProfile = () => {
                     country: formData.country,
                     department: formData.department,
                     municipality: formData.municipality,
-                    location: `${formData.municipality}, ${formData.department}`, // Para consistencia de búsqueda
-                    bio: formData.bio // Guardar bio también en profiles por redundancia útil
+                    location: `${formData.municipality}, ${formData.department}` // Para consistencia de búsqueda
                 })
                 .eq('id', user.id);
 
@@ -1080,10 +1079,10 @@ const CaregiverProfile = () => {
                             <button
                                 onClick={handleSave}
                                 disabled={saving || uploading}
-                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-xs border-none min-h-[64px]"
+                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-xs border-none"
                             >
                                 {saving ? (
-                                    <div className="flex items-center gap-3 animate-pulse">
+                                    <div className="flex items-center gap-3">
                                         <Loader2 className="animate-spin" size={20} />
                                         <span>Guardando Perfil...</span>
                                     </div>
