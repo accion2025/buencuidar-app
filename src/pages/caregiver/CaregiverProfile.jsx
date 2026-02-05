@@ -70,6 +70,7 @@ const preprocessImage = async (file, maxDimension = 1200) => {
 
 const CaregiverProfile = () => {
     const { profile, user, refreshProfile, setProfile } = useAuth();
+    console.log("CaregiverProfile Component - Auth Data:", { profile, user });
     const [isEditing, setIsEditing] = useState(false);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -544,7 +545,17 @@ const CaregiverProfile = () => {
                             <div className="flex items-center gap-3 border-l border-white/10 pl-8">
                                 <MapPin size={20} className="text-orange-400" />
                                 <span className="text-xl font-brand font-normal !text-[#FAFAF7]">
-                                    {[profile?.municipality, profile?.department, profile?.country ? (profile.country.charAt(0).toUpperCase() + profile.country.slice(1)) : ''].filter(Boolean).join(', ') || profile?.location || 'Nicaragua'}
+                                    {(() => {
+                                        try {
+                                            const countryClean = (profile?.country && typeof profile.country === 'string')
+                                                ? (profile.country.charAt(0).toUpperCase() + profile.country.slice(1))
+                                                : (profile?.country || '');
+                                            return [profile?.municipality, profile?.department, countryClean].filter(Boolean).join(', ') || profile?.location || 'Nicaragua';
+                                        } catch (e) {
+                                            console.error("Location render error:", e);
+                                            return profile?.location || 'Nicaragua';
+                                        }
+                                    })()}
                                 </span>
                             </div>
 
