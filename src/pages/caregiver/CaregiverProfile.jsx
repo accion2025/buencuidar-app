@@ -180,16 +180,21 @@ const CaregiverProfile = () => {
             profile.country
         ].filter(Boolean).join(', ');
 
-        // Populate dependent location lists for the modal
-        if (profile.country) {
-            const countryData = CENTRAL_AMERICA.find(c => c.id === profile.country);
-            if (countryData && countryData.departments) {
-                const depts = Object.keys(countryData.departments);
-                setAvailableDepartments(depts);
-                if (profile.department) {
-                    const munis = countryData.departments[profile.department] || [];
-                    setAvailableMunicipalities(munis);
-                }
+        // DETERMINAR PAÍS, DEPTO Y MUNICIPIO INICIALES
+        const initialCountry = profile.country || 'nicaragua';
+        const initialDepartment = profile.department || '';
+        const initialMunicipality = profile.municipality || '';
+
+        // CARGAR LISTAS DEPENDIENTES INMEDIATAMENTE
+        const countryData = CENTRAL_AMERICA.find(c => c.id === initialCountry);
+        if (countryData && countryData.departments) {
+            const depts = Object.keys(countryData.departments);
+            setAvailableDepartments(depts);
+
+            if (initialDepartment && countryData.departments[initialDepartment]) {
+                setAvailableMunicipalities(countryData.departments[initialDepartment]);
+            } else {
+                setAvailableMunicipalities([]);
             }
         }
 
@@ -198,9 +203,9 @@ const CaregiverProfile = () => {
             specialization: profile.specialization || '',
             phone: profile.phone || '',
             location: registeredLocation || profile.location || profile.caregiver_details?.location || '',
-            country: profile.country || 'nicaragua',
-            department: profile.department || '',
-            municipality: profile.municipality || '',
+            country: initialCountry,
+            department: initialDepartment,
+            municipality: initialMunicipality,
             experience: profile.experience || profile.caregiver_details?.experience || '',
             hourly_rate: profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150,
             bio: profile.bio || '',
@@ -790,8 +795,12 @@ const CaregiverProfile = () => {
                                                     required
                                                     className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
                                                     value={formData.department}
-                                                    onChange={e => setFormData({ ...formData, department: e.target.value })}
+                                                    onChange={e => {
+                                                        const newDept = e.target.value;
+                                                        setFormData(prev => ({ ...prev, department: newDept, municipality: '' }));
+                                                    }}
                                                 >
+                                                    <option value="" disabled>Selecciona Depto.</option>
                                                     {availableDepartments.map(dept => (
                                                         <option key={dept} value={dept}>{dept}</option>
                                                     ))}
@@ -805,6 +814,7 @@ const CaregiverProfile = () => {
                                                     value={formData.municipality}
                                                     onChange={e => setFormData({ ...formData, municipality: e.target.value })}
                                                 >
+                                                    <option value="" disabled>Selecciona Municipio</option>
                                                     {availableMunicipalities.map(muni => (
                                                         <option key={muni} value={muni}>{muni}</option>
                                                     ))}
