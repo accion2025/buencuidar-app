@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { supabase } from '../lib/supabase';
-import { Star, MapPin, Briefcase, Loader2, Search as SearchIcon, Globe, Home } from 'lucide-react';
+import { Star, MapPin, Briefcase, Loader2, Search as SearchIcon, Globe, Home, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CaregiverDetailModal from '../components/dashboard/CaregiverDetailModal';
 import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
