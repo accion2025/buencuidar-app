@@ -111,7 +111,7 @@ const Search = () => {
                         id: p.id,
                         name: p.full_name,
                         role: details?.specialization || 'Cuidador Profesional',
-                        rating: details?.rating || 0,
+                        rating: (details?.reviews_count > 0) ? (details?.rating || 0) : 0,
                         reviews: details?.reviews_count || 0,
                         experience: (details?.experience || 0) + ' años',
                         location: formatLocation(p, details),

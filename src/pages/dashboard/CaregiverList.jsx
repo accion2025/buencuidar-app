@@ -35,8 +35,9 @@ const CaregiverList = () => {
                 const detailsA = Array.isArray(a.caregiver_details) ? a.caregiver_details[0] : a.caregiver_details;
                 const detailsB = Array.isArray(b.caregiver_details) ? b.caregiver_details[0] : b.caregiver_details;
 
-                const ratingA = detailsA?.rating || 0;
-                const ratingB = detailsB?.rating || 0;
+                // Sanitize rating: Force 0 if reviews_count is 0 (ignore DB quirks)
+                const ratingA = (detailsA?.reviews_count > 0) ? (detailsA?.rating || 0) : 0;
+                const ratingB = (detailsB?.reviews_count > 0) ? (detailsB?.rating || 0) : 0;
 
                 // 1. Sort by rating descending (Point 1: Priorities equal ratings)
                 if (ratingB !== ratingA) {
@@ -183,13 +184,14 @@ const CaregiverList = () => {
                                     <div className="flex items-center gap-1.5 mb-4">
                                         <div className="flex items-center bg-amber-400/10 px-2 py-1 rounded-[8px]">
                                             {/* Point 2: Unfilled star if no rating */}
+                                            {/* Robust check: use reviews_count to avoid DB defaults */}
                                             <Star
                                                 size={14}
-                                                className={details?.rating > 0 ? "fill-amber-400 text-amber-400" : "text-slate-300 fill-none"}
+                                                className={(details?.reviews_count > 0 && details?.rating > 0) ? "fill-amber-400 text-amber-400" : "text-slate-300 fill-none"}
                                             />
                                             {/* Point 3: X/5 format, no rounding */}
-                                            <span className={`text-sm font-black ml-1.5 ${details?.rating > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
-                                                {details?.rating > 0 ? `${details.rating}/5` : '0/5'}
+                                            <span className={`text-sm font-black ml-1.5 ${(details?.reviews_count > 0 && details?.rating > 0) ? 'text-amber-600' : 'text-slate-400'}`}>
+                                                {(details?.reviews_count > 0 && details?.rating > 0) ? `${details.rating}/5` : '0/5'}
                                             </span>
                                         </div>
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-[8px] border border-slate-100">
