@@ -138,7 +138,6 @@ const MyShifts = () => {
                                                 }`}>
                                                 {(statusMap[shift.status] || shift.status).toUpperCase()}
                                             </div>
-                                            <span className="text-xs text-gray-400">ID: #{shift.id.slice(0, 5)}</span>
                                             {shift.type && (
                                                 <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-full font-medium">
                                                     {translateAppointmentType(shift.type)}
