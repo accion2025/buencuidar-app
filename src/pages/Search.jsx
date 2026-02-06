@@ -182,67 +182,89 @@ const Search = () => {
             <Navbar />
 
             {/* Header / Search Bar */}
-            <div className="bg-[var(--primary-color)] !text-[#FAFAF7] py-8">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-2xl font-bold mb-6">Encuentra al cuidador ideal</h2>
+            <div className="bg-gradient-to-br from-[var(--primary-color)] via-[#1a5a70] to-[#2FAE8F] py-12 md:py-20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)]/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
 
-                    <div className="bg-white p-4 rounded-[16px] shadow-md grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-gray-800 items-end">
-                        <div className="flex-grow">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
-                                <MapPin size={12} className="text-orange-400" /> Departamento
-                            </label>
-                            <select
-                                className="w-full border-b-2 border-gray-100 focus:border-[var(--primary-color)] outline-none font-medium bg-transparent py-1"
-                                value={filters.department}
-                                onChange={(e) => setFilters({ ...filters, department: e.target.value, municipality: '' })}
-                            >
-                                <option value="">Todos</option>
-                                {availableDepartments.map(dept => (
-                                    <option key={dept} value={dept}>{dept}</option>
-                                ))}
-                            </select>
-                        </div>
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="max-w-4xl mx-auto text-center mb-10">
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold !text-[#FAFAF7] mb-4 tracking-tight">Busca y Contrata Cuidadores PRO</h2>
+                        <p className="text-blue-100 text-sm md:text-lg font-secondary font-medium opacity-90">Personal capacitado y verificado para el cuidado de tus seres queridos.</p>
+                    </div>
 
-                        <div className="flex-grow">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
-                                <Home size={12} className="text-blue-400" /> Municipio
-                            </label>
-                            <select
-                                className="w-full border-b-2 border-gray-100 focus:border-[var(--primary-color)] outline-none font-medium bg-transparent py-1 disabled:opacity-50"
-                                value={filters.municipality}
-                                disabled={!filters.department}
-                                onChange={(e) => setFilters({ ...filters, municipality: e.target.value })}
-                            >
-                                <option value="">Todos</option>
-                                {availableMunicipalities.map(muni => (
-                                    <option key={muni} value={muni}>{muni}</option>
-                                ))}
-                            </select>
-                        </div>
+                    <div className="max-w-6xl mx-auto bg-white/10 backdrop-blur-xl p-2 rounded-[32px] shadow-2xl border border-white/20">
+                        <div className="bg-white p-6 md:p-8 rounded-[28px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 text-gray-800 items-end">
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Globe size={14} className="text-blue-500" /> País
+                                </label>
+                                <select
+                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
+                                    value={filters.country}
+                                    onChange={(e) => setFilters({ ...filters, country: e.target.value, department: '', municipality: '' })}
+                                >
+                                    {CENTRAL_AMERICA.map(country => (
+                                        <option key={country.id} value={country.id}>{country.name}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                        <div className="flex-grow">
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1 flex items-center gap-1">
-                                <Briefcase size={12} className="text-green-500" /> Especialidad
-                            </label>
-                            <select
-                                className="w-full border-b-2 border-gray-100 focus:border-[var(--primary-color)] outline-none font-medium bg-transparent py-1"
-                                value={filters.specialty}
-                                onChange={(e) => setFilters({ ...filters, specialty: e.target.value })}
-                            >
-                                <option value="">Todas las Especialidades</option>
-                                {CAREGIVER_SPECIALTIES.map(specialty => (
-                                    <option key={specialty} value={specialty}>
-                                        {specialty}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex items-end">
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <MapPin size={14} className="text-orange-400" /> Departamento
+                                </label>
+                                <select
+                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
+                                    value={filters.department}
+                                    onChange={(e) => setFilters({ ...filters, department: e.target.value, municipality: '' })}
+                                >
+                                    <option value="">Cualquiera</option>
+                                    {availableDepartments.map(dept => (
+                                        <option key={dept} value={dept}>{dept}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Home size={14} className="text-blue-400" /> Municipio
+                                </label>
+                                <select
+                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer disabled:opacity-50"
+                                    value={filters.municipality}
+                                    disabled={!filters.department}
+                                    onChange={(e) => setFilters({ ...filters, municipality: e.target.value })}
+                                >
+                                    <option value="">Cualquiera</option>
+                                    {availableMunicipalities.map(muni => (
+                                        <option key={muni} value={muni}>{muni}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Briefcase size={14} className="text-emerald-500" /> Especialidad
+                                </label>
+                                <select
+                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
+                                    value={filters.specialty}
+                                    onChange={(e) => setFilters({ ...filters, specialty: e.target.value })}
+                                >
+                                    <option value="">Todas</option>
+                                    {CAREGIVER_SPECIALTIES.map(specialty => (
+                                        <option key={specialty} value={specialty}>
+                                            {specialty}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <button
                                 onClick={fetchCaregivers}
-                                className="btn btn-primary w-full md:w-auto px-8 flex items-center justify-center gap-2"
+                                className="bg-[var(--primary-color)] !text-[#FAFAF7] w-full py-4 rounded-[18px] font-black text-xs uppercase tracking-[0.2em] hover:brightness-110 shadow-xl shadow-blue-900/10 transition-all flex items-center justify-center gap-3 active:scale-95"
                             >
-                                <SearchIcon size={18} />
+                                <SearchIcon size={18} strokeWidth={3} />
                                 <span>Buscar</span>
                             </button>
                         </div>
@@ -255,70 +277,58 @@ const Search = () => {
 
                     {/* Filters Sidebar */}
                     <aside className="w-full lg:w-1/4">
-                        <div className="bg-white p-6 rounded-[16px] shadow-sm border border-gray-200 sticky top-24">
-                            <h3 className="font-bold text-lg mb-4">Filtrar Resultados</h3>
+                        <div className="bg-white p-8 rounded-[24px] shadow-xl shadow-gray-200/50 border border-gray-100 sticky top-24">
+                            <h3 className="font-brand font-bold text-xl text-[var(--primary-color)] mb-6 tracking-tight">Filtrar por</h3>
 
-                            <div className="mb-6">
-                                <h4 className="font-medium mb-2 text-sm text-gray-600">Experiencia</h4>
-                                <label className="flex items-center mb-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="experience"
-                                        className="mr-2 accent-[var(--primary-color)]"
-                                        checked={filters.experience === 'under1'}
-                                        onChange={() => handleExperienceChange('under1')}
-                                    /> Menos de 1 año
-                                </label>
-                                <label className="flex items-center mb-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="experience"
-                                        className="mr-2 accent-[var(--primary-color)]"
-                                        checked={filters.experience === '1-3'}
-                                        onChange={() => handleExperienceChange('1-3')}
-                                    /> 1 - 3 años
-                                </label>
-                                <label className="flex items-center mb-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="experience"
-                                        className="mr-2 accent-[var(--primary-color)]"
-                                        checked={filters.experience === '3-5'}
-                                        onChange={() => handleExperienceChange('3-5')}
-                                    /> 3 - 5 años
-                                </label>
-                                <label className="flex items-center cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="experience"
-                                        className="mr-2 accent-[var(--primary-color)]"
-                                        checked={filters.experience === 'over5'}
-                                        onChange={() => handleExperienceChange('over5')}
-                                    /> + 5 años
-                                </label>
+                            <div className="mb-8">
+                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 ml-1">Experiencia</h4>
+                                <div className="space-y-3">
+                                    {[
+                                        { id: 'under1', label: 'Menos de 1 año' },
+                                        { id: '1-3', label: '1 - 3 años' },
+                                        { id: '3-5', label: '3 - 5 años' },
+                                        { id: 'over5', label: '+ 5 años' }
+                                    ].map(range => (
+                                        <label key={range.id} className="flex items-center gap-3 cursor-pointer group">
+                                            <div className="relative flex items-center justify-center">
+                                                <input
+                                                    type="radio"
+                                                    name="experience"
+                                                    className="peer appearance-none w-5 h-5 border-2 border-gray-200 rounded-full checked:border-[var(--secondary-color)] transition-all cursor-pointer"
+                                                    checked={filters.experience === range.id}
+                                                    onChange={() => handleExperienceChange(range.id)}
+                                                />
+                                                <div className="absolute w-2.5 h-2.5 bg-[var(--secondary-color)] rounded-full opacity-0 peer-checked:opacity-100 transition-all"></div>
+                                            </div>
+                                            <span className="text-sm font-medium text-gray-600 group-hover:text-[var(--primary-color)] transition-colors">{range.label}</span>
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
 
-                            <div className="mb-6">
-                                <h4 className="font-medium mb-2 text-sm text-gray-600">Rango de Precio / Hr</h4>
+                            <div className="mb-8">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tarifa Máxima</h4>
+                                    <span className="text-sm font-bold text-[var(--secondary-color)] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">${filters.priceRange}{filters.priceRange >= 500 && '+'}</span>
+                                </div>
                                 <input
                                     type="range"
                                     min="50"
                                     max="500"
                                     step="10"
-                                    className="w-full accent-[var(--primary-color)]"
+                                    className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-[var(--secondary-color)]"
                                     value={filters.priceRange}
                                     onChange={(e) => setFilters({ ...filters, priceRange: parseInt(e.target.value) })}
                                 />
-                                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                <div className="flex justify-between text-[10px] font-bold text-gray-400 mt-2 px-1">
                                     <span>$50</span>
-                                    <span className="font-bold text-[var(--primary-color)] bg-[var(--primary-light)]/10 px-2 rounded-full">${filters.priceRange}{filters.priceRange >= 500 && '+'}</span>
                                     <span>$500+</span>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handleClearFilters}
-                                className="text-[var(--primary-light)] text-sm font-medium hover:underline w-full text-center"
+                                className="w-full py-4 text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[var(--primary-color)] hover:bg-gray-50 rounded-[16px] transition-all border-2 border-transparent hover:border-gray-100"
                             >
                                 Limpiar Filtros
                             </button>
@@ -343,53 +353,72 @@ const Search = () => {
                                 </div>
                             ) : caregivers.length > 0 ? (
                                 caregivers.map((caregiver) => (
-                                    <div key={caregiver.id} className="bg-white rounded-[16px] shadow-sm border border-gray-200 hover:shadow-md transition-shadow overflow-hidden flex flex-col group">
-                                        <div className="p-6 flex-grow">
-                                            <div className="flex items-start gap-4 mb-4">
-                                                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-100 shrink-0">
+                                    <div key={caregiver.id} className="bg-white rounded-[24px] shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 overflow-hidden flex flex-col group hover:-translate-y-2">
+                                        <div className="p-8 flex-grow">
+                                            <div className="flex items-start gap-5 mb-6">
+                                                <div className="w-20 h-20 rounded-[20px] overflow-hidden border-4 border-gray-50 shadow-inner shrink-0 relative">
                                                     <img
                                                         src={caregiver.image}
                                                         alt={caregiver.name}
-                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
+                                                    {(caregiver.raw?.plan_type === 'premium' || caregiver.raw?.plan_type === 'professional_pro') && (
+                                                        <div className="absolute bottom-0 right-0 bg-[var(--secondary-color)] text-white p-1 rounded-tl-[8px]">
+                                                            <Award size={12} strokeWidth={3} />
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <div>
-                                                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-[var(--primary-color)] transition-colors">{caregiver.name}</h3>
-                                                    <p className="text-[var(--primary-light)] text-xs font-black uppercase tracking-widest">{caregiver.role}</p>
-                                                    <div className="flex items-center mt-1">
-                                                        <Star size={14} className={`${caregiver.reviews > 0 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
-                                                        <span className="text-sm font-bold text-gray-700 ml-1">{caregiver.rating}</span>
-                                                        <span className="text-xs text-gray-400 ml-1"><span>({caregiver.reviews}</span> <span>reseñas)</span></span>
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-brand font-bold text-xl text-[var(--primary-color)] group-hover:text-[var(--secondary-color)] transition-colors truncate">{caregiver.name}</h3>
+                                                    <p className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-[0.2em] mb-2">{caregiver.role}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-full">
+                                                            <Star size={12} className="text-yellow-400 fill-yellow-400" />
+                                                            <span className="text-xs font-black text-yellow-600 ml-1">{caregiver.rating}</span>
+                                                        </div>
+                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">({caregiver.reviews} reseñas)</span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="flex flex-wrap gap-2 mb-4">
-                                                {caregiver.tags.map(tag => (
-                                                    <span key={tag} className="bg-gray-50 text-gray-500 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md border border-gray-100">
+                                            <div className="flex flex-wrap gap-1.5 mb-6">
+                                                {caregiver.tags.slice(0, 3).map(tag => (
+                                                    <span key={tag} className="bg-gray-50 text-gray-500 text-[9px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-[12px] border border-gray-100">
                                                         {tag}
                                                     </span>
                                                 ))}
+                                                {caregiver.tags.length > 3 && (
+                                                    <span className="bg-blue-50 text-blue-500 text-[9px] font-bold px-2 py-1.5 rounded-[12px]">+{caregiver.tags.length - 3}</span>
+                                                )}
                                             </div>
 
-                                            <div className="text-sm text-gray-500 space-y-2 font-medium">
-                                                <p className="flex items-center gap-2">
-                                                    <MapPin size={14} className="text-orange-400" /> {caregiver.location}
-                                                </p>
-                                                <p className="flex items-center gap-2">
-                                                    <Briefcase size={14} className="text-blue-400" /> {caregiver.experience} de exp.
-                                                </p>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-1">
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                        <MapPin size={10} className="text-orange-400" /> Ubicación
+                                                    </p>
+                                                    <p className="text-xs font-bold text-gray-600 truncate">{caregiver.location}</p>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                        <Briefcase size={10} className="text-blue-400" /> Experiencia
+                                                    </p>
+                                                    <p className="text-xs font-bold text-gray-600">{caregiver.experience}</p>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                                        <div className="bg-gray-50/50 px-8 py-6 border-t border-gray-100 flex items-center justify-between">
                                             <div>
-                                                <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest leading-none mb-1">Tarifa</p>
-                                                <p className="text-xl font-brand font-bold text-[var(--primary-color)]"><span>${caregiver.price}</span><span className="text-sm font-normal text-gray-500 ml-1">/hr</span></p>
+                                                <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest leading-none mb-1">Inversión / Hr</p>
+                                                <p className="text-2xl font-brand font-bold text-[var(--primary-color)] flex items-baseline">
+                                                    <span>${caregiver.price}</span>
+                                                    <span className="text-xs font-secondary font-bold text-gray-400 ml-1 uppercase tracking-widest">USD</span>
+                                                </p>
                                             </div>
                                             <button
                                                 onClick={() => setSelectedCaregiver(caregiver.raw)}
-                                                className="btn btn-secondary text-[10px] font-black uppercase tracking-widest px-6 py-3 shadow-lg shadow-green-100"
+                                                className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-[10px] font-black uppercase tracking-[0.2em] px-6 py-4 rounded-[16px] shadow-lg shadow-emerald-900/10 hover:brightness-110 active:scale-95 transition-all"
                                             >
                                                 Ver Perfil
                                             </button>
