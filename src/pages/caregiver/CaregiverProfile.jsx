@@ -962,7 +962,7 @@ const CaregiverProfile = () => {
                                         ))}
                                     </div>
 
-                                    <div className="bg-blue-50/30 p-8 rounded-[16px] border-2 border-dashed border-blue-200 space-y-6">
+                                    <div className="bg-blue-50/30 p-4 md:p-6 rounded-[16px] border-2 border-dashed border-blue-200 space-y-4">
                                         <p className="text-xs font-black text-blue-600 uppercase tracking-[0.2em] text-center">Añadir Nuevo Certificado</p>
                                         <div className="grid grid-cols-2 gap-6">
                                             <div className="space-y-1">
@@ -986,7 +986,7 @@ const CaregiverProfile = () => {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="flex gap-6">
+                                        <div className="flex gap-4">
                                             <div className="w-32 space-y-1">
                                                 <label className="text-xs font-black text-blue-400 uppercase tracking-widest ml-1">Año</label>
                                                 <input
@@ -1037,13 +1037,13 @@ const CaregiverProfile = () => {
                                                         : [...formData.skills, skill];
                                                     setFormData({ ...formData, skills: newSkills });
                                                 }}
-                                                className={`p-6 rounded-[16px] border-2 text-left transition-all ${isSelected
+                                                className={`p-3 md:p-4 rounded-[16px] border-2 text-left transition-all ${isSelected
                                                     ? 'border-[var(--secondary-color)] bg-emerald-50 text-[var(--primary-color)] shadow-xl shadow-emerald-900/5 scale-[1.02]'
                                                     : 'border-gray-50 bg-white text-gray-400 hover:border-emerald-100'
                                                     }`}
                                             >
-                                                <div className="flex flex-col gap-3">
-                                                    <div className={`w-8 h-8 rounded-[16px] border-2 flex items-center justify-center transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-100'}`}>
+                                                <div className="flex flex-col gap-1">
+                                                    <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-100'}`}>
                                                         {isSelected && <Check size={16} strokeWidth={4} />}
                                                     </div>
                                                     <span className={`text-xs font-black uppercase tracking-widest leading-tight break-words whitespace-normal ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
@@ -1065,7 +1065,7 @@ const CaregiverProfile = () => {
                                     <h4 className="font-brand font-bold text-[var(--primary-color)] uppercase tracking-widest text-sm">Biografía Detallada</h4>
                                 </div>
                                 <textarea
-                                    className="w-full px-8 py-8 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all min-h-[200px] bg-gray-50/30 text-base font-secondary font-medium text-[var(--primary-color)] leading-relaxed shadow-inner"
+                                    className="w-full px-4 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all min-h-[150px] bg-gray-50/30 text-base font-secondary font-medium text-[var(--primary-color)] leading-relaxed shadow-inner"
                                     placeholder="Describe tu trayectoria..."
                                     value={formData.bio}
                                     onChange={e => setFormData({ ...formData, bio: e.target.value })}
