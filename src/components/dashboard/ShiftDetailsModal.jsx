@@ -61,8 +61,9 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                         </div>
                     </div>
 
-                    {/* New: Description Section */}
+                    {/* New: Description & Agenda Section */}
                     {(() => {
+                        const hasStructuredAgenda = shift.care_agenda?.length > 0;
                         const details = shift.details || '';
                         let description = details;
                         let services = [];
@@ -70,13 +71,15 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                         const planMarker = "[PLAN DE CUIDADO]";
                         const servicesMarker = "---SERVICES---";
 
-                        // Extract services first
-                        const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(\[INSTRUCCIONES ADICIONALES\]|---SERVICES---|$)/);
-                        if (planMatch) {
-                            services = planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean);
+                        // Extract plan details if no structured agenda
+                        if (!hasStructuredAgenda) {
+                            const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(\[INSTRUCCIONES ADICIONALES\]|---SERVICES---|$)/);
+                            if (planMatch) {
+                                services = planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean);
+                            }
                         }
 
-                        // Extract description
+                        // Extract description cleanup
                         if (details.includes(planMarker)) {
                             const parts = details.split(planMarker);
                             const beforePlan = parts[0].trim();
@@ -94,39 +97,59 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                             description = "";
                         }
 
-                        // Filter out default/placeholder text
                         const ignorePhrases = ['Sin instrucciones adicionales', 'Sin instrucciones especiales'];
                         if (ignorePhrases.some(phrase => description.trim().toLowerCase() === phrase.toLowerCase())) {
                             description = "";
                         }
 
-                        if (!description && services.length === 0) return null;
+                        if (!description && !hasStructuredAgenda && services.length === 0) return null;
 
                         return (
-                            <div className="mt-8">
-                                <h3 className="font-brand font-bold text-[#0F3C4C] text-lg mb-4 sm:mb-6 flex items-center gap-3">
-                                    <div className="p-2 bg-blue-50 text-[var(--primary-color)] rounded-[16px]"><FileText size={18} /></div>
-                                    Instrucciones del Servicio
-                                </h3>
-
-                                {description && (
-                                    <div className="p-6 sm:p-8 bg-slate-50 rounded-[16px] border border-slate-100 text-sm sm:text-base text-[#07212e] leading-relaxed font-medium mb-6 sm:mb-8 shadow-inner relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 p-4 opacity-5">
-                                            <FileText size={60} />
+                            <div className="mt-8 space-y-8">
+                                {/* Structured Agenda Priority */}
+                                {hasStructuredAgenda && (
+                                    <section>
+                                        <h3 className="font-brand font-bold text-[#0F3C4C] text-lg mb-4 flex items-center gap-3">
+                                            <div className="p-2 bg-amber-50 text-amber-600 rounded-[16px]"><Clock size={18} /></div>
+                                            Agenda Programada
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {shift.care_agenda.map((item, idx) => (
+                                                <div key={idx} className="flex items-center gap-4 p-4 bg-amber-50/30 rounded-[18px] border border-amber-100/50 group hover:bg-white hover:shadow-lg hover:shadow-amber-900/5 transition-all">
+                                                    <span className="text-xs font-black text-amber-600 bg-white px-3 py-1.5 rounded-[12px] shadow-sm shrink-0">{item.time}</span>
+                                                    <span className="text-sm text-slate-700 font-bold">{item.activity}</span>
+                                                    <CheckCircle size={16} className="text-amber-200 ml-auto group-hover:text-amber-500 transition-colors" />
+                                                </div>
+                                            ))}
                                         </div>
-                                        <p className="relative z-10 font-secondary italic">"{description}"</p>
-                                    </div>
+                                    </section>
                                 )}
 
-                                {services.length > 0 && (
-                                    <div className="grid grid-cols-1 gap-2">
-                                        {services.map((service, idx) => (
-                                            <div key={idx} className="flex items-center gap-3 p-3 bg-white rounded-[16px] border border-slate-100 shadow-sm">
-                                                <CheckCircle size={16} className="text-green-500 shrink-0" />
-                                                <span className="text-xs sm:text-sm text-slate-700 font-bold">{service}</span>
+                                {/* Instructions / Fallback Services */}
+                                {(description || (!hasStructuredAgenda && services.length > 0)) && (
+                                    <section>
+                                        <h3 className="font-brand font-bold text-[#0F3C4C] text-lg mb-4 flex items-center gap-3">
+                                            <div className="p-2 bg-blue-50 text-[var(--primary-color)] rounded-[16px]"><FileText size={18} /></div>
+                                            Instrucciones del Servicio
+                                        </h3>
+
+                                        {description && (
+                                            <div className="p-6 sm:p-8 bg-slate-50 rounded-[16px] border border-slate-100 text-sm sm:text-base text-[#07212e] leading-relaxed font-medium mb-4 shadow-inner relative overflow-hidden">
+                                                <p className="relative z-10 font-secondary italic">"{description}"</p>
                                             </div>
-                                        ))}
-                                    </div>
+                                        )}
+
+                                        {!hasStructuredAgenda && services.length > 0 && (
+                                            <div className="grid grid-cols-1 gap-2">
+                                                {services.map((service, idx) => (
+                                                    <div key={idx} className="flex items-center gap-3 p-3 bg-white rounded-[16px] border border-slate-100 shadow-sm">
+                                                        <CheckCircle size={16} className="text-green-500 shrink-0" />
+                                                        <span className="text-xs sm:text-sm text-slate-700 font-bold">{service}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </section>
                                 )}
                             </div>
                         );

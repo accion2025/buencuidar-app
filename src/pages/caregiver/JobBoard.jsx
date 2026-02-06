@@ -304,7 +304,7 @@ const JobBoard = () => {
                                             <Briefcase size={10} className="animate-pulse" /> SERVICIO PULSO
                                         </div>
                                     )}
-                                    {job.details?.includes('[PLAN DE CUIDADO]') && (
+                                    {job.care_agenda?.length > 0 && (
                                         <div className={`bg-amber-500 !text-white text-[9px] font-black px-4 py-1.5 shadow-lg flex items-center gap-2 uppercase tracking-widest ${isPulso ? 'rounded-bl-xl' : 'rounded-bl-2xl'}`}>
                                             <Clock size={10} /> EXIGE AGENDA DE CUIDADOS
                                         </div>
@@ -324,11 +324,12 @@ const JobBoard = () => {
                                             <span className="font-bold text-gray-700">{job.address || 'Dirección no especificada'}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 text-[#0F3C4C] font-semibold">
+                                        <Calendar size={16} className="text-[var(--secondary-color)]" />
                                         {new Date(job.date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <Clock size={16} className="text-gray-400" />
+                                    <div className="flex items-center gap-2 text-[#0F3C4C] font-semibold">
+                                        <Clock size={16} className="text-[var(--secondary-color)]" />
                                         {job.time?.substring(0, 5)} {job.end_time ? `- ${job.end_time.substring(0, 5)}` : ''}
                                     </div>
                                     <div className="flex items-center gap-3 font-brand font-bold text-[#0F3C4C] text-lg bg-slate-50 p-4 rounded-[16px] border border-slate-100">
@@ -336,22 +337,45 @@ const JobBoard = () => {
                                     </div>
                                 </div>
 
-                                {/* Care Plan / Details cleanup */}
+                                {/* Care Plan / Bitácora Section */}
                                 <div className="mb-4">
                                     {(() => {
-                                        // Standard appointment Plan de Cuidado (recorded in details)
+                                        // Priority 1: Structured Agenda
+                                        if (job.care_agenda?.length > 0) {
+                                            return (
+                                                <div className="space-y-2">
+                                                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest flex items-center gap-2">
+                                                        <Clock size={12} /> Agenda Programada
+                                                    </span>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {job.care_agenda.map((item, i) => (
+                                                            <span key={i} className="text-[10px] bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-amber-100 flex items-center gap-1.5">
+                                                                <span className="opacity-60">{item.time}</span> {item.activity}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+
+                                        // Priority 2: Standard Plan (Fallback)
                                         const details = job.details || '';
                                         const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(---SERVICES---|$)/);
                                         const services = planMatch ? planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean) : [];
 
                                         if (services.length > 0) {
                                             return (
-                                                <div className="flex flex-wrap gap-1.5 mt-2">
-                                                    {services.map((s, i) => (
-                                                        <span key={i} className="text-[10px] bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-[var(--secondary-color)]/10 flex items-center gap-1.5">
-                                                            <Briefcase size={10} /> {s}
-                                                        </span>
-                                                    ))}
+                                                <div className="space-y-2">
+                                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                                        <Activity size={12} /> Actividades Definidas
+                                                    </span>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {services.map((s, i) => (
+                                                            <span key={i} className="text-[10px] bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-[var(--secondary-color)]/10 flex items-center gap-1.5">
+                                                                <Briefcase size={10} /> {s}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             );
                                         }
