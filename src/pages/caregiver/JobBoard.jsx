@@ -332,15 +332,10 @@ const JobBoard = () => {
                                 {/* Care Plan / Details cleanup */}
                                 <div className="mb-4">
                                     {(() => {
-                                        // Prioritize care_agenda (structured) over details (legacy)
-                                        let services = [];
-                                        if (job.care_agenda && Array.isArray(job.care_agenda) && job.care_agenda.length > 0) {
-                                            services = job.care_agenda.map(item => typeof item === 'string' ? item : item.activity);
-                                        } else if (job.details) {
-                                            const details = job.details || '';
-                                            const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(---SERVICES---|$)/);
-                                            services = planMatch ? planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean) : [];
-                                        }
+                                        // Standard appointment Plan de Cuidado (recorded in details)
+                                        const details = job.details || '';
+                                        const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(---SERVICES---|$)/);
+                                        const services = planMatch ? planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean) : [];
 
                                         if (services.length > 0) {
                                             return (
