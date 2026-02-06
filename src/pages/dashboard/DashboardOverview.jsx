@@ -766,10 +766,9 @@ const DashboardOverview = () => {
                                             </button>
                                             <button
                                                 onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, false)}
-                                                className="px-4 bg-white border border-gray-100 text-gray-400 rounded-[16px] hover:text-[var(--error-color)] hover:bg-red-50 hover:border-red-100 transition-all flex-shrink-0"
-                                                title="Rechazar"
+                                                className="flex-1 bg-[var(--error-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-100 hover:bg-red-700 transition-all border-none"
                                             >
-                                                <Check size={20} className="rotate-45" />
+                                                Rechazar
                                             </button>
                                         </div>
                                     </div>
