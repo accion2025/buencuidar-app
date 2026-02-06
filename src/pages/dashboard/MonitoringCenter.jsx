@@ -675,7 +675,7 @@ const MonitoringCenter = () => {
                                             </button>
                                         )}
                                     </div>
-                                    <h2 className="text-2xl font-brand font-bold !text-[#FAFAF7]">Agenda</h2>
+                                    <h2 className="text-2xl font-brand font-bold !text-[#FAFAF7]">Agenda de cuidado</h2>
                                     <p className="text-[var(--accent-color)] text-[10px] font-black uppercase tracking-widest mt-1 opacity-80">
                                         {careAgenda.length > 0
                                             ? `${careAgenda.filter(i => i.status === 'Completado').length} de ${careAgenda.length} actividades`
