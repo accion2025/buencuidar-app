@@ -155,6 +155,8 @@ const DashboardOverview = () => {
                             id,
                             full_name,
                             avatar_url,
+                            phone,
+                            plan_type,
                             caregiver_details (*)
                         )
                     `)
@@ -683,7 +685,7 @@ const DashboardOverview = () => {
                                             image={app.caregiver?.avatar_url}
                                             status={app.status}
                                             rating={app.reviews?.[0]?.rating}
-                                            onViewProfile={() => navigate(`/search?caregiverId=${app.caregiver_id}`)}
+                                            onViewProfile={() => setSelectedCaregiver(app.caregiver)}
                                             onRate={() => setRatingAppointment(app)}
                                         />
                                     ))
@@ -753,6 +755,13 @@ const DashboardOverview = () => {
                                         </div>
 
                                         <div className="flex gap-3 flex-wrap sm:flex-nowrap">
+                                            <button
+                                                onClick={() => setSelectedCaregiver(req.caregiver)}
+                                                className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--secondary-color)] hover:text-white transition-all shadow-sm group-hover:border-[var(--secondary-color)]/20"
+                                                title="Ver perfil completo"
+                                            >
+                                                <User size={18} />
+                                            </button>
                                             <button
                                                 onClick={() => handleMessage(req.caregiver)}
                                                 className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--base-bg)] transition-all shadow-sm group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100"

@@ -497,13 +497,7 @@ const Search = () => {
 
             <CaregiverDetailModal
                 isOpen={!!selectedCaregiver}
-                onClose={() => {
-                    setSelectedCaregiver(null);
-                    const params = new URLSearchParams(window.location.search);
-                    if (params.get('caregiverId')) {
-                        navigate('/dashboard');
-                    }
-                }}
+                onClose={() => setSelectedCaregiver(null)}
                 caregiver={selectedCaregiver}
                 onContact={handleContact}
             />
