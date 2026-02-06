@@ -1037,16 +1037,16 @@ const CaregiverProfile = () => {
                                                         : [...formData.skills, skill];
                                                     setFormData({ ...formData, skills: newSkills });
                                                 }}
-                                                className={`p-3 md:p-4 rounded-[16px] border-2 text-left transition-all ${isSelected
+                                                className={`p-2 md:p-3 rounded-[16px] border-2 text-left transition-all ${isSelected
                                                     ? 'border-[var(--secondary-color)] bg-emerald-50 text-[var(--primary-color)] shadow-xl shadow-emerald-900/5 scale-[1.02]'
                                                     : 'border-gray-50 bg-white text-gray-400 hover:border-emerald-100'
                                                     }`}
                                             >
-                                                <div className="flex flex-col gap-1">
-                                                    <div className={`w-6 h-6 rounded-[12px] border-2 flex items-center justify-center transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-100'}`}>
-                                                        {isSelected && <Check size={16} strokeWidth={4} />}
+                                                <div className="flex items-center gap-2 md:gap-3">
+                                                    <div className={`w-5 h-5 md:w-6 md:h-6 rounded-[10px] md:rounded-[12px] border-2 flex items-center justify-center shrink-0 transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-100'}`}>
+                                                        {isSelected && <Check size={12} className="md:w-4 md:h-4" strokeWidth={4} />}
                                                     </div>
-                                                    <span className={`text-xs font-black uppercase tracking-widest leading-tight break-words whitespace-normal ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
+                                                    <span className={`text-[10px] md:text-xs font-black uppercase tracking-widest leading-tight ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
                                                 </div>
                                             </button>
                                         );
@@ -1073,18 +1073,18 @@ const CaregiverProfile = () => {
                             </div>
                         </form>
 
-                        <div className="p-6 md:p-10 border-t border-gray-100 bg-white flex gap-4 md:gap-6 mt-auto shrink-0 pb-safe">
+                        <div className="p-4 md:p-10 border-t border-gray-100 bg-white flex gap-3 md:gap-6 mt-auto shrink-0 pb-safe">
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
-                                className="flex-1 bg-white border-2 border-gray-100 text-[var(--text-light)] font-black py-4 md:py-5 rounded-[24px] hover:bg-gray-50 transition-all uppercase tracking-[0.2em] text-[10px] md:text-xs"
+                                className="flex-1 bg-white border-2 border-gray-100 text-[var(--text-light)] font-black py-3 md:py-5 rounded-[20px] md:rounded-[24px] hover:bg-gray-50 transition-all uppercase tracking-[0.2em] text-[10px] md:text-xs"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={saving || uploading}
-                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-4 md:py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-[10px] md:text-xs border-none"
+                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-3 md:py-5 rounded-[20px] md:rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-[10px] md:text-xs border-none"
                             >
                                 {saving ? (
                                     <div className="flex items-center gap-3">
