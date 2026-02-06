@@ -12,13 +12,18 @@ export const NotificationProvider = ({ children }) => {
         const initOneSignal = async () => {
             try {
                 await OneSignal.init({
-                    appId: "YOUR_ONESIGNAL_APP_ID", // TODO: Reemplazar con ID real de Ivan
-                    safari_web_id: "YOUR_SAFARI_WEB_ID",
+                    appId: import.meta.env.VITE_ONESIGNAL_APP_ID || "YOUR_ONESIGNAL_APP_ID", // Prioritize .env
+                    safari_web_id: import.meta.env.VITE_ONESIGNAL_SAFARI_ID || "YOUR_SAFARI_WEB_ID",
                     notifyButton: {
-                        enable: true,
+                        enable: false, // Cleaner UI, we use slidedown
                     },
                     allowLocalhostAsSecureOrigin: true,
                 });
+
+                // High Importance Channel for Android (Audible & Vibration)
+                // This is a hint for OneSignal to use a high priority channel
+                OneSignal.User.addTag("priority_alerts", "enabled");
+
                 setInitialized(true);
             } catch (error) {
                 console.error("Error al inicializar OneSignal:", error);
