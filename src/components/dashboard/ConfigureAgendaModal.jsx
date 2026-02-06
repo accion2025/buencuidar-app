@@ -88,16 +88,16 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                 {/* Header - SHRINK-0 */}
                 <div className="p-6 sm:p-8 border-b border-gray-100 flex justify-between items-center bg-[var(--base-bg)] shrink-0">
                     <div>
-                        <h3 className="text-xl sm:text-2xl font-brand font-bold text-[var(--primary-color)]">Configurar Agenda de Cuidado</h3>
-                        <p className="text-[10px] sm:text-sm text-[var(--text-light)] font-secondary mt-1 max-w-md">Selecciona las actividades y asigna un horario para hoy.</p>
+                        <h3 className="text-xl sm:text-3xl font-brand font-bold text-[var(--primary-color)]">Configurar Agenda de Cuidado</h3>
+                        <p className="text-xs sm:text-base text-[var(--text-light)] font-secondary mt-1 max-w-md">Selecciona las actividades y asigna un horario para hoy.</p>
                     </div>
                     <button onClick={onClose} className="p-2 sm:p-3 bg-white text-gray-400 rounded-[12px] sm:rounded-[16px] hover:bg-gray-50 border border-gray-100 transition-all shadow-sm">
-                        <X size={20} />
+                        <X size={24} />
                     </button>
                 </div>
 
                 {/* Content - FLEX-1 OVERFLOW-Y-AUTO */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-3 sm:space-y-6 custom-scrollbar pb-40 sm:pb-32 pb-safe">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 sm:space-y-6 custom-scrollbar pb-40 sm:pb-32 pb-safe">
                     {CARE_AGENDA_CATEGORIES.map(cat => {
                         const Icon = IconMap[cat.icon] || Activity;
                         const isCatOpen = openCategories[cat.id];
@@ -111,62 +111,62 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                             <div key={cat.id} className={`border-[2px] rounded-[18px] sm:rounded-[24px] transition-all duration-300 ${selectedCount > 0 ? 'border-[var(--secondary-color)]/20 bg-[var(--secondary-color)]/5' : 'border-gray-50 bg-white shadow-sm'}`}>
                                 <button
                                     onClick={() => toggleCategory(cat.id)}
-                                    className="w-full flex items-center justify-between p-3 sm:p-5 cursor-pointer"
+                                    className="w-full flex items-center justify-between p-4 sm:p-6 cursor-pointer"
                                 >
-                                    <div className="flex items-center gap-3 sm:gap-5 min-w-0">
-                                        <div className={`p-3 sm:p-4 rounded-[12px] sm:rounded-[16px] shrink-0 ${selectedCount > 0 ? 'bg-[var(--secondary-color)] !text-[#FAFAF7] shadow-lg' : 'bg-slate-50 text-[var(--primary-color)]'}`}>
-                                            <Icon size={20} className="sm:w-6 sm:h-6" strokeWidth={selectedCount > 0 ? 2.5 : 2} />
+                                    <div className="flex items-center gap-4 sm:gap-6 min-w-0">
+                                        <div className={`p-3 sm:p-5 rounded-[12px] sm:rounded-[20px] shrink-0 ${selectedCount > 0 ? 'bg-[var(--secondary-color)] !text-[#FAFAF7] shadow-lg' : 'bg-slate-50 text-[var(--primary-color)]'}`}>
+                                            <Icon size={24} className="sm:w-8 sm:h-8" strokeWidth={selectedCount > 0 ? 2.5 : 2} />
                                         </div>
                                         <div className="text-left min-w-0">
-                                            <h4 className={`font-brand font-bold text-sm sm:text-lg truncate ${selectedCount > 0 ? 'text-[var(--primary-color)]' : 'text-gray-700'}`}>{cat.name}</h4>
-                                            <p className="text-[10px] sm:text-sm text-[var(--text-light)] font-secondary font-medium truncate sm:whitespace-normal">{cat.description}</p>
+                                            <h4 className={`font-brand font-bold text-base sm:text-xl truncate ${selectedCount > 0 ? 'text-[var(--primary-color)]' : 'text-gray-700'}`}>{cat.name}</h4>
+                                            <p className="text-xs sm:text-base text-[var(--text-light)] font-secondary font-medium truncate sm:whitespace-normal">{cat.description}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2 sm:gap-4 shrink-0 h-full">
                                         {selectedCount > 0 && (
-                                            <span className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-[8px] sm:text-xs font-black uppercase tracking-widest px-2 sm:px-3 py-1 sm:py-1.5 rounded-full flex items-center gap-1 shadow-sm">
-                                                <Check size={10} className="sm:w-3 sm:h-3" strokeWidth={4} />
+                                            <span className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-[10px] sm:text-sm font-black uppercase tracking-widest px-2.5 sm:px-4 py-1 sm:py-2 rounded-full flex items-center gap-1.5 shadow-sm">
+                                                <Check size={12} className="sm:w-4 sm:h-4" strokeWidth={4} />
                                                 {selectedCount}
                                             </span>
                                         )}
-                                        {isCatOpen ? <ChevronDown size={18} className="text-[var(--text-light)] sm:w-5 sm:h-5" /> : <ChevronRight size={18} className="text-[var(--text-light)] sm:w-5 sm:h-5" />}
+                                        {isCatOpen ? <ChevronDown size={20} className="text-[var(--text-light)] sm:w-6 sm:h-6" /> : <ChevronRight size={20} className="text-[var(--text-light)] sm:w-6 sm:h-6" />}
                                     </div>
                                 </button>
 
                                 {isCatOpen && (
-                                    <div className="px-3 sm:px-5 pb-4 sm:pb-6 animate-slide-down">
-                                        <div className="h-[2px] w-full bg-gray-50/50 mb-4 sm:mb-6"></div>
+                                    <div className="px-4 sm:px-6 pb-5 sm:pb-8 animate-slide-down">
+                                        <div className="h-[2px] w-full bg-gray-50/50 mb-5 sm:mb-8"></div>
 
                                         {cat.sections ? (
                                             // Handle Nested Sections (Category 8)
-                                            <div className="space-y-4 sm:space-y-6">
+                                            <div className="space-y-5 sm:space-y-8">
                                                 {cat.sections.map((section, sIdx) => (
                                                     <div key={sIdx}>
-                                                        <h5 className="text-[10px] font-black text-[var(--text-light)] uppercase tracking-[0.2em] mb-3 border-l-4 border-[var(--secondary-color)] pl-3">{section.name}</h5>
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                                                        <h5 className="text-xs sm:text-sm font-black text-[var(--text-light)] uppercase tracking-[0.2em] mb-4 border-l-4 border-[var(--secondary-color)] pl-3">{section.name}</h5>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                                             {section.activities.map((act, aIdx) => {
                                                                 const isSelected = !!selectedActivities[act];
                                                                 return (
                                                                     <div
                                                                         key={aIdx}
                                                                         onClick={() => toggleActivity(act)}
-                                                                        className={`flex flex-col gap-3 p-3 sm:p-4 rounded-[16px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-lg ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
+                                                                        className={`flex flex-col gap-4 p-4 sm:p-5 rounded-[20px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-xl ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
                                                                     >
-                                                                        <div className="flex items-center gap-3 sm:gap-4 min-h-[40px] sm:min-h-[48px]">
-                                                                            <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-[10px] sm:rounded-[14px] border-2 flex items-center justify-center transition-all shrink-0 ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
-                                                                                {isSelected && <Check size={14} className="!text-[#FAFAF7] sm:w-4 sm:h-4" strokeWidth={4} />}
+                                                                        <div className="flex items-center gap-4 min-h-[48px] sm:min-h-[56px]">
+                                                                            <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-[10px] sm:rounded-[14px] border-2 flex items-center justify-center transition-all shrink-0 ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
+                                                                                {isSelected && <Check size={18} className="!text-[#FAFAF7] sm:w-6 sm:h-6" strokeWidth={4} />}
                                                                             </div>
-                                                                            <span className={`text-xs sm:text-sm ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
+                                                                            <span className={`text-sm sm:text-lg ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
                                                                         </div>
 
                                                                         {isSelected && (
-                                                                            <div className="flex items-center gap-3 animate-fade-in bg-slate-50 p-2 sm:p-3 rounded-[12px] border border-gray-100" onClick={e => e.stopPropagation()}>
-                                                                                <label className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 whitespace-nowrap">Hora:</label>
+                                                                            <div className="flex items-center gap-4 animate-fade-in bg-slate-50 p-3 sm:p-4 rounded-[14px] border border-gray-100" onClick={e => e.stopPropagation()}>
+                                                                                <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-400 ml-1 whitespace-nowrap">Hora:</label>
                                                                                 <input
                                                                                     type="time"
                                                                                     value={selectedActivities[act]}
                                                                                     onChange={(e) => handleTimeChange(act, e.target.value)}
-                                                                                    className="flex-1 bg-white border border-gray-200 px-3 sm:px-4 py-2 sm:py-3 rounded-[10px] sm:rounded-[12px] text-xs sm:text-sm font-bold focus:border-[var(--secondary-color)] outline-none min-h-[38px] sm:min-h-[44px] touch-manipulation"
+                                                                                    className="flex-1 bg-white border border-gray-200 px-4 py-3 rounded-[12px] text-sm sm:text-base font-bold focus:border-[var(--secondary-color)] outline-none min-h-[44px] sm:min-h-[50px] touch-manipulation"
                                                                                 />
                                                                             </div>
                                                                         )}
@@ -179,30 +179,30 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                                             </div>
                                         ) : (
                                             // Normal Activities
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                                 {cat.activities.map((act, idx) => {
                                                     const isSelected = !!selectedActivities[act];
                                                     return (
                                                         <div
                                                             key={idx}
                                                             onClick={() => toggleActivity(act)}
-                                                            className={`flex flex-col gap-3 p-3 sm:p-4 rounded-[16px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-lg ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
+                                                            className={`flex flex-col gap-4 p-4 sm:p-5 rounded-[20px] border-2 cursor-pointer transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-white shadow-xl ring-1 ring-[var(--secondary-color)]/20' : 'border-gray-50 bg-gray-50/30 hover:bg-white hover:border-gray-200'}`}
                                                         >
-                                                            <div className="flex items-center gap-3 sm:gap-4 min-h-[40px] sm:min-h-[48px]">
-                                                                <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-[10px] sm:rounded-[14px] border-2 flex items-center justify-center transition-all shrink-0 ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
-                                                                    {isSelected && <Check size={14} className="!text-[#FAFAF7] sm:w-4 sm:h-4" strokeWidth={4} />}
+                                                            <div className="flex items-center gap-4 min-h-[48px] sm:min-h-[56px]">
+                                                                <div className={`w-7 h-7 sm:w-9 sm:h-9 rounded-[10px] sm:rounded-[14px] border-2 flex items-center justify-center transition-all shrink-0 ${isSelected ? 'bg-[var(--secondary-color)] border-[var(--secondary-color)] scale-110' : 'border-gray-300 bg-white'}`}>
+                                                                    {isSelected && <Check size={18} className="!text-[#FAFAF7] sm:w-6 sm:h-6" strokeWidth={4} />}
                                                                 </div>
-                                                                <span className={`text-xs sm:text-sm ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
+                                                                <span className={`text-sm sm:text-lg ${isSelected ? 'text-[var(--primary-color)] font-bold' : 'text-[var(--text-main)] font-medium font-secondary'}`}>{act}</span>
                                                             </div>
 
                                                             {isSelected && (
-                                                                <div className="flex items-center gap-3 animate-fade-in bg-slate-50 p-2 sm:p-3 rounded-[12px] border border-gray-100" onClick={e => e.stopPropagation()}>
-                                                                    <label className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 whitespace-nowrap">Hora:</label>
+                                                                <div className="flex items-center gap-4 animate-fade-in bg-slate-50 p-3 sm:p-4 rounded-[14px] border border-gray-100" onClick={e => e.stopPropagation()}>
+                                                                    <label className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-gray-400 ml-1 whitespace-nowrap">Hora:</label>
                                                                     <input
                                                                         type="time"
                                                                         value={selectedActivities[act]}
                                                                         onChange={(e) => handleTimeChange(act, e.target.value)}
-                                                                        className="flex-1 bg-white border border-gray-200 px-3 sm:px-4 py-2 sm:py-3 rounded-[10px] sm:rounded-[12px] text-xs sm:text-sm font-bold focus:border-[var(--secondary-color)] outline-none min-h-[38px] sm:min-h-[44px] touch-manipulation"
+                                                                        className="flex-1 bg-white border border-gray-200 px-4 py-3 rounded-[12px] text-sm sm:text-base font-bold focus:border-[var(--secondary-color)] outline-none min-h-[44px] sm:min-h-[50px] touch-manipulation"
                                                                     />
                                                                 </div>
                                                             )}
@@ -220,19 +220,19 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
 
                 {/* Footer - ABSOLUTE BOTTOM */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 border-t border-gray-100 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.05)] sm:bg-white/95 sm:backdrop-blur-xl flex flex-col sm:flex-row justify-between items-center gap-4 z-20 shrink-0 pb-safe">
-                    <div className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[var(--text-light)]">
+                    <div className="text-xs sm:text-sm font-black uppercase tracking-widest text-[var(--text-light)]">
                         {Object.keys(selectedActivities).length} actividades seleccionadas
                     </div>
-                    <div className="flex gap-3 w-full sm:w-auto">
-                        <button onClick={onClose} className="flex-1 sm:flex-none btn bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 px-6 sm:px-8 text-[10px] sm:text-sm uppercase tracking-widest">
+                    <div className="flex gap-4 w-full sm:w-auto">
+                        <button onClick={onClose} className="flex-1 sm:flex-none btn bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 px-8 py-4 text-xs sm:text-base uppercase tracking-widest">
                             Cancelar
                         </button>
                         <button
                             onClick={handleSave}
                             disabled={saving}
-                            className="flex-2 sm:flex-none btn btn-primary px-8 sm:px-12 shadow-xl shadow-green-100 uppercase tracking-widest text-[10px] sm:text-sm"
+                            className="flex-2 sm:flex-none btn btn-primary px-10 sm:px-14 py-4 shadow-xl shadow-green-100 uppercase tracking-widest text-xs sm:text-base"
                         >
-                            {saving ? <Loader2 className="animate-spin" size={20} /> : <><Save size={20} className="sm:w-5 sm:h-5" /> Guardar Agenda</>}
+                            {saving ? <Loader2 className="animate-spin" size={24} /> : <><Save size={24} className="sm:w-6 sm:h-6" /> Guardar Agenda</>}
                         </button>
                     </div>
                 </div>
