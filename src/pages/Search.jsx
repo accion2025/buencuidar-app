@@ -59,8 +59,7 @@ const Search = () => {
                     *,
                     caregiver_details!inner (*)
                 `)
-                .eq('role', 'caregiver')
-                .eq('is_available', true);
+                .eq('role', 'caregiver');
 
             // Apply location filters (profiles table)
             if (filters.country) {
