@@ -447,10 +447,10 @@ const MonitoringCenter = () => {
                     body: logData,
                     theme: 'grid',
                     headStyles: { fillColor: [15, 60, 76] },
-                    styles: { overflow: 'ellipsize', cellWidth: 'auto', cellPadding: 2 },
+                    styles: { overflow: 'linebreak', cellWidth: 'auto', cellPadding: 2 },
                     columnStyles: {
-                        0: { cellWidth: 35 },
-                        1: { cellWidth: 45 },
+                        0: { cellWidth: 42 },
+                        1: { cellWidth: 55 },
                         2: { cellWidth: 'auto' }
                     },
                     margin: { left: 20, right: 20 }
