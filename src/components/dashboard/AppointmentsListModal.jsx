@@ -44,12 +44,9 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                         <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
                                             <User size={14} className="text-gray-500" />
                                         </div>
-                                        <button
-                                            onClick={() => window.location.href = `/search?caregiverId=${app.caregiver_id}`}
-                                            className="font-bold text-gray-800 text-sm hover:text-[var(--secondary-color)] transition-colors"
-                                        >
+                                        <span className="font-bold text-gray-800 text-sm">
                                             {app.caregiver?.full_name || 'Cuidador Asignado'}
-                                        </button>
+                                        </span>
                                     </div>
                                     <h3 className="font-bold text-lg text-gray-900 leading-tight">
                                         {app.title || 'Servicio de Cuidado'}
