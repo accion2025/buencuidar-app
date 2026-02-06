@@ -81,7 +81,7 @@ const CaregiverPlans = () => {
             {/* Header Block */}
             <div className="max-w-4xl w-full text-center space-y-4 mb-16">
                 <h1 className="text-5xl md:text-6xl font-brand font-bold tracking-tighter leading-tight">
-                    Planes <span className="text-[#0F3C4C]">B</span><span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PRO</span> para Profesionales
+                    Planes <span className="text-[#0F3C4C]">BC PRO</span> para Profesionales
                 </h1>
                 <p className="text-xl md:text-2xl text-slate-500 font-medium font-secondary italic">Destaca tu Perfil, Encuentra más Clientes</p>
             </div>
