@@ -64,6 +64,7 @@ const CaregiverPlans = () => {
         "Insignia de Verificado PRO",
         "Postulaciones ilimitadas",
         "Estadísticas de perfil",
+        "Agenda Inteligente PRO (Notificaciones)",
         "Alertas de empleo inmediatas",
         "Soporte preferencial",
         "Acceso a capacitaciones",

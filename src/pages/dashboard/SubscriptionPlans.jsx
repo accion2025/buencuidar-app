@@ -66,6 +66,7 @@ const SubscriptionPlans = () => {
         "Alertas y notificaciones",
         "Mensajería con cuidadores",
         "Reportes de bienestar",
+        "Habilita Agenda Inteligente para tu cuidador PRO",
         "Historial",
         "Soporte al usuario",
         "Acceso a cuidadores verificados"
