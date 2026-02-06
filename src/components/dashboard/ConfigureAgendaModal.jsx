@@ -84,7 +84,7 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 animate-fade-in shadow-2xl">
-            <div className="bg-white rounded-t-[24px] sm:rounded-[16px] shadow-2xl w-full max-w-4xl h-[90vh] sm:h-auto max-h-[90vh] flex flex-col border border-white/20 overflow-hidden relative">
+            <div className="bg-white rounded-none sm:rounded-[16px] shadow-2xl w-full max-w-4xl h-full sm:h-auto max-h-full sm:max-h-[90vh] flex flex-col border border-white/20 overflow-hidden relative">
                 {/* Header - SHRINK-0 */}
                 <div className="p-6 sm:p-10 border-b border-gray-100 flex justify-between items-center bg-[var(--base-bg)] shrink-0">
                     <div>
@@ -97,7 +97,7 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                 </div>
 
                 {/* Content - FLEX-1 OVERFLOW-Y-AUTO */}
-                <div className="flex-1 overflow-y-auto p-4 sm:p-10 space-y-5 sm:space-y-8 custom-scrollbar pb-10 sm:pb-10 pb-safe">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-10 space-y-5 sm:space-y-8 custom-scrollbar pb-32 sm:pb-10 pb-safe">
                     {CARE_AGENDA_CATEGORIES.map(cat => {
                         const Icon = IconMap[cat.icon] || Activity;
                         const isCatOpen = openCategories[cat.id];
