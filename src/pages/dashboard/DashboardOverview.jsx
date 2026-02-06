@@ -214,10 +214,25 @@ const DashboardOverview = () => {
                 .select('*')
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false })
-                .limit(10);
+                .limit(20); // Fetches more to allow for filtering of expired ones
 
             if (error) throw error;
-            setNotifications(data || []);
+
+            // 24-hour expiration for "cancelled" notifications
+            const now = new Date();
+            const filteredData = (data || []).filter(notif => {
+                const isCancellation = notif.message?.toLowerCase().includes('cancelad') ||
+                    notif.title?.toLowerCase().includes('cancelad');
+
+                if (isCancellation) {
+                    const time = new Date(notif.created_at);
+                    const diffInHours = (now - time) / (1000 * 60 * 60);
+                    return diffInHours < 24; // Keep if less than 24 hours old
+                }
+                return true; // Keep other notifications
+            });
+
+            setNotifications(filteredData.slice(0, 10)); // Maintain UI limit
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }

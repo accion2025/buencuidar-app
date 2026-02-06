@@ -151,11 +151,24 @@ const CaregiverOverview = () => {
                 `)
                 .eq('caregiver_id', user.id)
                 .in('status', ['confirmed', 'cancelled'])
-                .order('updated_at', { ascending: false }) // Order by updated_at to show latest changes
-                .limit(5);
+                .order('updated_at', { ascending: false })
+                .limit(10); // Fetches more to allow for filtering
 
             if (error) throw error;
-            setNotifications(data || []);
+
+            // 24-hour expiration for "cancelled" notifications
+            const now = new Date();
+            const filteredData = (data || []).filter(notif => {
+                const isCancellation = notif.status === 'cancelled';
+                if (isCancellation) {
+                    const time = new Date(notif.updated_at || notif.created_at);
+                    const diffInHours = (now - time) / (1000 * 60 * 60);
+                    return diffInHours < 24; // Keep if less than 24 hours old
+                }
+                return true; // Keep confirmed or already acknowledged notifications
+            });
+
+            setNotifications(filteredData.slice(0, 5)); // Maintain UI limit
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }

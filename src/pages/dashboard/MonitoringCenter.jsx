@@ -26,6 +26,9 @@ import ConfigureAgendaModal from '../../components/dashboard/ConfigureAgendaModa
 import { formatTimeAgo } from '../../utils/time';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { safeDateParse } from '../../utils/time';
+
+// Local helper removed, using safeDateParse from utils
 
 const MonitoringCenter = () => {
     const { profile, loading: authLoading } = useAuth();
@@ -138,7 +141,7 @@ const MonitoringCenter = () => {
             // 1. Check In Progress
             const { data: inProgress, error: ipError } = await supabase
                 .from('appointments')
-                .select('id, date, time, status, caregiver_id, details, care_agenda')
+                .select('id, date, time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
                 .eq('client_id', profile.id)
                 .eq('status', 'in_progress')
                 .limit(1);
@@ -151,7 +154,7 @@ const MonitoringCenter = () => {
                 // 2. Check Upcoming (Today/Future Confirmed)
                 const { data: nextUp, error: nextError } = await supabase
                     .from('appointments')
-                    .select('id, date, time, status, caregiver_id, details, care_agenda')
+                    .select('id, date, time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
                     .eq('client_id', profile.id)
                     .in('status', ['confirmed'])
                     .gte('date', today)
@@ -168,7 +171,9 @@ const MonitoringCenter = () => {
             }
 
             if (appointment) {
-                setActiveAppointment(appointment);
+                // Ensure we pick up the familiar name correctly from the join
+                const familiarName = appointment.familiar?.full_name || appointment.patients?.full_name || appointment.title;
+                setActiveAppointment({ ...appointment, displayName: familiarName });
                 setIsUpcoming(upcoming);
 
                 // 2. Fetch caregiver details
@@ -201,11 +206,9 @@ const MonitoringCenter = () => {
                     setLastUpdate("Esperando inicio...");
                 }
 
-                // Process Logs: Separate Wellness from Operations
-                const opLogs = logs.filter(l => l.category !== 'Wellness');
-                const wellnessLogs = logs.filter(l => l.category === 'Wellness');
-
-                setCareLogs(opLogs);
+                // Process Logs: Include both Operational and Wellness in the bitácora
+                // We keep wellness separate for the indicator cards, but combine them for the log
+                setCareLogs(logs || []);
 
                 // Process Wellness Indicators (Latest wins)
                 const newWellness = {
@@ -260,8 +263,8 @@ const MonitoringCenter = () => {
             const currentYear = new Date().getFullYear();
 
             appsData.forEach(app => {
-                const appYear = new Date(app.date).getFullYear();
-                if (appYear === currentYear && app.time && app.end_time) {
+                const appDate = safeDateParse(app.date);
+                if (appDate && appDate.getFullYear() === currentYear && app.time && app.end_time) {
                     const start = parseInt(app.time.split(':')[0]);
                     const end = parseInt(app.end_time.split(':')[0]);
                     if (!isNaN(start) && !isNaN(end) && end > start) {
@@ -386,13 +389,21 @@ const MonitoringCenter = () => {
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.text(`Periodo: ${new Date(reportStartDate).toLocaleDateString()} al ${new Date(reportEndDate).toLocaleDateString()}`, pageWidth - 20, 33, { align: 'right' });
+            const startLabel = safeDateParse(reportStartDate)?.toLocaleDateString() || reportStartDate;
+            const endLabel = safeDateParse(reportEndDate)?.toLocaleDateString() || reportEndDate;
+            doc.text(`Periodo: ${startLabel} al ${endLabel}`, pageWidth - 20, 33, { align: 'right' });
 
             // Patient & Profile Info
             doc.setTextColor(15, 60, 76);
             doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
-            doc.text(`Paciente/Titular: ${profile?.full_name || 'No especificado'}`, 20, 55);
+            // Try different sources for the familiar name
+            const familiarName = activeAppointment?.familiar?.full_name ||
+                activeAppointment?.patients?.full_name ||
+                activeAppointment?.title ||
+                profile?.full_name ||
+                'No especificado';
+            doc.text(`Familiar: ${familiarName}`, 20, 55);
 
             // Wellbeing Summary (Extract wellness logs)
             const wellnessLogs = rangeLogs.filter(l => l.category === 'Wellness');
@@ -400,15 +411,18 @@ const MonitoringCenter = () => {
                 doc.setFontSize(12);
                 doc.text('Resumen de Indicadores de Bienestar (Evolución):', 20, 70);
 
-                const wellnessData = wellnessLogs.map(log => [
-                    new Date(log.created_at).toLocaleDateString(),
-                    log.action,
-                    log.detail
-                ]);
+                const wellnessData = wellnessLogs.map(log => {
+                    const date = new Date(log.created_at);
+                    return [
+                        date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        log.action,
+                        log.detail
+                    ];
+                });
 
                 autoTable(doc, {
                     startY: 75,
-                    head: [['Fecha', 'Indicador', 'Valor']],
+                    head: [['Fecha / Hora de Emisión', 'Indicador', 'Valor']],
                     body: wellnessData.slice(-15), // Show last 15 for brevity or all if needed
                     theme: 'striped',
                     headStyles: { fillColor: [47, 174, 143] },
@@ -416,12 +430,12 @@ const MonitoringCenter = () => {
                 });
             }
 
-            // Historical Bitácora
-            const opLogs = rangeLogs.filter(l => l.category !== 'Wellness');
-            if (opLogs.length > 0) {
+            // Historical Bitácora (Include everything)
+            const allLogs = rangeLogs || [];
+            if (allLogs.length > 0) {
                 const startY = (doc.lastAutoTable?.finalY || 70) + 15;
                 doc.text('Bitácora Detallada de Actividades:', 20, startY);
-                const logData = opLogs.map(log => [
+                const logData = allLogs.map(log => [
                     new Date(log.created_at).toLocaleDateString() + ' ' + new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     log.action,
                     log.detail || 'Sin observaciones'
@@ -433,18 +447,22 @@ const MonitoringCenter = () => {
                     body: logData,
                     theme: 'grid',
                     headStyles: { fillColor: [15, 60, 76] },
+                    styles: { overflow: 'ellipsize', cellWidth: 'auto', cellPadding: 2 },
                     columnStyles: {
                         0: { cellWidth: 35 },
-                        1: { cellWidth: 45 }
+                        1: { cellWidth: 45 },
+                        2: { cellWidth: 'auto' }
                     },
                     margin: { left: 20, right: 20 }
                 });
             }
 
             // Footer
-            doc.setFontSize(8);
+            doc.setFontSize(7);
             doc.setTextColor(150);
-            doc.text('Este reporte es generado automáticamente por la plataforma BuenCuidar BC PULSO.', pageWidth / 2, 285, { align: 'center' });
+            const buildTime = new Date().toLocaleString();
+            doc.text(`BuenCuidar BC PULSO | Generado: ${buildTime}`, pageWidth / 2, 285, { align: 'center' });
+            doc.text('Este reporte es generado automáticamente por la plataforma BuenCuidar.', pageWidth / 2, 290, { align: 'center' });
 
             doc.save(`Reporte_Bienestar_${profile?.full_name || 'Usuario'}_Periodo.pdf`);
             setIsReportModalOpen(false);
@@ -455,7 +473,8 @@ const MonitoringCenter = () => {
             if (err instanceof TypeError && err.message.includes('autoTable')) {
                 alert("Error técnico: La librería de tablas PDF no cargó correctamente. Por favor, refresca la página (F5).");
             } else {
-                alert(`Error al generar el reporte (V2): ${err.message || 'Error de conexión o datos'}`);
+                const errorMsg = err.message || 'Error de conexión o datos';
+                alert(`Error al generar el reporte (V2): ${errorMsg}${err.stack ? '\n\nDetalle: ' + err.message : ''}`);
             }
         } finally {
             setIsGeneratingReport(false);
@@ -626,17 +645,22 @@ const MonitoringCenter = () => {
                             <div className="p-8 space-y-6 flex-grow max-h-[500px] overflow-y-auto custom-scrollbar">
                                 {careLogs.length > 0 ? (
                                     careLogs.map((log, idx) => (
-                                        <div key={log.id || idx} className="border-b border-gray-50 pb-5 last:border-0 last:pb-0 group">
+                                        <div key={log.id || idx} className={`border-b border-gray-50 pb-5 last:border-0 last:pb-0 group ${log.category === 'Wellness' ? 'bg-indigo-50/30 -mx-8 px-8 py-5' : ''}`}>
                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-2">
-                                                <h4 className="font-brand font-bold text-[var(--primary-color)] text-lg leading-tight group-hover:text-[var(--secondary-color)] transition-colors">{log.action}</h4>
-                                                <span className="text-[10px] font-black !text-[#FAFAF7] bg-[var(--primary-color)] px-3 py-1 rounded-full self-start md:self-auto shrink-0 uppercase tracking-widest">
+                                                <div className="flex items-center gap-2">
+                                                    {log.category === 'Wellness' && <Heart size={16} className="text-indigo-500" fill="currentColor" />}
+                                                    <h4 className={`font-brand font-bold text-lg leading-tight transition-colors ${log.category === 'Wellness' ? 'text-indigo-900 group-hover:text-indigo-600' : 'text-[var(--primary-color)] group-hover:text-[var(--secondary-color)]'}`}>
+                                                        {log.category === 'Wellness' ? `BIENESTAR: ${log.action}` : log.action}
+                                                    </h4>
+                                                </div>
+                                                <span className={`text-[10px] font-black !text-[#FAFAF7] px-3 py-1 rounded-full self-start md:self-auto shrink-0 uppercase tracking-widest ${log.category === 'Wellness' ? 'bg-indigo-600' : 'bg-[var(--primary-color)]'}`}>
                                                     {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
 
                                             {log.detail && log.detail !== 'Completado según agenda' && (
-                                                <p className="text-sm text-[var(--text-light)] font-secondary leading-relaxed bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-100">
-                                                    {log.detail}
+                                                <p className={`text-sm font-secondary leading-relaxed p-4 rounded-[16px] border ${log.category === 'Wellness' ? 'bg-white/80 border-indigo-100 text-indigo-800' : 'bg-[var(--base-bg)] border-gray-100 text-[var(--text-light)]'}`}>
+                                                    {log.category === 'Wellness' ? `Resultado: ${log.detail}` : log.detail}
                                                 </p>
                                             )}
                                         </div>

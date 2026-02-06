@@ -32,3 +32,13 @@ export const formatTimeAgo = (date) => {
     // Default to a simple date format for older things
     return past.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 };
+
+/**
+ * Parses a YYYY-MM-DD string as a local Date object, avoiding UTC shifts.
+ */
+export const safeDateParse = (dateStr) => {
+    if (!dateStr) return null;
+    if (dateStr.includes('T')) return new Date(dateStr);
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+};
