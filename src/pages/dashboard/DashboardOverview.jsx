@@ -612,7 +612,7 @@ const DashboardOverview = () => {
                                         date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                         image={app.caregiver?.avatar_url}
                                         status={app.status}
-                                        onViewProfile={() => navigate(`/search?caregiverId=${app.caregiver_id}`)}
+                                        onViewProfile={() => setSelectedCaregiver(app.caregiver)}
                                     />
                                 ))}
                             </div>
@@ -642,7 +642,7 @@ const DashboardOverview = () => {
                                         date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                         image={app.caregiver?.avatar_url}
                                         status={app.status}
-                                        onViewProfile={() => navigate(`/search?caregiverId=${app.caregiver_id}`)}
+                                        onViewProfile={() => setSelectedCaregiver(app.caregiver)}
                                     />
                                 ))
                             ) : (
