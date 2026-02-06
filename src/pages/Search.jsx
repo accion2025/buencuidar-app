@@ -365,15 +365,17 @@ const Search = () => {
                                                         alt={caregiver.name}
                                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
-                                                    {(caregiver.raw?.plan_type === 'premium' || caregiver.raw?.plan_type === 'professional_pro') && (
-                                                        <div className="absolute top-2 right-2 bg-emerald-50 text-[var(--secondary-color)] px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm z-10 flex items-center gap-1">
-                                                            <Award size={10} />
-                                                            <span>BC PRO</span>
-                                                        </div>
-                                                    )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] group-hover:text-[var(--secondary-color)] transition-colors truncate">{caregiver.name}</h3>
+                                                    <div className="flex items-center gap-3 mb-1">
+                                                        <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] group-hover:text-[var(--secondary-color)] transition-colors truncate">{caregiver.name}</h3>
+                                                        {(caregiver.raw?.plan_type === 'premium' || caregiver.raw?.plan_type === 'professional_pro') && (
+                                                            <div className="shrink-0 bg-emerald-50 text-[var(--secondary-color)] px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-1 shadow-sm">
+                                                                <Award size={10} />
+                                                                <span>BC PRO</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                     <p className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] mb-2">{caregiver.role}</p>
                                                     <div className="flex items-center gap-2">
                                                         <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-[4px]">
