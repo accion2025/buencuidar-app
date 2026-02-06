@@ -191,7 +191,7 @@ const Search = () => {
 
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="max-w-4xl mx-auto text-center mb-10">
-                        <h2 className="text-3xl md:text-5xl font-brand font-bold !text-[#FAFAF7] mb-4 tracking-tight">Busca y Contrata Cuidadores PRO</h2>
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold !text-[#FAFAF7] mb-4 tracking-tight">Busca y Contrata Cuidadores BC PRO</h2>
                         <p className="text-blue-100 text-sm md:text-lg font-secondary font-medium opacity-90">Personal capacitado y verificado para el cuidado de tus seres queridos.</p>
                     </div>
 
@@ -367,8 +367,9 @@ const Search = () => {
                                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
                                                     {(caregiver.raw?.plan_type === 'premium' || caregiver.raw?.plan_type === 'professional_pro') && (
-                                                        <div className="absolute bottom-0 right-0 bg-[var(--secondary-color)] text-white p-1 rounded-tl-[4px]">
-                                                            <Award size={12} strokeWidth={3} />
+                                                        <div className="absolute top-2 right-2 bg-emerald-50 text-[var(--secondary-color)] px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm z-10 flex items-center gap-1">
+                                                            <Award size={10} />
+                                                            <span>BC PRO</span>
                                                         </div>
                                                     )}
                                                 </div>

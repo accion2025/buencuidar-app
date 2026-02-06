@@ -170,7 +170,7 @@ const CaregiverList = () => {
                                 <div key={bg.id} className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-8 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all flex flex-col items-center text-center relative overflow-hidden group">
                                     {isPro && (
                                         <div className="absolute top-4 right-4 bg-emerald-50 text-[var(--secondary-color)] px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
-                                            PRO
+                                            BC PRO
                                         </div>
                                     )}
 
