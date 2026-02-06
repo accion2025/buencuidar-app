@@ -50,7 +50,10 @@ const CaregiverList = () => {
                 if (isAPremium && !isBPremium) return -1;
                 if (!isAPremium && isBPremium) return 1;
 
-                return 0;
+                // 3. TIE-BREAKER: Activity Level (updated_at)
+                const activityA = new Date(a.updated_at || 0).getTime();
+                const activityB = new Date(b.updated_at || 0).getTime();
+                return activityB - activityA;
             });
 
             setCaregivers(sortedData);

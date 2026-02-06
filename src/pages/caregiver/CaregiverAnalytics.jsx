@@ -8,19 +8,20 @@ import {
     DollarSign,
     Clock,
     Calendar,
-    TrendingUp,
-    FileText,
-    Download,
-    ChevronDown,
-    ChevronUp,
     BarChart2,
-    Activity
+    Activity,
+    Lock,
+    ShieldCheck,
+    TrendingUp,
+    FileText
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 // import { Bar, Line, Doughnut } from 'react-chartjs-2'; // Assuming chartjs is installed or we use simple CSS bars if not. 
 // Given the complexity of adding chartjs without ensuring it's in package.json, I will build simple CSS charts first to ensure stability.
 
 const CaregiverAnalytics = () => {
     const { user, profile, loading: authLoading } = useAuth();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [timeRange, setTimeRange] = useState('year'); // 'month', 'year', 'all'
     const [stats, setStats] = useState({
@@ -44,32 +45,49 @@ const CaregiverAnalytics = () => {
 
     if (!isPremium) {
         return (
-            <div className="min-h-[70vh] flex flex-col items-center justify-center text-center p-10 bg-white rounded-[16px] border border-slate-100 shadow-xl max-w-2xl mx-auto my-12 animate-fade-in">
-                <div className="w-24 h-24 bg-blue-50 text-[var(--primary-color)] rounded-full flex items-center justify-center mb-8 shadow-inner ring-4 ring-blue-50/50">
-                    <BarChart2 size={48} strokeWidth={1.5} />
-                </div>
-                <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-4 tracking-tight">Acceso Limitado</h2>
-                <p className="text-gray-600 font-secondary text-lg mb-10 max-w-md mx-auto leading-relaxed">
-                    La sección de **Análisis y Reportes Financieros** está reservada para nuestros cuidadores con suscripción **Premium**.
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-10 text-left">
-                    <div className="bg-slate-50 p-6 rounded-[24px] border border-slate-100 ring-1 ring-slate-200/50">
-                        <TrendingUp className="text-[var(--secondary-color)] mb-3" size={24} />
-                        <h4 className="font-bold text-sm text-[var(--primary-color)] mb-1 uppercase tracking-widest">Gráficos Pro</h4>
-                        <p className="text-xs text-gray-500 font-medium">Visualiza tus ingresos mensuales y proyección de crecimiento.</p>
+            <div className="flex-grow flex items-center justify-center py-20 px-4">
+                <div className="max-w-3xl w-full card !p-0 overflow-hidden shadow-2xl border-none animate-fade-in-up">
+                    <div className="bg-[var(--primary-color)] p-12 text-center relative flex flex-col items-center justify-center">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px] opacity-20"></div>
+                        <div className="bg-white/10 w-24 h-24 rounded-[16px] flex items-center justify-center backdrop-blur-md border border-white/20 mb-8 shadow-2xl">
+                            <Lock size={48} className="text-[var(--accent-color)]" />
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-brand font-bold !text-white tracking-tight mb-4 drop-shadow-sm">Acceso Restringido a BC PRO</h1>
+                        <p className="text-[var(--accent-color)] text-lg leading-relaxed max-w-xl mx-auto opacity-90 font-secondary text-center">
+                            La sección de análisis avanzado y reportes financieros es una función exclusiva para profesionales con una suscripción <span
+                                onClick={() => navigate('/caregiver/plans')}
+                                className="text-white font-black cursor-pointer hover:underline decoration-2 underline-offset-4 transition-all"
+                            >BC PRO Premium</span> activa.
+                        </p>
                     </div>
-                    <div className="bg-slate-50 p-6 rounded-[24px] border border-slate-100 ring-1 ring-slate-200/50">
-                        <FileText className="text-[var(--secondary-color)] mb-3" size={24} />
-                        <h4 className="font-bold text-sm text-[var(--primary-color)] mb-1 uppercase tracking-widest">Reportes PDF</h4>
-                        <p className="text-xs text-gray-500 font-medium">Exporta tu historial de pagos en formato profesional para tus finanzas.</p>
+
+                    <div className="p-12 bg-white flex flex-col items-center text-center">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10 w-full max-w-lg mx-auto">
+                            {[
+                                { icon: FileText, text: "Reportes PDF" },
+                                { icon: Activity, text: "Eficiencia $/h" }
+                            ].map((item, i) => (
+                                <div key={i} className="flex flex-col items-center gap-2">
+                                    <div className="w-12 h-12 rounded-[16px] bg-[var(--base-bg)] text-[var(--secondary-color)] flex items-center justify-center shadow-inner">
+                                        <item.icon size={24} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-[var(--primary-color)]">{item.text}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() => navigate('/caregiver/plans')}
+                            className="btn btn-secondary px-12 py-6 text-xl shadow-2xl shadow-green-100 uppercase tracking-widest"
+                        >
+                            ACTIVA BC PRO AHORA
+                        </button>
+
+                        <p className="text-xs text-[var(--text-light)] mt-8 font-secondary">
+                            ¿Ya crees que tienes el nivel PRO? Contacta a soporte si crees que esto es un error.
+                        </p>
                     </div>
                 </div>
-                <a
-                    href="/caregiver/payments"
-                    className="btn btn-secondary !px-12 !py-5 !text-sm font-black uppercase tracking-widest shadow-2xl shadow-emerald-200/50 transform hover:scale-105 transition-all"
-                >
-                    Mejorar mi Plan Ahora
-                </a>
             </div>
         );
     }

@@ -133,7 +133,10 @@ const Search = () => {
                     if (isAPremium && !isBPremium) return -1;
                     if (!isAPremium && isBPremium) return 1;
 
-                    return 0;
+                    // 3. TIE-BREAKER: Activity Level (updated_at)
+                    const activityA = new Date(a.raw?.updated_at || 0).getTime();
+                    const activityB = new Date(b.raw?.updated_at || 0).getTime();
+                    return activityB - activityA;
                 });
 
             setCaregivers(formattedData);
