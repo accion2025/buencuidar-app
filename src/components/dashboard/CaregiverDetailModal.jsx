@@ -241,11 +241,11 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
                         {/* Bio Section */}
                         <div className="bg-white">
-                            <h3 className="flex items-center gap-2 font-black text-gray-800 mb-3 text-lg">
-                                <span className="w-1.5 h-6 bg-[#0F4C5C] rounded-full"></span>
+                            <h3 className="flex items-center gap-2 font-black text-gray-400 mb-3 text-[10px] uppercase tracking-[0.2em]">
+                                <span className="w-1 h-3 bg-[#0F4C5C] rounded-full"></span>
                                 Sobre Mí
                             </h3>
-                            <p className="text-gray-600 leading-relaxed text-sm bg-gray-50/50 p-5 rounded-[16px] border border-gray-100">
+                            <p className="text-gray-600 leading-relaxed text-base bg-gray-50/50 p-5 rounded-[16px] border border-gray-100">
                                 {bio}
                             </p>
                         </div>
@@ -254,13 +254,13 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                         <div className="grid md:grid-cols-2 gap-6">
                             {/* Skills */}
                             <div>
-                                <h3 className="flex items-center gap-2 font-black text-gray-800 mb-4 text-sm uppercase tracking-wide">
-                                    <Check className="text-emerald-500" size={18} strokeWidth={3} />
+                                <h3 className="flex items-center gap-2 font-black text-gray-400 mb-4 text-[10px] uppercase tracking-[0.2em]">
+                                    <Check className="text-emerald-500" size={14} strokeWidth={4} />
                                     Habilidades
                                 </h3>
                                 <div className="flex flex-wrap gap-2">
                                     {skills.map((skill, idx) => (
-                                        <span key={idx} className="bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-[16px] border border-emerald-100/50">
+                                        <span key={idx} className="bg-emerald-50 text-emerald-800 text-sm font-bold px-4 py-2 rounded-[12px] border border-emerald-100/50">
                                             {skill}
                                         </span>
                                     ))}
@@ -269,24 +269,24 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
                             {/* Certifications */}
                             <div>
-                                <h3 className="flex items-center gap-2 font-black text-gray-800 mb-4 text-sm uppercase tracking-wide">
-                                    <BookOpen className="text-blue-500" size={18} strokeWidth={3} />
+                                <h3 className="flex items-center gap-2 font-black text-gray-400 mb-4 text-[10px] uppercase tracking-[0.2em]">
+                                    <BookOpen className="text-blue-500" size={14} strokeWidth={4} />
                                     Certificaciones
                                 </h3>
                                 <div className="space-y-2">
                                     {certifications.slice(0, 3).map((cert, idx) => (
-                                        <div key={idx} className="flex items-start gap-3 p-2.5 rounded-[16px] border border-gray-100 hover:bg-gray-50 transition-colors">
-                                            <div className="mt-0.5 text-blue-400 bg-blue-50 p-1 rounded-md">
-                                                <Award size={12} />
+                                        <div key={idx} className="flex items-start gap-3 p-3 rounded-[16px] border border-gray-100 hover:bg-gray-50 transition-colors">
+                                            <div className="mt-0.5 text-blue-400 bg-blue-50 p-1.5 rounded-md">
+                                                <Award size={14} />
                                             </div>
                                             <div>
-                                                <p className="font-bold text-gray-800 text-xs leading-tight">{cert.title}</p>
-                                                <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">{cert.org} • {cert.year}</p>
+                                                <p className="font-bold text-gray-800 text-sm leading-tight">{cert.title}</p>
+                                                <p className="text-xs text-gray-400 font-medium uppercase tracking-wide mt-1">{cert.org} • {cert.year}</p>
                                             </div>
                                         </div>
                                     ))}
                                     {(certifications.length === 0) && (
-                                        <p className="text-xs text-gray-400 italic">Sin certificaciones registradas</p>
+                                        <p className="text-sm text-gray-400 italic">Sin certificaciones registradas</p>
                                     )}
                                 </div>
                             </div>
@@ -295,8 +295,8 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                         {/* Featured Reviews */}
                         {reviews.length > 0 && (
                             <div className="bg-amber-50/30 rounded-[16px] p-6 border border-amber-100/50">
-                                <h3 className="flex items-center gap-2 font-black text-gray-800 mb-4">
-                                    <Star className="text-amber-400 fill-amber-400" size={20} />
+                                <h3 className="flex items-center gap-2 font-black text-gray-400 mb-4 text-[10px] uppercase tracking-[0.2em]">
+                                    <Star className="text-amber-400 fill-amber-400" size={14} />
                                     Reseñas Destacadas
                                 </h3>
                                 <div className="grid gap-3">
@@ -321,7 +321,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                                     ))}
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-slate-600 italic leading-relaxed">"{review.comment}"</p>
+                                            <p className="text-base text-slate-600 italic leading-relaxed">"{review.comment}"</p>
                                         </div>
                                     ))}
                                 </div>

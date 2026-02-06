@@ -638,21 +638,21 @@ const CaregiverProfile = () => {
                     <div className="space-y-10 text-left">
                         <div className="bg-white rounded-[16px] p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-8 tracking-tight flex items-center gap-3 relative z-10">
-                                <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
-                                    <User size={20} />
+                            <h3 className="font-brand font-bold text-[10px] text-gray-400 mb-8 tracking-[0.2em] uppercase flex items-center gap-3 relative z-10">
+                                <span className="p-2 bg-blue-50 text-blue-600 rounded-[12px]">
+                                    <User size={16} />
                                 </span>
                                 Sobre mi Trayectoria
                             </h3>
-                            <p className="text-[var(--text-main)] leading-relaxed text-lg font-secondary relative z-10 opacity-80">
+                            <p className="text-[var(--text-main)] leading-relaxed text-xl font-secondary relative z-10 opacity-90">
                                 {profile.bio || "Este cuidador aún no ha redactado su biografía profesional."}
                             </p>
 
                             <div className="mt-16 pt-12 border-t border-gray-100 relative z-10">
                                 <div className="flex justify-between items-center mb-8">
-                                    <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
-                                        <span className="p-2.5 bg-emerald-50 text-[var(--secondary-color)] rounded-[16px]">
-                                            <Star size={20} />
+                                    <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
+                                        <span className="p-2 bg-emerald-50 text-[var(--secondary-color)] rounded-[12px]">
+                                            <Star size={16} />
                                         </span>
                                         Habilidades Destacadas
                                     </h3>
@@ -665,7 +665,7 @@ const CaregiverProfile = () => {
                                     {(profile.skills && profile.skills.length > 0 ? profile.skills : ['Primeros Auxilios', 'Higiene y Confort', 'Indicadores Generales'])
                                         .filter(skill => !skill.toLowerCase().includes('esto es una prueba'))
                                         .map(skill => (
-                                            <span key={skill} className="bg-[var(--base-bg)] text-[var(--primary-color)] px-6 py-3 rounded-[16px] text-[10px] font-black uppercase tracking-widest border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[var(--secondary-color)]/30 hover:scale-105 transition-all">
+                                            <span key={skill} className="bg-[var(--base-bg)] text-[var(--primary-color)] px-6 py-3 rounded-[16px] text-sm font-bold border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[var(--secondary-color)]/30 hover:scale-105 transition-all">
                                                 <div className="w-2 h-2 bg-[var(--secondary-color)] rounded-full"></div>
                                                 {skill}
                                             </span>
@@ -677,9 +677,9 @@ const CaregiverProfile = () => {
                         <div className="card !p-12 border-none shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <div className="flex justify-between items-center mb-10 relative z-10">
-                                <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
-                                    <span className="p-2.5 bg-purple-50 text-purple-600 rounded-[16px]">
-                                        <BookOpen size={20} />
+                                <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
+                                    <span className="p-2 bg-purple-50 text-purple-600 rounded-[12px]">
+                                        <BookOpen size={16} />
                                     </span>
                                     Formación y Certificaciones
                                 </h3>
@@ -695,7 +695,7 @@ const CaregiverProfile = () => {
                                             <Award size={28} />
                                         </div>
                                         <div className="text-left">
-                                            <h4 className="font-brand font-bold text-[var(--primary-color)] text-lg leading-tight mb-1">{cert.title}</h4>
+                                            <h4 className="font-brand font-bold text-[var(--primary-color)] text-xl leading-tight mb-1">{cert.title}</h4>
                                             <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest">{cert.org} • {cert.year}</p>
                                         </div>
                                     </div>
@@ -707,9 +707,9 @@ const CaregiverProfile = () => {
                     <div className="space-y-10">
                         <div className="bg-white rounded-[16px] p-10 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                            <h3 className="font-brand font-bold text-[var(--primary-color)] mb-10 flex items-center gap-3 text-xl relative z-10">
-                                <span className="p-2.5 bg-amber-50 text-amber-500 rounded-[16px]">
-                                    <Award size={20} />
+                            <h3 className="font-brand font-bold text-gray-400 mb-10 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] relative z-10">
+                                <span className="p-2 bg-amber-50 text-amber-500 rounded-[12px]">
+                                    <Award size={16} />
                                 </span>
                                 Insignias Ganadas
                             </h3>
@@ -742,9 +742,9 @@ const CaregiverProfile = () => {
 
                         <div className="bg-[#0F3C4C] rounded-[16px] p-10 border border-white/5 shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-                            <h3 className="font-brand font-bold mb-10 text-xl tracking-tight flex items-center gap-3 relative z-10">
-                                <span className="p-2 bg-white/10 rounded-[16px]">
-                                    <ShieldCheck size={18} className="text-[var(--secondary-color)]" />
+                            <h3 className="font-brand font-bold mb-10 text-[10px] text-gray-400 uppercase tracking-[0.2em] flex items-center gap-3 relative z-10">
+                                <span className="p-2 bg-white/10 rounded-[12px]">
+                                    <ShieldCheck size={16} className="text-[var(--secondary-color)]" />
                                 </span>
                                 Estatus de Verificación
                             </h3>
