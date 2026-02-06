@@ -67,7 +67,6 @@ const CaregiverPlans = () => {
         "Agenda Inteligente PRO (Notificaciones)",
         "Alertas de empleo inmediatas",
         "Soporte preferencial",
-        "Acceso a capacitaciones",
         "Herramientas de gestión"
     ];
 
