@@ -111,7 +111,7 @@ const Search = () => {
                         id: p.id,
                         name: p.full_name,
                         role: details?.specialization || 'Cuidador Profesional',
-                        rating: details?.rating || 5.0,
+                        rating: details?.rating || 0,
                         reviews: details?.reviews_count || 0,
                         experience: (details?.experience || 0) + ' años',
                         location: formatLocation(p, details),
@@ -122,16 +122,12 @@ const Search = () => {
                     };
                 })
                 .sort((a, b) => {
-                    // 1. Priority to those who HAVE reviews (real work)
-                    if (a.reviews > 0 && b.reviews === 0) return -1;
-                    if (a.reviews === 0 && b.reviews > 0) return 1;
-
-                    // 2. If both have reviews OR both have 0 reviews, sort by rating
+                    // Sort by rating descending
                     if (b.rating !== a.rating) {
                         return b.rating - a.rating;
                     }
 
-                    // 3. TIE-BREAKER: Priority to PREMIUM caregivers (Suscripción PRO)
+                    // TIE-BREAKER: Priority to PREMIUM caregivers (Suscripción PRO)
                     const isAPremium = a.raw?.plan_type === 'premium' || a.raw?.plan_type === 'professional_pro';
                     const isBPremium = b.raw?.plan_type === 'premium' || b.raw?.plan_type === 'professional_pro';
                     if (isAPremium && !isBPremium) return -1;
@@ -379,10 +375,14 @@ const Search = () => {
                                                     <p className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] mb-2">{caregiver.role}</p>
                                                     <div className="flex items-center gap-2">
                                                         <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-[4px]">
-                                                            <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                                                            <span className="text-sm font-black text-yellow-600 ml-1">{caregiver.rating}</span>
+                                                            <Star size={12} className={caregiver.rating > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} />
+                                                            <span className={`text-sm font-black ml-1 ${caregiver.rating > 0 ? 'text-yellow-600' : 'text-gray-400'}`}>
+                                                                {caregiver.rating > 0 ? caregiver.rating.toFixed(1) : 'S/C'}
+                                                            </span>
                                                         </div>
-                                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({caregiver.reviews} reseñas)</span>
+                                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                                            {caregiver.reviews > 0 ? `(${caregiver.reviews} valoraciones)` : '(Sin calificaciones)'}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>

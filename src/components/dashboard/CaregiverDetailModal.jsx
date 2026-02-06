@@ -57,7 +57,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
             if (data) {
                 const totalRating = data.reduce((acc, curr) => acc + curr.rating, 0);
-                const avg = data.length > 0 ? (totalRating / data.length).toFixed(1) : '5.0';
+                const avg = data.length > 0 ? (totalRating / data.length).toFixed(1) : '0.0';
 
                 setRealStats({
                     rating: avg,

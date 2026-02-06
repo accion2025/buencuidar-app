@@ -188,16 +188,19 @@ const CaregiverList = () => {
 
                                     <div className="flex items-center gap-1.5 mb-4">
                                         <div className="flex items-center gap-1">
-                                            {[1, 2, 3, 4, 5].map((s) => (
-                                                <Star
-                                                    key={s}
-                                                    size={12}
-                                                    className={s <= (details?.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}
-                                                />
-                                            ))}
+                                            {[1, 2, 3, 4, 5].map((s) => {
+                                                const rating = details?.rating || 0;
+                                                return (
+                                                    <Star
+                                                        key={s}
+                                                        size={12}
+                                                        className={s <= Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                         <span className="text-xs font-black text-slate-400 tracking-wider">
-                                            ({details?.reviews_count || 0})
+                                            ({details?.reviews_count || 0} valoraciones)
                                         </span>
                                     </div>
 
