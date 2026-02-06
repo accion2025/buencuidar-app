@@ -179,7 +179,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                         <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-[4px]">
                                             <Star
                                                 size={14}
-                                                className={Number(realStats.rating) > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
+                                                className={Number(realStats.rating) > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300 fill-none"}
                                             />
                                             <span className={`text-sm font-black ml-1 ${Number(realStats.rating) > 0 ? 'text-yellow-600' : 'text-gray-400'}`}>
                                                 {Number(realStats.rating) > 0 ? `${realStats.rating}/5` : '0/5'}

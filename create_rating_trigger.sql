@@ -17,7 +17,7 @@ BEGIN
         UPDATE caregiver_details
         SET 
             rating = (
-                SELECT COALESCE(TRUNC(AVG(rating)::numeric, 1), 5.0)
+                SELECT COALESCE(TRUNC(AVG(rating)::numeric, 1), 0.0)
                 FROM reviews
                 WHERE caregiver_id = target_caregiver_id
             ),
@@ -52,7 +52,7 @@ SET
         SELECT TRUNC(AVG(rating)::numeric, 1)
         FROM reviews r
         WHERE r.caregiver_id = cd.id
-    ), 5.0),
+    ), 0.0),
     reviews_count = COALESCE((
         SELECT COUNT(*)
         FROM reviews r

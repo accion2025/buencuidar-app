@@ -185,7 +185,7 @@ const CaregiverList = () => {
                                             {/* Point 2: Unfilled star if no rating */}
                                             <Star
                                                 size={14}
-                                                className={details?.rating > 0 ? "fill-amber-400 text-amber-400" : "text-slate-300"}
+                                                className={details?.rating > 0 ? "fill-amber-400 text-amber-400" : "text-slate-300 fill-none"}
                                             />
                                             {/* Point 3: X/5 format, no rounding */}
                                             <span className={`text-sm font-black ml-1.5 ${details?.rating > 0 ? 'text-amber-600' : 'text-slate-400'}`}>

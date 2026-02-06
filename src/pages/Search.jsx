@@ -378,7 +378,7 @@ const Search = () => {
                                                             {/* Point 2: Unfilled star if no rating */}
                                                             <Star
                                                                 size={12}
-                                                                className={caregiver.rating > 0 ? "text-yellow-400 fill-yellow-400" : "text-slate-300"}
+                                                                className={caregiver.rating > 0 ? "text-yellow-400 fill-yellow-400" : "text-slate-300 fill-none"}
                                                             />
                                                             {/* Point 3: X/5 format, no rounding (showing up to 2 decimals) */}
                                                             <span className={`text-sm font-black ml-1 ${caregiver.rating > 0 ? 'text-yellow-600' : 'text-slate-400'}`}>
