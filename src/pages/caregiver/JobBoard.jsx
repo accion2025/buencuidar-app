@@ -298,16 +298,18 @@ const JobBoard = () => {
 
                         return (
                             <div key={job.id} className="bg-white p-8 rounded-[16px] border border-slate-100 hover:border-[var(--secondary-color)]/30 hover:shadow-2xl hover:shadow-slate-200 transition-all group relative overflow-hidden flex flex-col">
-                                {isPulso && (
-                                    <div className="absolute top-0 right-0 bg-[#4F46E5] !text-[#FAFAF7] text-[10px] font-black px-4 py-1.5 rounded-bl-2xl shadow-lg z-10 flex items-center gap-2 uppercase tracking-widest">
-                                        <Briefcase size={10} className="animate-pulse" /> SERVICIO PULSO
-                                    </div>
-                                )}
-                                {job.details?.includes('[PLAN DE CUIDADO]') && (
-                                    <div className={`absolute top-0 ${isPulso ? 'right-0 mt-8' : 'right-0'} bg-amber-500 !text-white text-[9px] font-black px-4 py-1.5 rounded-bl-2xl shadow-lg z-10 flex items-center gap-2 uppercase tracking-widest`}>
-                                        <Clock size={10} /> EXIGE AGENDA DE CUIDADOS
-                                    </div>
-                                )}
+                                <div className="absolute top-0 right-0 flex flex-col items-end z-10">
+                                    {isPulso && (
+                                        <div className="bg-[#4F46E5] !text-[#FAFAF7] text-[10px] font-black px-4 py-1.5 rounded-bl-2xl shadow-lg flex items-center gap-2 uppercase tracking-widest">
+                                            <Briefcase size={10} className="animate-pulse" /> SERVICIO PULSO
+                                        </div>
+                                    )}
+                                    {job.details?.includes('[PLAN DE CUIDADO]') && (
+                                        <div className={`bg-amber-500 !text-white text-[9px] font-black px-4 py-1.5 shadow-lg flex items-center gap-2 uppercase tracking-widest ${isPulso ? 'rounded-bl-xl' : 'rounded-bl-2xl'}`}>
+                                            <Clock size={10} /> EXIGE AGENDA DE CUIDADOS
+                                        </div>
+                                    )}
+                                </div>
                                 <h3 className="text-2xl font-brand font-bold !text-[#0F3C4C] mb-1 group-hover:text-[var(--secondary-color)] transition-colors uppercase tracking-tight pr-24">{job.title}</h3>
                                 <div className="flex items-center gap-2 text-xs text-[#07212e] font-black uppercase tracking-widest mb-6 opacity-60">
                                     <User size={14} className="text-[var(--secondary-color)]" />
