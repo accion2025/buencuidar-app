@@ -131,26 +131,26 @@ const CaregiverList = () => {
                 onContact={handleContact}
             />
 
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-800">Cuidadores Disponibles</h1>
-                <p className="text-gray-500">Encuentra al profesional ideal para el cuidado de tus seres queridos.</p>
+            <div className="mb-10">
+                <h1 className="text-3xl font-brand font-bold text-slate-800 mb-2 tracking-tight">Cuidadores Disponibles</h1>
+                <p className="text-lg text-slate-500 font-secondary font-medium max-w-2xl">Encuentra al profesional ideal para el cuidado y bienestar de tus seres queridos.</p>
             </div>
 
             {/* Search & Filter */}
-            <div className="flex gap-4 mb-8">
-                <div className="relative flex-grow max-w-lg">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <div className="flex flex-col md:flex-row gap-4 mb-12">
+                <div className="relative flex-grow max-w-2xl group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[var(--secondary-color)] transition-colors" size={20} />
                     <input
                         type="text"
                         placeholder="Buscar por nombre o especialidad..."
-                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-[16px] focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
+                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-[16px] focus:border-[var(--secondary-color)] outline-none font-bold text-base bg-white/50 backdrop-blur-sm transition-all shadow-sm focus:shadow-lg focus:shadow-emerald-900/5"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <button className="px-6 py-3 border border-gray-200 rounded-[16px] text-gray-600 hover:bg-gray-50 flex items-center gap-2 font-medium">
+                <button className="px-8 py-4 bg-white border-2 border-gray-100 rounded-[16px] text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest transition-all hover:border-slate-200 shadow-sm">
                     <Filter size={18} />
-                    Filtros
+                    <span>Filtros Avanzados</span>
                 </button>
             </div>
 
@@ -163,40 +163,56 @@ const CaregiverList = () => {
                         const details = Array.isArray(bg.caregiver_details) ? bg.caregiver_details[0] : bg.caregiver_details;
                         const displayBio = bg.bio || details?.bio;
                         const displayLocationFormatted = formatLocation(bg, details);
+                        const isPro = bg.plan_type === 'premium' || bg.plan_type === 'professional_pro';
 
                         return (
-                            <div key={bg.id} className="bg-white rounded-[16px] shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow flex flex-col items-center text-center">
-                                <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden">
+                            <div key={bg.id} className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-8 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all flex flex-col items-center text-center relative overflow-hidden group">
+                                {isPro && (
+                                    <div className="absolute top-4 right-4 bg-emerald-50 text-[var(--secondary-color)] px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+                                        PRO
+                                    </div>
+                                )}
+
+                                <div className="w-28 h-28 rounded-full border-4 border-gray-50 mb-6 overflow-hidden shadow-inner group-hover:scale-105 transition-transform duration-500">
                                     {bg.avatar_url ? (
                                         <img src={bg.avatar_url} alt={bg.full_name} className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center font-bold text-xl text-gray-400">
+                                        <div className="w-full h-full flex items-center justify-center font-black text-2xl bg-slate-100 text-slate-400">
                                             {bg.full_name?.charAt(0)}
                                         </div>
                                     )}
                                 </div>
-                                <h3 className="font-bold text-gray-800 text-lg mb-1">{bg.full_name}</h3>
-                                {details?.rating && (
-                                    <div className="flex items-center gap-1 mb-2">
-                                        <Star size={14} className={`${(details?.reviews_count || 0) > 0 ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`} />
-                                        <span className="font-bold text-gray-700">{details.rating}</span>
-                                        <span className="text-xs text-gray-400">({details.reviews_count || 0})</span>
-                                    </div>
-                                )}
-                                <p className="text-blue-600 text-sm font-medium mb-4 flex items-center justify-center gap-1">
 
-                                    <MapPin size={14} /> {displayLocationFormatted}
+                                <h3 className="font-brand font-bold text-slate-800 text-xl mb-1 tracking-tight">{bg.full_name}</h3>
+
+                                <div className="flex items-center gap-1.5 mb-4">
+                                    <div className="flex items-center gap-1">
+                                        {[1, 2, 3, 4, 5].map((s) => (
+                                            <Star
+                                                key={s}
+                                                size={12}
+                                                className={s <= (details?.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}
+                                            />
+                                        ))}
+                                    </div>
+                                    <span className="text-xs font-black text-slate-400 tracking-wider">
+                                        ({details?.reviews_count || 0})
+                                    </span>
+                                </div>
+
+                                <p className="text-cyan-700 text-xs font-black uppercase tracking-[0.15em] mb-4 flex items-center justify-center gap-2 opacity-80">
+                                    <MapPin size={14} className="text-rose-400" /> {displayLocationFormatted}
                                 </p>
 
-                                <p className="text-gray-500 text-sm mb-6 line-clamp-2">
-                                    {displayBio || 'Cuidador verificado de la plataforma BuenCuidar.'}
+                                <p className="text-slate-500 text-base font-secondary leading-relaxed mb-8 line-clamp-2">
+                                    {displayBio || 'Cuidador verificado de la plataforma BuenCuidar especializado en atención personalizada.'}
                                 </p>
 
                                 <button
                                     onClick={() => setSelectedCaregiver(bg)}
-                                    className="w-full py-2 border border-[var(--primary-color)] text-[var(--primary-color)] font-bold rounded-[16px] hover:bg-blue-50 transition-colors"
+                                    className="w-full py-4 bg-slate-50 !text-slate-600 font-black rounded-[16px] hover:bg-emerald-600 hover:!text-[#FAFAF7] hover:shadow-lg transition-all uppercase tracking-widest text-[10px]"
                                 >
-                                    Ver Perfil
+                                    Ver Perfil Completo
                                 </button>
                             </div>
                         );
