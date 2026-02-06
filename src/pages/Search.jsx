@@ -192,14 +192,14 @@ const Search = () => {
                         <p className="text-blue-100 text-sm md:text-lg font-secondary font-medium opacity-90">Personal capacitado y verificado para el cuidado de tus seres queridos.</p>
                     </div>
 
-                    <div className="max-w-6xl mx-auto bg-white/10 backdrop-blur-xl p-2 rounded-[32px] shadow-2xl border border-white/20">
-                        <div className="bg-white p-6 md:p-8 rounded-[28px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 text-gray-800 items-end">
+                    <div className="max-w-6xl mx-auto bg-white/10 backdrop-blur-xl p-2 rounded-[20px] shadow-2xl border border-white/20">
+                        <div className="bg-white p-6 md:p-8 rounded-[18px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 text-gray-800 items-end">
                             <div className="space-y-2">
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                                     <Globe size={14} className="text-blue-500" /> País
                                 </label>
                                 <select
-                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
+                                    className="w-full border-2 border-gray-50 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
                                     value={filters.country}
                                     onChange={(e) => setFilters({ ...filters, country: e.target.value, department: '', municipality: '' })}
                                 >
@@ -210,11 +210,11 @@ const Search = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                                     <MapPin size={14} className="text-orange-400" /> Departamento
                                 </label>
                                 <select
-                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
+                                    className="w-full border-2 border-gray-50 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
                                     value={filters.department}
                                     onChange={(e) => setFilters({ ...filters, department: e.target.value, municipality: '' })}
                                 >
@@ -226,11 +226,11 @@ const Search = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                                     <Home size={14} className="text-blue-400" /> Municipio
                                 </label>
                                 <select
-                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer disabled:opacity-50"
+                                    className="w-full border-2 border-gray-50 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer disabled:opacity-50"
                                     value={filters.municipality}
                                     disabled={!filters.department}
                                     onChange={(e) => setFilters({ ...filters, municipality: e.target.value })}
@@ -243,11 +243,11 @@ const Search = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                                     <Briefcase size={14} className="text-emerald-500" /> Especialidad
                                 </label>
                                 <select
-                                    className="w-full border-2 border-gray-50 rounded-[16px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
+                                    className="w-full border-2 border-gray-50 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-sm bg-gray-50/50 transition-all cursor-pointer"
                                     value={filters.specialty}
                                     onChange={(e) => setFilters({ ...filters, specialty: e.target.value })}
                                 >
@@ -262,7 +262,7 @@ const Search = () => {
 
                             <button
                                 onClick={fetchCaregivers}
-                                className="bg-[var(--primary-color)] !text-[#FAFAF7] w-full py-4 rounded-[18px] font-black text-xs uppercase tracking-[0.2em] hover:brightness-110 shadow-xl shadow-blue-900/10 transition-all flex items-center justify-center gap-3 active:scale-95"
+                                className="bg-[var(--primary-color)] !text-[#FAFAF7] w-full py-4 rounded-[12px] font-black text-xs uppercase tracking-[0.2em] hover:brightness-110 shadow-xl shadow-blue-900/10 transition-all flex items-center justify-center gap-3 active:scale-95"
                             >
                                 <SearchIcon size={18} strokeWidth={3} />
                                 <span>Buscar</span>
@@ -277,11 +277,11 @@ const Search = () => {
 
                     {/* Filters Sidebar */}
                     <aside className="w-full lg:w-1/4">
-                        <div className="bg-white p-8 rounded-[24px] shadow-xl shadow-gray-200/50 border border-gray-100 sticky top-24">
+                        <div className="bg-white p-8 rounded-[16px] shadow-xl shadow-gray-200/50 border border-gray-100 sticky top-24">
                             <h3 className="font-brand font-bold text-xl text-[var(--primary-color)] mb-6 tracking-tight">Filtrar por</h3>
 
                             <div className="mb-8">
-                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 ml-1">Experiencia</h4>
+                                <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 ml-1">Experiencia</h4>
                                 <div className="space-y-3">
                                     {[
                                         { id: 'under1', label: 'Menos de 1 año' },
@@ -300,7 +300,7 @@ const Search = () => {
                                                 />
                                                 <div className="absolute w-2.5 h-2.5 bg-[var(--secondary-color)] rounded-full opacity-0 peer-checked:opacity-100 transition-all"></div>
                                             </div>
-                                            <span className="text-sm font-medium text-gray-600 group-hover:text-[var(--primary-color)] transition-colors">{range.label}</span>
+                                            <span className="text-sm font-bold text-gray-600 group-hover:text-[var(--primary-color)] transition-colors">{range.label}</span>
                                         </label>
                                     ))}
                                 </div>
@@ -308,8 +308,8 @@ const Search = () => {
 
                             <div className="mb-8">
                                 <div className="flex justify-between items-center mb-4">
-                                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Tarifa Máxima</h4>
-                                    <span className="text-sm font-bold text-[var(--secondary-color)] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">${filters.priceRange}{filters.priceRange >= 500 && '+'}</span>
+                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Tarifa Máxima</h4>
+                                    <span className="text-sm font-bold text-[var(--secondary-color)] bg-emerald-50 px-3 py-1 rounded-[8px] border border-emerald-100">${filters.priceRange}{filters.priceRange >= 500 && '+'}</span>
                                 </div>
                                 <input
                                     type="range"
@@ -320,7 +320,7 @@ const Search = () => {
                                     value={filters.priceRange}
                                     onChange={(e) => setFilters({ ...filters, priceRange: parseInt(e.target.value) })}
                                 />
-                                <div className="flex justify-between text-[10px] font-bold text-gray-400 mt-2 px-1">
+                                <div className="flex justify-between text-xs font-bold text-gray-400 mt-2 px-1">
                                     <span>$50</span>
                                     <span>$500+</span>
                                 </div>
@@ -328,7 +328,7 @@ const Search = () => {
 
                             <button
                                 onClick={handleClearFilters}
-                                className="w-full py-4 text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[var(--primary-color)] hover:bg-gray-50 rounded-[16px] transition-all border-2 border-transparent hover:border-gray-100"
+                                className="w-full py-4 text-xs font-black text-gray-400 uppercase tracking-widest hover:text-[var(--primary-color)] hover:bg-gray-50 rounded-[12px] transition-all border-2 border-transparent hover:border-gray-100"
                             >
                                 Limpiar Filtros
                             </button>
@@ -353,72 +353,72 @@ const Search = () => {
                                 </div>
                             ) : caregivers.length > 0 ? (
                                 caregivers.map((caregiver) => (
-                                    <div key={caregiver.id} className="bg-white rounded-[24px] shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 overflow-hidden flex flex-col group hover:-translate-y-2">
+                                    <div key={caregiver.id} className="bg-white rounded-[16px] shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 overflow-hidden flex flex-col group hover:-translate-y-2">
                                         <div className="p-8 flex-grow">
                                             <div className="flex items-start gap-5 mb-6">
-                                                <div className="w-20 h-20 rounded-[20px] overflow-hidden border-4 border-gray-50 shadow-inner shrink-0 relative">
+                                                <div className="w-20 h-20 rounded-[12px] overflow-hidden border-4 border-gray-50 shadow-inner shrink-0 relative">
                                                     <img
                                                         src={caregiver.image}
                                                         alt={caregiver.name}
                                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                     />
                                                     {(caregiver.raw?.plan_type === 'premium' || caregiver.raw?.plan_type === 'professional_pro') && (
-                                                        <div className="absolute bottom-0 right-0 bg-[var(--secondary-color)] text-white p-1 rounded-tl-[8px]">
+                                                        <div className="absolute bottom-0 right-0 bg-[var(--secondary-color)] text-white p-1 rounded-tl-[4px]">
                                                             <Award size={12} strokeWidth={3} />
                                                         </div>
                                                     )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <h3 className="font-brand font-bold text-xl text-[var(--primary-color)] group-hover:text-[var(--secondary-color)] transition-colors truncate">{caregiver.name}</h3>
-                                                    <p className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-[0.2em] mb-2">{caregiver.role}</p>
+                                                    <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] group-hover:text-[var(--secondary-color)] transition-colors truncate">{caregiver.name}</h3>
+                                                    <p className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] mb-2">{caregiver.role}</p>
                                                     <div className="flex items-center gap-2">
-                                                        <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-full">
+                                                        <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-[4px]">
                                                             <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                                                            <span className="text-xs font-black text-yellow-600 ml-1">{caregiver.rating}</span>
+                                                            <span className="text-sm font-black text-yellow-600 ml-1">{caregiver.rating}</span>
                                                         </div>
-                                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">({caregiver.reviews} reseñas)</span>
+                                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">({caregiver.reviews} reseñas)</span>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <div className="flex flex-wrap gap-1.5 mb-6">
                                                 {caregiver.tags.slice(0, 3).map(tag => (
-                                                    <span key={tag} className="bg-gray-50 text-gray-500 text-[9px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-[12px] border border-gray-100">
+                                                    <span key={tag} className="bg-gray-50 text-gray-600 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-[8px] border border-gray-100">
                                                         {tag}
                                                     </span>
                                                 ))}
                                                 {caregiver.tags.length > 3 && (
-                                                    <span className="bg-blue-50 text-blue-500 text-[9px] font-bold px-2 py-1.5 rounded-[12px]">+{caregiver.tags.length - 3}</span>
+                                                    <span className="bg-blue-50 text-blue-500 text-xs font-bold px-2 py-1.5 rounded-[8px]">+{caregiver.tags.length - 3}</span>
                                                 )}
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-1">
-                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
                                                         <MapPin size={10} className="text-orange-400" /> Ubicación
                                                     </p>
-                                                    <p className="text-xs font-bold text-gray-600 truncate">{caregiver.location}</p>
+                                                    <p className="text-sm font-bold text-gray-600 truncate">{caregiver.location}</p>
                                                 </div>
                                                 <div className="space-y-1">
-                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+                                                    <p className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
                                                         <Briefcase size={10} className="text-blue-400" /> Experiencia
                                                     </p>
-                                                    <p className="text-xs font-bold text-gray-600">{caregiver.experience}</p>
+                                                    <p className="text-sm font-bold text-gray-600">{caregiver.experience}</p>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div className="bg-gray-50/50 px-8 py-6 border-t border-gray-100 flex items-center justify-between">
                                             <div>
-                                                <p className="text-[9px] text-gray-400 uppercase font-black tracking-widest leading-none mb-1">Inversión / Hr</p>
-                                                <p className="text-2xl font-brand font-bold text-[var(--primary-color)] flex items-baseline">
+                                                <p className="text-xs text-gray-400 uppercase font-black tracking-widest leading-none mb-1">Inversión / Hr</p>
+                                                <p className="text-3xl font-brand font-bold text-[var(--primary-color)] flex items-baseline">
                                                     <span>${caregiver.price}</span>
-                                                    <span className="text-xs font-secondary font-bold text-gray-400 ml-1 uppercase tracking-widest">USD</span>
+                                                    <span className="text-sm font-secondary font-bold text-gray-400 ml-1 uppercase tracking-widest">USD</span>
                                                 </p>
                                             </div>
                                             <button
                                                 onClick={() => setSelectedCaregiver(caregiver.raw)}
-                                                className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-[10px] font-black uppercase tracking-[0.2em] px-6 py-4 rounded-[16px] shadow-lg shadow-emerald-900/10 hover:brightness-110 active:scale-95 transition-all"
+                                                className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-xs font-black uppercase tracking-[0.2em] px-6 py-4 rounded-[12px] shadow-lg shadow-emerald-900/10 hover:brightness-110 active:scale-95 transition-all"
                                             >
                                                 Ver Perfil
                                             </button>
