@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageCircle, User, X } from 'lucide-react';
+import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageCircle, User, X, Calendar, Activity } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
