@@ -114,7 +114,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
             ref={backdropRef}
             className="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center sm:p-6 p-0 animate-fade-in"
         >
-            <div className="bg-white sm:rounded-[24px] rounded-none shadow-2xl w-full max-w-2xl sm:max-h-[90vh] max-h-screen overflow-hidden relative flex flex-col border border-white/20 h-full sm:h-auto">
+            <div className="bg-white sm:rounded-[24px] rounded-none shadow-2xl w-full max-w-2xl sm:max-h-[90vh] max-h-screen overflow-hidden relative flex flex-col border border-white/20 h-full sm:h-auto pb-safe">
 
                 {/* Scrollable Content */}
                 <div
@@ -262,11 +262,14 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                     <Check className="text-emerald-500" size={14} strokeWidth={4} />
                                     Habilidades
                                 </h3>
-                                <div className="flex flex-wrap gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {skills.map((skill, idx) => (
-                                        <span key={idx} className="bg-emerald-50 text-emerald-800 text-sm font-bold px-4 py-2 rounded-[12px] border border-emerald-100/50">
-                                            {skill}
-                                        </span>
+                                        <div key={idx} className="flex items-center gap-3 bg-gray-50/50 p-3 rounded-[12px] border border-gray-100 hover:border-emerald-100 transition-colors">
+                                            <div className="w-6 h-6 rounded-[8px] border-2 border-emerald-100 flex items-center justify-center shrink-0 bg-emerald-50 text-emerald-600">
+                                                <Check size={14} strokeWidth={4} />
+                                            </div>
+                                            <span className="text-xs font-bold uppercase tracking-wider text-gray-700">{skill}</span>
+                                        </div>
                                     ))}
                                 </div>
                             </div>
@@ -335,19 +338,19 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 border-t border-gray-100 bg-white z-30 flex gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+                <div className="p-4 sm:p-6 border-t border-gray-100 bg-white z-30 flex gap-3 sm:gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] shrink-0">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white border-2 border-slate-100 text-slate-500 font-bold py-4 rounded-[16px] hover:bg-slate-50 transition-colors uppercase tracking-widest text-sm"
+                        className="flex-1 bg-white border-2 border-slate-100 text-slate-500 font-bold py-3 sm:py-4 rounded-[16px] hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs sm:text-sm"
                     >
-                        Cancelar
+                        Salir
                     </button>
                     <button
                         onClick={() => onContact(caregiver)}
-                        className="flex-[2] bg-[#0F4C5C] !text-[#FAFAF7] font-black py-4 rounded-[16px] hover:shadow-xl hover:shadow-[#0F4C5C]/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-sm"
+                        className="flex-[2] bg-[#0F4C5C] !text-[#FAFAF7] font-black py-3 sm:py-4 rounded-[16px] hover:shadow-xl hover:shadow-[#0F4C5C]/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-widest text-xs sm:text-sm"
                     >
                         <Mail size={18} />
-                        Enviar Mensaje
+                        Contactar
                     </button>
                 </div>
             </div>

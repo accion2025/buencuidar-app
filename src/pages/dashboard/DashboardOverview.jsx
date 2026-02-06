@@ -502,7 +502,7 @@ const DashboardOverview = () => {
     );
 
     return (
-        <div className="max-w-7xl mx-auto animate-fade-in relative pb-12">
+        <>
             <AppointmentsListModal
                 isOpen={showListModal}
                 onClose={() => setShowListModal(false)}
@@ -540,353 +540,354 @@ const DashboardOverview = () => {
                 }}
             />
 
+            <div className="max-w-7xl mx-auto animate-fade-in relative pb-12">
+                <div className="bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12">
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[120px] opacity-20"></div>
+                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[100px] opacity-10"></div>
 
-            <div className="bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12">
-                <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[120px] opacity-20"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[100px] opacity-10"></div>
-
-                <div className="relative z-10">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-                        <div>
-                            <span className="bg-white/10 text-[var(--accent-color)] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block border border-white/10 backdrop-blur-md">
-                                Panel de Control
-                            </span>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-brand font-bold tracking-tight mb-2 text-left !text-[#FAFAF7] break-words drop-shadow-sm">
-                                ¡Hola de nuevo, {profile?.full_name?.split(' ')[0] || 'Usuario'}!
-                            </h1>
-                            <p className="!text-[#FAFAF7]/80 text-lg font-secondary max-w-xl text-left">
-                                Aquí tienes el resumen de hoy y el estado de tus servicios de cuidado.
-                            </p>
+                    <div className="relative z-10">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                            <div>
+                                <span className="bg-white/10 text-[var(--accent-color)] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block border border-white/10 backdrop-blur-md">
+                                    Panel de Control
+                                </span>
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl font-brand font-bold tracking-tight mb-2 text-left !text-[#FAFAF7] break-words drop-shadow-sm">
+                                    ¡Hola de nuevo, {profile?.full_name?.split(' ')[0] || 'Usuario'}!
+                                </h1>
+                                <p className="!text-[#FAFAF7]/80 text-lg font-secondary max-w-xl text-left">
+                                    Aquí tienes el resumen de hoy y el estado de tus servicios de cuidado.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                <StatCard
-                    icon={Users}
-                    title="Cuidadores Disponibles"
-                    value={caregiversCount.toString()}
-                    colorClass="secondary"
-                    onClick={() => navigate('/dashboard/caregivers')}
-                />
-                <StatCard
-                    icon={Calendar}
-                    title="Citas Programadas"
-                    value={upcomingAppointmentsList.length.toString()}
-                    colorClass="primary"
-                    onClick={() => setShowListModal(true)}
-                />
-            </div>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <StatCard
+                        icon={Users}
+                        title="Cuidadores Disponibles"
+                        value={caregiversCount.toString()}
+                        colorClass="secondary"
+                        onClick={() => navigate('/dashboard/caregivers')}
+                    />
+                    <StatCard
+                        icon={Calendar}
+                        title="Citas Programadas"
+                        value={upcomingAppointmentsList.length.toString()}
+                        colorClass="primary"
+                        onClick={() => setShowListModal(true)}
+                    />
+                </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                {/* Left Column Wrapper */}
-                <div className="lg:col-span-2 space-y-10 text-left">
-                    {/* In Progress Section (If any) */}
-                    {inProgressAppointments.length > 0 && (
-                        <div className="card !p-8 border-none bg-gradient-to-r from-emerald-50 to-white shadow-xl">
-                            <div className="flex justify-between items-center mb-8">
-                                <div className="flex items-center gap-3">
-                                    <div className="relative flex h-3 w-3">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--secondary-color)] opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--secondary-color)]"></span>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                    {/* Left Column Wrapper */}
+                    <div className="lg:col-span-2 space-y-10 text-left">
+                        {/* In Progress Section (If any) */}
+                        {inProgressAppointments.length > 0 && (
+                            <div className="card !p-8 border-none bg-gradient-to-r from-emerald-50 to-white shadow-xl">
+                                <div className="flex justify-between items-center mb-8">
+                                    <div className="flex items-center gap-3">
+                                        <div className="relative flex h-3 w-3">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--secondary-color)] opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--secondary-color)]"></span>
+                                        </div>
+                                        <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Servicio en Curso</h3>
                                     </div>
-                                    <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Servicio en Curso</h3>
-                                </div>
-                                <button
-                                    onClick={() => navigate('/dashboard/pulso')}
-                                    className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline flex items-center gap-2"
-                                >
-                                    Ver en PULSO <Activity size={14} />
-                                </button>
-                            </div>
-
-                            <div className="space-y-4">
-                                {inProgressAppointments.map(app => (
-                                    <AppointmentCard
-                                        key={app.id}
-                                        name={app.caregiver?.full_name || 'Cuidador Asignado'}
-                                        role={app.title}
-                                        time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
-                                        date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                        image={app.caregiver?.avatar_url}
-                                        status={app.status}
-                                        onViewProfile={() => setSelectedCaregiver(app.caregiver)}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Upcoming Appointments */}
-                    <div className="card !p-10 border-none shadow-2xl">
-                        <div className="flex justify-between items-center mb-10">
-                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
-                                <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
-                                    <Calendar size={20} />
-                                </span>
-                                Próximas Citas
-                            </h3>
-                            <button onClick={() => setShowListModal(true)} className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] hover:underline bg-[var(--base-bg)] px-4 py-2 rounded-[16px] transition-all">Ver Todo</button>
-                        </div>
-
-                        <div className="space-y-6">
-                            {confirmedAppointments.length > 0 ? (
-                                confirmedAppointments.map(app => (
-                                    <AppointmentCard
-                                        key={app.id}
-                                        name={app.caregiver?.full_name || 'Cuidador Asignado'}
-                                        role={app.title}
-                                        time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
-                                        date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                        image={app.caregiver?.avatar_url}
-                                        status={app.status}
-                                        onViewProfile={() => setSelectedCaregiver(app.caregiver)}
-                                    />
-                                ))
-                            ) : (
-                                <div className="text-center py-16 bg-gray-50/50 rounded-[16px] border border-dashed border-gray-200">
-                                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                                        <Calendar size={32} className="text-gray-300" />
-                                    </div>
-                                    <p className="text-[var(--text-light)] italic font-secondary text-lg">No tienes visitas confirmadas próximamente.</p>
                                     <button
-                                        onClick={() => navigate('/services')}
-                                        className="mt-6 text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline"
+                                        onClick={() => navigate('/dashboard/pulso')}
+                                        className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline flex items-center gap-2"
                                     >
-                                        Pedir mi primer servicio
+                                        Ver en PULSO <Activity size={14} />
                                     </button>
                                 </div>
-                            )}
 
-                        </div>
-                    </div>
-
-                    {/* Completed Appointments */}
-                    <div className="card !p-10 border-none shadow-2xl">
-                        <div className="flex items-center gap-3 mb-10">
-                            <div className="p-2.5 bg-orange-50 text-orange-500 rounded-[16px]">
-                                <Star size={20} fill="currentColor" />
-                            </div>
-                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Historial de Citas</h3>
-                        </div>
-                        <div className="grid gap-6">
-                            {historyAppointments.length > 0 ? (
-                                historyAppointments
-                                    .slice(0, 3)
-                                    .map(app => (
+                                <div className="space-y-4">
+                                    {inProgressAppointments.map(app => (
                                         <AppointmentCard
                                             key={app.id}
-                                            name={app.caregiver?.full_name || 'Cuidador'}
-                                            role={app.title || 'Servicio Finalizado'}
+                                            name={app.caregiver?.full_name || 'Cuidador Asignado'}
+                                            role={app.title}
                                             time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
                                             date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                                             image={app.caregiver?.avatar_url}
                                             status={app.status}
-                                            rating={app.reviews?.[0]?.rating}
                                             onViewProfile={() => setSelectedCaregiver(app.caregiver)}
-                                            onRate={() => setRatingAppointment(app)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Upcoming Appointments */}
+                        <div className="card !p-10 border-none shadow-2xl">
+                            <div className="flex justify-between items-center mb-10">
+                                <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
+                                    <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
+                                        <Calendar size={20} />
+                                    </span>
+                                    Próximas Citas
+                                </h3>
+                                <button onClick={() => setShowListModal(true)} className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] hover:underline bg-[var(--base-bg)] px-4 py-2 rounded-[16px] transition-all">Ver Todo</button>
+                            </div>
+
+                            <div className="space-y-6">
+                                {confirmedAppointments.length > 0 ? (
+                                    confirmedAppointments.map(app => (
+                                        <AppointmentCard
+                                            key={app.id}
+                                            name={app.caregiver?.full_name || 'Cuidador Asignado'}
+                                            role={app.title}
+                                            time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
+                                            date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                            image={app.caregiver?.avatar_url}
+                                            status={app.status}
+                                            onViewProfile={() => setSelectedCaregiver(app.caregiver)}
                                         />
                                     ))
-                            ) : (
-                                <p className="text-[var(--text-light)] italic text-center py-8 font-secondary text-lg">No tienes citas completadas registradas.</p>
-                            )}
+                                ) : (
+                                    <div className="text-center py-16 bg-gray-50/50 rounded-[16px] border border-dashed border-gray-200">
+                                        <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                                            <Calendar size={32} className="text-gray-300" />
+                                        </div>
+                                        <p className="text-[var(--text-light)] italic font-secondary text-lg">No tienes visitas confirmadas próximamente.</p>
+                                        <button
+                                            onClick={() => navigate('/services')}
+                                            className="mt-6 text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline"
+                                        >
+                                            Pedir mi primer servicio
+                                        </button>
+                                    </div>
+                                )}
+
+                            </div>
+                        </div>
+
+                        {/* Completed Appointments */}
+                        <div className="card !p-10 border-none shadow-2xl">
+                            <div className="flex items-center gap-3 mb-10">
+                                <div className="p-2.5 bg-orange-50 text-orange-500 rounded-[16px]">
+                                    <Star size={20} fill="currentColor" />
+                                </div>
+                                <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Historial de Citas</h3>
+                            </div>
+                            <div className="grid gap-6">
+                                {historyAppointments.length > 0 ? (
+                                    historyAppointments
+                                        .slice(0, 3)
+                                        .map(app => (
+                                            <AppointmentCard
+                                                key={app.id}
+                                                name={app.caregiver?.full_name || 'Cuidador'}
+                                                role={app.title || 'Servicio Finalizado'}
+                                                time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
+                                                date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                                image={app.caregiver?.avatar_url}
+                                                status={app.status}
+                                                rating={app.reviews?.[0]?.rating}
+                                                onViewProfile={() => setSelectedCaregiver(app.caregiver)}
+                                                onRate={() => setRatingAppointment(app)}
+                                            />
+                                        ))
+                                ) : (
+                                    <p className="text-[var(--text-light)] italic text-center py-8 font-secondary text-lg">No tienes citas completadas registradas.</p>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
 
 
-                {/* Right Column */}
-                <div className="flex flex-col gap-10">
-                    {/* Caregiver Requests Panel */}
-                    <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                        <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
-                            <span className="p-2.5 bg-emerald-50 text-[var(--secondary-color)] rounded-[16px]">
-                                <Activity size={20} />
-                            </span>
-                            Postulaciones
-                        </h3>
+                    {/* Right Column */}
+                    <div className="flex flex-col gap-10">
+                        {/* Caregiver Requests Panel */}
+                        <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
+                                <span className="p-2.5 bg-emerald-50 text-[var(--secondary-color)] rounded-[16px]">
+                                    <Activity size={20} />
+                                </span>
+                                Postulaciones
+                            </h3>
 
-                        <div className="space-y-6 relative z-10">
-                            {appointments.flatMap(a =>
-                                (a.job_applications || [])
-                                    .filter(app => {
-                                        if (app.status !== 'pending') return false;
-                                        // Grace Period: Only show if created > 5 minutes ago
-                                        const createdTime = new Date(app.created_at).getTime();
-                                        const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-                                        return createdTime < fiveMinutesAgo;
-                                    })
-                                    .map(app => ({ ...app, appointment: a }))
-                            ).length > 0 ? (
-                                appointments.flatMap(a =>
+                            <div className="space-y-6 relative z-10">
+                                {appointments.flatMap(a =>
                                     (a.job_applications || [])
                                         .filter(app => {
                                             if (app.status !== 'pending') return false;
+                                            // Grace Period: Only show if created > 5 minutes ago
                                             const createdTime = new Date(app.created_at).getTime();
                                             const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
                                             return createdTime < fiveMinutesAgo;
                                         })
                                         .map(app => ({ ...app, appointment: a }))
-                                ).map((req) => (
-                                    <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
-                                        <div className="flex items-center gap-4 mb-6">
-                                            <div className="w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/20 shadow-inner text-[var(--primary-color)] flex items-center justify-center font-brand font-bold overflow-hidden border border-white">
-                                                {req.caregiver?.avatar_url ? (
-                                                    <img src={req.caregiver.avatar_url} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    req.caregiver?.full_name?.charAt(0) || '?'
-                                                )}
+                                ).length > 0 ? (
+                                    appointments.flatMap(a =>
+                                        (a.job_applications || [])
+                                            .filter(app => {
+                                                if (app.status !== 'pending') return false;
+                                                const createdTime = new Date(app.created_at).getTime();
+                                                const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+                                                return createdTime < fiveMinutesAgo;
+                                            })
+                                            .map(app => ({ ...app, appointment: a }))
+                                    ).map((req) => (
+                                        <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
+                                            <div className="flex items-center gap-4 mb-6">
+                                                <div className="w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/20 shadow-inner text-[var(--primary-color)] flex items-center justify-center font-brand font-bold overflow-hidden border border-white">
+                                                    {req.caregiver?.avatar_url ? (
+                                                        <img src={req.caregiver.avatar_url} alt="" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        req.caregiver?.full_name?.charAt(0) || '?'
+                                                    )}
+                                                </div>
+                                                <div className="text-left">
+                                                    <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Candidato'}</p>
+                                                    <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em] mt-0.5">Nueva Solicitud</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="text-sm text-[var(--text-main)] mb-6 space-y-3 font-secondary bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-50">
+                                                <div className="flex items-center gap-3">
+                                                    <Calendar size={14} className="text-[var(--secondary-color)]" />
+                                                    <span className="font-bold text-[var(--primary-color)]">{req.appointment.date}</span>
+                                                </div>
+                                                <p className="text-xs italic text-[var(--text-light)] leading-relaxed">"{req.appointment.title}"</p>
+                                            </div>
+
+                                            <div className="flex gap-3 flex-wrap sm:flex-nowrap">
+                                                <button
+                                                    onClick={() => setSelectedCaregiver(req.caregiver)}
+                                                    className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--secondary-color)] hover:text-white transition-all shadow-sm group-hover:border-[var(--secondary-color)]/20"
+                                                    title="Ver perfil completo"
+                                                >
+                                                    <User size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleMessage(req.caregiver)}
+                                                    className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--base-bg)] transition-all shadow-sm group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100"
+                                                    title="Enviar mensaje"
+                                                >
+                                                    <MessageSquare size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, true)}
+                                                    className="flex-1 bg-[var(--secondary-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-100 hover:bg-emerald-600 transition-all border-none"
+                                                >
+                                                    Aprobar
+                                                </button>
+                                                <button
+                                                    onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, false)}
+                                                    className="flex-1 bg-[var(--error-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-100 hover:bg-red-700 transition-all border-none"
+                                                >
+                                                    Rechazar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                        <Activity size={32} className="mx-auto text-gray-300 mb-4 opacity-50" />
+                                        <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes solicitudes pendientes.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Family Members Card */}
+                        <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                            <div className="flex justify-between items-center mb-10 relative z-10">
+                                <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
+                                    <span className="p-2.5 bg-purple-50 text-purple-600 rounded-[16px]">
+                                        <Users size={20} />
+                                    </span>
+                                    Familiares
+                                </h3>
+                                <button onClick={() => navigate('/dashboard/profile')} className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-widest hover:underline bg-[var(--base-bg)] px-3 py-1.5 rounded-[16px] transition-all">Gestionar</button>
+                            </div>
+
+                            <div className="space-y-4 relative z-10">
+                                {patients.length > 0 ? (
+                                    patients.map((patient) => (
+                                        <div key={patient.id} className="flex items-center gap-5 p-5 bg-[var(--base-bg)]/50 rounded-[24px] border border-transparent hover:bg-white hover:border-[var(--secondary-color)]/20 hover:shadow-xl transition-all group">
+                                            <div className="w-14 h-14 rounded-[16px] bg-white shadow-md text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-xl border border-gray-50 group-hover:bg-[var(--secondary-color)] group-hover:text-white transition-all transform group-hover:scale-105">
+                                                {(patient.full_name || patient.name || '?').charAt(0)}
                                             </div>
                                             <div className="text-left">
-                                                <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Candidato'}</p>
-                                                <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em] mt-0.5">Nueva Solicitud</p>
+                                                <p className="font-brand font-bold text-[var(--primary-color)] text-lg tracking-tight">{patient.full_name || patient.name}</p>
+                                                <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-[0.2em] mt-0.5">{patient.age} años</p>
                                             </div>
                                         </div>
-
-                                        <div className="text-sm text-[var(--text-main)] mb-6 space-y-3 font-secondary bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-50">
-                                            <div className="flex items-center gap-3">
-                                                <Calendar size={14} className="text-[var(--secondary-color)]" />
-                                                <span className="font-bold text-[var(--primary-color)]">{req.appointment.date}</span>
-                                            </div>
-                                            <p className="text-xs italic text-[var(--text-light)] leading-relaxed">"{req.appointment.title}"</p>
-                                        </div>
-
-                                        <div className="flex gap-3 flex-wrap sm:flex-nowrap">
-                                            <button
-                                                onClick={() => setSelectedCaregiver(req.caregiver)}
-                                                className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--secondary-color)] hover:text-white transition-all shadow-sm group-hover:border-[var(--secondary-color)]/20"
-                                                title="Ver perfil completo"
-                                            >
-                                                <User size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleMessage(req.caregiver)}
-                                                className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--base-bg)] transition-all shadow-sm group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100"
-                                                title="Enviar mensaje"
-                                            >
-                                                <MessageSquare size={18} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, true)}
-                                                className="flex-1 bg-[var(--secondary-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-100 hover:bg-emerald-600 transition-all border-none"
-                                            >
-                                                Aprobar
-                                            </button>
-                                            <button
-                                                onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, false)}
-                                                className="flex-1 bg-[var(--error-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-100 hover:bg-red-700 transition-all border-none"
-                                            >
-                                                Rechazar
-                                            </button>
-                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-6">
+                                        <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes familiares registrados.</p>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
-                                    <Activity size={32} className="mx-auto text-gray-300 mb-4 opacity-50" />
-                                    <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes solicitudes pendientes.</p>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Family Members Card */}
-                    <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                        <div className="flex justify-between items-center mb-10 relative z-10">
-                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight flex items-center gap-3">
-                                <span className="p-2.5 bg-purple-50 text-purple-600 rounded-[16px]">
-                                    <Users size={20} />
+                        {/* Notifications Panel */}
+                        <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
+                                <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
+                                    <Bell size={20} />
                                 </span>
-                                Familiares
+                                Mensajes
                             </h3>
-                            <button onClick={() => navigate('/dashboard/profile')} className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-widest hover:underline bg-[var(--base-bg)] px-3 py-1.5 rounded-[16px] transition-all">Gestionar</button>
-                        </div>
 
-                        <div className="space-y-4 relative z-10">
-                            {patients.length > 0 ? (
-                                patients.map((patient) => (
-                                    <div key={patient.id} className="flex items-center gap-5 p-5 bg-[var(--base-bg)]/50 rounded-[24px] border border-transparent hover:bg-white hover:border-[var(--secondary-color)]/20 hover:shadow-xl transition-all group">
-                                        <div className="w-14 h-14 rounded-[16px] bg-white shadow-md text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-xl border border-gray-50 group-hover:bg-[var(--secondary-color)] group-hover:text-white transition-all transform group-hover:scale-105">
-                                            {(patient.full_name || patient.name || '?').charAt(0)}
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="font-brand font-bold text-[var(--primary-color)] text-lg tracking-tight">{patient.full_name || patient.name}</p>
-                                            <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-[0.2em] mt-0.5">{patient.age} años</p>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-6">
-                                    <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes familiares registrados.</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Notifications Panel */}
-                    <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                        <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
-                            <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
-                                <Bell size={20} />
-                            </span>
-                            Mensajes
-                        </h3>
-
-                        <div className="space-y-8 relative z-10">
-                            {notifications.length > 0 ? (
-                                notifications.map((notif) => (
-                                    <div key={notif.id} className={`flex gap-5 items-start animate-fade-in transition-all ${notif.is_read ? 'opacity-40 grayscale-[0.5]' : 'hover:scale-[1.02]'}`}>
-                                        <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center flex-shrink-0 shadow-lg border-2 ${notif.type === 'alert' || notif.type === 'warning' ? 'bg-red-50 text-[var(--error-color)] border-red-100' :
-                                            notif.type === 'success' ? 'bg-emerald-50 text-[var(--secondary-color)] border-emerald-100' : 'bg-blue-50 text-blue-600 border-blue-100'
-                                            }`}>
-                                            {notif.type === 'alert' || notif.type === 'warning' ? (
-                                                <AlertTriangle size={22} />
-                                            ) : notif.type === 'success' ? (
-                                                <CheckCircle size={22} />
-                                            ) : (
-                                                <Info size={22} />
-                                            )}
-                                        </div>
-                                        <div className="flex-1 text-left min-w-0">
-                                            <div className="flex justify-between items-start gap-4">
-                                                <p className={`text-base font-brand leading-tight truncate ${notif.is_read ? 'font-medium text-[var(--text-main)]' : 'font-bold text-[var(--primary-color)]'}`}>
-                                                    {notif.title}
-                                                </p>
-                                                {!notif.is_read && (
-                                                    <button onClick={() => markAsRead(notif.id)} className="text-[var(--secondary-color)] hover:bg-[var(--secondary-color)]/10 p-2 rounded-[16px] transition-colors bg-[var(--base-bg)] border border-gray-100">
-                                                        <Check size={16} strokeWidth={4} />
-                                                    </button>
+                            <div className="space-y-8 relative z-10">
+                                {notifications.length > 0 ? (
+                                    notifications.map((notif) => (
+                                        <div key={notif.id} className={`flex gap-5 items-start animate-fade-in transition-all ${notif.is_read ? 'opacity-40 grayscale-[0.5]' : 'hover:scale-[1.02]'}`}>
+                                            <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center flex-shrink-0 shadow-lg border-2 ${notif.type === 'alert' || notif.type === 'warning' ? 'bg-red-50 text-[var(--error-color)] border-red-100' :
+                                                notif.type === 'success' ? 'bg-emerald-50 text-[var(--secondary-color)] border-emerald-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+                                                }`}>
+                                                {notif.type === 'alert' || notif.type === 'warning' ? (
+                                                    <AlertTriangle size={22} />
+                                                ) : notif.type === 'success' ? (
+                                                    <CheckCircle size={22} />
+                                                ) : (
+                                                    <Info size={22} />
                                                 )}
                                             </div>
-                                            <p className="text-sm text-[var(--text-light)] mt-2 leading-relaxed font-secondary line-clamp-2">
-                                                {notif.message}
-                                            </p>
-                                            <div className="flex items-center gap-2 mt-3 text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em]">
-                                                <Clock size={12} />
-                                                {timeAgo(notif.created_at)}
+                                            <div className="flex-1 text-left min-w-0">
+                                                <div className="flex justify-between items-start gap-4">
+                                                    <p className={`text-base font-brand leading-tight truncate ${notif.is_read ? 'font-medium text-[var(--text-main)]' : 'font-bold text-[var(--primary-color)]'}`}>
+                                                        {notif.title}
+                                                    </p>
+                                                    {!notif.is_read && (
+                                                        <button onClick={() => markAsRead(notif.id)} className="text-[var(--secondary-color)] hover:bg-[var(--secondary-color)]/10 p-2 rounded-[16px] transition-colors bg-[var(--base-bg)] border border-gray-100">
+                                                            <Check size={16} strokeWidth={4} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <p className="text-sm text-[var(--text-light)] mt-2 leading-relaxed font-secondary line-clamp-2">
+                                                    {notif.message}
+                                                </p>
+                                                <div className="flex items-center gap-2 mt-3 text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em]">
+                                                    <Clock size={12} />
+                                                    {timeAgo(notif.created_at)}
+                                                </div>
                                             </div>
                                         </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                        <p className="text-[var(--text-light)] text-sm font-secondary">No tienes nuevas notificaciones.</p>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
-                                    <p className="text-[var(--text-light)] text-sm font-secondary">No tienes nuevas notificaciones.</p>
-                                </div>
-                            )}
-                        </div>
+                                )}
+                            </div>
 
-                        <button className="w-full mt-12 py-4 bg-[var(--base-bg)] border border-gray-100 rounded-[16px] text-[10px] font-black text-[var(--primary-color)] uppercase tracking-[0.25em] hover:bg-white hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all relative z-10">
-                            Ver historial completo
-                        </button>
+                            <button className="w-full mt-12 py-4 bg-[var(--base-bg)] border border-gray-100 rounded-[16px] text-[10px] font-black text-[var(--primary-color)] uppercase tracking-[0.25em] hover:bg-white hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all relative z-10">
+                                Ver historial completo
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
