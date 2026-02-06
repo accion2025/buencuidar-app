@@ -115,21 +115,23 @@ const DashboardOverview = () => {
         try {
             const today = new Date().toISOString().split('T')[0];
 
-            // 1. Fetch Appointments (Simple, no deep joins)
+            // 1. Fetch Appointments (Detailed caregiver join for Profile viewing)
             const { data: appsData, error: appsError } = await supabase
                 .from('appointments')
                 .select(`
                     *,
                     caregiver:caregiver_id (
+                        id,
                         full_name,
                         address,
                         avatar_url,
+                        phone,
+                        plan_type,
                         caregiver_details (*)
                     )
                 `)
                 .eq('client_id', user.id)
-                // We need all appointments to filter for history/rating locally or we could optimize this query
-                .order('date', { ascending: false }); // Sort by newest first to see recent history easily
+                .order('date', { ascending: false });
 
 
             if (appsError) {
@@ -681,7 +683,7 @@ const DashboardOverview = () => {
                                             image={app.caregiver?.avatar_url}
                                             status={app.status}
                                             rating={app.reviews?.[0]?.rating}
-                                            onViewProfile={() => setSelectedCaregiver(app.caregiver)}
+                                            onViewProfile={() => navigate(`/search?caregiverId=${app.caregiver_id}`)}
                                             onRate={() => setRatingAppointment(app)}
                                         />
                                     ))

@@ -47,8 +47,53 @@ const Search = () => {
     }, [filters.department, filters.country]);
 
     useEffect(() => {
-        fetchCaregivers();
-    }, [filters]); // Added filters to dependency array to re-fetch when filters change
+        const loadInitial = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const caregiverId = params.get('caregiverId');
+
+            if (caregiverId) {
+                // If we have a caregiverId, fetch that specific one first
+                try {
+                    const { data, error } = await supabase
+                        .from('profiles')
+                        .select(`
+                            id,
+                            full_name,
+                            avatar_url,
+                            role,
+                            caregiver_details (*)
+                        `)
+                        .eq('id', caregiverId)
+                        .single();
+
+                    if (data && !error) {
+                        // Transform to search format
+                        const details = data.caregiver_details?.[0] || data.caregiver_details || {};
+                        const formatted = {
+                            id: data.id,
+                            name: data.full_name,
+                            role: details.specialization || 'Cuidador',
+                            image: data.avatar_url || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&q=80',
+                            rating: details.rating || 5, // Fallback if no real stats yet
+                            reviews: details.reviews_count || 0,
+                            location: details.municipality ? `${details.municipality}, ${details.department}` : 'Ubicación pendiente',
+                            experience: `${details.experience || 1} años`,
+                            tags: details.skills || [],
+                            price: details.hourly_rate || 10,
+                            raw: data
+                        };
+                        setSelectedCaregiver(formatted.raw);
+                    }
+                } catch (e) {
+                    console.error("Error auto-opening profile:", e);
+                }
+            }
+
+            await fetchCaregivers();
+        };
+
+        loadInitial();
+    }, [filters.experience, filters.priceRange, filters.country, filters.department, filters.municipality, filters.specialty]); // Added all filters to dependency array to re-fetch when filters change
 
     const fetchCaregivers = async () => {
         setLoading(true);
