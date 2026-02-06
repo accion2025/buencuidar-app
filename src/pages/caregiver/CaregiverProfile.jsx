@@ -786,10 +786,10 @@ const CaregiverProfile = () => {
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex flex-col md:items-center md:justify-center p-0 md:p-4">
                     <div className="bg-white w-full max-w-4xl h-[100dvh] md:h-auto md:max-h-[90vh] md:rounded-[32px] flex flex-col animate-slide-up shadow-2xl overflow-hidden">
                         {/* Modal Header */}
-                        <div className="p-6 md:p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0">
+                        <div className="p-4 md:p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0">
                             <div>
                                 <h3 className="text-xl md:text-3xl font-brand font-bold text-[var(--primary-color)] tracking-tight">Editar Perfil Profesional</h3>
-                                <p className="text-[10px] md:text-sm text-[var(--text-light)] mt-1 md:mt-2 font-secondary font-bold">Actualiza tu información para destacar.</p>
+                                <p className="text-[10px] md:text-sm text-[var(--text-light)] mt-0 md:mt-2 font-secondary font-bold">Actualiza tu información para destacar.</p>
                             </div>
                             <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-red-500 p-2 md:p-3 rounded-[16px] hover:bg-red-50 transition-all">
                                 <X size={24} className="md:w-8 md:h-8" />
@@ -797,7 +797,7 @@ const CaregiverProfile = () => {
                         </div>
 
 
-                        <form onSubmit={handleSave} className={`flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-10 space-y-8 md:space-y-12 ${saving ? 'overflow-y-hidden' : ''} overscroll-contain`}>
+                        <form onSubmit={handleSave} className={`flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-10 space-y-6 md:space-y-12 ${saving ? 'overflow-y-hidden' : ''} overscroll-contain`}>
                             {/* Basic Info */}
                             <div className="space-y-8">
                                 <div className="flex items-center gap-4">
@@ -979,7 +979,7 @@ const CaregiverProfile = () => {
                                                 <label className="text-xs font-black text-blue-400 uppercase tracking-widest ml-1">Institución</label>
                                                 <input
                                                     type="text"
-                                                    placeholder="Ej. UNAM"
+                                                    placeholder="Ej. Centro Tecnológico"
                                                     className="w-full px-5 py-3 rounded-[16px] border-2 border-white focus:border-blue-400 outline-none text-sm font-bold shadow-sm"
                                                     value={newCert.org}
                                                     onChange={e => setNewCert({ ...newCert, org: e.target.value })}
@@ -1042,11 +1042,11 @@ const CaregiverProfile = () => {
                                                     : 'border-gray-50 bg-white text-gray-400 hover:border-emerald-100'
                                                     }`}
                                             >
-                                                <div className="flex items-center gap-2 md:gap-3">
-                                                    <div className={`w-5 h-5 md:w-6 md:h-6 rounded-[10px] md:rounded-[12px] border-2 flex items-center justify-center shrink-0 transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-100'}`}>
-                                                        {isSelected && <Check size={12} className="md:w-4 md:h-4" strokeWidth={4} />}
+                                                <div className="flex items-center gap-3 md:gap-4">
+                                                    <div className={`w-6 h-6 md:w-7 md:h-7 rounded-[10px] md:rounded-[12px] border-2 flex items-center justify-center shrink-0 transition-all ${isSelected ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'border-gray-400 bg-white'}`}>
+                                                        {isSelected && <Check size={14} className="md:w-5 md:h-5" strokeWidth={4} />}
                                                     </div>
-                                                    <span className={`text-[10px] md:text-xs font-black uppercase tracking-widest leading-tight ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-400'}`}>{skill}</span>
+                                                    <span className={`text-xs md:text-sm font-bold uppercase tracking-wider leading-tight ${isSelected ? 'text-[var(--primary-color)]' : 'text-gray-500'}`}>{skill}</span>
                                                 </div>
                                             </button>
                                         );
@@ -1073,7 +1073,7 @@ const CaregiverProfile = () => {
                             </div>
                         </form>
 
-                        <div className="p-4 md:p-10 border-t border-gray-100 bg-white flex gap-3 md:gap-6 mt-auto shrink-0 pb-safe">
+                        <div className="p-3 md:p-10 border-t border-gray-200 bg-gray-50 flex gap-3 md:gap-6 mt-auto shrink-0 pb-safe shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
