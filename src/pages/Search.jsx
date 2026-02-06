@@ -63,6 +63,9 @@ const Search = () => {
                 .eq('is_available', true);
 
             // Apply location filters (profiles table)
+            if (filters.country) {
+                query = query.eq('country', filters.country);
+            }
             if (filters.department) {
                 query = query.eq('department', filters.department);
             }
@@ -203,6 +206,7 @@ const Search = () => {
                                     value={filters.country}
                                     onChange={(e) => setFilters({ ...filters, country: e.target.value, department: '', municipality: '' })}
                                 >
+                                    <option value="">Todos</option>
                                     {CENTRAL_AMERICA.map(country => (
                                         <option key={country.id} value={country.id}>{country.name}</option>
                                     ))}
@@ -218,7 +222,7 @@ const Search = () => {
                                     value={filters.department}
                                     onChange={(e) => setFilters({ ...filters, department: e.target.value, municipality: '' })}
                                 >
-                                    <option value="">Cualquiera</option>
+                                    <option value="">Todos</option>
                                     {availableDepartments.map(dept => (
                                         <option key={dept} value={dept}>{dept}</option>
                                     ))}
@@ -235,7 +239,7 @@ const Search = () => {
                                     disabled={!filters.department}
                                     onChange={(e) => setFilters({ ...filters, municipality: e.target.value })}
                                 >
-                                    <option value="">Cualquiera</option>
+                                    <option value="">Todos</option>
                                     {availableMunicipalities.map(muni => (
                                         <option key={muni} value={muni}>{muni}</option>
                                     ))}
