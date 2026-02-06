@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Star, TrendingUp, Users, MessageSquare, Bell, Check, Info, AlertTriangle, CheckCircle, ArrowRight, Activity } from 'lucide-react';
+import { Calendar, Clock, Star, TrendingUp, Users, MessageSquare, Bell, Check, Info, AlertTriangle, CheckCircle, ArrowRight, Activity, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
