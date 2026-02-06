@@ -122,12 +122,12 @@ const Search = () => {
                     };
                 })
                 .sort((a, b) => {
-                    // Sort by rating descending
+                    // 1. Sort by rating descending (Point 1: Priorities equal ratings)
                     if (b.rating !== a.rating) {
                         return b.rating - a.rating;
                     }
 
-                    // TIE-BREAKER: Priority to PREMIUM caregivers (Suscripción PRO)
+                    // 2. TIE-BREAKER: Priority to PREMIUM caregivers (Suscripción BC PRO)
                     const isAPremium = a.raw?.plan_type === 'premium' || a.raw?.plan_type === 'professional_pro';
                     const isBPremium = b.raw?.plan_type === 'premium' || b.raw?.plan_type === 'professional_pro';
                     if (isAPremium && !isBPremium) return -1;
@@ -375,9 +375,14 @@ const Search = () => {
                                                     <p className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] mb-2">{caregiver.role}</p>
                                                     <div className="flex items-center gap-2">
                                                         <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-[4px]">
-                                                            <Star size={12} className={caregiver.rating > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} />
-                                                            <span className={`text-sm font-black ml-1 ${caregiver.rating > 0 ? 'text-yellow-600' : 'text-gray-400'}`}>
-                                                                {caregiver.rating > 0 ? caregiver.rating.toFixed(1) : 'S/C'}
+                                                            {/* Point 2: Unfilled star if no rating */}
+                                                            <Star
+                                                                size={12}
+                                                                className={caregiver.rating > 0 ? "text-yellow-400 fill-yellow-400" : "text-slate-300"}
+                                                            />
+                                                            {/* Point 3: X/5 format, no rounding (showing up to 2 decimals) */}
+                                                            <span className={`text-sm font-black ml-1 ${caregiver.rating > 0 ? 'text-yellow-600' : 'text-slate-400'}`}>
+                                                                {caregiver.rating > 0 ? `${caregiver.rating}/5` : '0/5'}
                                                             </span>
                                                         </div>
                                                         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">

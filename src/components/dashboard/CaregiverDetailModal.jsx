@@ -57,10 +57,13 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
 
             if (data) {
                 const totalRating = data.reduce((acc, curr) => acc + curr.rating, 0);
-                const avg = data.length > 0 ? (totalRating / data.length).toFixed(1) : '0.0';
+                // Point 3: No redondear (Truncate to 1 decimal instead of rounding to it)
+                const rawAvg = data.length > 0 ? (totalRating / data.length) : 0;
+                const truncatedAvg = Math.floor(rawAvg * 10) / 10;
+                const displayAvg = rawAvg > 0 ? (truncatedAvg % 1 === 0 ? truncatedAvg.toFixed(1) : truncatedAvg.toString()) : '0.0';
 
                 setRealStats({
-                    rating: avg,
+                    rating: displayAvg,
                     count: data.length
                 });
                 setReviews(data.slice(0, 3));
@@ -172,19 +175,20 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 )}
                                 <div className="flex items-center gap-2 text-gray-400">
                                     <p className="text-cyan-700 font-bold font-mono text-xs opacity-80 uppercase tracking-widest mr-2">{specialization}</p>
-                                    <div className="flex items-center">
-                                        {[1, 2, 3, 4, 5].map((s) => (
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-[4px]">
                                             <Star
-                                                key={s}
                                                 size={14}
-                                                className={`${realStats.count === 0
-                                                    ? 'text-gray-300'
-                                                    : (s <= Number(realStats.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200')
-                                                    }`}
+                                                className={Number(realStats.rating) > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
                                             />
-                                        ))}
+                                            <span className={`text-sm font-black ml-1 ${Number(realStats.rating) > 0 ? 'text-yellow-600' : 'text-gray-400'}`}>
+                                                {Number(realStats.rating) > 0 ? `${realStats.rating}/5` : '0/5'}
+                                            </span>
+                                        </div>
+                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                            {realStats.count > 0 ? `(${realStats.count} valoraciones)` : '(Sin calificaciones)'}
+                                        </span>
                                     </div>
-                                    {realStats.count > 0 && <span className="text-xs font-bold text-slate-600">({realStats.count})</span>}
                                 </div>
                             </div>
 

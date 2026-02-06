@@ -17,7 +17,7 @@ BEGIN
         UPDATE caregiver_details
         SET 
             rating = (
-                SELECT COALESCE(ROUND(AVG(rating)::numeric, 1), 5.0)
+                SELECT COALESCE(TRUNC(AVG(rating)::numeric, 1), 5.0)
                 FROM reviews
                 WHERE caregiver_id = target_caregiver_id
             ),
@@ -49,7 +49,7 @@ FOR EACH ROW EXECUTE PROCEDURE public.update_caregiver_rating();
 UPDATE caregiver_details cd
 SET 
     rating = COALESCE((
-        SELECT ROUND(AVG(rating)::numeric, 1)
+        SELECT TRUNC(AVG(rating)::numeric, 1)
         FROM reviews r
         WHERE r.caregiver_id = cd.id
     ), 5.0),

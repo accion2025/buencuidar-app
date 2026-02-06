@@ -35,21 +35,15 @@ const CaregiverList = () => {
                 const detailsA = Array.isArray(a.caregiver_details) ? a.caregiver_details[0] : a.caregiver_details;
                 const detailsB = Array.isArray(b.caregiver_details) ? b.caregiver_details[0] : b.caregiver_details;
 
-                const reviewsA = detailsA?.reviews_count || 0;
-                const reviewsB = detailsB?.reviews_count || 0;
                 const ratingA = detailsA?.rating || 0;
                 const ratingB = detailsB?.rating || 0;
 
-                // 1. Priority to those with real reviews
-                if (reviewsA > 0 && reviewsB === 0) return -1;
-                if (reviewsA === 0 && reviewsB > 0) return 1;
-
-                // 2. Otherwise sort by rating
+                // 1. Sort by rating descending (Point 1: Priorities equal ratings)
                 if (ratingB !== ratingA) {
                     return ratingB - ratingA;
                 }
 
-                // 3. TIE-BREAKER: Priority to PREMIUM caregivers (Suscripción PRO)
+                // 2. TIE-BREAKER: Priority to BC PRO (Consistency with Search)
                 const isAPremium = a.plan_type === 'premium' || a.plan_type === 'professional_pro';
                 const isBPremium = b.plan_type === 'premium' || b.plan_type === 'professional_pro';
                 if (isAPremium && !isBPremium) return -1;
@@ -187,23 +181,21 @@ const CaregiverList = () => {
                                     <h3 className="font-brand font-bold text-slate-800 text-xl mb-1 tracking-tight">{bg.full_name}</h3>
 
                                     <div className="flex items-center gap-1.5 mb-4">
-                                        <div className="flex items-center gap-1">
-                                            {[1, 2, 3, 4, 5].map((s) => {
-                                                const rating = details?.rating || 0;
-                                                return (
-                                                    <Star
-                                                        key={s}
-                                                        size={12}
-                                                        className={s <= Math.round(rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}
-                                                    />
-                                                );
-                                            })}
+                                        <div className="flex items-center bg-amber-400/10 px-2 py-1 rounded-[8px]">
+                                            {/* Point 2: Unfilled star if no rating */}
+                                            <Star
+                                                size={14}
+                                                className={details?.rating > 0 ? "fill-amber-400 text-amber-400" : "text-slate-300"}
+                                            />
+                                            {/* Point 3: X/5 format, no rounding */}
+                                            <span className={`text-sm font-black ml-1.5 ${details?.rating > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
+                                                {details?.rating > 0 ? `${details.rating}/5` : '0/5'}
+                                            </span>
                                         </div>
-                                        <span className="text-xs font-black text-slate-400 tracking-wider">
-                                            ({details?.reviews_count || 0} valoraciones)
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-[8px] border border-slate-100">
+                                            {details?.reviews_count > 0 ? `${details.reviews_count} val.` : 'Sin cal.'}
                                         </span>
                                     </div>
-
                                     <p className="text-cyan-700 text-xs font-black uppercase tracking-[0.15em] mb-4 flex items-center justify-center gap-2 opacity-80">
                                         <MapPin size={14} className="text-rose-400" /> {displayLocationFormatted}
                                     </p>
