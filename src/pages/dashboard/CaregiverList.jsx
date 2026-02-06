@@ -123,107 +123,110 @@ const CaregiverList = () => {
     });
 
     return (
-        <div className="max-w-7xl mx-auto animate-fade-in">
+        <>
             <CaregiverDetailModal
                 isOpen={!!selectedCaregiver}
                 onClose={() => setSelectedCaregiver(null)}
                 caregiver={selectedCaregiver}
                 onContact={handleContact}
             />
+            <div className="max-w-7xl mx-auto animate-fade-in">
 
-            <div className="mb-10">
-                <h1 className="text-3xl font-brand font-bold text-slate-800 mb-2 tracking-tight">Cuidadores Disponibles</h1>
-                <p className="text-lg text-slate-500 font-secondary font-medium max-w-2xl">Encuentra al profesional ideal para el cuidado y bienestar de tus seres queridos.</p>
-            </div>
-
-            {/* Search & Filter */}
-            <div className="flex flex-col md:flex-row gap-4 mb-12">
-                <div className="relative flex-grow max-w-2xl group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[var(--secondary-color)] transition-colors" size={20} />
-                    <input
-                        type="text"
-                        placeholder="Buscar por nombre o especialidad..."
-                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-[16px] focus:border-[var(--secondary-color)] outline-none font-bold text-base bg-white/50 backdrop-blur-sm transition-all shadow-sm focus:shadow-lg focus:shadow-emerald-900/5"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                <div className="mb-10">
+                    <h1 className="text-3xl font-brand font-bold text-slate-800 mb-2 tracking-tight">Cuidadores Disponibles</h1>
+                    <p className="text-lg text-slate-500 font-secondary font-medium max-w-2xl">Encuentra al profesional ideal para el cuidado y bienestar de tus seres queridos.</p>
                 </div>
-                <button className="px-8 py-4 bg-white border-2 border-gray-100 rounded-[16px] text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest transition-all hover:border-slate-200 shadow-sm">
-                    <Filter size={18} />
-                    <span>Filtros Avanzados</span>
-                </button>
-            </div>
 
-            {/* Grid */}
-            {loading ? (
-                <div className="text-center py-20 text-gray-400">Cargando cuidadores...</div>
-            ) : filteredCaregivers.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredCaregivers.map(bg => {
-                        const details = Array.isArray(bg.caregiver_details) ? bg.caregiver_details[0] : bg.caregiver_details;
-                        const displayBio = bg.bio || details?.bio;
-                        const displayLocationFormatted = formatLocation(bg, details);
-                        const isPro = bg.plan_type === 'premium' || bg.plan_type === 'professional_pro';
+                {/* Search & Filter */}
+                <div className="flex flex-col md:flex-row gap-4 mb-12">
+                    <div className="relative flex-grow max-w-2xl group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[var(--secondary-color)] transition-colors" size={20} />
+                        <input
+                            type="text"
+                            placeholder="Buscar por nombre o especialidad..."
+                            className="w-full pl-12 pr-4 py-4 border-2 border-gray-100 rounded-[16px] focus:border-[var(--secondary-color)] outline-none font-bold text-base bg-white/50 backdrop-blur-sm transition-all shadow-sm focus:shadow-lg focus:shadow-emerald-900/5"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <button className="px-8 py-4 bg-white border-2 border-gray-100 rounded-[16px] text-slate-600 hover:bg-slate-50 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest transition-all hover:border-slate-200 shadow-sm">
+                        <Filter size={18} />
+                        <span>Filtros Avanzados</span>
+                    </button>
+                </div>
 
-                        return (
-                            <div key={bg.id} className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-8 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all flex flex-col items-center text-center relative overflow-hidden group">
-                                {isPro && (
-                                    <div className="absolute top-4 right-4 bg-emerald-50 text-[var(--secondary-color)] px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
-                                        PRO
-                                    </div>
-                                )}
+                {/* Grid */}
+                {loading ? (
+                    <div className="text-center py-20 text-gray-400">Cargando cuidadores...</div>
+                ) : filteredCaregivers.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {filteredCaregivers.map(bg => {
+                            const details = Array.isArray(bg.caregiver_details) ? bg.caregiver_details[0] : bg.caregiver_details;
+                            const displayBio = bg.bio || details?.bio;
+                            const displayLocationFormatted = formatLocation(bg, details);
+                            const isPro = bg.plan_type === 'premium' || bg.plan_type === 'professional_pro';
 
-                                <div className="w-28 h-28 rounded-full border-4 border-gray-50 mb-6 overflow-hidden shadow-inner group-hover:scale-105 transition-transform duration-500">
-                                    {bg.avatar_url ? (
-                                        <img src={bg.avatar_url} alt={bg.full_name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center font-black text-2xl bg-slate-100 text-slate-400">
-                                            {bg.full_name?.charAt(0)}
+                            return (
+                                <div key={bg.id} className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-8 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all flex flex-col items-center text-center relative overflow-hidden group">
+                                    {isPro && (
+                                        <div className="absolute top-4 right-4 bg-emerald-50 text-[var(--secondary-color)] px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+                                            PRO
                                         </div>
                                     )}
-                                </div>
 
-                                <h3 className="font-brand font-bold text-slate-800 text-xl mb-1 tracking-tight">{bg.full_name}</h3>
-
-                                <div className="flex items-center gap-1.5 mb-4">
-                                    <div className="flex items-center gap-1">
-                                        {[1, 2, 3, 4, 5].map((s) => (
-                                            <Star
-                                                key={s}
-                                                size={12}
-                                                className={s <= (details?.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}
-                                            />
-                                        ))}
+                                    <div className="w-28 h-28 rounded-full border-4 border-gray-50 mb-6 overflow-hidden shadow-inner group-hover:scale-105 transition-transform duration-500">
+                                        {bg.avatar_url ? (
+                                            <img src={bg.avatar_url} alt={bg.full_name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center font-black text-2xl bg-slate-100 text-slate-400">
+                                                {bg.full_name?.charAt(0)}
+                                            </div>
+                                        )}
                                     </div>
-                                    <span className="text-xs font-black text-slate-400 tracking-wider">
-                                        ({details?.reviews_count || 0})
-                                    </span>
+
+                                    <h3 className="font-brand font-bold text-slate-800 text-xl mb-1 tracking-tight">{bg.full_name}</h3>
+
+                                    <div className="flex items-center gap-1.5 mb-4">
+                                        <div className="flex items-center gap-1">
+                                            {[1, 2, 3, 4, 5].map((s) => (
+                                                <Star
+                                                    key={s}
+                                                    size={12}
+                                                    className={s <= (details?.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="text-xs font-black text-slate-400 tracking-wider">
+                                            ({details?.reviews_count || 0})
+                                        </span>
+                                    </div>
+
+                                    <p className="text-cyan-700 text-xs font-black uppercase tracking-[0.15em] mb-4 flex items-center justify-center gap-2 opacity-80">
+                                        <MapPin size={14} className="text-rose-400" /> {displayLocationFormatted}
+                                    </p>
+
+                                    <p className="text-slate-500 text-base font-secondary leading-relaxed mb-8 line-clamp-2">
+                                        {displayBio || 'Cuidador verificado de la plataforma BuenCuidar especializado en atención personalizada.'}
+                                    </p>
+
+                                    <button
+                                        onClick={() => setSelectedCaregiver(bg)}
+                                        className="w-full py-4 bg-[#0F4C5C] text-[#FAFAF7] font-black rounded-[16px] hover:bg-[#0a3541] hover:shadow-xl transition-all uppercase tracking-widest text-[11px] shadow-lg shadow-[#0F4C5C]/20 flex items-center justify-center gap-2 group/btn"
+                                    >
+                                        <span>Ver Perfil Completo</span>
+                                        <Star size={14} className="group-hover/btn:rotate-90 transition-transform" />
+                                    </button>
                                 </div>
-
-                                <p className="text-cyan-700 text-xs font-black uppercase tracking-[0.15em] mb-4 flex items-center justify-center gap-2 opacity-80">
-                                    <MapPin size={14} className="text-rose-400" /> {displayLocationFormatted}
-                                </p>
-
-                                <p className="text-slate-500 text-base font-secondary leading-relaxed mb-8 line-clamp-2">
-                                    {displayBio || 'Cuidador verificado de la plataforma BuenCuidar especializado en atención personalizada.'}
-                                </p>
-
-                                <button
-                                    onClick={() => setSelectedCaregiver(bg)}
-                                    className="w-full py-4 bg-slate-50 !text-slate-600 font-black rounded-[16px] hover:bg-emerald-600 hover:!text-[#FAFAF7] hover:shadow-lg transition-all uppercase tracking-widest text-[10px]"
-                                >
-                                    Ver Perfil Completo
-                                </button>
-                            </div>
-                        );
-                    })}
-                </div>
-            ) : (
-                <div className="text-center py-20 text-gray-400">
-                    No se encontraron cuidadores disponibles.
-                </div>
-            )}
-        </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 text-gray-400">
+                        No se encontraron cuidadores disponibles.
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 

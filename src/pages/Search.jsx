@@ -422,9 +422,10 @@ const Search = () => {
                                             </div>
                                             <button
                                                 onClick={() => setSelectedCaregiver(caregiver.raw)}
-                                                className="bg-[var(--secondary-color)] !text-[#FAFAF7] text-xs font-black uppercase tracking-[0.2em] px-6 py-4 rounded-[12px] shadow-lg shadow-emerald-900/10 hover:brightness-110 active:scale-95 transition-all"
+                                                className="bg-[#0F4C5C] text-[#FAFAF7] text-xs font-black uppercase tracking-[0.2em] px-8 py-5 rounded-[16px] shadow-lg shadow-[#0F4C5C]/20 hover:bg-[#0a3541] hover:shadow-xl active:scale-95 transition-all flex items-center gap-2 group/btn"
                                             >
-                                                Ver Perfil
+                                                <span>Ver Perfil Completo</span>
+                                                <Star size={14} className="group-hover/btn:rotate-90 transition-transform" />
                                             </button>
                                         </div>
                                     </div>
