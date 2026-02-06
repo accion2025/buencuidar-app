@@ -668,10 +668,9 @@ const MonitoringCenter = () => {
                                         {activeAppointment && (
                                             <button
                                                 onClick={() => setShowAgendaModal(true)}
-                                                className="p-2.5 bg-white/10 hover:bg-white/20 rounded-[16px] !text-[#FAFAF7] transition-all backdrop-blur-sm border border-white/10"
-                                                title="Configurar Agenda"
+                                                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-[12px] !text-[#FAFAF7] transition-all backdrop-blur-sm border border-white/10 font-black text-[10px] uppercase tracking-widest"
                                             >
-                                                <Settings size={20} />
+                                                Editar Agenda
                                             </button>
                                         )}
                                     </div>
