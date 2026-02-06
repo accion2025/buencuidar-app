@@ -27,8 +27,21 @@ const JobBoard = () => {
 
         loadJobs();
 
+        // Real-time subscription to see edits immediately
+        const subscription = supabase
+            .channel('job_board_updates')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'appointments' },
+                () => {
+                    console.log('Appointments changed, refreshing job board...');
+                    fetchJobs(0);
+                }
+            )
+            .subscribe();
+
         return () => {
             mounted = false;
+            subscription.unsubscribe();
         };
     }, []);
 
@@ -317,30 +330,32 @@ const JobBoard = () => {
                                 </div>
 
                                 {/* Care Plan / Details cleanup */}
-                                {job.details && (
-                                    <div className="mb-4">
-                                        {(() => {
+                                <div className="mb-4">
+                                    {(() => {
+                                        // Prioritize care_agenda (structured) over details (legacy)
+                                        let services = [];
+                                        if (job.care_agenda && Array.isArray(job.care_agenda) && job.care_agenda.length > 0) {
+                                            services = job.care_agenda.map(item => typeof item === 'string' ? item : item.activity);
+                                        } else if (job.details) {
                                             const details = job.details || '';
                                             const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(---SERVICES---|$)/);
-                                            const services = planMatch ? planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean) : [];
+                                            services = planMatch ? planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean) : [];
+                                        }
 
-                                            if (services.length > 0) {
-                                                return (
-                                                    <div>
-                                                        <div className="flex flex-wrap gap-1.5 mt-2">
-                                                            {services.map((s, i) => (
-                                                                <span key={i} className="text-[10px] bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-[var(--secondary-color)]/10 flex items-center gap-1.5">
-                                                                    <Briefcase size={10} /> {s}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                );
-                                            }
-                                            return null;
-                                        })()}
-                                    </div>
-                                )}
+                                        if (services.length > 0) {
+                                            return (
+                                                <div className="flex flex-wrap gap-1.5 mt-2">
+                                                    {services.map((s, i) => (
+                                                        <span key={i} className="text-[10px] bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-[var(--secondary-color)]/10 flex items-center gap-1.5">
+                                                            <Briefcase size={10} /> {s}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    })()}
+                                </div>
 
                                 {applicationStatus === 'rejected' ? (
                                     <div className="w-full py-2.5 rounded-[16px] font-bold text-center bg-red-100 text-red-600 border border-red-200 cursor-not-allowed">
