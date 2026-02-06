@@ -783,21 +783,21 @@ const CaregiverProfile = () => {
             </div>
 
             {isEditing && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center safe-area-inset-bottom">
-                    <div className="bg-white w-full max-w-4xl h-full flex flex-col animate-slide-up shadow-2xl">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center p-0 md:p-4">
+                    <div className="bg-white w-full max-w-4xl h-[100dvh] md:h-full md:max-h-[90vh] md:rounded-[32px] flex flex-col animate-slide-up shadow-2xl overflow-hidden">
                         {/* Modal Header */}
-                        <div className="p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <div className="p-6 md:p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0">
                             <div>
-                                <h3 className="text-3xl font-brand font-bold text-[var(--primary-color)] tracking-tight">Editar Perfil Profesional</h3>
-                                <p className="text-sm text-[var(--text-light)] mt-2 font-secondary font-bold">Actualiza tu información para destacar ante los clientes de BuenCuidar.</p>
+                                <h3 className="text-xl md:text-3xl font-brand font-bold text-[var(--primary-color)] tracking-tight">Editar Perfil Profesional</h3>
+                                <p className="text-[10px] md:text-sm text-[var(--text-light)] mt-1 md:mt-2 font-secondary font-bold">Actualiza tu información para destacar.</p>
                             </div>
-                            <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-red-500 p-3 rounded-[16px] hover:bg-red-50 transition-all">
-                                <X size={32} />
+                            <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-red-500 p-2 md:p-3 rounded-[16px] hover:bg-red-50 transition-all">
+                                <X size={24} className="md:w-8 md:h-8" />
                             </button>
                         </div>
 
 
-                        <form onSubmit={handleSave} className={`flex-1 overflow-y-auto overflow-x-hidden p-10 space-y-12 ${saving ? 'overflow-y-hidden' : ''}`}>
+                        <form onSubmit={handleSave} className={`flex-1 overflow-y-auto overflow-x-hidden p-6 md:p-10 space-y-8 md:space-y-12 ${saving ? 'overflow-y-hidden' : ''} overscroll-contain`}>
                             {/* Basic Info */}
                             <div className="space-y-8">
                                 <div className="flex items-center gap-4">
@@ -1073,18 +1073,18 @@ const CaregiverProfile = () => {
                             </div>
                         </form>
 
-                        <div className="p-10 border-t border-gray-100 bg-white flex gap-6 mt-auto">
+                        <div className="p-6 md:p-10 border-t border-gray-100 bg-white flex gap-4 md:gap-6 mt-auto shrink-0 pb-safe">
                             <button
                                 type="button"
                                 onClick={() => setIsEditing(false)}
-                                className="flex-1 bg-white border-2 border-gray-100 text-[var(--text-light)] font-black py-5 rounded-[24px] hover:bg-gray-50 transition-all uppercase tracking-[0.2em] text-xs"
+                                className="flex-1 bg-white border-2 border-gray-100 text-[var(--text-light)] font-black py-4 md:py-5 rounded-[24px] hover:bg-gray-50 transition-all uppercase tracking-[0.2em] text-[10px] md:text-xs"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={saving || uploading}
-                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-xs border-none"
+                                className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-4 md:py-5 rounded-[24px] hover:brightness-110 shadow-2xl transition-all flex items-center justify-center disabled:opacity-50 uppercase tracking-[0.2em] text-[10px] md:text-xs border-none"
                             >
                                 {saving ? (
                                     <div className="flex items-center gap-3">
