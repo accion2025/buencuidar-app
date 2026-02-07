@@ -14,7 +14,8 @@ import {
     Award,
     User,
     MessageSquare,
-    Lock
+    Lock,
+    Bell
 } from 'lucide-react';
 import InstallPrompt from '../InstallPrompt';
 
