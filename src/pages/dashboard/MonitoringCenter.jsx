@@ -176,7 +176,7 @@ const MonitoringCenter = () => {
                 setActiveAppointment({ ...appointment, displayName: familiarName });
                 setIsUpcoming(upcoming);
 
-                // 2. Fetch caregiver details
+                // 2. Fetch caregiver details (inc. ID)
                 if (appointment.caregiver_id) {
                     const { data: caregiverProfile, error: cgError } = await supabase
                         .from('profiles')
