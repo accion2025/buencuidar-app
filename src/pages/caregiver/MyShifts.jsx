@@ -12,6 +12,7 @@ const MyShifts = () => {
     const [loading, setLoading] = useState(true);
     const [selectedShift, setSelectedShift] = useState(null);
     const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming', 'completed', 'cancelled'
+    const [isActionLoading, setIsActionLoading] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -84,6 +85,39 @@ const MyShifts = () => {
     const completedCount = shifts.filter(s => s.status === 'completed').length;
     const cancelledCount = shifts.filter(s => s.status === 'cancelled').length;
 
+
+    const handleAction = async (id, status) => {
+        setIsActionLoading(true);
+        try {
+            const updateData = { status };
+
+            if (status === 'in_progress') {
+                updateData.started_at = new Date().toISOString();
+            } else if (status === 'completed') {
+                updateData.ended_at = new Date().toISOString();
+            }
+
+            const { error } = await supabase
+                .from('appointments')
+                .update(updateData)
+                .eq('id', id);
+
+            if (error) throw error;
+
+            if (status === 'in_progress') {
+                alert("🚀 Turno iniciado. ¡Buen trabajo!");
+            } else if (status === 'completed') {
+                alert("🏆 Turno finalizado con éxito. No olvides completar la bitácora.");
+            }
+
+            loadShifts(); // Refresh list
+        } catch (error) {
+            console.error("Error updating appointment:", error);
+            alert("❌ Error: " + (error.message || "No se pudo actualizar el turno."));
+        } finally {
+            setIsActionLoading(false);
+        }
+    };
 
     return (
         <>
@@ -189,7 +223,8 @@ const MyShifts = () => {
                 isOpen={!!selectedShift}
                 onClose={() => setSelectedShift(null)}
                 shift={selectedShift}
-                onStartShift={(s) => alert("Iniciando turno: " + s.id)}
+                onAction={handleAction}
+                isLoading={isActionLoading}
             />
         </>
     );

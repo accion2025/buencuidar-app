@@ -177,6 +177,52 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
                             </a>
                         </div>
                     </div>
+
+                    {/* Action Buttons */}
+                    <div className="mt-10 sm:mt-12 flex flex-col gap-4">
+                        {shift.status === 'confirmed' && (
+                            <button
+                                onClick={() => {
+                                    onAction?.(shift.id, 'in_progress');
+                                    onClose();
+                                }}
+                                disabled={isLoading}
+                                className="w-full bg-[var(--secondary-color)] hover:bg-emerald-600 !text-[#FAFAF7] py-6 rounded-[20px] font-black uppercase tracking-widest shadow-2xl shadow-green-900/40 border-none transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+                            >
+                                {isLoading ? 'Procesando...' : (
+                                    <>
+                                        Iniciar Turno
+                                        <Navigation size={20} className="rotate-90" />
+                                    </>
+                                )}
+                            </button>
+                        )}
+
+                        {shift.status === 'in_progress' && (
+                            <button
+                                onClick={() => {
+                                    onAction?.(shift.id, 'completed');
+                                    onClose();
+                                }}
+                                disabled={isLoading}
+                                className="w-full bg-[var(--primary-color)] hover:bg-[#1a5a70] !text-[#FAFAF7] py-6 rounded-[20px] font-black uppercase tracking-widest shadow-2xl shadow-blue-900/40 border-none transition-all flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+                            >
+                                {isLoading ? 'Procesando...' : (
+                                    <>
+                                        Finalizar Turno
+                                        <CheckCircle size={20} />
+                                    </>
+                                )}
+                            </button>
+                        )}
+
+                        <button
+                            onClick={onClose}
+                            className="w-full bg-slate-100 text-slate-500 py-4 rounded-[16px] font-bold uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all"
+                        >
+                            Cerrar Detalles
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

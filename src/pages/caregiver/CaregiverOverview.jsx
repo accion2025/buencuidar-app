@@ -21,6 +21,7 @@ const CaregiverOverview = () => {
     // Payment Modal State
     const [editingPayment, setEditingPayment] = useState(null);
     const [recentPayments, setRecentPayments] = useState([]);
+    const [isActionLoading, setIsActionLoading] = useState(false);
 
     const handleAcknowledge = async (notification) => {
         try {
@@ -452,6 +453,7 @@ const CaregiverOverview = () => {
     };
 
     const handleAction = async (id, status) => {
+        setIsActionLoading(true);
         try {
             const updateData = { status };
 
@@ -468,10 +470,25 @@ const CaregiverOverview = () => {
                 .eq('id', id);
 
             if (error) throw error;
+
+            // Clear successful feedback
+            if (status === 'confirmed') {
+                alert("✅ Turno aceptado correctamente.");
+            } else if (status === 'in_progress') {
+                alert("🚀 Turno iniciado. ¡Buen trabajo!");
+            } else if (status === 'completed') {
+                alert("🏆 Turno finalizado con éxito. No olvides completar la bitácora.");
+            } else if (status === 'cancelled') {
+                alert("⚠️ Turno ignorado/cancelado.");
+            }
+
             setNewRequests(prev => prev.filter(r => r.id !== id));
             fetchDashboardData(); // Refresh stats/next shift if accepted
         } catch (error) {
             console.error("Error updating request:", error);
+            alert("❌ Error: " + (error.message || "No se pudo actualizar el turno."));
+        } finally {
+            setIsActionLoading(false);
         }
     };
 
