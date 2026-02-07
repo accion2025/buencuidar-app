@@ -589,11 +589,11 @@ const CaregiverOverview = () => {
 
                                                                 {/* Patient Info */}
                                                                 {shift.patient && (
-                                                                    <div className="mt-8 flex items-center gap-4 !text-[#FAFAF7]/80 py-4 px-6 bg-white/5 rounded-[16px] border border-white/10 backdrop-blur-sm">
+                                                                    <div className="mt-8 flex items-center gap-4 !text-white/90 py-4 px-6 bg-white/5 rounded-[16px] border border-white/10 backdrop-blur-sm">
                                                                         <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/10">
                                                                             <User size={20} />
                                                                         </div>
-                                                                        <span className="font-secondary text-base">Cuidar a: <strong className="!text-[#FAFAF7] font-brand text-lg">{shift.patient.full_name}</strong></span>
+                                                                        <span className="font-secondary text-base !text-white/80">Cuidar a: <strong className="!text-white font-brand text-lg">{shift.patient.full_name}</strong></span>
                                                                     </div>
                                                                 )}
 
