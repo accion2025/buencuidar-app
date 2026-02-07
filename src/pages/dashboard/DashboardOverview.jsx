@@ -282,7 +282,11 @@ const DashboardOverview = () => {
     };
 
     const handleApproveRequest = async (application, isApproved) => {
+        console.log("Iniciando handleApproveRequest:", { application, isApproved });
         try {
+            if (!application?.caregiver?.id && isApproved) {
+                throw new Error("No se encontró el ID del cuidador en la solicitud.");
+            }
             if (isApproved) {
                 // 1. Confirm the appointment with this caregiver
                 const { error: appError } = await supabase
@@ -333,8 +337,11 @@ const DashboardOverview = () => {
             fetchAppointments();
             fetchNotifications();
         } catch (error) {
-            console.error('Error updating request:', error);
-            alert("Error al procesar la solicitud: " + error.message);
+            console.error('Error detallado al procesar solicitud:', error);
+            const errorMsg = error.message === 'Failed to fetch'
+                ? 'Error de conexión (Failed to fetch). Por favor verifica tu internet o si un ad-blocker está bloqueando Supabase.'
+                : error.message;
+            alert("Error al procesar la solicitud: " + errorMsg);
         }
     };
 
