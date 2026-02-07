@@ -142,16 +142,22 @@ const CaregiverLayout = () => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
                 {/* Header (Mobile Only Toggle) */}
-                <header className="bg-white border-b border-gray-200 px-6 py-4 lg:hidden flex items-center justify-between sticky top-0 z-40">
-                    <button onClick={() => setIsSidebarOpen(true)} className="text-gray-600">
+                <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+                    <button onClick={() => setIsSidebarOpen(true)} className="text-gray-600 lg:hidden">
                         <Menu size={24} />
                     </button>
-                    <span className="font-bold text-gray-800">Modo Cuidador</span>
+                    <div className="flex flex-col lg:flex-row lg:items-center gap-1 lg:gap-3">
+                        <span className="font-bold text-gray-800 lg:text-xl">Panel del Cuidador</span>
+                        <div className="hidden lg:flex items-center gap-2">
+                            <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{profile?.full_name}</span>
+                        </div>
+                    </div>
                     <button
                         onClick={() => navigate('/caregiver#notifications')}
-                        className="relative text-gray-400 hover:text-[var(--secondary-color)] transition-all"
+                        className="relative text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 p-2 rounded-[12px] hover:shadow-md group"
                     >
-                        <Bell size={22} />
+                        <Bell size={22} className="group-hover:animate-swing" />
                         {unreadCount > 0 && (
                             <span className="absolute -top-1 -right-1 flex h-3 w-3">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
