@@ -3,10 +3,20 @@ import { X, DollarSign, Check, Calendar, Clock, User } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
+    const formatTimeToInput = (iso) => {
+        if (!iso) return '';
+        try {
+            const date = new Date(iso);
+            return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        } catch (e) {
+            return '';
+        }
+    };
+
     const [amount, setAmount] = useState(appointment?.payment_amount || appointment?.offered_rate || '');
     const [status, setStatus] = useState(appointment?.payment_status || 'pending');
-    const [startTime, setStartTime] = useState(appointment?.time || '');
-    const [endTime, setEndTime] = useState(appointment?.end_time || '');
+    const [startTime, setStartTime] = useState(formatTimeToInput(appointment?.started_at) || appointment?.time || '');
+    const [endTime, setEndTime] = useState(formatTimeToInput(appointment?.ended_at) || appointment?.end_time || '');
     const [loading, setLoading] = useState(false);
 
     // Reset state when appointment changes
@@ -14,8 +24,8 @@ const EditPaymentModal = ({ isOpen, onClose, appointment, onUpdate }) => {
         if (appointment) {
             setAmount(appointment.payment_amount || appointment.offered_rate || '');
             setStatus(appointment.payment_status || 'pending');
-            setStartTime(appointment.time || '');
-            setEndTime(appointment.end_time || '');
+            setStartTime(formatTimeToInput(appointment.started_at) || appointment.time || '');
+            setEndTime(formatTimeToInput(appointment.ended_at) || appointment.end_time || '');
         }
     }, [appointment]);
 
