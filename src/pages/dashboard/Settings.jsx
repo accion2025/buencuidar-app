@@ -28,6 +28,8 @@ const Settings = () => {
             const swReg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
 
             setDiagnostic({
+                appId: import.meta.env.VITE_ONESIGNAL_APP_ID || "Faltante en .env",
+                origin: window.location.origin,
                 pushId: pushId || "No suscrito / Null",
                 permission: permission ? "Concedido" : "Denegado",
                 tags: JSON.stringify(tags || {}),
@@ -258,6 +260,14 @@ const Settings = () => {
                             <p className="text-red-400 text-[10px] font-bold uppercase">{diagnostic.error}</p>
                         ) : (
                             <>
+                                <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">App ID</span>
+                                    <span className="text-[9px] text-slate-300 font-mono text-right ml-4">{diagnostic.appId}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Origin (Dominio)</span>
+                                    <span className="text-[10px] text-blue-400 font-mono text-right ml-4">{diagnostic.origin}</span>
+                                </div>
                                 <div className="flex justify-between border-b border-white/5 pb-2">
                                     <span className="text-[10px] text-slate-500 uppercase font-bold">Push ID</span>
                                     <span className="text-[10px] text-green-400 font-mono break-all text-right ml-4">{diagnostic.pushId}</span>
