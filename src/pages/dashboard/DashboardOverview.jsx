@@ -902,7 +902,10 @@ const DashboardOverview = () => {
                                 )}
                             </div>
 
-                            <button className="w-full mt-12 py-4 bg-[var(--base-bg)] border border-gray-100 rounded-[16px] text-[10px] font-black text-[var(--primary-color)] uppercase tracking-[0.25em] hover:bg-white hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all relative z-10">
+                            <button
+                                onClick={() => navigate('/dashboard/pulso')}
+                                className="w-full mt-12 py-4 bg-[var(--base-bg)] border border-gray-100 rounded-[16px] text-[10px] font-black text-[var(--primary-color)] uppercase tracking-[0.25em] hover:bg-white hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all relative z-10"
+                            >
                                 Ver historial completo
                             </button>
                         </div>

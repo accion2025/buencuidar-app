@@ -31,7 +31,7 @@ import { safeDateParse } from '../../utils/time';
 // Local helper removed, using safeDateParse from utils
 
 const MonitoringCenter = () => {
-    const { profile, loading: authLoading } = useAuth();
+    const { profile, user, loading: authLoading } = useAuth();
     const navigate = useNavigate();
     const [lastUpdate, setLastUpdate] = useState("Sincronizando...");
 
@@ -339,9 +339,9 @@ const MonitoringCenter = () => {
 
     // REPLACED: Clinical metrics with Wellbeing Indicators
     const indicators = [
-        { label: 'Estado de Bienestar', value: wellnessData.general.value, sub: 'Basado en reporte', icon: Heart, color: 'text-green-600', bg: 'bg-green-50', status: wellnessData.general.status },
-        { label: 'Nivel de Energía', value: wellnessData.energy.value, sub: 'Activo', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', status: wellnessData.energy.status },
-        { label: 'Bienestar Hoy', value: wellnessData.mood.value, sub: 'Tranquilo', icon: Wind, color: 'text-indigo-600', bg: 'bg-indigo-50', status: wellnessData.mood.status },
+        { label: 'Estado de Bienestar', value: wellnessData.general.value, sub: '', icon: Heart, color: 'text-green-600', bg: 'bg-green-50', status: wellnessData.general.status },
+        { label: 'Nivel de Energía', value: wellnessData.energy.value, sub: '', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50', status: wellnessData.energy.status },
+        { label: 'Bienestar Hoy', value: wellnessData.mood.value, sub: '', icon: Wind, color: 'text-indigo-600', bg: 'bg-indigo-50', status: wellnessData.mood.status },
         { label: 'Rutina Cumplida', value: agendaItems.length > 0 ? `${Math.round((completedAgendaCount / agendaItems.length) * 100)}%` : '0%', sub: `${completedAgendaCount}/${agendaItems.length} tareas`, icon: CircleCheck, color: 'text-orange-600', bg: 'bg-orange-50', status: completedAgendaCount === agendaItems.length && agendaItems.length > 0 ? 'Completo' : 'En curso' },
         { label: 'Horas de Cuidado', value: `${hoursStats.confirmed}h`, sub: `Este año (${new Date().getFullYear()})`, icon: Clock, color: 'text-purple-600', bg: 'bg-purple-50', status: `${hoursStats.pending}h pendientes` },
         { label: 'Calificación Promedio', value: averageRating || '-', sub: 'Otorgada a cuidadores', icon: Star, color: 'text-amber-600', bg: 'bg-amber-50', status: 'Nivel de confianza' },
@@ -481,6 +481,57 @@ const MonitoringCenter = () => {
             }
         } finally {
             setIsGeneratingReport(false);
+        }
+    };
+
+    const handleMessage = async (caregiver) => {
+        if (!user || !caregiver?.id) return;
+
+        try {
+            // 1. Check if conversation exists
+            const { data: conversations, error } = await supabase
+                .from('conversations')
+                .select('id')
+                .or(`and(participant1_id.eq.${user.id},participant2_id.eq.${caregiver.id}),and(participant1_id.eq.${caregiver.id},participant2_id.eq.${user.id})`);
+
+            if (error) throw error;
+
+            let conversationId;
+
+            if (conversations && conversations.length > 0) {
+                conversationId = conversations[0].id;
+            } else {
+                // 2. Create new conversation
+                const { data: newConv, error: createError } = await supabase
+                    .from('conversations')
+                    .insert([{
+                        participant1_id: user.id,
+                        participant2_id: caregiver.id,
+                        last_message: 'Hola, quiero coordinar una entrevista.',
+                        last_message_at: new Date()
+                    }])
+                    .select()
+                    .single();
+
+                if (createError) throw createError;
+                conversationId = newConv.id;
+
+                // 2b. Insert the actual initial message
+                await supabase
+                    .from('messages')
+                    .insert([{
+                        conversation_id: conversationId,
+                        sender_id: user.id,
+                        content: 'Hola, quiero coordinar una entrevista.'
+                    }]);
+            }
+
+            // 3. Navigate
+            navigate('/dashboard/messages', { state: { conversationId: conversationId } });
+
+        } catch (error) {
+            console.error('Error starting chat:', error);
+            alert('No se pudo iniciar el chat');
         }
     };
 
@@ -632,7 +683,9 @@ const MonitoringCenter = () => {
                                     <div className="flex justify-between items-end mt-3">
                                         <div>
                                             <p className="text-sm font-brand font-bold text-[var(--primary-color)]">{item.label}</p>
-                                            <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest mt-0.5">{item.sub}</p>
+                                            {item.sub && (
+                                                <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest mt-0.5">{item.sub}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -640,12 +693,17 @@ const MonitoringCenter = () => {
                         ))}
 
                         {/* Care Log */}
-                        <div className="md:col-span-2 card !p-0 overflow-hidden flex flex-col min-h-[400px]">
+                        <div id="care-bitacora" className="md:col-span-2 card !p-0 overflow-hidden flex flex-col min-h-[400px]">
                             <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-[var(--base-bg)]/50 backdrop-blur-sm">
                                 <h2 className="text-2xl font-brand font-bold text-[var(--primary-color)] flex items-center gap-3">
                                     <History size={24} className="text-[var(--secondary-color)]" /> Bitácora de Cuidado
                                 </h2>
-                                <button className="text-xs font-black text-[var(--secondary-color)] uppercase tracking-widest hover:underline">Ver Historial Completo</button>
+                                <button
+                                    onClick={() => document.getElementById('care-bitacora')?.scrollIntoView({ behavior: 'smooth' })}
+                                    className="text-xs font-black text-[var(--secondary-color)] uppercase tracking-widest hover:underline"
+                                >
+                                    Ver Historial Completo
+                                </button>
                             </div>
                             <div className="p-8 space-y-6 flex-grow max-h-[500px] overflow-y-auto custom-scrollbar">
                                 {careLogs.length > 0 ? (
@@ -772,7 +830,10 @@ const MonitoringCenter = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <button className="btn btn-primary w-full py-4 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-100">
+                                    <button
+                                        onClick={() => handleMessage(caregiver)}
+                                        className="btn btn-primary w-full py-4 text-[10px] font-black uppercase tracking-widest shadow-xl shadow-green-100"
+                                    >
                                         Enviar Mensaje
                                     </button>
                                 </>
