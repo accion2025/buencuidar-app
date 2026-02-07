@@ -23,7 +23,7 @@ const StatCard = ({ icon: Icon, title, value, colorClass, onClick }) => (
     </div>
 );
 
-const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile, onRate, onMessage, status }) => (
+const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile, onRate, status }) => (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white border border-gray-100 rounded-[16px] mb-4 last:mb-0 hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all animate-fade-in group relative overflow-hidden">
         <div className="flex items-center gap-5 relative z-10">
             <div className={`w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/30 text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-xl overflow-hidden shrink-0 shadow-inner group-hover:scale-105 transition-transform border border-white`}>
@@ -55,15 +55,6 @@ const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile,
                     className="bg-[var(--base-bg)] text-[var(--primary-color)] px-4 py-2 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] hover:text-white transition-all border border-gray-100 shadow-sm"
                 >
                     Ver perfil
-                </button>
-            )}
-
-            {onMessage && (
-                <button
-                    onClick={onMessage}
-                    className="bg-blue-50 text-blue-600 px-4 py-2 rounded-[16px] text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 hover:text-white transition-all border border-blue-100 shadow-sm flex items-center gap-2"
-                >
-                    <MessageCircle size={14} /> Enviar Mensaje
                 </button>
             )}
 
@@ -644,7 +635,6 @@ const DashboardOverview = () => {
                                             image={app.caregiver?.avatar_url}
                                             status={app.status}
                                             onViewProfile={() => setSelectedCaregiver(app.caregiver)}
-                                            onMessage={() => handleMessage(app.caregiver)}
                                         />
                                     ))}
                                 </div>
@@ -675,7 +665,6 @@ const DashboardOverview = () => {
                                             image={app.caregiver?.avatar_url}
                                             status={app.status}
                                             onViewProfile={() => setSelectedCaregiver(app.caregiver)}
-                                            onMessage={() => handleMessage(app.caregiver)}
                                         />
                                     ))
                                 ) : (
@@ -720,7 +709,6 @@ const DashboardOverview = () => {
                                                 rating={app.reviews?.[0]?.rating}
                                                 onViewProfile={() => setSelectedCaregiver(app.caregiver)}
                                                 onRate={() => setRatingAppointment(app)}
-                                                onMessage={() => handleMessage(app.caregiver)}
                                             />
                                         ))
                                 ) : (

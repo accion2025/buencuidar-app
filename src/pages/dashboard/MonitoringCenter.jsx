@@ -180,7 +180,7 @@ const MonitoringCenter = () => {
                 if (appointment.caregiver_id) {
                     const { data: caregiverProfile, error: cgError } = await supabase
                         .from('profiles')
-                        .select('id, full_name, avatar_url, phone, role')
+                        .select('id, full_name, avatar_url, phone')
                         .eq('id', appointment.caregiver_id)
                         .single();
 
@@ -507,7 +507,7 @@ const MonitoringCenter = () => {
                     .insert([{
                         participant1_id: user.id,
                         participant2_id: caregiver.id,
-                        last_message: 'Hola, te contacto desde el Centro de Monitoreo.',
+                        last_message: 'Hola, quiero coordinar una entrevista.',
                         last_message_at: new Date()
                     }])
                     .select()
@@ -522,7 +522,7 @@ const MonitoringCenter = () => {
                     .insert([{
                         conversation_id: conversationId,
                         sender_id: user.id,
-                        content: 'Hola, te contacto desde el Centro de Monitoreo.'
+                        content: 'Hola, quiero coordinar una entrevista.'
                     }]);
             }
 
