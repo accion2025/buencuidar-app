@@ -96,9 +96,9 @@ const Navbar = () => {
 
                                     {/* Global Notification Bell */}
                                     <button
-                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/dashboard/messages')}
                                         className="relative p-2.5 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[16px] hover:shadow-md group"
-                                        title="Notificaciones y Mensajes"
+                                        title="Mensajes"
                                     >
                                         <Bell size={20} className="group-hover:animate-swing" />
                                         {unreadCount > 0 && (
@@ -108,7 +108,7 @@ const Navbar = () => {
                                             </span>
                                         )}
                                         {/* Simple label for clarity */}
-                                        <span className="sr-only">Notificaciones</span>
+                                        <span className="sr-only">Mensajes</span>
                                     </button>
                                     <button
                                         onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')}
@@ -135,7 +135,7 @@ const Navbar = () => {
                         <div className="md:hidden flex items-center gap-2">
                             {showUserMenu && (
                                 <button
-                                    onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                                    onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/dashboard/messages')}
                                     className="relative p-2 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[12px]"
                                 >
                                     <Bell size={20} />

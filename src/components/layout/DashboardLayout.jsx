@@ -152,7 +152,7 @@ const DashboardLayout = () => {
 
                     <div className="flex items-center justify-end w-full gap-6">
                         <button
-                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/dashboard/messages')}
                             className="relative text-gray-500 hover:text-[var(--primary-color)] transition-all group"
                         >
                             <Bell size={20} className="group-hover:animate-swing" />

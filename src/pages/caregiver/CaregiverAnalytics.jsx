@@ -13,7 +13,8 @@ import {
     Lock,
     ShieldCheck,
     TrendingUp,
-    FileText
+    FileText,
+    Download
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 // import { Bar, Line, Doughnut } from 'react-chartjs-2'; // Assuming chartjs is installed or we use simple CSS bars if not. 
