@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Check, FileText, Loader2, ListTodo, ClipboardList, Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
-const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientName, appointmentDetails, careAgenda, clientId }) => {
+const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientName, appointmentDetails, careAgenda, clientId, onSaved }) => {
     const [loading, setLoading] = useState(false); // Used for saving
     const [checklistItems, setChecklistItems] = useState([]);
     const [completedItems, setCompletedItems] = useState(new Set());
@@ -119,6 +119,8 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                 }
             }
 
+
+            if (onSaved) onSaved();
             onClose();
         } catch (error) {
             console.error("Error saving logs:", error);

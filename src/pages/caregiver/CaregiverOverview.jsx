@@ -1036,6 +1036,7 @@ const CaregiverOverview = () => {
                             appointmentDetails={nextShifts[0].details}
                             careAgenda={nextShifts[0].care_agenda}
                             clientId={nextShifts[0].client_id}
+                            onSaved={fetchDashboardData}
                         />
                         <WellnessReportModal
                             isOpen={showWellnessModal}
