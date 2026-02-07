@@ -40,6 +40,43 @@ const Settings = () => {
         }
     };
 
+    const testLocalNotification = () => {
+        if (!("Notification" in window)) {
+            alert("Este navegador no soporta notificaciones.");
+            return;
+        }
+        if (Notification.permission === "granted") {
+            try {
+                new Notification("Test Local BuenCuidar", {
+                    body: "Si ves esto, tu teléfono SÍ permite mostrar alertas de esta app.",
+                    icon: "/images/rebranding/pwa_icon_square.png"
+                });
+            } catch (e) {
+                // Algunos navegadores móviles requieren ServiceWorker para mostrar notificaciones
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification("Test Local BuenCuidar", {
+                        body: "Si ves esto, tu teléfono SÍ permite mostrar alertas de esta app.",
+                        icon: "/images/rebranding/pwa_icon_square.png"
+                    });
+                });
+            }
+        } else {
+            alert("Permiso denegado. Pulsa 'Activar Notificaciones' arriba.");
+        }
+    };
+
+    const resetIdentity = async () => {
+        if (confirm("¿Resetear identidad? Esto forzará una nueva suscripción y limpiará errores técnicos.")) {
+            try {
+                await OneSignal.logout();
+                await OneSignal.User.PushSubscription.optOut();
+                alert("Identidad reseteada. Refresca la app y pulsa Activar.");
+            } catch (e) {
+                alert("Error al resetear: " + e.message);
+            }
+        }
+    };
+
     // Load preferences from profile
     useEffect(() => {
         if (profile) {
@@ -245,6 +282,21 @@ const Settings = () => {
                 <div className="flex items-center gap-3 mb-6">
                     <ShieldCheck size={20} className="text-green-400" />
                     <h3 className="text-white font-brand font-bold text-lg">Diagnóstico de Alertas</h3>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                    <button
+                        onClick={testLocalNotification}
+                        className="text-[9px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-400 rounded-[16px] py-4 hover:bg-blue-500/20 transition-all border border-blue-500/10"
+                    >
+                        🔔 Test Alerta Local
+                    </button>
+                    <button
+                        onClick={resetIdentity}
+                        className="text-[9px] font-black uppercase tracking-widest bg-red-500/10 text-red-400 rounded-[16px] py-4 hover:bg-red-500/20 transition-all border border-red-500/10"
+                    >
+                        ♻️ Reset Identidad
+                    </button>
                 </div>
 
                 <button
