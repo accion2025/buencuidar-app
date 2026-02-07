@@ -217,9 +217,12 @@ const MonitoringCenter = () => {
                     mood: { value: 'Pendiente', status: '' }
                 };
 
-                // Helper to map value to status/color logic if needed, currently direct mapping
+                // Filter logs that belong to Wellness category
+                const wellnessLogs = (logs || []).filter(l => l.category === 'Wellness');
+
+                // Process in chronological order so that the latest report (at the top of logs if sorted DESC) 
+                // is the one that stays if we add a break or reverse, but here we iterate and first found wins.
                 wellnessLogs.forEach(log => {
-                    // Assuming log.detail holds the selected value
                     if (log.action === 'Estado General' && newWellness.general.value === 'Pendiente') {
                         newWellness.general = { value: log.detail, status: log.detail === 'Estable' ? 'Normal' : 'Atención' };
                     }
