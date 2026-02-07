@@ -13,6 +13,30 @@ const Settings = () => {
         sms: false
     });
     const [saving, setSaving] = useState(false);
+    const [diagnostic, setDiagnostic] = useState(null);
+
+    const runDiagnostic = async () => {
+        if (typeof OneSignal === 'undefined') {
+            setDiagnostic({ error: "OneSignal no está cargado aún o el SDK falló." });
+            return;
+        }
+
+        try {
+            const pushId = await OneSignal.User.PushSubscription.id;
+            const permission = await OneSignal.Notifications.permission;
+            const tags = await OneSignal.User.getTags();
+            const swReg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
+
+            setDiagnostic({
+                pushId: pushId || "No suscrito / Null",
+                permission: permission ? "Concedido" : "Denegado",
+                tags: JSON.stringify(tags || {}),
+                sw: swReg?.active?.scriptURL || "Ninguno activo"
+            });
+        } catch (e) {
+            setDiagnostic({ error: "Fallo durante el diagnóstico: " + e.message });
+        }
+    };
 
     // Load preferences from profile
     useEffect(() => {
@@ -141,16 +165,34 @@ const Settings = () => {
                     </div>
                 </div>
 
-                <button
-                    onClick={() => OneSignal.Slidedown.promptPush()}
-                    className="w-full flex items-center justify-center gap-3 p-5 rounded-[24px] bg-[var(--base-bg)] text-[var(--primary-color)] font-brand font-bold text-lg hover:bg-[var(--secondary-color)]/10 transition-all border-2 border-dashed border-[var(--secondary-color)]/30 group"
-                >
-                    <Bell size={24} className="text-[var(--secondary-color)] group-hover:scale-110 transition-transform" />
-                    Activar Notificaciones en dispositivo
-                </button>
+                {!window.isSecureContext && window.location.hostname !== 'localhost' ? (
+                    <div className="p-4 bg-red-50 border border-red-100 rounded-[16px] mb-6">
+                        <p className="text-sm text-red-600 font-brand font-bold">
+                            ⚠️ Conexión no segura (HTTP)
+                        </p>
+                        <p className="text-xs text-red-500 font-secondary mt-1">
+                            El navegador bloquea las notificaciones en sitios sin candado de seguridad (HTTPS). Contacta a soporte para habilitar el dominio seguro.
+                        </p>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => {
+                            if (typeof OneSignal !== 'undefined' && OneSignal.Slidedown) {
+                                OneSignal.Slidedown.promptPush();
+                            } else {
+                                alert("El sistema de notificaciones está cargando. Por favor, espera un momento.");
+                            }
+                        }}
+                        className="w-full flex items-center justify-center gap-3 p-5 rounded-[24px] bg-[var(--base-bg)] text-[var(--primary-color)] font-brand font-bold text-lg hover:bg-[var(--secondary-color)]/10 transition-all border-2 border-dashed border-[var(--secondary-color)]/30 group"
+                    >
+                        <Bell size={24} className="text-[var(--secondary-color)] group-hover:scale-110 transition-transform" />
+                        Activar Notificaciones en dispositivo
+                    </button>
+                )}
 
-                <p className="text-[10px] text-center text-gray-400 mt-6 font-black uppercase tracking-widest">
-                    Haz clic aquí si no escuchas los avisos en tu móvil o PC
+                <p className="text-[10px] text-center text-gray-400 mt-6 font-black uppercase tracking-widest leading-relaxed">
+                    Haz clic arriba si no recibes avisos.<br />
+                    Para alertas audibles: Revisa en Ajustes &gt; Aplicaciones &gt; BuenCuidar &gt; Notificaciones que el sonido esté activo.
                 </p>
             </div>
 
@@ -195,6 +237,54 @@ const Settings = () => {
                     </button>
                 </div>
             )}
+
+            {/* Diagnostic Panel para Debugging */}
+            <div className="bg-slate-900 rounded-[24px] p-8 text-left shadow-2xl">
+                <div className="flex items-center gap-3 mb-6">
+                    <ShieldCheck size={20} className="text-green-400" />
+                    <h3 className="text-white font-brand font-bold text-lg">Diagnóstico de Alertas</h3>
+                </div>
+
+                <button
+                    onClick={runDiagnostic}
+                    className="w-full text-xs font-black uppercase tracking-widest bg-white/10 text-white rounded-[16px] py-4 hover:bg-white/20 transition-all mb-6 border border-white/5"
+                >
+                    ⚡ Ejecutar Test de Conexión
+                </button>
+
+                {diagnostic && (
+                    <div className="space-y-3 bg-black/40 rounded-[16px] p-6 border border-white/5">
+                        {diagnostic.error ? (
+                            <p className="text-red-400 text-[10px] font-bold uppercase">{diagnostic.error}</p>
+                        ) : (
+                            <>
+                                <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Push ID</span>
+                                    <span className="text-[10px] text-green-400 font-mono break-all text-right ml-4">{diagnostic.pushId}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Permiso</span>
+                                    <span className={`text-[10px] font-bold uppercase ${diagnostic.permission === 'Concedido' ? 'text-green-400' : 'text-orange-400'}`}>
+                                        {diagnostic.permission}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between border-b border-white/5 pb-2">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold">Worker</span>
+                                    <span className="text-[10px] text-blue-400 font-mono italic">{diagnostic.sw}</span>
+                                </div>
+                                <div className="pt-2">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold block mb-1">Tags Activos</span>
+                                    <span className="text-[9px] text-slate-400 font-mono block leading-relaxed">{diagnostic.tags}</span>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                )}
+
+                <p className="text-[9px] text-slate-500 mt-6 leading-relaxed italic">
+                    Si el Push ID es "Null", el dispositivo no está registrado en OneSignal. Intenta "Activar Notificaciones" arriba.
+                </p>
+            </div>
         </div>
     );
 };
