@@ -843,7 +843,7 @@ const DashboardOverview = () => {
                         </div>
 
                         {/* Notifications Panel */}
-                        <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                        <div id="messages" className="card !p-10 border-none shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
                                 <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">

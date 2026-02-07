@@ -146,7 +146,18 @@ const CaregiverLayout = () => {
                         <Menu size={24} />
                     </button>
                     <span className="font-bold text-gray-800">Modo Cuidador</span>
-                    <div className="w-8"></div> {/* Spacer */}
+                    <button
+                        onClick={() => navigate('/caregiver#notifications')}
+                        className="relative text-gray-400 hover:text-[var(--secondary-color)] transition-all"
+                    >
+                        <Bell size={22} />
+                        {unreadCount > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                            </span>
+                        )}
+                    </button>
                 </header>
 
                 {/* Page Content */}

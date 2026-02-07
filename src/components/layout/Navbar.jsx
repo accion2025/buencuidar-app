@@ -1,27 +1,46 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import {
-    User,
-    LayoutDashboard,
-    Menu,
-    X,
-    LogOut,
-    Home,
-    Activity,
-    Sparkles,
-    BookOpen,
-    LogIn,
-    UserPlus,
-    ChevronRight
-} from 'lucide-react';
+import { Bell, Menu, X, LogOut, Home, Activity, Sparkles, LogIn, UserPlus, LayoutDashboard, User } from 'lucide-react';
 import Logo from './Logo';
+import { supabase } from '../../lib/supabase';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, profile, signOut } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    React.useEffect(() => {
+        if (!user) return;
+
+        const fetchUnreadCount = async () => {
+            const { count } = await supabase
+                .from('notifications')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id)
+                .eq('is_read', false);
+            setUnreadCount(count || 0);
+        };
+
+        fetchUnreadCount();
+
+        // Real-time subscription for all notification changes
+        const channel = supabase
+            .channel('public:notifications')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'notifications',
+                filter: `user_id=eq.${user.id}`
+            }, () => fetchUnreadCount())
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [user]);
 
     const isRegistrationSuccess = location.pathname === '/registration-success';
     const showUserMenu = user && !isRegistrationSuccess;
@@ -74,6 +93,23 @@ const Navbar = () => {
                                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Hola de nuevo</span>
                                         <span className="text-sm font-black text-[var(--primary-color)]">{profile?.full_name || 'Usuario'}</span>
                                     </div>
+
+                                    {/* Global Notification Bell */}
+                                    <button
+                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                                        className="relative p-2.5 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[16px] hover:shadow-md group"
+                                        title="Notificaciones y Mensajes"
+                                    >
+                                        <Bell size={20} className="group-hover:animate-swing" />
+                                        {unreadCount > 0 && (
+                                            <span className="absolute top-2 right-2 flex h-3 w-3">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                                            </span>
+                                        )}
+                                        {/* Simple label for clarity */}
+                                        <span className="sr-only">Notificaciones</span>
+                                    </button>
                                     <button
                                         onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')}
                                         className="btn btn-primary flex items-center gap-2 text-xs tracking-widest uppercase shadow-lg shadow-green-100"
@@ -95,13 +131,29 @@ const Navbar = () => {
                             )}
                         </nav>
 
-                        {/* Mobile Menu Button */}
-                        <button
-                            className="md:hidden p-2 text-[var(--primary-color)] hover:bg-gray-100 rounded-[16px] transition-colors"
-                            onClick={() => setIsSidebarOpen(true)}
-                        >
-                            <Menu size={24} />
-                        </button>
+                        {/* Mobile Menu Button & Bell */}
+                        <div className="md:hidden flex items-center gap-2">
+                            {showUserMenu && (
+                                <button
+                                    onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                                    className="relative p-2 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[12px]"
+                                >
+                                    <Bell size={20} />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                                        </span>
+                                    )}
+                                </button>
+                            )}
+                            <button
+                                className="p-2 text-[var(--primary-color)] hover:bg-gray-100 rounded-[12px] transition-colors"
+                                onClick={() => setIsSidebarOpen(true)}
+                            >
+                                <Menu size={24} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>

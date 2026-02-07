@@ -54,3 +54,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- To test: SELECT * FROM check_and_notify_upcoming_tasks();
 -- To automate: Add a Cron in Supabase looking like: select check_and_notify_upcoming_tasks();
+-- EXPLICACIÓN:
+-- 1. Este script crea una "alarma" (Trigger) que vigila la tabla 'care_logs'.
+-- 2. Cuando un cuidador marca una tarea como terminada, el disparador se activa.
+-- 3. Inmediatamente inserta un mensaje en la tabla 'notifications' para el Familiar (Cliente).
+-- 4. El mensaje incluye el ID de OneSignal para que suene en el celular.
+explica esos

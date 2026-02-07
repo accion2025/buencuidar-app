@@ -879,7 +879,7 @@ const CaregiverOverview = () => {
                         </div>
 
                         {/* Notifications Panel */}
-                        <div className="bg-white rounded-[16px] p-6 border border-gray-200 shadow-sm">
+                        <div id="notifications" className="bg-white rounded-[16px] p-6 border border-gray-200 shadow-sm">
                             <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                                 <Bell size={18} className="text-orange-500" />
                                 Notificaciones

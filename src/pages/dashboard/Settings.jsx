@@ -3,6 +3,7 @@ import { Bell, Lock, CreditCard, Shield, ChevronRight, Plus, ShieldCheck } from 
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
+import OneSignal from 'react-onesignal';
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -114,87 +115,67 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* Plan Status & Pulso Banner */}
+
+            {/* PULSO Configuration or Upgrade Banner */}
             <div className="space-y-6">
-                {/* Plan Card */}
-                <div className={`p-8 border rounded-[16px] flex flex-col items-center text-center gap-4 bg-white shadow-sm ${isPremium ? 'border-blue-100' : 'border-gray-200'}`}>
-                    <div className="space-y-2">
-                        <h3 className={`text-xl font-black ${isPremium ? 'text-blue-900' : 'text-gray-800 uppercase tracking-tight'}`}>{planName}</h3>
-                        <p className={`text-sm max-w-sm mx-auto ${isPremium ? 'text-blue-700' : 'text-gray-500'}`}>
-                            {isPremium
-                                ? 'Tu familia cuenta con protección total y alertas en tiempo real activas.'
-                                : 'Acceso básico limitado. Activa PULSO Premium para el máximo nivel de cuidado.'}
-                        </p>
+                {isPremium && (
+                    <div className="bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm space-y-6">
+                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                            <Bell size={16} /> Preferencias de Alerta PULSO
+                        </h4>
+
+                        <div className="grid md:grid-cols-2 gap-4">
+                            <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
+                                <div>
+                                    <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
+                                </div>
+                                <button
+                                    onClick={() => toggle('email')}
+                                    className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                >
+                                    <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+
+                            <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
+                                <div>
+                                    <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
+                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
+                                </div>
+                                <button
+                                    onClick={() => toggle('sms')}
+                                    className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-blue-600' : 'bg-gray-300'}`}
+                                >
+                                    <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <span className="px-6 py-2 rounded-full text-xs font-black tracking-widest bg-green-500 !text-[#FAFAF7] shadow-sm shadow-green-100">
-                        ACTIVO
-                    </span>
+                )}
+
+                {/* Manual Push Permission Trigger - Always visible for everyone to listen/test notifications */}
+                <div className="bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm space-y-4">
+                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                        <Bell size={16} /> Centro de Alertas Audibles
+                    </h4>
+                    <button
+                        onClick={() => OneSignal.Slidedown.promptPush()}
+                        className="w-full flex items-center justify-center gap-3 p-4 rounded-[16px] bg-[var(--base-bg)] text-[var(--primary-color)] font-bold text-sm hover:bg-[var(--secondary-color)]/10 transition-all border border-[var(--secondary-color)]/20 shadow-sm"
+                    >
+                        <Bell size={18} className="text-[var(--secondary-color)]" />
+                        Activar Notificaciones en este dispositivo
+                    </button>
+                    <p className="text-[10px] text-center text-gray-400 mt-1 uppercase tracking-widest font-bold">
+                        Haz clic aquí si no escuchas los avisos en tu móvil o PC
+                    </p>
                 </div>
 
-                {/* PULSO Configuration or Upgrade Banner */}
-                <div className="space-y-6">
-                    {isPremium && (
-                        <div className="bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm space-y-6">
-                            <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                <Bell size={16} /> Preferencias de Alerta PULSO
-                            </h4>
-
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
-                                    <div>
-                                        <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
-                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
-                                    </div>
-                                    <button
-                                        onClick={() => toggle('email')}
-                                        className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                    >
-                                        <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
-                                    </button>
-                                </div>
-
-                                <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
-                                    <div>
-                                        <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
-                                        <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
-                                    </div>
-                                    <button
-                                        onClick={() => toggle('sms')}
-                                        className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                    >
-                                        <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {!isPremium && (
-                        <div className="bg-orange-50 p-8 rounded-[16px] flex flex-col items-center text-center gap-6 border border-orange-100 shadow-sm animate-fade-in">
-                            <div className="space-y-2">
-                                <h4 className="font-bold text-orange-900 flex items-center justify-center gap-2 text-xl">
-                                    <ShieldCheck size={28} className="text-orange-500" />
-                                    ¿Quieres tranquilidad total?
-                                </h4>
-                                <p className="text-orange-700 max-w-md mx-auto leading-relaxed">
-                                    Solo con el **Plan PULSO Premium** recibirás alerta familiar al instante y seguimiento detallado de bitácora.
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => navigate('/dashboard/plans')}
-                                className="bg-orange-600 !text-[#FAFAF7] px-10 py-4 rounded-[16px] font-black text-lg shadow-xl shadow-orange-200 hover:bg-orange-700 transition-all active:scale-95 hover:scale-105"
-                            >
-                                ACTIVAR PULSO
-                            </button>
-                        </div>
-                    )}
-
-                    {isPremium && (
-                        <div className="text-center pt-2">
-                            <a href="#" className="text-xs text-gray-400 hover:underline hover:text-gray-600 transition-colors">Gestionar facturación (Stripe Portal)</a>
-                        </div>
-                    )}
-                </div>
+                {isPremium && (
+                    <div className="text-center pt-8 border-t border-gray-50">
+                        <a href="#" className="text-xs text-gray-400 hover:underline hover:text-gray-600 transition-colors uppercase tracking-widest font-bold">Gestionar facturación</a>
+                    </div>
+                )}
             </div>
         </div>
     );
