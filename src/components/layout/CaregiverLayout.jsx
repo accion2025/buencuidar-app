@@ -154,7 +154,7 @@ const CaregiverLayout = () => {
                         </div>
                     </div>
                     <button
-                        onClick={() => navigate('/caregiver/messages')}
+                        onClick={() => navigate('/caregiver#notifications')}
                         className="relative text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 p-2 rounded-[12px] hover:shadow-md group"
                     >
                         <Bell size={22} className="group-hover:animate-swing" />

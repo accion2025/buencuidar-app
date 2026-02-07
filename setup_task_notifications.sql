@@ -1,5 +1,4 @@
--- setup_task_notifications.sql
--- Goal: Automatically notify Ivan (or any client) when a task is completed in the care agenda.
+: Automatically notify Ivan (or any client) when a task is completed in the care agenda.
 
 -- 1. Function to handle routine task completion notifications
 CREATE OR REPLACE FUNCTION notify_client_on_task_completion()
@@ -12,9 +11,10 @@ BEGIN
     -- Only trigger for routine tasks (category can be 'Tarea', 'Alimentación', 'Higiene', etc.)
     -- Exclusion of 'Alerta' and 'Wellness' which are handled elsewhere or differently.
     IF NEW.category NOT IN ('Alerta', 'Wellness', 'Emergencia') THEN
-        
-        -- Get the Client ID (user_id who owns the appointment)
-        SELECT user_id INTO target_client_id
+        -- setup_task_notifications.sql
+-- Goal
+        -- Get the Client ID (client_id who owns the appointment)
+        SELECT client_id INTO target_client_id
         FROM appointments
         WHERE id = NEW.appointment_id;
 

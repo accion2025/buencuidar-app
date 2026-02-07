@@ -9,7 +9,7 @@ DECLARE
     caregiver_name TEXT;
 BEGIN
     IF NEW.category NOT IN ('Alerta', 'Wellness', 'Emergencia') THEN
-        SELECT user_id INTO target_client_id FROM appointments WHERE id = NEW.appointment_id;
+        SELECT client_id INTO target_client_id FROM appointments WHERE id = NEW.appointment_id;
         SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
 
         IF target_client_id IS NOT NULL THEN
