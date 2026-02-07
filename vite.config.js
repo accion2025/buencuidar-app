@@ -14,8 +14,7 @@ export default defineConfig({
       filename: 'sw.js',
       registerType: 'prompt',
       devOptions: {
-        enabled: true,
-        type: 'module'
+        enabled: true
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
