@@ -107,9 +107,9 @@ const MonitoringCenter = () => {
     const [loadingData, setLoadingData] = useState(true);
     const [showAgendaModal, setShowAgendaModal] = useState(false);
     const [wellnessData, setWellnessData] = useState({
-        general: { value: 'Pendiente', status: 'En espera' },
-        energy: { value: 'Pendiente', status: 'En espera' },
-        mood: { value: 'Pendiente', status: 'En espera' }
+        general: { value: 'Pendiente', status: '' },
+        energy: { value: 'Pendiente', status: '' },
+        mood: { value: 'Pendiente', status: '' }
     });
     const [hoursStats, setHoursStats] = useState({ confirmed: 0, pending: 0 });
     const [averageRating, setAverageRating] = useState(null);
@@ -212,9 +212,9 @@ const MonitoringCenter = () => {
 
                 // Process Wellness Indicators (Latest wins)
                 const newWellness = {
-                    general: { value: 'Pendiente', status: 'En espera' },
-                    energy: { value: 'Pendiente', status: 'En espera' },
-                    mood: { value: 'Pendiente', status: 'En espera' }
+                    general: { value: 'Pendiente', status: '' },
+                    energy: { value: 'Pendiente', status: '' },
+                    mood: { value: 'Pendiente', status: '' }
                 };
 
                 // Helper to map value to status/color logic if needed, currently direct mapping
@@ -619,8 +619,10 @@ const MonitoringCenter = () => {
                                     <div className={`p-4 rounded-[16px] ${item.bg.includes('green') || item.bg.includes('blue') || item.icon === Heart ? 'bg-[var(--secondary-color)] !text-[#FAFAF7]' : 'bg-[var(--primary-color)] !text-[#FAFAF7]'} group-hover:scale-110 transition-transform shadow-lg`}>
                                         <item.icon size={28} strokeWidth={2.5} />
                                     </div>
-                                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${item.status === 'Normal' || item.status === 'Bueno' || item.status === 'Excelente' || item.status === 'Completo' ? 'text-[var(--secondary-color)] bg-[var(--secondary-color)]/10' : 'text-[var(--text-light)] bg-[var(--base-bg)]'
-                                        }`}>{item.status}</span>
+                                    {item.status && (
+                                        <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${item.status === 'Normal' || item.status === 'Bueno' || item.status === 'Excelente' || item.status === 'Completo' ? 'text-[var(--secondary-color)] bg-[var(--secondary-color)]/10' : 'text-[var(--text-light)] bg-[var(--base-bg)]'
+                                            }`}>{item.status}</span>
+                                    )}
                                 </div>
                                 <div>
                                     <h3 className="text-4xl font-brand font-bold text-[var(--primary-color)] tracking-tight">{item.value}</h3>
