@@ -70,113 +70,131 @@ const Settings = () => {
 
     // Derived State for Subscription
     const isPremium = profile?.subscription_status === 'active';
-    const planName = profile?.plan_type === 'premium' ? 'Plan Familiar Premium' : 'Plan Básico (Gratuito)';
 
     return (
-        <div className="space-y-6 animate-fade-in max-w-4xl mx-auto pb-10">
+        <div className="space-y-10 animate-fade-in max-w-3xl text-left">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Configuración</h2>
+                <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Configuración de la App</h1>
                 {saving && (
-                    <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full animate-pulse border border-green-100 italic">
-                        Guardando cambios...
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#0F3C4C]/40 animate-pulse">
+                        Guardando...
                     </span>
                 )}
             </div>
 
-            {/* Security */}
-            <div className="bg-white rounded-[16px] shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 bg-gray-50">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-blue-100 p-2 rounded-[16px] text-blue-600">
-                            <Lock size={20} />
+            {/* Notification Preferences (PULSO) */}
+            {isPremium && (
+                <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                    <div className="p-8 border-b border-gray-50 bg-slate-50/50">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-blue-100 p-3 rounded-[16px] text-blue-600 shadow-inner">
+                                <Bell size={24} />
+                            </div>
+                            <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Preferencias de Alerta PULSO</h3>
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800">Seguridad</h3>
+                    </div>
+                    <div className="p-8 space-y-8">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="font-brand font-bold text-[#0F3C4C] text-lg">Avisos por Email</p>
+                                <p className="text-sm text-gray-500 font-secondary mt-1">Reportes Diarios de bienestar.</p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={notifications.email}
+                                    onChange={() => toggle('email')}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--secondary-color)]"></div>
+                            </label>
+                        </div>
+
+                        <div className="flex items-center justify-between border-t border-gray-50 pt-8">
+                            <div>
+                                <p className="font-brand font-bold text-[#0F3C4C] text-lg">Mensajes SMS</p>
+                                <p className="text-sm text-gray-500 font-secondary mt-1">Notificaciones críticas a tu móvil.</p>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={notifications.sms}
+                                    onChange={() => toggle('sms')}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-[var(--secondary-color)]"></div>
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div className="p-6 space-y-4">
-                    <button
-                        onClick={handlePasswordReset}
-                        className="w-full flex items-center justify-between p-3 rounded-[16px] hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all group"
-                    >
-                        <span className="font-medium text-gray-700">Cambiar Contraseña</span>
-                        <ChevronRight size={18} className="text-gray-400 group-hover:text-gray-600" />
+            )}
+
+            {/* Manual Push Permission Trigger */}
+            <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 p-8">
+                <div className="flex items-center gap-4 mb-6 text-left">
+                    <div className="bg-orange-100 p-3 rounded-[16px] text-orange-600 shadow-inner">
+                        <Bell size={24} />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Centro de Alertas Audibles</h3>
+                        <p className="text-sm text-gray-500 font-secondary mt-1">Configura las notificaciones en este dispositivo.</p>
+                    </div>
+                </div>
+
+                <button
+                    onClick={() => OneSignal.Slidedown.promptPush()}
+                    className="w-full flex items-center justify-center gap-3 p-5 rounded-[24px] bg-[var(--base-bg)] text-[var(--primary-color)] font-brand font-bold text-lg hover:bg-[var(--secondary-color)]/10 transition-all border-2 border-dashed border-[var(--secondary-color)]/30 group"
+                >
+                    <Bell size={24} className="text-[var(--secondary-color)] group-hover:scale-110 transition-transform" />
+                    Activar Notificaciones en dispositivo
+                </button>
+
+                <p className="text-[10px] text-center text-gray-400 mt-6 font-black uppercase tracking-widest">
+                    Haz clic aquí si no escuchas los avisos en tu móvil o PC
+                </p>
+            </div>
+
+            {/* Account and Security */}
+            <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                <div className="p-8 border-b border-gray-50 bg-slate-50/50">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-slate-100 p-3 rounded-[16px] text-[#0F3C4C] shadow-inner">
+                            <Shield size={24} />
+                        </div>
+                        <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Cuenta y Seguridad</h3>
+                    </div>
+                </div>
+                <div className="divide-y divide-gray-50">
+                    <button onClick={handlePasswordReset} className="w-full p-8 hover:bg-slate-50/50 transition-all font-brand font-bold text-[#0F3C4C] text-lg flex justify-between items-center group">
+                        Cambiar Contraseña
+                        <div className="w-10 h-10 rounded-[16px] bg-gray-50 flex items-center justify-center group-hover:bg-white group-hover:shadow-lg transition-all">
+                            <Lock size={18} className="text-gray-300 group-hover:text-[var(--primary-color)] transition-colors" />
+                        </div>
                     </button>
+
                     <button
                         onClick={() => {
                             if (confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.")) {
                                 alert("Por favor contacta a soporte para proceder con la baja definitiva.");
                             }
                         }}
-                        className="w-full flex items-center justify-between p-3 rounded-[16px] hover:bg-red-50 border border-transparent hover:border-red-100 transition-all group mt-2"
+                        className="w-full p-8 hover:bg-red-50 transition-all font-brand font-bold text-red-500 text-lg flex justify-between items-center group"
                     >
-                        <span className="font-medium text-red-600">Eliminar Cuenta</span>
-                        <ChevronRight size={18} className="text-red-300 group-hover:text-red-500" />
-                    </button>
-                </div>
-            </div>
-
-
-            {/* PULSO Configuration or Upgrade Banner */}
-            <div className="space-y-6">
-                {isPremium && (
-                    <div className="bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm space-y-6">
-                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <Bell size={16} /> Preferencias de Alerta PULSO
-                        </h4>
-
-                        <div className="grid md:grid-cols-2 gap-4">
-                            <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
-                                <div>
-                                    <p className="font-bold text-gray-700 text-sm">Avisos por Email</p>
-                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Reportes Diarios</p>
-                                </div>
-                                <button
-                                    onClick={() => toggle('email')}
-                                    className={`w-12 h-6 rounded-full transition-colors relative ${notifications.email ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                >
-                                    <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.email ? 'translate-x-6' : 'translate-x-0'}`} />
-                                </button>
-                            </div>
-
-                            <div className="flex items-center justify-between p-4 rounded-[16px] bg-gray-50/50 border border-gray-100">
-                                <div>
-                                    <p className="font-bold text-gray-700 text-sm">Mensajes SMS</p>
-                                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-tight">Alertas Críticas</p>
-                                </div>
-                                <button
-                                    onClick={() => toggle('sms')}
-                                    className={`w-12 h-6 rounded-full transition-colors relative ${notifications.sms ? 'bg-blue-600' : 'bg-gray-300'}`}
-                                >
-                                    <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${notifications.sms ? 'translate-x-6' : 'translate-x-0'}`} />
-                                </button>
-                            </div>
+                        Eliminar Cuenta
+                        <div className="w-10 h-10 rounded-[16px] bg-red-50/50 flex items-center justify-center group-hover:bg-white group-hover:shadow-lg transition-all">
+                            <Shield size={18} className="text-red-300" />
                         </div>
-                    </div>
-                )}
-
-                {/* Manual Push Permission Trigger - Always visible for everyone to listen/test notifications */}
-                <div className="bg-white p-6 rounded-[16px] border border-gray-100 shadow-sm space-y-4">
-                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                        <Bell size={16} /> Centro de Alertas Audibles
-                    </h4>
-                    <button
-                        onClick={() => OneSignal.Slidedown.promptPush()}
-                        className="w-full flex items-center justify-center gap-3 p-4 rounded-[16px] bg-[var(--base-bg)] text-[var(--primary-color)] font-bold text-sm hover:bg-[var(--secondary-color)]/10 transition-all border border-[var(--secondary-color)]/20 shadow-sm"
-                    >
-                        <Bell size={18} className="text-[var(--secondary-color)]" />
-                        Activar Notificaciones en este dispositivo
                     </button>
-                    <p className="text-[10px] text-center text-gray-400 mt-1 uppercase tracking-widest font-bold">
-                        Haz clic aquí si no escuchas los avisos en tu móvil o PC
-                    </p>
                 </div>
-
-                {isPremium && (
-                    <div className="text-center pt-8 border-t border-gray-50">
-                        <a href="#" className="text-xs text-gray-400 hover:underline hover:text-gray-600 transition-colors uppercase tracking-widest font-bold">Gestionar facturación</a>
-                    </div>
-                )}
             </div>
+
+            {isPremium && (
+                <div className="text-center pt-4">
+                    <button className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-[var(--primary-color)] transition-colors">
+                        Gestionar facturación
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
