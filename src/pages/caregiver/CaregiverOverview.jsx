@@ -241,7 +241,7 @@ const CaregiverOverview = () => {
                         full_name,
                         address,
                         avatar_url,
-                        avatar_url,
+                        subscription_status,
                         patients (*)
                     ),
                     patient:patient_id (*)
@@ -680,8 +680,14 @@ const CaregiverOverview = () => {
                                                                             <FileText size={16} /> Bitácora
                                                                         </button>
                                                                         <button
-                                                                            onClick={() => setShowWellnessModal(true)}
-                                                                            className="bg-white/10 !text-[#FAFAF7] p-4 rounded-[16px] font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all flex items-center justify-center gap-2 border border-white/10 backdrop-blur-sm"
+                                                                            onClick={() => {
+                                                                                if (shift.client?.subscription_status === 'active') {
+                                                                                    setShowWellnessModal(true);
+                                                                                } else {
+                                                                                    alert("Esta función requiere que el cliente tenga una suscripción activa a BC PULSO.");
+                                                                                }
+                                                                            }}
+                                                                            className={`bg-white/10 !text-[#FAFAF7] p-4 rounded-[16px] font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all flex items-center justify-center gap-2 border border-white/10 backdrop-blur-sm ${shift.client?.subscription_status !== 'active' ? 'opacity-30 cursor-not-allowed' : ''}`}
                                                                         >
                                                                             <Activity size={16} /> PULSO
                                                                         </button>
