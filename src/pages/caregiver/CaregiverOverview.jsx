@@ -290,8 +290,15 @@ const CaregiverOverview = () => {
                 // Add to monthly earnings
                 monthlyEarnings += pay;
 
-                // Calculate Hours
-                if (app.time && app.end_time) {
+                // Calculate Hours (Prioritize REAL TIME)
+                let hours = 0;
+                if (app.started_at && app.ended_at) {
+                    const start = new Date(app.started_at);
+                    const end = new Date(app.ended_at);
+                    const diffMs = end - start;
+                    hours = diffMs / (1000 * 60 * 60); // Convert ms to hours
+                } else if (app.time && app.end_time) {
+                    // Fallback to scheduled time
                     const parseTime = (t) => {
                         const [h, m] = t.split(':').map(Number);
                         return h + (m / 60);
@@ -300,9 +307,11 @@ const CaregiverOverview = () => {
                     const end = parseTime(app.end_time);
 
                     if (!isNaN(start) && !isNaN(end) && end > start) {
-                        monthlyHours += (end - start);
+                        hours = (end - start);
                     }
                 }
+
+                if (hours > 0) monthlyHours += hours;
             });
 
             // 3. Upcoming Count
@@ -362,7 +371,7 @@ const CaregiverOverview = () => {
             (recentCompleted || []).forEach(app => {
                 activity.push({
                     type: 'appointment',
-                    date: new Date(app.date), // Use updated_at if marked completed? date is simpler
+                    date: new Date(app.updated_at || app.date), // Use updated_at to show when it was actually completed
                     data: app
                 });
             });
@@ -444,9 +453,18 @@ const CaregiverOverview = () => {
 
     const handleAction = async (id, status) => {
         try {
+            const updateData = { status };
+
+            // Add real timestamps
+            if (status === 'in_progress') {
+                updateData.started_at = new Date().toISOString();
+            } else if (status === 'completed') {
+                updateData.ended_at = new Date().toISOString();
+            }
+
             const { error } = await supabase
                 .from('appointments')
-                .update({ status })
+                .update(updateData)
                 .eq('id', id);
 
             if (error) throw error;
