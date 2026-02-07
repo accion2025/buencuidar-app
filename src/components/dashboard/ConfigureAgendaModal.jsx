@@ -71,6 +71,7 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
             if (updateError) throw updateError;
 
             if (onSave) onSave(agendaArray);
+            alert("¡Agenda guardada correctamente!");
             onClose();
         } catch (error) {
             console.error("Error saving agenda:", error);

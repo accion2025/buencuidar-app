@@ -116,6 +116,7 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
 
 
             if (onSaved) onSaved();
+            alert("¡Cambios guardados con éxito!");
             onClose();
         } catch (error) {
             console.error("Error saving logs:", error);
