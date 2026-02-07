@@ -565,7 +565,7 @@ const CaregiverOverview = () => {
                                                                     <User size={40} strokeWidth={1.5} />
                                                                 </div>
                                                                 <div>
-                                                                    <h3 className="text-4xl font-brand font-bold tracking-tight mb-1">{shift.client?.full_name || 'Cliente'}</h3>
+                                                                    <h3 className="text-4xl font-brand font-bold tracking-tight mb-1 !text-white">{shift.client?.full_name || 'Cliente'}</h3>
                                                                     <p className="text-[var(--accent-color)] font-secondary opacity-90 text-lg">{shift.client?.address || 'Ubicación remota'}</p>
                                                                 </div>
                                                             </div>
