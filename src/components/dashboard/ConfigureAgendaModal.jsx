@@ -63,12 +63,12 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
                 time
             }));
 
-            const { error } = await supabase
+            const { error: updateError } = await supabase
                 .from('appointments')
                 .update({ care_agenda: agendaArray })
                 .eq('id', appointmentId);
 
-            if (error) throw error;
+            if (updateError) throw updateError;
 
             if (onSave) onSave(agendaArray);
             onClose();

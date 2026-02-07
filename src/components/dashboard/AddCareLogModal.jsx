@@ -88,15 +88,17 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
             const toRemove = [...initialCompletedItems].filter(x => !completedItems.has(x));
 
             if (toRemove.length > 0) {
-                await supabase
+                const { error: removeError } = await supabase
                     .from('care_logs')
                     .delete()
                     .eq('appointment_id', appointmentId)
                     .in('action', toRemove);
+
+                if (removeError) throw removeError;
             }
 
             if (toAdd.length > 0) {
-                await supabase
+                const { error: insertError } = await supabase
                     .from('care_logs')
                     .insert(toAdd.map(item => ({
                         appointment_id: appointmentId,
@@ -106,17 +108,10 @@ const AddCareLogModal = ({ isOpen, onClose, appointmentId, caregiverId, clientNa
                         category: 'Plan de Cuidado'
                     })));
 
-                // NOTIFICATION: Check if Routine is 100% Complete
-                // logic: if now complete (completedItems.size === checklistItems.length) AND wasn't before (initial.size < total)
-                if (clientId && checklistItems.length > 0 && completedItems.size === checklistItems.length && initialCompletedItems.size < checklistItems.length) {
-                    await supabase.from('notifications').insert({
-                        user_id: clientId,
-                        type: 'success',
-                        title: 'Rutina Completada',
-                        message: `El cuidador ha completado todas las tareas de la agenda de hoy.`,
-                        metadata: { appointment_id: appointmentId, time: new Date().toISOString() }
-                    });
-                }
+                if (insertError) throw insertError;
+
+                // NOTIFICATION: Handled by Database Trigger (notify_client_on_care_log_insert)
+                // We only handle "Routine 100% Complete" if needed, but for now we rely on the trigger per task.
             }
 
 
