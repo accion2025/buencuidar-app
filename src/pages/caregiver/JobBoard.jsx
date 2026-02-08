@@ -50,38 +50,8 @@ const JobBoard = () => {
                             const msgContent = `SISTEMA: La oferta de trabajo "${job.title}" para el ${job.date} ha expirado y ha sido retirada de la bolsa de trabajo. Gracias por tu interés.`;
 
                             for (const applicant of applicants) {
-                                // Send system notification via messages
-                                // First check/create conversation
-                                const { data: conv } = await supabase
-                                    .from('conversations')
-                                    .select('id')
-                                    .or(`and(participant1_id.eq.${job.client_id},participant2_id.eq.${applicant.caregiver_id}),and(participant1_id.eq.${applicant.caregiver_id},participant2_id.eq.${job.client_id})`)
-                                    .single();
-
-                                let convId = conv?.id;
-                                if (!convId) {
-                                    const { data: newConv } = await supabase.from('conversations').insert({
-                                        participant1_id: job.client_id,
-                                        participant2_id: applicant.caregiver_id,
-                                        last_message: msgContent,
-                                        last_message_at: new Date()
-                                    }).select().single();
-                                    convId = newConv?.id;
-                                }
-
-                                if (convId) {
-                                    // 1. Message in Chat
-                                    await supabase.from('messages').insert({
-                                        conversation_id: convId,
-                                        sender_id: job.client_id,
-                                        content: msgContent
-                                    });
-                                    await supabase.from('conversations').update({
-                                        last_message: msgContent,
-                                        last_message_at: new Date()
-                                    }).eq('id', convId);
-
-                                    // 2. Alert in Notifications Center (for OneSignal/Push)
+                                try {
+                                    // 1. Mandatory Alert in Notifications Center (Always happens)
                                     await supabase.from('notifications').insert({
                                         user_id: applicant.caregiver_id,
                                         title: 'Oferta Expirada',
@@ -89,10 +59,42 @@ const JobBoard = () => {
                                         type: 'system',
                                         is_read: false
                                     });
+
+                                    // 2. Chat Message (Create conversation if needed)
+                                    const { data: conv } = await supabase
+                                        .from('conversations')
+                                        .select('id')
+                                        .or(`and(participant1_id.eq.${job.client_id},participant2_id.eq.${applicant.caregiver_id}),and(participant1_id.eq.${applicant.caregiver_id},participant2_id.eq.${job.client_id})`)
+                                        .maybeSingle();
+
+                                    let convId = conv?.id;
+                                    if (!convId) {
+                                        const { data: newConv } = await supabase.from('conversations').insert({
+                                            participant1_id: job.client_id,
+                                            participant2_id: applicant.caregiver_id,
+                                            last_message: msgContent,
+                                            last_message_at: new Date()
+                                        }).select().single();
+                                        convId = newConv?.id;
+                                    }
+
+                                    if (convId) {
+                                        await supabase.from('messages').insert({
+                                            conversation_id: convId,
+                                            sender_id: job.client_id,
+                                            content: msgContent
+                                        });
+                                        await supabase.from('conversations').update({
+                                            last_message: msgContent,
+                                            last_message_at: new Date()
+                                        }).eq('id', convId);
+                                    }
+                                } catch (notifErr) {
+                                    console.error(`Error notifying applicant ${applicant.caregiver_id}:`, notifErr);
                                 }
                             }
 
-                            // 3. Physically delete applications to clean up "My Applications" for caregivers
+                            // 3. Physically delete applications to clean up widgets for both Family and Caregiver
                             await supabase
                                 .from('job_applications')
                                 .delete()

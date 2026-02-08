@@ -234,6 +234,7 @@ const CaregiverOverview = () => {
             const todayStr = now.toLocaleDateString('en-CA');
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
 
+            // Existing: Confirmed shifts that were not started
             const { data: expiredShifts, error: fetchError } = await supabase
                 .from('appointments')
                 .select('id')
@@ -249,10 +250,45 @@ const CaregiverOverview = () => {
                     .from('appointments')
                     .update({ status: 'cancelled' })
                     .in('id', ids);
-                console.log(`Auto-cancelled ${ids.length} expired shifts from overview.`);
+            }
+
+            // NEW: Public jobs (pending) that expired (Clean up applications)
+            const { data: expiredJobs } = await supabase
+                .from('appointments')
+                .select('id, title, date, client_id')
+                .is('caregiver_id', null)
+                .eq('status', 'pending')
+                .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+
+            if (expiredJobs && expiredJobs.length > 0) {
+                for (const job of expiredJobs) {
+                    const { data: applicants } = await supabase
+                        .from('job_applications')
+                        .select('caregiver_id')
+                        .eq('appointment_id', job.id);
+
+                    if (applicants && applicants.length > 0) {
+                        for (const applicant of applicants) {
+                            try {
+                                // Notification Center (Always)
+                                await supabase.from('notifications').insert({
+                                    user_id: applicant.caregiver_id,
+                                    title: 'Oferta Expirada',
+                                    message: `La vacante "${job.title}" ha expirado.`,
+                                    type: 'system',
+                                    is_read: false
+                                });
+                            } catch (err) { }
+                        }
+                        // Delete applications
+                        await supabase.from('job_applications').delete().eq('appointment_id', job.id);
+                    }
+                    // Cancel appointment
+                    await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', job.id);
+                }
             }
         } catch (err) {
-            console.error("Error cleaning up expired shifts in overview:", err);
+            console.error("Error cleaning up expired shifts/jobs in overview:", err);
         }
     };
 

@@ -104,12 +104,102 @@ const DashboardOverview = () => {
 
     useEffect(() => {
         if (user) {
-            fetchAppointments();
-            fetchNotifications();
-            fetchPatients();
-            fetchCaregiversCount();
+            const loadData = async () => {
+                await cleanupExpiredJobs();
+                fetchAppointments();
+                fetchNotifications();
+                fetchPatients();
+                fetchCaregiversCount();
+            };
+            loadData();
         }
     }, [user]);
+
+    const cleanupExpiredJobs = async () => {
+        try {
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('en-CA');
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+
+            // Find jobs (appointments without caregiver_id) that are in the past
+            const { data: expiredJobs, error: fetchError } = await supabase
+                .from('appointments')
+                .select('id, title, date, client_id')
+                .is('caregiver_id', null)
+                .eq('status', 'pending')
+                .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+
+            if (fetchError) throw fetchError;
+
+            if (expiredJobs && expiredJobs.length > 0) {
+                for (const job of expiredJobs) {
+                    // 1. Get ALL applicants for this job
+                    const { data: applicants } = await supabase
+                        .from('job_applications')
+                        .select('caregiver_id')
+                        .eq('appointment_id', job.id);
+
+                    if (applicants && applicants.length > 0) {
+                        const msgContent = `SISTEMA: La oferta "${job.title}" para el ${job.date} ha expirado. Gracias por tu interés.`;
+
+                        for (const applicant of applicants) {
+                            try {
+                                // 1. Mandatory Alert in Notifications Center
+                                await supabase.from('notifications').insert({
+                                    user_id: applicant.caregiver_id,
+                                    title: 'Oferta Expirada',
+                                    message: `La vacante "${job.title}" para el ${job.date} ha expirado.`,
+                                    type: 'system',
+                                    is_read: false
+                                });
+
+                                // 2. Chat Message (Create conversation if needed)
+                                const { data: conv } = await supabase
+                                    .from('conversations')
+                                    .select('id')
+                                    .or(`and(participant1_id.eq.${job.client_id},participant2_id.eq.${applicant.caregiver_id}),and(participant1_id.eq.${applicant.caregiver_id},participant2_id.eq.${job.client_id})`)
+                                    .maybeSingle();
+
+                                let convId = conv?.id;
+                                if (!convId) {
+                                    const { data: newConv } = await supabase.from('conversations').insert({
+                                        participant1_id: job.client_id,
+                                        participant2_id: applicant.caregiver_id,
+                                        last_message: msgContent,
+                                        last_message_at: new Date()
+                                    }).select().single();
+                                    convId = newConv?.id;
+                                }
+
+                                if (convId) {
+                                    await supabase.from('messages').insert({
+                                        conversation_id: convId,
+                                        sender_id: job.client_id,
+                                        content: msgContent
+                                    });
+                                    await supabase.from('conversations').update({
+                                        last_message: msgContent,
+                                        last_message_at: new Date()
+                                    }).eq('id', convId);
+                                }
+                            } catch (err) {
+                                console.error("Error notifying in cleanup:", err);
+                            }
+                        }
+
+                        // 2. Physical delete of applications to clean the widget
+                        await supabase.from('job_applications').delete().eq('appointment_id', job.id);
+                    }
+
+                    // 3. Status to cancelled
+                    await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', job.id);
+                }
+                console.log(`[Cleanup] Proccessed ${expiredJobs.length} expired appointments from Dashboard.`);
+            }
+        } catch (error) {
+            console.error("Error in dashboard cleanup:", error);
+        }
+    };
 
     const fetchAppointments = async () => {
         try {
