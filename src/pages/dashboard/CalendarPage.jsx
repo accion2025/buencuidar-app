@@ -471,7 +471,7 @@ const CalendarPage = () => {
                                                             <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-[16px]"><Edit2 size={16} /></button>
                                                             <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
                                                         </>
-                                                    ) : isPast ? (
+                                                    ) : isActuallyPast ? (
                                                         <span className="p-1.5 text-gray-300" title="Registro histórico no editable"><Lock size={16} /></span>
                                                     ) : (
                                                         <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
@@ -493,14 +493,11 @@ const CalendarPage = () => {
                                             </div>
 
                                             {(() => {
-                                                const now = new Date();
-                                                const todayStr = now.toLocaleDateString('en-CA');
-                                                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
-                                                const isPast = event.originalDate < todayStr || (event.originalDate === todayStr && event.time < currentTime);
-
+                                                // Using the same variables defined above (isGray, isActuallyPast) 
+                                                // which are already in scope from the parent map.
                                                 return (
                                                     <>
-                                                        {!isGray && !isPast && (
+                                                        {!isGray && !isActuallyPast && (
                                                             <button
                                                                 onClick={() => {
                                                                     setSelectedAgendaId(event.id);
@@ -512,7 +509,7 @@ const CalendarPage = () => {
                                                                 <Settings size={14} /> Configurar Agenda BC PULSO
                                                             </button>
                                                         )}
-                                                        {isPast && (
+                                                        {isActuallyPast && (
                                                             <div className="mt-3 py-2 bg-gray-100 text-gray-400 rounded-[12px] text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 border border-gray-200">
                                                                 <Lock size={12} /> Registro Histórico (No editable)
                                                             </div>
