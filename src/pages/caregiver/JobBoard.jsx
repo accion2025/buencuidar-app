@@ -24,21 +24,29 @@ const JobBoard = () => {
             try {
                 const now = new Date();
                 const todayStr = now.toLocaleDateString('en-CA');
-                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                // Add 5 minutes grace period
+                const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
+                const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
 
-                // Find jobs that are pending, unassigned, and expired (before today OR today but before current time)
-                const { data: expiredJobs, error: fetchError } = await supabase
+                // Find jobs that are pending, unassigned, and expired (5 min after END TIME)
+                const { data: maybeExpired, error: fetchError } = await supabase
                     .from('appointments')
-                    .select('id, title, date, time, client_id')
+                    .select('id, title, date, time, end_time, client_id')
                     .eq('status', 'pending')
                     .is('caregiver_id', null)
-                    .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+                    .lte('date', todayStr);
 
                 if (fetchError) throw fetchError;
 
+                const expiredJobs = (maybeExpired || []).filter(job => {
+                    if (job.date < todayStr) return true;
+                    const endTime = job.end_time || job.time;
+                    return endTime < currentGraceTimeStr;
+                });
+
                 if (expiredJobs && expiredJobs.length > 0) {
                     for (const job of expiredJobs) {
-                        // 1. Get applicants for this job
+                        // 1. Get ALL applicants for this job
                         const { data: applicants, error: appError } = await supabase
                             .from('job_applications')
                             .select('caregiver_id')
@@ -47,11 +55,9 @@ const JobBoard = () => {
                         if (appError) continue;
 
                         if (applicants && applicants.length > 0) {
-                            const msgContent = `SISTEMA: La oferta de trabajo "${job.title}" para el ${job.date} ha expirado y ha sido retirada de la bolsa de trabajo. Gracias por tu interés.`;
-
                             for (const applicant of applicants) {
                                 try {
-                                    // 1. Mandatory Alert in Notifications Center (Always happens)
+                                    // Mandatory Alert in Notifications Center (ONLY)
                                     await supabase.from('notifications').insert({
                                         user_id: applicant.caregiver_id,
                                         title: 'Oferta Expirada',
@@ -59,52 +65,19 @@ const JobBoard = () => {
                                         type: 'system',
                                         is_read: false
                                     });
-
-                                    // 2. Chat Message (Create conversation if needed)
-                                    const { data: conv } = await supabase
-                                        .from('conversations')
-                                        .select('id')
-                                        .or(`and(participant1_id.eq.${job.client_id},participant2_id.eq.${applicant.caregiver_id}),and(participant1_id.eq.${applicant.caregiver_id},participant2_id.eq.${job.client_id})`)
-                                        .maybeSingle();
-
-                                    let convId = conv?.id;
-                                    if (!convId) {
-                                        const { data: newConv } = await supabase.from('conversations').insert({
-                                            participant1_id: job.client_id,
-                                            participant2_id: applicant.caregiver_id,
-                                            last_message: msgContent,
-                                            last_message_at: new Date()
-                                        }).select().single();
-                                        convId = newConv?.id;
-                                    }
-
-                                    if (convId) {
-                                        await supabase.from('messages').insert({
-                                            conversation_id: convId,
-                                            sender_id: job.client_id,
-                                            content: msgContent
-                                        });
-                                        await supabase.from('conversations').update({
-                                            last_message: msgContent,
-                                            last_message_at: new Date().toISOString()
-                                        }).eq('id', convId);
-                                    }
                                 } catch (notifErr) {
                                     console.error(`Error notifying applicant ${applicant.caregiver_id}:`, notifErr);
                                 }
                             }
 
-                            // 3. Physically delete applications to clean up widgets for both Family and Caregiver
-                            await supabase
-                                .from('job_applications')
-                                .delete()
-                                .eq('appointment_id', job.id);
+                            // 2. Physically delete applications
+                            await supabase.from('job_applications').delete().eq('appointment_id', job.id);
                         }
 
-                        // 2. Mark job as cancelled/expired so it doesn't appear anymore
+                        // 3. Mark job as cancelled
                         await supabase
                             .from('appointments')
-                            .update({ status: 'cancelled' }) // Or 'expired' if you wish to add it, using cancelled for now
+                            .update({ status: 'cancelled' })
                             .eq('id', job.id);
                     }
                     // Refresh if any expired
@@ -148,12 +121,12 @@ const JobBoard = () => {
             const from = pageNumber * JOBS_PER_PAGE;
             const to = from + JOBS_PER_PAGE - 1;
 
-            const now = new Date();
-            const todayStr = now.toLocaleDateString('en-CA');
-            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+            // Add 5 minutes grace period
+            const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
+            const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
 
             // 1. Fetch appointments that are pending and have NO caregiver assigned (Open Jobs)
-            // Filter: Future dates OR Today but future time
+            // Bring all from today onwards to filter more reliably in JavaScript
             const { data: jobsData, error: jobsError } = await supabase
                 .from('appointments')
                 .select(`
@@ -169,7 +142,7 @@ const JobBoard = () => {
                 `)
                 .eq('status', 'pending')
                 .is('caregiver_id', null)
-                .or(`date.gt.${todayStr},and(date.eq.${todayStr},time.gte.${currentTime})`)
+                .gte('date', todayStr)
                 .order('date', { ascending: true })
                 .order('time', { ascending: true })
                 .range(from, to);
@@ -195,10 +168,17 @@ const JobBoard = () => {
 
             setAppliedJobs(appliedMap);
 
+            // 2. Client-side filter to respect the 5-minute grace period exactly
+            const filteredJobs = (jobsData || []).filter(job => {
+                if (job.date > todayStr) return true;
+                const endTime = job.end_time || job.time;
+                return endTime >= currentGraceTimeStr;
+            });
+
             if (pageNumber === 0) {
-                setJobs(jobsData || []);
+                setJobs(filteredJobs);
             } else {
-                setJobs(prev => [...prev, ...(jobsData || [])]);
+                setJobs(prev => [...prev, ...filteredJobs]);
             }
 
             if (jobsData && jobsData.length < JOBS_PER_PAGE) {

@@ -232,9 +232,11 @@ const CaregiverOverview = () => {
         try {
             const now = new Date();
             const todayStr = now.toLocaleDateString('en-CA');
-            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+            // Add 5 minutes grace period
+            const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
+            const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
 
-            // Confirmed shifts that were not started by their END TIME
+            // Confirmed shifts that were not started by their END TIME (+ 5 min)
             const { data: maybePastShifts, error: fetchError } = await supabase
                 .from('appointments')
                 .select('id, date, time, end_time')
@@ -247,7 +249,7 @@ const CaregiverOverview = () => {
             const expiredShifts = (maybePastShifts || []).filter(s => {
                 if (s.date < todayStr) return true;
                 const endTime = s.end_time || s.time;
-                return endTime < currentTime;
+                return endTime < currentGraceTimeStr;
             });
 
             if (fetchError) throw fetchError;
@@ -260,13 +262,13 @@ const CaregiverOverview = () => {
                     .in('id', ids);
             }
 
-            // NEW: Public jobs (pending) that expired (Clean up applications)
+            // NEW: Public jobs (pending) that expired (Clean up applications) - 5 min grace
             const { data: expiredJobs } = await supabase
                 .from('appointments')
                 .select('id, title, date, client_id')
                 .is('caregiver_id', null)
                 .eq('status', 'pending')
-                .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+                .or(`date.lt.${todayStr},and(date.eq.${todayStr},end_time.lt.${currentGraceTimeStr})`);
 
             if (expiredJobs && expiredJobs.length > 0) {
                 for (const job of expiredJobs) {
@@ -515,14 +517,17 @@ const CaregiverOverview = () => {
 
             const now = new Date();
             const todayStr = now.toLocaleDateString('en-CA');
-            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+            // Add 5 minutes grace period for filtering applications too
+            const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
+            const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
 
             // DUAL-FILTER: Clean up applications for expired/cancelled appointments
             const activeApplications = (data || []).filter(app => {
                 if (!app.appointment) return false;
 
                 const isCancelled = app.appointment.status === 'cancelled';
-                const isPast = app.appointment.date < todayStr || (app.appointment.date === todayStr && app.appointment.time < currentTime);
+                const endTime = app.appointment.end_time || app.appointment.time;
+                const isPast = app.appointment.date < todayStr || (app.appointment.date === todayStr && endTime < currentGraceTimeStr);
 
                 // Point 3: Remove cancelled by time/status from the list
                 return !isCancelled && !isPast;
