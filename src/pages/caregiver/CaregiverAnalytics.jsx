@@ -119,11 +119,9 @@ const CaregiverAnalytics = () => {
             const monthsMap = {};
 
             const processedPayments = (apps || []).map(app => {
-                // Logic: STRICTLY use payment_amount ONLY if status is 'paid'.
-                // If not paid, earnings are 0 (do not use offered_rate).
-                const amount = app.payment_status === 'paid' && app.payment_amount
-                    ? parseFloat(app.payment_amount)
-                    : 0;
+                // Logic: Use payment_amount if available, otherwise estimate from offered_rate * hours
+                // This ensures "valores" are shown even for pending payments
+                let amount = 0;
 
                 // Calculate hours
                 let hours = 0;
@@ -140,6 +138,12 @@ const CaregiverAnalytics = () => {
                         // Handle overnight shift (e.g. 23:00 to 06:00)
                         hours = (24 - start) + end;
                     }
+                }
+
+                if (app.payment_status === 'paid' && app.payment_amount) {
+                    amount = parseFloat(app.payment_amount);
+                } else if (app.offered_rate && hours > 0) {
+                    amount = parseFloat(app.offered_rate) * hours;
                 }
 
                 // Aggregate totals
@@ -191,7 +195,7 @@ const CaregiverAnalytics = () => {
     };
 
     const generateReport = () => {
-        const doc = new jsPDF();
+        const doc = new jsPDF({ orientation: 'landscape' });
 
         // Header
         doc.setFontSize(22);
@@ -206,7 +210,7 @@ const CaregiverAnalytics = () => {
         // Stats Box
         doc.setDrawColor(240);
         doc.setFillColor(249, 250, 251);
-        doc.roundedRect(14, 45, 182, 25, 3, 3, 'FD');
+        doc.roundedRect(14, 45, 269, 25, 3, 3, 'FD'); // Width adjusted for landscape
 
         doc.setFontSize(11);
         doc.setTextColor(15, 60, 76);
@@ -225,20 +229,23 @@ const CaregiverAnalytics = () => {
             p.patient?.full_name || 'N/A',
             p.address || 'N/A',
             `${p.calculatedHours.toFixed(1)}h`,
-            `$${p.calculatedAmount}`,
-            p.payment_status === 'paid' ? 'PAGADO' : 'COMPLETADO'
+            `$${p.hourlyRate}`,
+            `$${p.calculatedAmount.toFixed(2)}`,
+            p.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE'
         ]);
 
         autoTable(doc, {
             startY: 80,
-            head: [['Fecha', 'Cliente', 'Familiar', 'Dirección', 'Horas', 'Total', 'Estado']],
+            head: [['Fecha', 'Cliente', 'Familiar', 'Dirección', 'Horas', 'Tarifa', 'Total', 'Estado']],
             body: tableData,
             headStyles: { fillColor: [15, 60, 76], textColor: [250, 250, 247] }, // FAFAF7
             alternateRowStyles: { fillColor: [249, 250, 251] },
             margin: { top: 80 },
-            styles: { font: "helvetica", fontSize: 8 }, // Smaller font to fit more columns
+            styles: { font: "helvetica", fontSize: 8 },
             columnStyles: {
-                3: { cellWidth: 40 } // Give more width to Address
+                3: { cellWidth: 70 }, // Address needs space
+                1: { cellWidth: 35 }, // Client
+                2: { cellWidth: 35 }  // Patient
             }
         });
 
