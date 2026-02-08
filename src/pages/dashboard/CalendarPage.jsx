@@ -78,8 +78,8 @@ const CalendarPage = () => {
             `)
                 .or(`client_id.eq.${user.id},caregiver_id.eq.${user.id}`)
                 .gte('date', firstDay.split('T')[0])
-                .lte('date', lastDay.split('T')[0])
-                .neq('status', 'cancelled');
+                .lte('date', lastDay.split('T')[0]);
+            // Removed .neq('status', 'cancelled') to show historical records
 
             if (error) throw error;
 
@@ -128,8 +128,30 @@ const CalendarPage = () => {
             selectedServices: services
         });
 
+        const now = new Date();
+        const todayStr = now.toLocaleDateString('en-CA');
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+        const endTime = appointment.end_time || appointment.time;
+        const isPast = appointment.originalDate < todayStr || (appointment.originalDate === todayStr && endTime < currentTime);
+        const isHistorical = ['completed', 'paid', 'cancelled'].includes(appointment.status) || isPast;
+
+        if (isHistorical) {
+            alert("No se pueden editar citas pasadas o finalizadas.");
+            return;
+        }
+
+        setNewAppointment({
+            title: appointment.title,
+            time: appointment.time,
+            endTime: appointment.end_time || '',
+            type: appointment.type,
+            patient_id: appointment.patient_id || '',
+            address: appointment.address || '',
+            selectedServices: services
+        });
+
         setEditingId(appointment.id);
-        setSelectedDate(appointment.calendar_date_day || appointment.date);
+        setSelectedDate(appointment.date); // Use the day number already in appointment.date
         setShowModal(true);
     };
 
@@ -235,33 +257,33 @@ const CalendarPage = () => {
     const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
     const emptyDays = Array(firstDayOfMonth).fill(null);
     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
     const getEventColor = (event) => {
         const now = new Date();
         const todayStr = now.toLocaleDateString('en-CA');
         const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
 
-        // Case 1: Status based (historical/cancelled)
-        if (['completed', 'paid', 'cancelled'].includes(event.status)) {
-            return 'bg-gray-100 text-gray-400 border-gray-200 opacity-60 italic';
+        const statusColors = {
+            'confirmed': 'bg-green-100 text-green-700 border-green-200 font-bold',
+            'cancelled': 'bg-gray-100 text-gray-400 border-gray-100 opacity-60 italic',
+            'completed': 'bg-slate-100 text-slate-400 border-slate-100 opacity-60',
+            'paid': 'bg-slate-100 text-slate-400 border-slate-200 opacity-60'
+        };
+
+        if (statusColors[event.status]) {
+            if (['cancelled', 'completed', 'paid'].includes(event.status)) return statusColors[event.status];
         }
 
-        // Case 2: Past dates (Strictly before today)
-        if (event.originalDate < todayStr) {
-            return 'bg-slate-50 text-slate-400 border-slate-200 opacity-70';
+        const isPastDate = event.originalDate < todayStr;
+        const endTime = event.end_time || event.time;
+        const isPastTime = event.originalDate === todayStr && endTime < currentTime;
+
+        // Visual priority: Block only if the END TIME has passed (today or before)
+        if (isPastDate || isPastTime) {
+            return 'bg-gray-100 text-gray-400 border-gray-100 opacity-50 italic';
         }
 
-        // Case 3: Expired Today (Today but past time) -> Requirement 2
-        if (event.originalDate === todayStr && event.time < currentTime) {
-            return 'bg-slate-50 text-slate-400 border-slate-200 opacity-70';
-        }
-
-        // Case 4: Confirmed (Active)
-        if (event.status === 'confirmed') {
-            return 'bg-green-100 text-green-700 border-green-200 font-bold';
-        }
-
-        // Default: Pending/Future
+        // Catch-all for other non-past confirmed/pending
+        if (event.status === 'confirmed') return statusColors.confirmed;
         return 'bg-blue-100 text-blue-700 border-blue-200 font-medium';
     };
 
@@ -430,17 +452,21 @@ const CalendarPage = () => {
                             <>
                                 <button onClick={() => openModal(selectedDate)} className="w-full mb-4 py-2 border border-dashed border-blue-600 text-blue-600 rounded-[16px] font-medium hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"><Plus size={16} /> Agregar otra cita</button>
                                 {appointments.filter(a => a.date === selectedDate).map(event => {
-                                    const isGray = ['completed', 'paid', 'cancelled'].includes(event.status);
+                                    const now = new Date();
+                                    const todayStr = now.toLocaleDateString('en-CA');
+                                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                    const isPastDate = event.originalDate < todayStr;
+                                    const endTime = event.end_time || event.time;
+                                    const isPastTime = event.originalDate === todayStr && endTime < currentTime;
+
+                                    // General Rule: Past if END TIME reached (today or before)
+                                    const isActuallyPast = isPastDate || isPastTime;
+                                    const isGray = ['completed', 'paid', 'cancelled'].includes(event.status) || isActuallyPast;
                                     return (
                                         <div key={event.id} className={`p-4 rounded-[16px] shadow-sm border relative group/event ${isGray ? 'bg-gray-50 border-gray-200 opacity-60' : 'bg-white border-gray-100'}`}>
                                             <div className="flex gap-1 absolute top-2 right-2">
                                                 {(() => {
-                                                    const now = new Date();
-                                                    const todayStr = now.toLocaleDateString('en-CA');
-                                                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
-                                                    const isPast = event.originalDate < todayStr || (event.originalDate === todayStr && event.time < currentTime);
-
-                                                    return !isGray && !isPast ? (
+                                                    return !isGray && !isActuallyPast ? (
                                                         <>
                                                             <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-[16px]"><Edit2 size={16} /></button>
                                                             <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>

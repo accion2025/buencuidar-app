@@ -121,13 +121,21 @@ const DashboardOverview = () => {
             const todayStr = now.toLocaleDateString('en-CA');
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
 
-            // Find jobs (appointments without caregiver_id) that are in the past
-            const { data: expiredJobs, error: fetchError } = await supabase
+            // Find jobs (appointments without caregiver_id) that are in the past or expired today
+            const { data: maybeExpired, error: fetchError } = await supabase
                 .from('appointments')
-                .select('id, title, date, client_id')
+                .select('id, title, date, time, end_time, client_id')
                 .is('caregiver_id', null)
                 .eq('status', 'pending')
-                .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+                .lte('date', todayStr);
+
+            if (fetchError) throw fetchError;
+
+            const expiredJobs = (maybeExpired || []).filter(job => {
+                if (job.date < todayStr) return true;
+                const endTime = job.end_time || job.time;
+                return endTime < currentTime;
+            });
 
             if (fetchError) throw fetchError;
 
@@ -179,7 +187,7 @@ const DashboardOverview = () => {
                                     });
                                     await supabase.from('conversations').update({
                                         last_message: msgContent,
-                                        last_message_at: new Date()
+                                        last_message_at: new Date().toISOString()
                                     }).eq('id', convId);
                                 }
                             } catch (err) {
@@ -187,14 +195,14 @@ const DashboardOverview = () => {
                             }
                         }
 
-                        // 2. Physical delete of applications to clean the widget
+                        // 3. Physical delete of applications to clean the widget for caregivers
                         await supabase.from('job_applications').delete().eq('appointment_id', job.id);
                     }
 
-                    // 3. Status to cancelled
+                    // 4. Status to cancelled (Keep in calendar history)
                     await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', job.id);
                 }
-                console.log(`[Cleanup] Proccessed ${expiredJobs.length} expired appointments from Dashboard.`);
+                console.log(`[Cleanup] Processed ${expiredJobs.length} expired appointments from Dashboard.`);
             }
         } catch (error) {
             console.error("Error in dashboard cleanup:", error);

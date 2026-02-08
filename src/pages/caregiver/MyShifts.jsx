@@ -20,12 +20,21 @@ const MyShifts = () => {
             const todayStr = now.toLocaleDateString('en-CA');
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
 
-            const { data: expiredShifts, error: fetchError } = await supabase
+            // Confirmed shifts that were not started by their END TIME
+            const { data: maybePastShifts, error: fetchError } = await supabase
                 .from('appointments')
-                .select('id')
+                .select('id, date, time, end_time')
                 .eq('caregiver_id', user.id)
                 .eq('status', 'confirmed')
-                .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+                .lte('date', todayStr);
+
+            if (fetchError) throw fetchError;
+
+            const expiredShifts = (maybePastShifts || []).filter(s => {
+                if (s.date < todayStr) return true;
+                const endTime = s.end_time || s.time;
+                return endTime < currentTime;
+            });
 
             if (fetchError) throw fetchError;
 

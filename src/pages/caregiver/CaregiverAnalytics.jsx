@@ -355,10 +355,7 @@ const CaregiverAnalytics = () => {
             {/* Detailed Table */}
             <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
                 <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Historial de Pagos</h3>
-                        <span className="bg-blue-100 text-blue-600 text-[9px] font-black px-2 py-1 rounded-md uppercase tracking-tighter">v1.2.4 (Meses y Totales)</span>
-                    </div>
+                    <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Historial de Pagos</h3>
                     <button
                         onClick={generateReport}
                         className="flex items-center gap-2 bg-[var(--primary-color)] !text-[#FAFAF7] font-black text-[10px] uppercase tracking-widest px-6 py-3 rounded-[16px] hover:bg-[#1a5a70] transition-all shadow-xl shadow-blue-900/20"
@@ -372,8 +369,7 @@ const CaregiverAnalytics = () => {
                             <tr>
                                 <th className="px-8 py-5">Fecha</th>
                                 <th className="px-8 py-5">Cliente</th>
-                                <th className="px-8 py-5">Familiar / Paciente</th>
-                                <th className="px-8 py-5">Dirección</th>
+                                <th className="px-8 py-5">Familiar</th>
                                 <th className="px-8 py-5 text-center">Horas</th>
                                 <th className="px-8 py-5 text-center">$/Hora</th>
                                 <th className="px-8 py-5 text-right">Total</th>
@@ -383,13 +379,8 @@ const CaregiverAnalytics = () => {
                         <tbody className="divide-y divide-gray-100">
                             {(() => {
                                 let lastMonth = "";
-                                return payments.map((pay) => {
-                                    const dateArr = pay.date.split('-');
-                                    const year = dateArr[0];
-                                    const month = dateArr[1] - 1;
-                                    const day = dateArr[2];
-                                    const dateObj = new Date(year, month, day);
-
+                                return payments.map((pay, index) => {
+                                    const dateObj = new Date(pay.date);
                                     const currentMonth = dateObj.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
                                     const isNewMonth = currentMonth !== lastMonth;
                                     lastMonth = currentMonth;
@@ -397,25 +388,25 @@ const CaregiverAnalytics = () => {
                                     return (
                                         <React.Fragment key={pay.id}>
                                             {isNewMonth && (
-                                                <tr className="bg-slate-50/50 border-y border-slate-100">
-                                                    <td colSpan="8" className="px-8 py-4">
-                                                        <div className="flex items-center gap-4">
-                                                            <span className="text-[10px] font-black tracking-[0.4em] text-[#2FAE8F] whitespace-nowrap">{currentMonth}</span>
-                                                            <div className="h-[2px] w-full bg-gradient-to-r from-[#2FAE8F]/20 to-transparent"></div>
+                                                <tr className="bg-slate-50/80 border-y border-slate-100">
+                                                    <td colSpan="7" className="px-8 py-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="h-px flex-grow bg-slate-200"></div>
+                                                            <span className="text-[10px] font-black tracking-[0.3em] text-[var(--primary-color)] opacity-60">{currentMonth}</span>
+                                                            <div className="h-px flex-grow bg-slate-200"></div>
                                                         </div>
                                                     </td>
                                                 </tr>
                                             )}
-                                            <tr className="hover:bg-blue-50/50 transition-colors text-[13px] border-b border-gray-50">
+                                            <tr className="hover:bg-blue-50/50 transition-colors text-sm">
                                                 <td className="px-6 py-4 font-medium text-gray-800">{pay.date}</td>
                                                 <td className="px-6 py-4 text-gray-600">{pay.client?.full_name}</td>
-                                                <td className="px-6 py-4 text-gray-900 font-bold">{pay.patient?.full_name || 'N/A'}</td>
-                                                <td className="px-6 py-4 text-gray-400 text-xs italic max-w-[150px] truncate">{pay.address || 'N/A'}</td>
-                                                <td className="px-6 py-4 text-center font-mono font-bold text-[#0F3C4C]">{pay.calculatedHours.toFixed(1)}h</td>
+                                                <td className="px-6 py-4 text-gray-500 font-bold">{pay.patient?.full_name || 'N/A'}</td>
+                                                <td className="px-6 py-4 text-center font-mono">{pay.calculatedHours.toFixed(1)}h</td>
                                                 <td className="px-6 py-4 text-center font-mono text-gray-400">${pay.hourlyRate}</td>
-                                                <td className="px-6 py-4 text-right font-black text-gray-900">${pay.calculatedAmount.toLocaleString()}</td>
+                                                <td className="px-6 py-4 text-right font-bold text-gray-800">${pay.calculatedAmount}</td>
                                                 <td className="px-6 py-4 text-center">
-                                                    <span className={`px-3 py-1 rounded-full text-[9px] font-black tracking-tighter uppercase ${pay.payment_status === 'paid'
+                                                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${pay.payment_status === 'paid'
                                                         ? 'bg-green-100 text-green-700'
                                                         : 'bg-blue-100 text-blue-700'
                                                         }`}>
@@ -426,20 +417,20 @@ const CaregiverAnalytics = () => {
                                         </React.Fragment>
                                     );
                                 });
-                            })() || null}
+                            })()}
 
                             {/* Totals Row */}
                             {payments.length > 0 && (
-                                <tr className="bg-[#0F3C4C] text-[#FAFAF7] font-bold">
-                                    <td colSpan="4" className="px-8 py-5 text-right text-[10px] uppercase tracking-widest opacity-80">Totales Acumulados</td>
-                                    <td className="px-6 py-5 text-center font-mono text-xl">
+                                <tr className="bg-slate-50 font-bold border-t-2 border-slate-200">
+                                    <td colSpan="3" className="px-8 py-4 text-right text-[10px] uppercase tracking-widest text-gray-500">Totales Acumulados</td>
+                                    <td className="px-6 py-4 text-center font-mono text-[#0F3C4C]">
                                         {payments.reduce((acc, p) => acc + p.calculatedHours, 0).toFixed(1)}h
                                     </td>
-                                    <td className="px-6 py-5 text-center opacity-40">-</td>
-                                    <td className="px-6 py-5 text-right font-black text-2xl text-[#2FAE8F]">
+                                    <td className="px-6 py-4 text-center text-gray-400">-</td>
+                                    <td className="px-6 py-4 text-right font-black text-[#0F3C4C] text-lg">
                                         ${Math.round(payments.reduce((acc, p) => acc + p.calculatedAmount, 0)).toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-5"></td>
+                                    <td className="px-6 py-4"></td>
                                 </tr>
                             )}
 

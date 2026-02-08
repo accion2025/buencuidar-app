@@ -86,7 +86,7 @@ const JobBoard = () => {
                                         });
                                         await supabase.from('conversations').update({
                                             last_message: msgContent,
-                                            last_message_at: new Date()
+                                            last_message_at: new Date().toISOString()
                                         }).eq('id', convId);
                                     }
                                 } catch (notifErr) {

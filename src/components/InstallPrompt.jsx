@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Download, X, Share } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 const InstallPrompt = ({ className }) => {
+    const location = useLocation();
     const [deferredPrompt, setDeferredPrompt] = useState(null);
     const [showPrompt, setShowPrompt] = useState(false);
     const [isIOS, setIsIOS] = useState(false);
@@ -11,9 +13,13 @@ const InstallPrompt = ({ className }) => {
         // 1. Check if already installed (Standalone mode)
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-        // ALWAYS show the prompt if not currently installed
-        if (!isStandalone) {
+        // Condition: Only show on landing (/) or home (/home)
+        const isAllowedPage = location.pathname === '/' || location.pathname === '/home';
+
+        if (!isStandalone && isAllowedPage) {
             setShowPrompt(true);
+        } else {
+            setShowPrompt(false);
         }
 
         // 2. Detect iOS
