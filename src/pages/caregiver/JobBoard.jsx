@@ -26,13 +26,13 @@ const JobBoard = () => {
                 const todayStr = now.toLocaleDateString('en-CA');
                 const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
 
-                // Find jobs that are pending, unassigned, and expired (before today OR today but before current time)
+                // Find jobs that are pending, unassigned, and expired (before today OR today but end_time passed)
                 const { data: expiredJobs, error: fetchError } = await supabase
                     .from('appointments')
-                    .select('id, title, date, time, client_id')
+                    .select('id, title, date, time, end_time, client_id')
                     .eq('status', 'pending')
                     .is('caregiver_id', null)
-                    .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+                    .or(`date.lt.${todayStr},and(date.eq.${todayStr},end_time.lt.${currentTime})`);
 
                 if (fetchError) throw fetchError;
 
@@ -169,7 +169,7 @@ const JobBoard = () => {
                 `)
                 .eq('status', 'pending')
                 .is('caregiver_id', null)
-                .or(`date.gt.${todayStr},and(date.eq.${todayStr},time.gte.${currentTime})`)
+                .or(`date.gt.${todayStr},and(date.eq.${todayStr},end_time.gte.${currentTime})`)
                 .order('date', { ascending: true })
                 .order('time', { ascending: true })
                 .range(from, to);
