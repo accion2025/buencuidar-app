@@ -315,13 +315,12 @@ const CaregiverOverview = () => {
                 if (hours > 0) monthlyHours += hours;
             });
 
-            // 3. Upcoming Count
             const { count: upcomingCount } = await supabase
                 .from('appointments')
                 .select('*', { count: 'exact', head: true })
                 .eq('caregiver_id', user.id)
                 .gte('date', today)
-                .neq('status', 'cancelled');
+                .eq('status', 'confirmed');
 
             const newStats = [];
 
