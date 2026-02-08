@@ -7,6 +7,7 @@ import { supabase } from '../../lib/supabase';
 import EditPaymentModal from '../../components/dashboard/EditPaymentModal';
 import AddCareLogModal from '../../components/dashboard/AddCareLogModal';
 import WellnessReportModal from '../../components/dashboard/WellnessReportModal';
+import AllApplicationsModal from '../../components/dashboard/AllApplicationsModal';
 
 const CaregiverOverview = () => {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ const CaregiverOverview = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
     const [showWellnessModal, setShowWellnessModal] = useState(false);
+    const [isAppsModalOpen, setIsAppsModalOpen] = useState(false);
 
     // Payment Modal State
     const [editingPayment, setEditingPayment] = useState(null);
@@ -290,8 +292,11 @@ const CaregiverOverview = () => {
                                 });
                             } catch (err) { }
                         }
-                        // Delete applications
-                        await supabase.from('job_applications').delete().eq('appointment_id', job.id);
+                        // Mark applications as CANCELLED (Do NOT delete)
+                        await supabase
+                            .from('job_applications')
+                            .update({ status: 'cancelled' })
+                            .eq('appointment_id', job.id);
                     }
                     // Cancel appointment
                     await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', job.id);
@@ -511,29 +516,13 @@ const CaregiverOverview = () => {
                 `)
                 .eq('caregiver_id', user.id)
                 .order('created_at', { ascending: false })
-                .limit(10); // increased limit slightly to allow filtering junk without empty list
+                .limit(20); // Fetches more to allow for filtering
 
             if (error) throw error;
 
-            const now = new Date();
-            const todayStr = now.toLocaleDateString('en-CA');
-            // Add 5 minutes grace period for filtering applications too
-            const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
-            const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
-
-            // DUAL-FILTER: Clean up applications for expired/cancelled appointments
-            const activeApplications = (data || []).filter(app => {
-                if (!app.appointment) return false;
-
-                const isCancelled = app.appointment.status === 'cancelled';
-                const endTime = app.appointment.end_time || app.appointment.time;
-                const isPast = app.appointment.date < todayStr || (app.appointment.date === todayStr && endTime < currentGraceTimeStr);
-
-                // Point 3: Remove cancelled by time/status from the list
-                return !isCancelled && !isPast;
-            });
-
-            setMyApplications(activeApplications.slice(0, 5));
+            // NEW POLICY: Show ALL applications (History), including cancelled/expired
+            // We just sort them by date (already sorted by query)
+            setMyApplications(data.slice(0, 5));
         } catch (error) {
             console.error("Error fetching applications:", error);
         }
@@ -1107,10 +1096,12 @@ const CaregiverOverview = () => {
                                                 <p className="text-xs font-bold text-gray-800">{app.appointment?.title || 'Servicio'}</p>
                                                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${app.status === 'approved' ? 'bg-green-100 text-green-700' :
                                                     app.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                        'bg-yellow-100 text-yellow-700'
+                                                        (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'bg-gray-200 text-gray-600' :
+                                                            'bg-yellow-100 text-yellow-700'
                                                     }`}>
                                                     {app.status === 'approved' ? 'Aprobada' :
-                                                        app.status === 'rejected' ? 'Rechazada' : 'Pendiente'}
+                                                        app.status === 'rejected' ? 'Rechazada' :
+                                                            (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'Cancelada/Exp' : 'Pendiente'}
                                                 </span>
                                             </div>
                                             <p className="text-[11px] text-gray-500 mb-2">Cliente: {app.appointment?.client?.full_name || 'Anónimo'}</p>
@@ -1134,6 +1125,13 @@ const CaregiverOverview = () => {
                                 >
                                     Ver Bolsa de Trabajo
                                 </button>
+
+                                <button
+                                    onClick={() => setIsAppsModalOpen(true)}
+                                    className="w-full mt-4 text-xs text-gray-500 font-bold hover:text-[var(--primary-color)] transition-colors border-t border-gray-100 pt-3 flex items-center justify-center gap-1"
+                                >
+                                    Ver todas ({myApplications?.length || 0})
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1141,6 +1139,12 @@ const CaregiverOverview = () => {
             </div>
 
             {/* Modals outside the animated container */}
+            <AllApplicationsModal
+                isOpen={isAppsModalOpen}
+                onClose={() => setIsAppsModalOpen(false)}
+                applications={myApplications}
+            />
+
             <EditPaymentModal
                 appointment={editingPayment}
                 isOpen={!!editingPayment}

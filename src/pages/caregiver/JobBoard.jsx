@@ -86,8 +86,11 @@ const JobBoard = () => {
                                 }
                             }
 
-                            // 2. Physically delete applications
-                            await supabase.from('job_applications').delete().eq('appointment_id', job.id);
+                            // 2. Mark applications as CANCELLED (Do NOT delete)
+                            await supabase
+                                .from('job_applications')
+                                .update({ status: 'cancelled' })
+                                .eq('appointment_id', job.id);
                         }
 
                         // 3. Mark job as cancelled
