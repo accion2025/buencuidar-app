@@ -29,7 +29,7 @@ const JobBoard = () => {
                 const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
 
                 // Find jobs that are pending, unassigned, and expired (before today OR today but end_time passed)
-                const { data: expiredJobs, error: fetchError } = await supabase
+                const { data: maybeExpired, error: fetchError } = await supabase
                     .from('appointments')
                     .select('id, title, date, time, end_time, client_id')
                     .eq('status', 'pending')
@@ -38,14 +38,14 @@ const JobBoard = () => {
 
                 if (fetchError) throw fetchError;
 
-                const expiredJobs = (maybeExpired || []).filter(job => {
+                const expiredJobsList = (maybeExpired || []).filter(job => {
                     if (job.date < todayStr) return true;
                     const endTime = job.end_time || job.time;
                     return endTime < currentGraceTimeStr;
                 });
 
-                if (expiredJobs && expiredJobs.length > 0) {
-                    for (const job of expiredJobs) {
+                if (expiredJobsList && expiredJobsList.length > 0) {
+                    for (const job of expiredJobsList) {
                         // 1. Get ALL applicants for this job
                         const { data: applicants, error: appError } = await supabase
                             .from('job_applications')
