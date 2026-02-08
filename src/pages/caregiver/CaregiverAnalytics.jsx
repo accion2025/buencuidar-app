@@ -229,16 +229,30 @@ const CaregiverAnalytics = () => {
         doc.text(`Promedio $/hora: $${stats.avgHourlyRate}/h`, 140, 60);
 
         // Table
-        const tableData = payments.map(p => [
-            p.date,
-            p.client?.full_name || 'N/A',
-            p.patient?.full_name || 'N/A',
-            p.address || 'N/A',
-            `${p.calculatedHours.toFixed(1)}h`,
-            `$${p.hourlyRate}`,
-            `$${p.calculatedAmount.toFixed(2)}`,
-            p.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE'
-        ]);
+        const tableData = [];
+        let currentMonthHeader = "";
+
+        payments.forEach(p => {
+            const dateObj = new Date(p.date);
+            const monthName = dateObj.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
+
+            if (monthName !== currentMonthHeader) {
+                currentMonthHeader = monthName;
+                // Add a month separator row to the data
+                tableData.push([{ content: currentMonthHeader, colSpan: 8, styles: { fillColor: [240, 240, 240], fontStyle: 'bold', halign: 'center' } }]);
+            }
+
+            tableData.push([
+                p.date,
+                p.client?.full_name || 'N/A',
+                p.patient?.full_name || 'N/A',
+                p.address || 'N/A',
+                `${p.calculatedHours.toFixed(1)}h`,
+                `$${p.hourlyRate}`,
+                `$${p.calculatedAmount.toFixed(2)}`,
+                p.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE'
+            ]);
+        });
 
         // Add a total row to the table data for the PDF
         const totalAmount = payments.reduce((acc, p) => acc + p.calculatedAmount, 0);
@@ -363,24 +377,47 @@ const CaregiverAnalytics = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {payments.map(pay => (
-                                <tr key={pay.id} className="hover:bg-blue-50/50 transition-colors text-sm">
-                                    <td className="px-6 py-4 font-medium text-gray-800">{pay.date}</td>
-                                    <td className="px-6 py-4 text-gray-600">{pay.client?.full_name}</td>
-                                    <td className="px-6 py-4 text-gray-500 font-bold">{pay.patient?.full_name || 'N/A'}</td>
-                                    <td className="px-6 py-4 text-center font-mono">{pay.calculatedHours.toFixed(1)}h</td>
-                                    <td className="px-6 py-4 text-center font-mono text-gray-400">${pay.hourlyRate}</td>
-                                    <td className="px-6 py-4 text-right font-bold text-gray-800">${pay.calculatedAmount}</td>
-                                    <td className="px-6 py-4 text-center">
-                                        <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${pay.payment_status === 'paid'
-                                            ? 'bg-green-100 text-green-700'
-                                            : 'bg-blue-100 text-blue-700'
-                                            }`}>
-                                            {pay.payment_status === 'paid' ? 'PAGADO' : 'COMPLETADO'}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
+                            {(() => {
+                                let lastMonth = "";
+                                return payments.map((pay, index) => {
+                                    const dateObj = new Date(pay.date);
+                                    const currentMonth = dateObj.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
+                                    const isNewMonth = currentMonth !== lastMonth;
+                                    lastMonth = currentMonth;
+
+                                    return (
+                                        <React.Fragment key={pay.id}>
+                                            {isNewMonth && (
+                                                <tr className="bg-slate-50/80 border-y border-slate-100">
+                                                    <td colSpan="7" className="px-8 py-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="h-px flex-grow bg-slate-200"></div>
+                                                            <span className="text-[10px] font-black tracking-[0.3em] text-[var(--primary-color)] opacity-60">{currentMonth}</span>
+                                                            <div className="h-px flex-grow bg-slate-200"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            <tr className="hover:bg-blue-50/50 transition-colors text-sm">
+                                                <td className="px-6 py-4 font-medium text-gray-800">{pay.date}</td>
+                                                <td className="px-6 py-4 text-gray-600">{pay.client?.full_name}</td>
+                                                <td className="px-6 py-4 text-gray-500 font-bold">{pay.patient?.full_name || 'N/A'}</td>
+                                                <td className="px-6 py-4 text-center font-mono">{pay.calculatedHours.toFixed(1)}h</td>
+                                                <td className="px-6 py-4 text-center font-mono text-gray-400">${pay.hourlyRate}</td>
+                                                <td className="px-6 py-4 text-right font-bold text-gray-800">${pay.calculatedAmount}</td>
+                                                <td className="px-6 py-4 text-center">
+                                                    <span className={`px-2 py-1 rounded-full text-[10px] font-bold ${pay.payment_status === 'paid'
+                                                        ? 'bg-green-100 text-green-700'
+                                                        : 'bg-blue-100 text-blue-700'
+                                                        }`}>
+                                                        {pay.payment_status === 'paid' ? 'PAGADO' : 'COMPLETADO'}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </React.Fragment>
+                                    );
+                                });
+                            })()}
 
                             {/* Totals Row */}
                             {payments.length > 0 && (
