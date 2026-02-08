@@ -507,7 +507,7 @@ const DashboardOverview = () => {
     // Filter appointments for "Próximas Visitas" (Confirmed)
     // We exclude in_progress here to avoid duplication if shown in separate section
     const confirmedAppointments = appointments
-        .filter(a => a.status === 'confirmed' && a.date >= todayLocal)
+        .filter(a => (a.status === 'confirmed' || a.status === 'pending') && a.date >= todayLocal)
         .sort((a, b) => new Date(a.date) - new Date(b.date)) // Ascending (Closest first)
         .slice(0, 3); // Take first 3
 

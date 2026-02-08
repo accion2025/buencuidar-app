@@ -1,28 +1,33 @@
 
 import { createClient } from '@supabase/supabase-js';
-import fs from 'fs';
-import path from 'path';
 
-const envPath = path.resolve(process.cwd(), '.env');
-let envContent = fs.readFileSync(envPath, 'utf-8');
-const envVars = {};
-envContent.split('\n').forEach(line => {
-    const parts = line.split('=');
-    if (parts.length >= 2) envVars[parts[0].trim()] = parts.slice(1).join('=').trim();
-});
+const supabaseUrl = 'https://ntxxknufezprbibzpftf.supabase.co';
+const supabaseKey = 'sb_publishable_V5D-ZgsTgoDcqQBEbZ4lQA_Dcfz2wY-';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-const url = envVars['VITE_SUPABASE_URL'];
-const key = envVars['VITE_SUPABASE_ANON_KEY'];
-const supabase = createClient(url, key);
+async function check() {
+    console.log("Inspecting appointment date formats...");
 
-async function inspectAppointmentsSchema() {
-    try {
-        const { error: err } = await supabase.from('appointments').select('non_existent_column_to_trigger_error');
-        if (err) {
-            console.log("COLUMNS:", err.message);
-        }
-    } catch (err) {
-        console.error("Unexpected Error:", err);
+    // We try to fetch WITHOUT filters to see if ANYTHING is public or if we get a schema error
+    const { data, error } = await supabase
+        .from('appointments')
+        .select('date')
+        .limit(5);
+
+    if (error) {
+        console.error("Query Error:", error.message);
+        // Try to get column info via error hint
+        const { error: schemaError } = await supabase.from('appointments').select('id, created_at, date, client_id');
+        if (schemaError) console.log("Schema Context:", schemaError.message);
+        return;
+    }
+
+    if (data && data.length > 0) {
+        console.log("Sample Dates:", data.map(d => d.date));
+        console.log("Types:", data.map(d => typeof d.date));
+    } else {
+        console.log("No data returned. RLS might be blocking or table is empty.");
     }
 }
-inspectAppointmentsSchema();
+
+check();

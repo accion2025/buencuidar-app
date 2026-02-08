@@ -28,13 +28,13 @@ const JobBoard = () => {
                 const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
                 const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
 
-                // Find jobs that are pending, unassigned, and expired (5 min after END TIME)
-                const { data: maybeExpired, error: fetchError } = await supabase
+                // Find jobs that are pending, unassigned, and expired (before today OR today but end_time passed)
+                const { data: expiredJobs, error: fetchError } = await supabase
                     .from('appointments')
                     .select('id, title, date, time, end_time, client_id')
                     .eq('status', 'pending')
                     .is('caregiver_id', null)
-                    .lte('date', todayStr);
+                    .or(`date.lt.${todayStr},and(date.eq.${todayStr},end_time.lt.${currentTime})`);
 
                 if (fetchError) throw fetchError;
 
@@ -142,7 +142,7 @@ const JobBoard = () => {
                 `)
                 .eq('status', 'pending')
                 .is('caregiver_id', null)
-                .gte('date', todayStr)
+                .or(`date.gt.${todayStr},and(date.eq.${todayStr},end_time.gte.${currentTime})`)
                 .order('date', { ascending: true })
                 .order('time', { ascending: true })
                 .range(from, to);
