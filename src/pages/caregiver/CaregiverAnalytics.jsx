@@ -102,6 +102,12 @@ const CaregiverAnalytics = () => {
             const { data: apps, error } = await supabase
                 .from('appointments')
                 .select(`
+                    id, 
+                    date, 
+                    time, 
+                    end_time, 
+                    status, 
+                    payment_status, 
                     payment_amount, 
                     offered_rate,
                     address,
