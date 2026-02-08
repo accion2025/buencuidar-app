@@ -119,7 +119,9 @@ const DashboardOverview = () => {
         try {
             const now = new Date();
             const todayStr = now.toLocaleDateString('en-CA');
-            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+            // Add 5 minutes grace period
+            const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
+            const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
 
             // Find jobs (appointments without caregiver_id) that are in the past or expired today
             const { data: maybeExpired, error: fetchError } = await supabase
@@ -134,7 +136,7 @@ const DashboardOverview = () => {
             const expiredJobs = (maybeExpired || []).filter(job => {
                 if (job.date < todayStr) return true;
                 const endTime = job.end_time || job.time;
-                return endTime < currentTime;
+                return endTime < currentGraceTimeStr;
             });
 
             if (fetchError) throw fetchError;
