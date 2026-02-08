@@ -1,51 +1,91 @@
 
 import { createClient } from '@supabase/supabase-js';
 
+// Usamos el proyecto confirmado NTXX
 const supabaseUrl = 'https://ntxxknufezprbibzpftf.supabase.co';
 const supabaseKey = 'sb_publishable_V5D-ZgsTgoDcqQBEbZ4lQA_Dcfz2wY-';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-async function findTheProblem() {
-    console.log("Searching for appointments by status 'pending'...");
+async function run() {
+    console.log("--- DIAGNÓSTICO PROFUNDO: ¿POR QUÉ NO SE VEN? ---");
 
-    // 1. Check basic visibility (No joins)
-    const { data: simpleApps, error: simpleError } = await supabase
+    // 1. Login como Carlos (Cuidador)
+    const { data: auth, error: authErr } = await supabase.auth.signInWithPassword({
+        email: 'carlosbenitez-pro@outlook.com',
+        password: 'password123'
+    });
+
+    if (authErr) {
+        console.error("❌ FALLÓ LOGIN:", authErr.message);
+        return;
+    }
+    console.log("✅ Login OK (Yamila ID):", auth.user.id);
+
+    // 2. Buscar las citas PRUEBA sin ningún filtro primero
+    const { data: allPruebas, error: searchErr } = await supabase
         .from('appointments')
-        .select('id, title, status, client_id, caregiver_id')
-        .eq('status', 'pending')
-        .is('caregiver_id', null);
+        .select('id, title, status, caregiver_id, client_id, date, time')
+        .ilike('title', '%PRUEBA%');
 
-    if (simpleError) {
-        console.error("Simple Query Error:", simpleError.message);
-    } else {
-        console.log(`Simple query (no joins) found ${simpleApps?.length || 0} apps.`);
-        simpleApps?.forEach(a => console.log(`- ${a.title} (${a.id})`));
+    if (searchErr) {
+        console.error("❌ ERROR BUSCANDO PRUEBAS:", searchErr.message);
+        return;
     }
 
-    // 2. Check if a specific appointment (Prueba 24) exists
-    console.log("\nSearching for 'PRUEBA 24' specifically...");
-    const { data: testApp } = await supabase
-        .from('appointments')
-        .select('*')
-        .ilike('title', '%PRUEBA 24%');
-    console.log(`Search result for 'PRUEBA 24': ${testApp?.length || 0} rows.`);
+    if (!allPruebas || allPruebas.length === 0) {
+        console.error("❌ NO SE ENCONTRARON CITAS 'PRUEBA' EN LA DB (¿Borradas?)");
+        return;
+    }
 
-    // 3. Attempt join
-    console.log("\nAttempting query WITH joins (exactly like JobBoard.jsx)...");
-    const { data: joinedApps, error: joinError } = await supabase
-        .from('appointments')
-        .select('*, client:client_id(full_name), patient:patient_id(full_name)')
-        .eq('status', 'pending')
-        .is('caregiver_id', null);
+    console.log(`\n🔍 ENCONTRADAS ${allPruebas.length} CITAS 'PRUEBA'. ANALIZANDO UNA POR UNA:`);
 
-    if (joinError) {
-        console.error("Joined Query Error:", joinError.message);
-    } else {
-        console.log(`Joined query found ${joinedApps?.length || 0} apps.`);
-        joinedApps?.forEach(a => {
-            console.log(`- ${a.title}: Client ${a.client?.full_name || 'NULL'}, Patient ${a.patient?.full_name || 'NULL'}`);
-        });
+    for (const job of allPruebas) {
+        console.log(`\n---------------------------------------------------`);
+        console.log(`CITA: ${job.title} (ID: ${job.id})`);
+
+        // CHECK 1: STATUS
+        const statusOk = job.status === 'pending';
+        console.log(`[1] Status es 'pending'? ${statusOk ? '✅' : '❌ (' + job.status + ')'}`);
+
+        // CHECK 2: CAREGIVER_ID
+        const caregiverOk = job.caregiver_id === null;
+        console.log(`[2] Caregiver es NULL? ${caregiverOk ? '✅' : '❌ (Asignado a: ' + job.caregiver_id + ')'}`);
+
+        // CHECK 3: FECHA (Futura?)
+        const now = new Date();
+        const todayStr = now.toLocaleDateString('en-CA');
+        const dateOk = job.date >= todayStr;
+        console.log(`[3] Fecha futura/hoy? (${job.date} >= ${todayStr}) ${dateOk ? '✅' : '❌'}`);
+
+        // CHECK 4: DATA DEL CLIENTE (Profile join)
+        // Si el usuario no tiene permisos para ver al cliente, la cita desaparece si usamos inner join o select explicito
+        let clientOk = false;
+        if (job.client_id) {
+            const { data: client, error: clientErr } = await supabase
+                .from('profiles')
+                .select('id, full_name')
+                .eq('id', job.client_id)
+                .single();
+
+            if (clientErr) {
+                console.log(`[4] Acceso a Cliente (Profile): ❌ ERROR: ${clientErr.message}`);
+            } else if (!client) {
+                console.log(`[4] Acceso a Cliente (Profile): ❌ NO EXISTE (NULL)`);
+            } else {
+                console.log(`[4] Acceso a Cliente (Profile): ✅ OK (${client.full_name})`);
+                clientOk = true;
+            }
+        } else {
+            console.log(`[4] Acceso a Cliente: ❌ SIN CLIENT_ID`);
+        }
+
+        // VEREDICTO
+        if (statusOk && caregiverOk && dateOk && clientOk) {
+            console.log(`\n🎉 VEREDICTO: ESTA CITA DEBERÍA SER VISIBLE.`);
+        } else {
+            console.log(`\n💀 VEREDICTO: ESTA CITA ESTÁ OCULTA.`);
+        }
     }
 }
 
-findTheProblem();
+run();

@@ -134,6 +134,9 @@ const JobBoard = () => {
         try {
             if (pageNumber === 0) setLoading(true);
 
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('en-CA');
+
             const from = pageNumber * JOBS_PER_PAGE;
             const to = from + JOBS_PER_PAGE - 1;
 
