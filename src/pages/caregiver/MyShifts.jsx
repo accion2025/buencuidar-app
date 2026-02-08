@@ -14,9 +14,43 @@ const MyShifts = () => {
     const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming', 'completed', 'cancelled'
     const [isActionLoading, setIsActionLoading] = useState(false);
 
+    const cleanupExpiredShifts = async () => {
+        try {
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('en-CA');
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+
+            const { data: expiredShifts, error: fetchError } = await supabase
+                .from('appointments')
+                .select('id')
+                .eq('caregiver_id', user.id)
+                .eq('status', 'confirmed')
+                .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+
+            if (fetchError) throw fetchError;
+
+            if (expiredShifts && expiredShifts.length > 0) {
+                const ids = expiredShifts.map(s => s.id);
+                const { error: updateError } = await supabase
+                    .from('appointments')
+                    .update({ status: 'cancelled' })
+                    .in('id', ids);
+
+                if (updateError) throw updateError;
+                console.log(`Auto-cancelled ${ids.length} expired confirmed shifts.`);
+            }
+        } catch (err) {
+            console.error("Error cleaning up expired shifts:", err);
+        }
+    };
+
     useEffect(() => {
         if (user) {
-            loadShifts();
+            const init = async () => {
+                await cleanupExpiredShifts();
+                await loadShifts();
+            };
+            init();
 
             // Subscribe to real-time changes
             const subscription = supabase

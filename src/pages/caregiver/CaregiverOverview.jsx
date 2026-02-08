@@ -228,8 +228,37 @@ const CaregiverOverview = () => {
         }
     };
 
+    const cleanupExpiredShifts = async () => {
+        try {
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('en-CA');
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+
+            const { data: expiredShifts, error: fetchError } = await supabase
+                .from('appointments')
+                .select('id')
+                .eq('caregiver_id', user.id)
+                .eq('status', 'confirmed')
+                .or(`date.lt.${todayStr},and(date.eq.${todayStr},time.lt.${currentTime})`);
+
+            if (fetchError) throw fetchError;
+
+            if (expiredShifts && expiredShifts.length > 0) {
+                const ids = expiredShifts.map(s => s.id);
+                await supabase
+                    .from('appointments')
+                    .update({ status: 'cancelled' })
+                    .in('id', ids);
+                console.log(`Auto-cancelled ${ids.length} expired shifts from overview.`);
+            }
+        } catch (err) {
+            console.error("Error cleaning up expired shifts in overview:", err);
+        }
+    };
+
     const fetchDashboardData = async () => {
         try {
+            await cleanupExpiredShifts();
             const today = new Date().toLocaleDateString('en-CA'); // Local YYYY-MM-DD
 
             // 1. Fetch Next Shift
