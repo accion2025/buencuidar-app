@@ -1,0 +1,121 @@
+﻿diff --git a/src/pages/dashboard/CalendarPage.jsx b/src/pages/dashboard/CalendarPage.jsx
+index 84caf79..a5dad54 100644
+--- a/src/pages/dashboard/CalendarPage.jsx
++++ b/src/pages/dashboard/CalendarPage.jsx
+@@ -237,21 +237,32 @@ const CalendarPage = () => {
+     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+ 
+     const getEventColor = (event) => {
+-        // Status overrides date logic
++        const now = new Date();
++        const todayStr = now.toLocaleDateString('en-CA');
++        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
++
++        // Case 1: Status based (historical/cancelled)
+         if (['completed', 'paid', 'cancelled'].includes(event.status)) {
+-            return 'bg-gray-100 text-gray-500 border-gray-200 opacity-70';
++            return 'bg-gray-100 text-gray-400 border-gray-200 opacity-60 italic';
+         }
+ 
+-        const today = new Date();
+-        today.setHours(0, 0, 0, 0);
++        // Case 2: Past dates (Strictly before today)
++        if (event.originalDate < todayStr) {
++            return 'bg-slate-50 text-slate-400 border-slate-200 opacity-70';
++        }
+ 
+-        const [year, month, day] = event.originalDate.split('-').map(Number);
+-        const eventDate = new Date(year, month - 1, day);
++        // Case 3: Expired Today (Today but past time) -> Requirement 2
++        if (event.originalDate === todayStr && event.time < currentTime) {
++            return 'bg-slate-50 text-slate-400 border-slate-200 opacity-70';
++        }
+ 
+-        if (eventDate < today) {
+-            return 'bg-gray-100 text-gray-500 border-gray-200 opacity-70'; // Pasadas
++        // Case 4: Confirmed (Active)
++        if (event.status === 'confirmed') {
++            return 'bg-green-100 text-green-700 border-green-200 font-bold';
+         }
+-        return 'bg-blue-100 text-blue-700 border-blue-200 font-medium'; // Programadas
++
++        // Default: Pending/Future
++        return 'bg-blue-100 text-blue-700 border-blue-200 font-medium';
+     };
+ 
+     const openModal = (date = null) => {
+@@ -423,10 +434,23 @@ const CalendarPage = () => {
+                                     return (
+                                         <div key={event.id} className={`p-4 rounded-[16px] shadow-sm border relative group/event ${isGray ? 'bg-gray-50 border-gray-200 opacity-60' : 'bg-white border-gray-100'}`}>
+                                             <div className="flex gap-1 absolute top-2 right-2">
+-                                                {!isGray && (
+-                                                    <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-[16px]"><Edit2 size={16} /></button>
+-                                                )}
+-                                                <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
++                                                {(() => {
++                                                    const now = new Date();
++                                                    const todayStr = now.toLocaleDateString('en-CA');
++                                                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
++                                                    const isPast = event.originalDate < todayStr || (event.originalDate === todayStr && event.time < currentTime);
++
++                                                    return !isGray && !isPast ? (
++                                                        <>
++                                                            <button onClick={() => handleEditAppointment(event)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-[16px]"><Edit2 size={16} /></button>
++                                                            <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
++                                                        </>
++                                                    ) : isPast ? (
++                                                        <span className="p-1.5 text-gray-300" title="Registro hist├│rico no editable"><Lock size={16} /></span>
++                                                    ) : (
++                                                        <button onClick={() => handleDeleteAppointment(event.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-[16px]"><Trash2 size={16} /></button>
++                                                    );
++                                                })()}
+                                             </div>
+                                             <h4 className={`font-bold mb-1 pr-8 ${isGray ? 'text-gray-500' : 'text-gray-800'}`}>{event.title} {isGray && `(${event.status === 'cancelled' ? 'Cancelada' : 'Finalizada'})`}</h4>
+                                             <div className="text-sm text-gray-600 flex items-center gap-2"><Clock size={14} /> {event.time} {event.end_time ? `- ${event.end_time.substring(0, 5)}` : ''}</div>
+@@ -442,18 +466,34 @@ const CalendarPage = () => {
+                                                 {!event.caregiver_id && <Info size={14} className="opacity-40" />}
+                                             </div>
+ 
+-                                            {isSubscribed && !isGray && (
+-                                                <button
+-                                                    onClick={() => {
+-                                                        setSelectedAgendaId(event.id);
+-                                                        setCurrentCareAgenda(event.care_agenda || []);
+-                                                        setShowAgendaModal(true);
+-                                                    }}
+-                                                    className="w-full mt-3 py-2 bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] rounded-[12px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)]/20 flex items-center justify-center gap-2 border border-[var(--secondary-color)]/20 transition-all font-primary"
+-                                                >
+-                                                    <Settings size={14} /> Configurar Agenda BC PULSO
+-                                                </button>
+-                                            )}
++                                            {(() => {
++                                                const now = new Date();
++                                                const todayStr = now.toLocaleDateString('en-CA');
++                                                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
++                                                const isPast = event.originalDate < todayStr || (event.originalDate === todayStr && event.time < currentTime);
++
++                                                return (
++                                                    <>
++                                                        {!isGray && !isPast && (
++                                                            <button
++                                                                onClick={() => {
++                                                                    setSelectedAgendaId(event.id);
++                                                                    setCurrentCareAgenda(event.care_agenda || []);
++                                                                    setShowAgendaModal(true);
++                                                                }}
++                                                                className="w-full mt-3 py-2 bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] rounded-[12px] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--secondary-color)]/20 flex items-center justify-center gap-2 border border-[var(--secondary-color)]/20 transition-all font-primary"
++                                                            >
++                                                                <Settings size={14} /> Configurar Agenda BC PULSO
++                                                            </button>
++                                                        )}
++                                                        {isPast && (
++                                                            <div className="mt-3 py-2 bg-gray-100 text-gray-400 rounded-[12px] text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 border border-gray-200">
++                                                                <Lock size={12} /> Registro Hist├│rico (No editable)
++                                                            </div>
++                                                        )}
++                                                    </>
++                                                );
++                                            })()}
+                                         </div>
+                                     );
+                                 })}

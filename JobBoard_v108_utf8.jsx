@@ -20,93 +20,8 @@ const JobBoard = () => {
     useEffect(() => {
         let mounted = true;
 
-        const cleanupExpiredJobs = async () => {
-            // Disabled cleanup to rely on view filters and avoid accidental deletion (Safety First)
-            return;
-            try {
-                const now = new Date();
-                const todayStr = now.toLocaleDateString('en-CA');
-                // Add 5 minutes grace period
-                const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
-                const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
-
-                // 1. Fetch strictly pending and unassigned jobs from TODAY onwards (to avoid fetching ancient history)
-                // We rely on client-side filtering for precise time expiration.
-                const { data: rawJobs, error: fetchError } = await supabase
-                    .from('appointments')
-                    .select('id, title, date, time, end_time, client_id')
-                    .eq('status', 'pending')
-                    .is('caregiver_id', null)
-                    .gte('date', todayStr); // Allow fetching today's jobs to check time locally
-
-                if (fetchError) throw fetchError;
-
-                // 2. Strict 5-Minute Expiration Logic
-                // Rule: Visible if NOW <= (End Time + 5 minutes)
-                const validJobs = (rawJobs || []).filter(job => {
-                    // Future dates are always visible
-                    if (job.date > todayStr) return true;
-
-                    // For today's jobs, calculate expiration time
-                    // Default end_time or fall back to start_time (though end_time should exist)
-                    const timeReference = job.end_time || job.time;
-
-                    // Construct expiration Date object (Today at EndTime:00)
-                    const [endHour, endMinute] = timeReference.split(':').map(Number);
-                    const expirationDate = new Date();
-                    expirationDate.setHours(endHour, endMinute + 5, 0, 0); // Add 5 minutes grace
-
-                    const now = new Date();
-                    return now <= expirationDate;
-                });
-
-                if (validJobs && validJobs.length > 0) {
-                    for (const job of validJobs) {
-                        // 1. Get ALL applicants for this job
-                        const { data: applicants, error: appError } = await supabase
-                            .from('job_applications')
-                            .select('caregiver_id')
-                            .eq('appointment_id', job.id);
-
-                        if (appError) continue;
-
-                        if (applicants && applicants.length > 0) {
-                            for (const applicant of applicants) {
-                                try {
-                                    // Mandatory Alert in Notifications Center (ONLY)
-                                    await supabase.from('notifications').insert({
-                                        user_id: applicant.caregiver_id,
-                                        title: 'Oferta Expirada',
-                                        message: `La vacante "${job.title}" para el ${job.date} ha expirado.`,
-                                        type: 'system',
-                                        is_read: false
-                                    });
-                                } catch (notifErr) {
-                                    console.error(`Error notifying applicant ${applicant.caregiver_id}:`, notifErr);
-                                }
-                            }
-
-                            // 2. Physically delete applications
-                            await supabase.from('job_applications').delete().eq('appointment_id', job.id);
-                        }
-
-                        // 3. Mark job as cancelled
-                        await supabase
-                            .from('appointments')
-                            .update({ status: 'cancelled' })
-                            .eq('id', job.id);
-                    }
-                    // Refresh if any expired
-                    fetchJobs(0);
-                }
-            } catch (err) {
-                console.error("Error cleaning up expired jobs:", err);
-            }
-        };
-
         const loadJobs = async () => {
             if (!mounted) return;
-            await cleanupExpiredJobs();
             await fetchJobs(0);
         };
 
@@ -137,12 +52,7 @@ const JobBoard = () => {
             const from = pageNumber * JOBS_PER_PAGE;
             const to = from + JOBS_PER_PAGE - 1;
 
-            // Add 5 minutes grace period
-            const graceTime = new Date(now.getTime() - 5 * 60 * 1000);
-            const currentGraceTimeStr = `${String(graceTime.getHours()).padStart(2, '0')}:${String(graceTime.getMinutes()).padStart(2, '0')}:00`;
-
             // 1. Fetch appointments that are pending and have NO caregiver assigned (Open Jobs)
-            // Bring all from today onwards to filter more reliably in JavaScript
             const { data: jobsData, error: jobsError } = await supabase
                 .from('appointments')
                 .select(`
@@ -158,9 +68,8 @@ const JobBoard = () => {
                 `)
                 .eq('status', 'pending')
                 .is('caregiver_id', null)
-                .gte('date', todayStr) // Fetch today and future, filter time later
+                .gte('date', new Date().toLocaleDateString('en-CA')) // YYYY-MM-DD in local time
                 .order('date', { ascending: true })
-                .order('time', { ascending: true })
                 .range(from, to);
 
             if (jobsError) throw jobsError;
@@ -184,27 +93,10 @@ const JobBoard = () => {
 
             setAppliedJobs(appliedMap);
 
-            // 2. Client-side filter: Strict 5-Minute Expiration Rule
-            // Visible if NOW <= (EndTime + 5 minutes)
-            const filteredJobs = (jobsData || []).filter(job => {
-                // Future dates are always visible
-                if (job.date > todayStr) return true;
-
-                // For today's jobs:
-                const timeReference = job.end_time || job.time;
-                const [endHour, endMinute] = timeReference.split(':').map(Number);
-
-                const expirationDate = new Date();
-                expirationDate.setHours(endHour, endMinute + 5, 0, 0); // Grace period: 5 minutes
-
-                const now = new Date();
-                return now <= expirationDate;
-            });
-
             if (pageNumber === 0) {
-                setJobs(filteredJobs);
+                setJobs(jobsData || []);
             } else {
-                setJobs(prev => [...prev, ...filteredJobs]);
+                setJobs(prev => [...prev, ...(jobsData || [])]);
             }
 
             if (jobsData && jobsData.length < JOBS_PER_PAGE) {
