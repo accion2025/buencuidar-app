@@ -70,17 +70,33 @@ const JobBoard = () => {
                                 }
 
                                 if (convId) {
+                                    // 1. Message in Chat
                                     await supabase.from('messages').insert({
                                         conversation_id: convId,
-                                        sender_id: job.client_id, // System message sent on behalf of client/system
+                                        sender_id: job.client_id,
                                         content: msgContent
                                     });
                                     await supabase.from('conversations').update({
                                         last_message: msgContent,
                                         last_message_at: new Date()
                                     }).eq('id', convId);
+
+                                    // 2. Alert in Notifications Center (for OneSignal/Push)
+                                    await supabase.from('notifications').insert({
+                                        user_id: applicant.caregiver_id,
+                                        title: 'Oferta Expirada',
+                                        message: `La vacante "${job.title}" para el ${job.date} ha expirado.`,
+                                        type: 'system',
+                                        is_read: false
+                                    });
                                 }
                             }
+
+                            // 3. Physically delete applications to clean up "My Applications" for caregivers
+                            await supabase
+                                .from('job_applications')
+                                .delete()
+                                .eq('appointment_id', job.id);
                         }
 
                         // 2. Mark job as cancelled/expired so it doesn't appear anymore

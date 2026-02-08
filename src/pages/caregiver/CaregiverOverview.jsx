@@ -468,12 +468,22 @@ const CaregiverOverview = () => {
                 .limit(10); // increased limit slightly to allow filtering junk without empty list
 
             if (error) throw error;
-            // DUAL-FILTER: Both at DB level (where possible) and JS level
-            const activeApplications = (data || []).filter(app =>
-                app.appointment &&
-                app.appointment.status !== 'cancelled' &&
-                app.appointment.status !== 'deleted'
-            );
+
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('en-CA');
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+
+            // DUAL-FILTER: Clean up applications for expired/cancelled appointments
+            const activeApplications = (data || []).filter(app => {
+                if (!app.appointment) return false;
+
+                const isCancelled = app.appointment.status === 'cancelled';
+                const isPast = app.appointment.date < todayStr || (app.appointment.date === todayStr && app.appointment.time < currentTime);
+
+                // Point 3: Remove cancelled by time/status from the list
+                return !isCancelled && !isPast;
+            });
+
             setMyApplications(activeApplications.slice(0, 5));
         } catch (error) {
             console.error("Error fetching applications:", error);

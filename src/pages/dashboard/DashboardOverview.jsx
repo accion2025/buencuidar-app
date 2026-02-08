@@ -517,11 +517,18 @@ const DashboardOverview = () => {
             return new Date(b.date) - new Date(a.date);
         });
     // Filter for "Citas Programadas" (Modal & Stat Card)
-    const upcomingAppointmentsList = appointments.filter(a =>
-        (a.status === 'confirmed' || a.status === 'pending' || a.status === 'in_progress') &&
-        a.status !== 'cancelled' &&
-        a.date >= todayLocal
-    );
+    const upcomingAppointmentsList = appointments.filter(a => {
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+        const isPastToday = a.date === todayLocal && a.time < currentTime;
+
+        return (
+            (a.status === 'confirmed' || a.status === 'pending' || a.status === 'in_progress') &&
+            a.status !== 'cancelled' &&
+            a.date >= todayLocal &&
+            !isPastToday
+        );
+    });
 
     return (
         <>
