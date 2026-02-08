@@ -240,12 +240,26 @@ const CaregiverAnalytics = () => {
             p.payment_status === 'paid' ? 'PAGADO' : 'PENDIENTE'
         ]);
 
+        // Add a total row to the table data for the PDF
+        const totalAmount = payments.reduce((acc, p) => acc + p.calculatedAmount, 0);
+        const totalHours = payments.reduce((acc, p) => acc + p.calculatedHours, 0);
+
+        tableData.push([
+            '', '', '', 'TOTALES',
+            `${totalHours.toFixed(1)}h`,
+            '',
+            `$${totalAmount.toFixed(2)}`,
+            ''
+        ]);
+
         autoTable(doc, {
             startY: 80,
             head: [['Fecha', 'Cliente', 'Familiar', 'Dirección', 'Horas', 'Tarifa', 'Total', 'Estado']],
             body: tableData,
             headStyles: { fillColor: [15, 60, 76], textColor: [250, 250, 247] }, // FAFAF7
             alternateRowStyles: { fillColor: [249, 250, 251] },
+            foot: [['', '', '', 'TOTAL ACUMULADO', `${totalHours.toFixed(1)}h`, '', `$${totalAmount.toFixed(2)}`, '']],
+            footStyles: { fillColor: [240, 240, 240], textColor: [15, 60, 76], fontStyle: 'bold' },
             margin: { top: 80 },
             styles: { font: "helvetica", fontSize: 8 },
             columnStyles: {
@@ -367,6 +381,22 @@ const CaregiverAnalytics = () => {
                                     </td>
                                 </tr>
                             ))}
+
+                            {/* Totals Row */}
+                            {payments.length > 0 && (
+                                <tr className="bg-slate-50 font-bold border-t-2 border-slate-200">
+                                    <td colSpan="3" className="px-8 py-4 text-right text-[10px] uppercase tracking-widest text-gray-500">Totales Acumulados</td>
+                                    <td className="px-6 py-4 text-center font-mono text-[#0F3C4C]">
+                                        {payments.reduce((acc, p) => acc + p.calculatedHours, 0).toFixed(1)}h
+                                    </td>
+                                    <td className="px-6 py-4 text-center text-gray-400">-</td>
+                                    <td className="px-6 py-4 text-right font-black text-[#0F3C4C] text-lg">
+                                        ${Math.round(payments.reduce((acc, p) => acc + p.calculatedAmount, 0)).toLocaleString()}
+                                    </td>
+                                    <td className="px-6 py-4"></td>
+                                </tr>
+                            )}
+
                             {payments.length === 0 && (
                                 <tr>
                                     <td colSpan="7" className="px-6 py-8 text-center text-gray-400 italic">
