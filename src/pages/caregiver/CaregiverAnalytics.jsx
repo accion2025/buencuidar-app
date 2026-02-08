@@ -102,15 +102,11 @@ const CaregiverAnalytics = () => {
             const { data: apps, error } = await supabase
                 .from('appointments')
                 .select(`
-                    id, 
-                    date, 
-                    time, 
-                    end_time, 
-                    status, 
-                    payment_status, 
                     payment_amount, 
                     offered_rate,
-                    client:client_id (full_name)
+                    address,
+                    client:client_id (full_name),
+                    patient:patient_id (full_name)
                 `)
                 .eq('caregiver_id', user.id)
                 .or('status.eq.completed,status.eq.paid')
@@ -226,20 +222,24 @@ const CaregiverAnalytics = () => {
         const tableData = payments.map(p => [
             p.date,
             p.client?.full_name || 'N/A',
+            p.patient?.full_name || 'N/A',
+            p.address || 'N/A',
             `${p.calculatedHours.toFixed(1)}h`,
-            `$${p.hourlyRate}`,
             `$${p.calculatedAmount}`,
             p.payment_status === 'paid' ? 'PAGADO' : 'COMPLETADO'
         ]);
 
         autoTable(doc, {
             startY: 80,
-            head: [['Fecha', 'Cliente', 'Horas', 'Tarifa', 'Total', 'Estado']],
+            head: [['Fecha', 'Cliente', 'Familiar', 'Dirección', 'Horas', 'Total', 'Estado']],
             body: tableData,
             headStyles: { fillColor: [15, 60, 76], textColor: [250, 250, 247] }, // FAFAF7
             alternateRowStyles: { fillColor: [249, 250, 251] },
             margin: { top: 80 },
-            styles: { font: "helvetica", fontSize: 9 }
+            styles: { font: "helvetica", fontSize: 8 }, // Smaller font to fit more columns
+            columnStyles: {
+                3: { cellWidth: 40 } // Give more width to Address
+            }
         });
 
         // Footer
@@ -328,7 +328,7 @@ const CaregiverAnalytics = () => {
                             <tr>
                                 <th className="px-8 py-5">Fecha</th>
                                 <th className="px-8 py-5">Cliente</th>
-                                <th className="px-8 py-5">Servicio</th>
+                                <th className="px-8 py-5">Familiar</th>
                                 <th className="px-8 py-5 text-center">Horas</th>
                                 <th className="px-8 py-5 text-center">$/Hora</th>
                                 <th className="px-8 py-5 text-right">Total</th>
@@ -340,7 +340,7 @@ const CaregiverAnalytics = () => {
                                 <tr key={pay.id} className="hover:bg-blue-50/50 transition-colors text-sm">
                                     <td className="px-6 py-4 font-medium text-gray-800">{pay.date}</td>
                                     <td className="px-6 py-4 text-gray-600">{pay.client?.full_name}</td>
-                                    <td className="px-6 py-4 text-gray-500">Acompañamiento</td> {/* Simplification */}
+                                    <td className="px-6 py-4 text-gray-500 font-bold">{pay.patient?.full_name || 'N/A'}</td>
                                     <td className="px-6 py-4 text-center font-mono">{pay.calculatedHours.toFixed(1)}h</td>
                                     <td className="px-6 py-4 text-center font-mono text-gray-400">${pay.hourlyRate}</td>
                                     <td className="px-6 py-4 text-right font-bold text-gray-800">${pay.calculatedAmount}</td>
