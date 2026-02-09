@@ -1,11 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, MapPin, Star, Shield, Clock, Mail, MessageCircle, Award, Check, BookOpen, DollarSign, User } from 'lucide-react';
+import { X, MapPin, Star, Shield, Clock, Mail, MessageCircle, Award, Check, BookOpen, DollarSign, User, Info, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { formatLocation } from '../../utils/location';
+import { useAuth } from '../../context/AuthContext';
 
 const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
+    const { user, profile } = useAuth();
     const [reviews, setReviews] = useState([]);
     const [realStats, setRealStats] = useState({ rating: '5.0', count: 0 });
+
+    // Request Form State
+    const [showRequestForm, setShowRequestForm] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [requestData, setRequestData] = useState({
+        serviceTitle: '',
+        address: '',
+        date: '',
+        time: '',
+        details: ''
+    });
+
     const scrollRef = useRef(null);
     const backdropRef = useRef(null);
 
@@ -36,6 +50,15 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
             }
         } else {
             document.body.style.overflow = 'unset';
+            // Reset form when closed
+            setShowRequestForm(false);
+            setRequestData({
+                serviceTitle: '',
+                address: '',
+                date: '',
+                time: '',
+                details: ''
+            });
         }
 
         return () => {
@@ -70,6 +93,43 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
             }
         } catch (error) {
             console.error("Error fetching reviews:", error);
+        }
+    };
+
+    const handleRequestSubmit = async (e) => {
+        e.preventDefault();
+        if (!user) {
+            alert("Debes iniciar sesión para enviar una solicitud.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        try {
+            // 1. Create Appointment (Status: Pending)
+            const { error } = await supabase
+                .from('appointments')
+                .insert({
+                    client_id: user.id,
+                    caregiver_id: caregiver.id,
+                    status: 'pending',
+                    title: requestData.serviceTitle,
+                    address: requestData.address,
+                    date: requestData.date,
+                    time: requestData.time,
+                    details: requestData.details,
+                    created_at: new Date().toISOString()
+                });
+
+            if (error) throw error;
+
+            alert("✅ ¡Solicitud enviada con éxito! El cuidador ha sido notificado.");
+            onClose(); // Close modal
+
+        } catch (error) {
+            console.error("Error envío solicitud:", error);
+            alert("Error al enviar solicitud: " + error.message);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -337,6 +397,119 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                     </div>
                 </div>
 
+                {/* Content Overlay for Form */}
+                {showRequestForm && (
+                    <div className="absolute inset-0 bg-white z-20 flex flex-col animate-fade-in">
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-slate-50/50">
+                            <h3 className="font-brand font-bold text-xl text-[var(--primary-color)] flex items-center gap-2">
+                                <BookOpen size={20} className="text-[var(--secondary-color)]" />
+                                Solicitud de Servicio
+                            </h3>
+                            <button
+                                onClick={() => setShowRequestForm(false)}
+                                className="text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+                            <form onSubmit={handleRequestSubmit} className="space-y-6 max-w-lg mx-auto">
+                                <div className="bg-blue-50 p-4 rounded-[12px] border border-blue-100 mb-6 flex items-start gap-3">
+                                    <Info size={20} className="text-blue-500 shrink-0 mt-0.5" />
+                                    <div className="text-sm text-blue-800">
+                                        <p className="font-bold mb-1">Estás contactando a: {caregiver.full_name}</p>
+                                        <p>Envía los detalles de tu requerimiento. El cuidador revisará tu solicitud y podrá aceptarla o rechazarla.</p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Título del Servicio</label>
+                                    <input
+                                        required
+                                        type="text"
+                                        placeholder="Ej. Cuidado de Adulto Mayor, Acompañamiento..."
+                                        className="w-full border-2 border-gray-100 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-bold text-slate-700 transition-all bg-gray-50/30 focus:bg-white"
+                                        value={requestData.serviceTitle}
+                                        onChange={e => setRequestData({ ...requestData, serviceTitle: e.target.value })}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Dirección del Servicio</label>
+                                    <div className="relative">
+                                        <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                        <input
+                                            required
+                                            type="text"
+                                            placeholder="Dirección completa donde se requiere el servicio"
+                                            className="w-full border-2 border-gray-100 rounded-[12px] pl-11 pr-4 py-3 focus:border-[var(--secondary-color)] outline-none font-semibold text-slate-700 transition-all bg-gray-50/30 focus:bg-white"
+                                            value={requestData.address}
+                                            onChange={e => setRequestData({ ...requestData, address: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Fecha</label>
+                                        <input
+                                            required
+                                            type="date"
+                                            min={new Date().toISOString().split('T')[0]}
+                                            className="w-full border-2 border-gray-100 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-semibold text-slate-700 transition-all bg-gray-50/30 focus:bg-white"
+                                            value={requestData.date}
+                                            onChange={e => setRequestData({ ...requestData, date: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Hora Inicio</label>
+                                        <input
+                                            required
+                                            type="time"
+                                            className="w-full border-2 border-gray-100 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-semibold text-slate-700 transition-all bg-gray-50/30 focus:bg-white"
+                                            value={requestData.time}
+                                            onChange={e => setRequestData({ ...requestData, time: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Detalles Adicionales (Opcional)</label>
+                                    <textarea
+                                        rows="3"
+                                        placeholder="Describe brevemente las necesidades específicas..."
+                                        className="w-full border-2 border-gray-100 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none text-slate-600 transition-all bg-gray-50/30 focus:bg-white resize-none"
+                                        value={requestData.details}
+                                        onChange={e => setRequestData({ ...requestData, details: e.target.value })}
+                                    ></textarea>
+                                </div>
+
+                                <div className="pt-4 flex gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowRequestForm(false)}
+                                        className="flex-1 bg-white border-2 border-slate-100 text-slate-500 font-bold py-3 rounded-[16px] hover:bg-slate-50 transition-colors uppercase tracking-widest text-xs"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="flex-[2] bg-[var(--primary-color)] !text-[#FAFAF7] font-black py-3 rounded-[16px] hover:shadow-xl hover:bg-[#0a3541] transition-all flex items-center justify-center gap-2 uppercase tracking-widest text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {isSubmitting ? (
+                                            <><Loader2 size={18} className="animate-spin" /> Enviando...</>
+                                        ) : (
+                                            <><Check size={18} strokeWidth={3} /> Enviar Solicitud</>
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
                 {/* Footer Actions */}
                 <div className="p-4 sm:p-6 border-t border-gray-100 bg-white z-30 flex gap-3 sm:gap-4 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] shrink-0">
                     <button
@@ -346,7 +519,17 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                         Salir
                     </button>
                     <button
-                        onClick={() => onContact(caregiver)}
+                        onClick={() => {
+                            if (!user) {
+                                alert("Por favor inicia sesión para contactar.");
+                                return;
+                            }
+                            if (profile?.role !== 'familia') {
+                                alert("Solo los usuarios registrados como 'Familia' pueden enviar solicitudes de servicio.");
+                                return;
+                            }
+                            setShowRequestForm(true);
+                        }}
                         className="flex-[2] bg-[#0F4C5C] !text-[#FAFAF7] font-black py-3 sm:py-4 rounded-[16px] hover:shadow-xl hover:shadow-[#0F4C5C]/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-widest text-xs sm:text-sm"
                     >
                         <Mail size={18} />
@@ -354,6 +537,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                     </button>
                 </div>
             </div>
+            {/* Footer Ends */}
         </div>
     );
 };
