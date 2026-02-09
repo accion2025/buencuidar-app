@@ -91,6 +91,7 @@ const CaregiverOverview = () => {
                         .update({ last_message: msgContent, last_message_at: new Date().toISOString() })
                         .eq('id', conversationId);
                 }
+                alert("Solicitud denegada.");
             }
 
         } catch (error) {
@@ -974,7 +975,7 @@ const CaregiverOverview = () => {
                                                     onClick={() => handleAction(req.id, 'cancelled')}
                                                     className="bg-white text-gray-400 py-4 rounded-[16px] font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-red-50 hover:text-[var(--error-color)] border border-gray-100 transition-all"
                                                 >
-                                                    <X size={16} strokeWidth={4} /> Ignorar
+                                                    <X size={16} strokeWidth={4} /> Denegada
                                                 </button>
                                             </div>
                                         </div>
@@ -1110,7 +1111,7 @@ const CaregiverOverview = () => {
                                                                 'bg-yellow-100 text-yellow-700'
                                                     }`}>
                                                     {app.status === 'approved' && app.appointment?.status !== 'cancelled' ? 'Aprobada' :
-                                                        app.status === 'rejected' ? 'Rechazada' :
+                                                        app.status === 'rejected' ? 'Denegada' :
                                                             (app.status === 'approved' && app.appointment?.status === 'cancelled') ? 'Servicio Cancelado' :
                                                                 (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'Cancelada/Exp' : 'Pendiente'}
                                                 </span>

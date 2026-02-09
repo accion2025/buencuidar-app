@@ -168,12 +168,12 @@ const AdminVerification = () => {
                                         </button>
                                         <button
                                             onClick={() => {
-                                                const reason = prompt("Razón del rechazo:");
+                                                const reason = prompt("Razón de la denegación:");
                                                 if (reason) handleAction(doc.id, doc.caregiver_id, 'rejected', reason);
                                             }}
                                             disabled={actioning === doc.id}
                                             className="bg-red-500 hover:bg-red-600 !text-[#FAFAF7] p-4 rounded-[16px] shadow-lg shadow-red-100 transition-all border-none"
-                                            title="Rechazar"
+                                            title="Denegar"
                                         >
                                             <X size={24} strokeWidth={3} />
                                         </button>

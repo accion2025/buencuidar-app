@@ -420,7 +420,7 @@ const DashboardOverview = () => {
 
             } else {
                 // REJECT Flow: Ask for confirmation first
-                if (!window.confirm("¿Estás seguro de que quieres rechazar esta solicitud? Esta acción no se puede deshacer.")) {
+                if (!window.confirm("¿Estás seguro de que quieres denegar esta solicitud? Esta acción no se puede deshacer.")) {
                     return;
                 }
 
@@ -431,7 +431,7 @@ const DashboardOverview = () => {
                     .eq('id', application.id);
 
                 if (error) throw error;
-                alert("Solicitud rechazada.");
+                alert("Solicitud denegada.");
             }
 
             fetchAppointments();
@@ -828,7 +828,64 @@ const DashboardOverview = () => {
 
                     {/* Right Column */}
                     <div className="flex flex-col gap-10">
-                        {/* Caregiver Requests Panel */}
+                        {/* Direct Requests Section (New) */}
+                        <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
+                                <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
+                                    <Clock size={20} />
+                                </span>
+                                Solicitudes Directas
+                            </h3>
+
+                            <div className="space-y-6 relative z-10">
+                                {appointments
+                                    .filter(a => a.caregiver_id !== null && a.status === 'pending')
+                                    .length > 0 ? (
+                                    appointments
+                                        .filter(a => a.caregiver_id !== null && a.status === 'pending')
+                                        .map((req) => (
+                                            <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <div className="w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/20 shadow-inner text-[var(--primary-color)] flex items-center justify-center font-brand font-bold overflow-hidden border border-white">
+                                                        {req.caregiver?.avatar_url ? (
+                                                            <img src={req.caregiver.avatar_url} alt="" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            req.caregiver?.full_name?.charAt(0) || '?'
+                                                        )}
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Cuidador'}</p>
+                                                        <p className="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] mt-0.5">Pendiente de Aceptación</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="text-sm text-[var(--text-main)] mb-6 space-y-3 font-secondary bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-50">
+                                                    <div className="flex items-center gap-3">
+                                                        <Calendar size={14} className="text-[var(--secondary-color)]" />
+                                                        <span className="font-bold text-[var(--primary-color)]">{req.date}</span>
+                                                    </div>
+                                                    <p className="text-xs italic text-[var(--text-light)] leading-relaxed">"{req.title}"</p>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => handleDeleteAppointment(req)}
+                                                    className="w-full bg-red-50 text-red-600 py-3 rounded-[16px] font-black text-[10px] uppercase tracking-widest hover:bg-red-100 transition-all border border-red-100"
+                                                >
+                                                    Cancelar Solicitud
+                                                </button>
+                                            </div>
+                                        ))
+                                ) : (
+                                    <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                        <Clock size={32} className="mx-auto text-gray-300 mb-4 opacity-50" />
+                                        <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes solicitudes pendientes.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Job Applications Panel (Postulaciones) */}
                         <div className="card !p-10 border-none shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
@@ -839,18 +896,9 @@ const DashboardOverview = () => {
                             </h3>
 
                             <div className="space-y-6 relative z-10">
-                                {appointments.flatMap(a =>
-                                    (a.job_applications || [])
-                                        .filter(app => {
-                                            if (app.status !== 'pending') return false;
-                                            // Grace Period: Only show if created > 5 minutes ago
-                                            const createdTime = new Date(app.created_at).getTime();
-                                            const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-                                            return createdTime < fiveMinutesAgo;
-                                        })
-                                        .map(app => ({ ...app, appointment: a }))
-                                ).length > 0 ? (
-                                    appointments.flatMap(a =>
+                                {appointments
+                                    .filter(a => a.caregiver_id === null) // Solamente ofertas de la bolsa
+                                    .flatMap(a =>
                                         (a.job_applications || [])
                                             .filter(app => {
                                                 if (app.status !== 'pending') return false;
@@ -859,64 +907,76 @@ const DashboardOverview = () => {
                                                 return createdTime < fiveMinutesAgo;
                                             })
                                             .map(app => ({ ...app, appointment: a }))
-                                    ).map((req) => (
-                                        <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
-                                            <div className="flex items-center gap-4 mb-6">
-                                                <div className="w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/20 shadow-inner text-[var(--primary-color)] flex items-center justify-center font-brand font-bold overflow-hidden border border-white">
-                                                    {req.caregiver?.avatar_url ? (
-                                                        <img src={req.caregiver.avatar_url} alt="" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        req.caregiver?.full_name?.charAt(0) || '?'
-                                                    )}
+                                    ).length > 0 ? (
+                                    appointments
+                                        .filter(a => a.caregiver_id === null)
+                                        .flatMap(a =>
+                                            (a.job_applications || [])
+                                                .filter(app => {
+                                                    if (app.status !== 'pending') return false;
+                                                    const createdTime = new Date(app.created_at).getTime();
+                                                    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+                                                    return createdTime < fiveMinutesAgo;
+                                                })
+                                                .map(app => ({ ...app, appointment: a }))
+                                        ).map((req) => (
+                                            <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <div className="w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/20 shadow-inner text-[var(--primary-color)] flex items-center justify-center font-brand font-bold overflow-hidden border border-white">
+                                                        {req.caregiver?.avatar_url ? (
+                                                            <img src={req.caregiver.avatar_url} alt="" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            req.caregiver?.full_name?.charAt(0) || '?'
+                                                        )}
+                                                    </div>
+                                                    <div className="text-left">
+                                                        <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Candidato'}</p>
+                                                        <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em] mt-0.5">Nueva Postulación</p>
+                                                    </div>
                                                 </div>
-                                                <div className="text-left">
-                                                    <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Candidato'}</p>
-                                                    <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em] mt-0.5">Nueva Solicitud</p>
-                                                </div>
-                                            </div>
 
-                                            <div className="text-sm text-[var(--text-main)] mb-6 space-y-3 font-secondary bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-50">
-                                                <div className="flex items-center gap-3">
-                                                    <Calendar size={14} className="text-[var(--secondary-color)]" />
-                                                    <span className="font-bold text-[var(--primary-color)]">{req.appointment.date}</span>
+                                                <div className="text-sm text-[var(--text-main)] mb-6 space-y-3 font-secondary bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-50">
+                                                    <div className="flex items-center gap-3">
+                                                        <Calendar size={14} className="text-[var(--secondary-color)]" />
+                                                        <span className="font-bold text-[var(--primary-color)]">{req.appointment.date}</span>
+                                                    </div>
+                                                    <p className="text-xs italic text-[var(--text-light)] leading-relaxed">"{req.appointment.title}"</p>
                                                 </div>
-                                                <p className="text-xs italic text-[var(--text-light)] leading-relaxed">"{req.appointment.title}"</p>
-                                            </div>
 
-                                            <div className="flex gap-3 flex-wrap sm:flex-nowrap">
-                                                <button
-                                                    onClick={() => setSelectedCaregiver(req.caregiver)}
-                                                    className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--secondary-color)] hover:text-white transition-all shadow-sm group-hover:border-[var(--secondary-color)]/20"
-                                                    title="Ver perfil completo"
-                                                >
-                                                    <User size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleMessage(req.caregiver)}
-                                                    className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--base-bg)] transition-all shadow-sm group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100"
-                                                    title="Enviar mensaje"
-                                                >
-                                                    <MessageSquare size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, true)}
-                                                    className="flex-1 bg-[var(--secondary-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-100 hover:bg-emerald-600 transition-all border-none"
-                                                >
-                                                    Aprobar
-                                                </button>
-                                                <button
-                                                    onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, false)}
-                                                    className="flex-1 bg-[var(--error-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-100 hover:bg-red-700 transition-all border-none"
-                                                >
-                                                    Rechazar
-                                                </button>
+                                                <div className="flex gap-3 flex-wrap sm:flex-nowrap">
+                                                    <button
+                                                        onClick={() => setSelectedCaregiver(req.caregiver)}
+                                                        className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--secondary-color)] hover:text-white transition-all shadow-sm group-hover:border-[var(--secondary-color)]/20"
+                                                        title="Ver perfil completo"
+                                                    >
+                                                        <User size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleMessage(req.caregiver)}
+                                                        className="p-3.5 rounded-[16px] border border-gray-100 bg-white text-[var(--primary-color)] hover:bg-[var(--base-bg)] transition-all shadow-sm group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:border-blue-100"
+                                                        title="Enviar mensaje"
+                                                    >
+                                                        <MessageSquare size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, true)}
+                                                        className="flex-1 bg-[var(--secondary-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-green-100 hover:bg-emerald-600 transition-all border-none"
+                                                    >
+                                                        Aprobar
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleApproveRequest({ ...req, appointment_id: req.appointment.id }, false)}
+                                                        className="flex-1 bg-[var(--error-color)] !text-[#FAFAF7] py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-widest shadow-lg shadow-red-100 hover:bg-red-700 transition-all border-none"
+                                                    >
+                                                        Denegar
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))
+                                        ))
                                 ) : (
                                     <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
                                         <Activity size={32} className="mx-auto text-gray-300 mb-4 opacity-50" />
-                                        <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes solicitudes pendientes.</p>
+                                        <p className="text-[var(--text-light)] text-sm italic font-secondary">No tienes postulaciones pendientes.</p>
                                     </div>
                                 )}
                             </div>
@@ -956,14 +1016,14 @@ const DashboardOverview = () => {
                             </div>
                         </div>
 
-                        {/* Notifications Panel */}
+                        {/* Notifications Panel (Control de Tareas) */}
                         <div id="messages" className="card !p-10 border-none shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] mb-10 tracking-tight flex items-center gap-3 relative z-10">
                                 <span className="p-2.5 bg-blue-50 text-blue-600 rounded-[16px]">
                                     <Bell size={20} />
                                 </span>
-                                Mensajes
+                                Control de Tareas
                             </h3>
 
                             <div className="space-y-8 relative z-10">

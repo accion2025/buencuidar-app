@@ -1123,7 +1123,7 @@ const CheckRow = ({ label, docData }) => {
             <span className="!text-[#FAFAF7] font-secondary font-medium uppercase tracking-widest text-[10px]">{label}</span>
             <div className={`flex items-center gap-3 font-black ${active ? 'text-[var(--secondary-color)]' : '!text-[#FAFAF7]/40'}`}>
                 <span className="text-[9px] uppercase tracking-widest">
-                    {active ? 'Completado' : status === 'in_review' ? 'En Revisión' : status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                    {active ? 'Completado' : status === 'in_review' ? 'En Revisión' : status === 'rejected' ? 'Denegada' : 'Pendiente'}
                 </span>
                 <div className={`w-6 h-6 rounded-[16px] border-2 flex items-center justify-center transition-all ${active ? 'border-[var(--secondary-color)] bg-[var(--secondary-color)]/20 shadow-lg shadow-green-500/20' : 'border-white/10'}`}>
                     {active ? <Check size={12} strokeWidth={4} /> : status === 'in_review' ? <Clock size={12} className="text-orange-300" /> : status === 'rejected' ? <X size={12} className="text-red-400" /> : null}

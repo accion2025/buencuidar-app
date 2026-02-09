@@ -422,7 +422,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                     <Info size={20} className="text-blue-500 shrink-0 mt-0.5" />
                                     <div className="text-sm text-blue-800">
                                         <p className="font-bold mb-1">Estás contactando a: {caregiver.full_name}</p>
-                                        <p>Envía los detalles de tu requerimiento. El cuidador revisará tu solicitud y podrá aceptarla o rechazarla.</p>
+                                        <p>Envía los detalles de tu requerimiento. El cuidador revisará tu solicitud y podrá aceptarla o denegarla.</p>
                                     </div>
                                 </div>
 

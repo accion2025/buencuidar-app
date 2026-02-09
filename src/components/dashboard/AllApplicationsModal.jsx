@@ -61,7 +61,7 @@ const AllApplicationsModal = ({ isOpen, onClose, applications }) => {
                                                     'bg-yellow-100 text-yellow-700'
                                         }`}>
                                         {app.status === 'approved' && app.appointment?.status !== 'cancelled' ? 'Aprobada' :
-                                            app.status === 'rejected' ? 'Rechazada' :
+                                            app.status === 'rejected' ? 'Denegada' :
                                                 (app.status === 'approved' && app.appointment?.status === 'cancelled') ? 'Servicio Cancelado' :
                                                     (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'Cancelada/Exp' : 'Pendiente'}
                                     </span>

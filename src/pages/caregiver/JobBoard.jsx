@@ -499,7 +499,7 @@ const JobBoard = () => {
 
                                 {applicationStatus === 'rejected' ? (
                                     <div className="w-full py-2.5 rounded-[16px] font-bold text-center bg-red-100 text-red-600 border border-red-200 cursor-not-allowed">
-                                        Solicitud Rechazada
+                                        Solicitud Denegada
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-3 w-full">

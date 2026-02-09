@@ -305,7 +305,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                                                 'bg-orange-100 text-orange-700 border-orange-200'
                                                             }`}>
                                                             {existingDoc.status === 'verified' ? 'Verificado' :
-                                                                existingDoc.status === 'rejected' ? 'Rechazado' :
+                                                                existingDoc.status === 'rejected' ? 'Denegada' :
                                                                     'En Revisión'}
                                                         </span>
                                                     )}
