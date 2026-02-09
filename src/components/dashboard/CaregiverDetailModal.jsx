@@ -524,7 +524,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 alert("Por favor inicia sesión para contactar.");
                                 return;
                             }
-                            if (profile?.role !== 'familia') {
+                            if (profile?.role !== 'family') {
                                 alert("Solo los usuarios registrados como 'Familia' pueden enviar solicitudes de servicio.");
                                 return;
                             }
