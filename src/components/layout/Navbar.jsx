@@ -96,7 +96,7 @@ const Navbar = () => {
 
                                     {/* Global Notification Bell */}
                                     <button
-                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
                                         className="relative p-2.5 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[16px] hover:shadow-md group"
                                         title="Notificaciones y Mensajes"
                                     >
@@ -142,7 +142,7 @@ const Navbar = () => {
                         <div className="md:hidden flex items-center gap-2">
                             {showUserMenu && (
                                 <button
-                                    onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                                    onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
                                     className="relative p-2 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[12px]"
                                 >
                                     <Bell size={20} />

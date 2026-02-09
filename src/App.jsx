@@ -36,6 +36,7 @@ import CaregiverProfile from './pages/caregiver/CaregiverProfile';
 import CaregiverAnalytics from './pages/caregiver/CaregiverAnalytics'; // New Import
 import CaregiverSettings from './pages/caregiver/CaregiverSettings';
 import CaregiverPlans from './pages/caregiver/CaregiverPlans';
+import Notifications from './pages/dashboard/Notifications'; // New Import
 
 // Admin Imports
 import AdminRoute from './components/AdminRoute';
@@ -78,6 +79,7 @@ function App() {
                 <Route path="pulso" element={<MonitoringCenter />} />
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="messages" element={<Messages />} />
+                <Route path="notifications" element={<Notifications />} />
                 <Route path="caregivers" element={<CaregiverList />} />
                 <Route path="plans" element={<SubscriptionPlans />} />
                 <Route path="subscription" element={<SubscriptionManagement />} />
@@ -91,6 +93,7 @@ function App() {
                 <Route path="jobs" element={<JobBoard />} />
                 <Route path="shifts" element={<MyShifts />} />
                 <Route path="messages" element={<Messages />} />
+                <Route path="notifications" element={<Notifications />} />
                 <Route path="payments" element={<CaregiverPayments />} />
                 <Route path="plans" element={<CaregiverPlans />} />
                 <Route path="analytics" element={<CaregiverAnalytics />} />
