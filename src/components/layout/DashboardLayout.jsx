@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useMessage } from '../../context/MessageContext';
@@ -45,9 +45,16 @@ const SidebarItem = ({ icon: Icon, label, path, active, onClick, badge, locked }
 const DashboardLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { profile, signOut, user } = useAuth(); // Destructure user
+    const { profile, signOut, user, loading } = useAuth(); // Destructure user and loading
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { unreadCount } = useMessage(); // Use global context
+
+    // Redirect if not logged in
+    useEffect(() => {
+        if (!loading && !user) {
+            navigate('/login');
+        }
+    }, [user, loading, navigate]);
 
     const isSubscribed = profile?.subscription_status === 'active';
 
@@ -131,10 +138,10 @@ const DashboardLayout = () => {
                 <div className="p-4 border-t border-white/10 bg-[var(--primary-color)]">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 w-full rounded-[16px] text-red-200 hover:bg-red-900/20 hover:text-red-100 transition-colors"
+                        className="flex items-center gap-4 px-6 py-5 md:px-4 md:py-3 w-full rounded-[16px] text-red-200 hover:bg-red-900/20 hover:text-red-100 transition-colors group"
                     >
-                        <LogOut size={20} />
-                        <span className="font-medium">Cerrar Sesión</span>
+                        <LogOut className="w-6 h-6 md:w-5 md:h-5" />
+                        <span className="font-bold md:font-medium text-lg md:text-base">Cerrar Sesión</span>
                     </button>
                 </div>
             </aside>

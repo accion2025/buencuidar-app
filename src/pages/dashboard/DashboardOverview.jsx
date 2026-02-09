@@ -23,7 +23,7 @@ const StatCard = ({ icon: Icon, title, value, colorClass, onClick }) => (
     </div>
 );
 
-const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile, onRate, status }) => (
+const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile, onRate, status, label, labelColor }) => (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white border border-gray-100 rounded-[16px] mb-4 last:mb-0 hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all animate-fade-in group relative overflow-hidden">
         <div className="flex items-center gap-5 relative z-10">
             <div className={`w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/30 text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-xl overflow-hidden shrink-0 shadow-inner group-hover:scale-105 transition-transform border border-white`}>
@@ -36,7 +36,14 @@ const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile,
             <div className="text-left">
                 <h4 className="font-brand font-bold text-[var(--primary-color)] text-lg group-hover:text-[var(--secondary-color)] transition-colors tracking-tight">{name}</h4>
                 <div className="flex flex-col gap-1 mt-1">
-                    <p className="text-[10px] text-[var(--text-light)] font-black font-secondary uppercase tracking-widest">{role}</p>
+                    <div className="flex items-center gap-2">
+                        <p className="text-[10px] text-[var(--text-light)] font-black font-secondary uppercase tracking-widest">{role}</p>
+                        {label && (
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${labelColor || 'bg-gray-100 text-gray-600'}`}>
+                                {label}
+                            </span>
+                        )}
+                    </div>
                     <div className="flex items-center gap-3 text-[var(--text-light)] mt-1 flex-wrap">
                         <div className="flex items-center gap-1.5">
                             <Clock size={12} className="text-[var(--secondary-color)]" />
@@ -507,7 +514,20 @@ const DashboardOverview = () => {
     // Filter appointments for "Próximas Visitas" (Confirmed)
     // We exclude in_progress here to avoid duplication if shown in separate section
     const confirmedAppointments = appointments
-        .filter(a => (a.status === 'confirmed' || a.status === 'pending') && a.date >= todayLocal)
+        .filter(a => {
+            if (a.status === 'cancelled') return false;
+            if (a.date < todayLocal) return false;
+
+            // If it's today, check if it already finished
+            if (a.date === todayLocal) {
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                const endTime = a.end_time || a.time;
+                if (endTime < currentTime) return false;
+            }
+
+            return (a.status === 'confirmed' || a.status === 'pending');
+        })
         .sort((a, b) => new Date(a.date) - new Date(b.date)) // Ascending (Closest first)
         .slice(0, 3); // Take first 3
 
@@ -620,13 +640,15 @@ const DashboardOverview = () => {
     const upcomingAppointmentsList = appointments.filter(a => {
         const now = new Date();
         const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
-        const isPastToday = a.date === todayLocal && a.time < currentTime;
+        const endTime = a.end_time || a.time;
+        const isExpiredToday = a.date === todayLocal && endTime < currentTime;
+        const isPastDate = a.date < todayLocal;
 
         return (
             (a.status === 'confirmed' || a.status === 'pending' || a.status === 'in_progress') &&
             a.status !== 'cancelled' &&
-            a.date >= todayLocal &&
-            !isPastToday
+            !isPastDate &&
+            !isExpiredToday
         );
     });
 
@@ -762,18 +784,26 @@ const DashboardOverview = () => {
 
                             <div className="space-y-6">
                                 {confirmedAppointments.length > 0 ? (
-                                    confirmedAppointments.map(app => (
-                                        <AppointmentCard
-                                            key={app.id}
-                                            name={app.caregiver?.full_name || 'Cuidador Asignado'}
-                                            role={app.title}
-                                            time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
-                                            date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                            image={app.caregiver?.avatar_url}
-                                            status={app.status}
-                                            onViewProfile={() => setSelectedCaregiver(app.caregiver)}
-                                        />
-                                    ))
+                                    confirmedAppointments.map(app => {
+                                        const now = new Date();
+                                        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                        const isPendingAndRunning = app.status === 'pending' && app.time <= currentTime;
+
+                                        return (
+                                            <AppointmentCard
+                                                key={app.id}
+                                                name={app.caregiver?.full_name || (app.status === 'pending' ? 'Sin cuidador asignado' : 'Cuidador Asignado')}
+                                                role={app.title}
+                                                time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
+                                                date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                                image={app.caregiver?.avatar_url}
+                                                status={app.status}
+                                                label={isPendingAndRunning ? 'PENDIENTE' : null}
+                                                labelColor={isPendingAndRunning ? 'bg-orange-100 text-orange-600 border border-orange-200' : ''}
+                                                onViewProfile={() => setSelectedCaregiver(app.caregiver)}
+                                            />
+                                        );
+                                    })
                                 ) : (
                                     <div className="text-center py-16 bg-gray-50/50 rounded-[16px] border border-dashed border-gray-200">
                                         <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
@@ -804,20 +834,26 @@ const DashboardOverview = () => {
                                 {historyAppointments.length > 0 ? (
                                     historyAppointments
                                         .slice(0, 3)
-                                        .map(app => (
-                                            <AppointmentCard
-                                                key={app.id}
-                                                name={app.caregiver?.full_name || 'Cuidador'}
-                                                role={app.title || 'Servicio Finalizado'}
-                                                time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
-                                                date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                                image={app.caregiver?.avatar_url}
-                                                status={app.status}
-                                                rating={app.reviews?.[0]?.rating}
-                                                onViewProfile={() => setSelectedCaregiver(app.caregiver)}
-                                                onRate={() => setRatingAppointment(app)}
-                                            />
-                                        ))
+                                        .map(app => {
+                                            const isExpired = app.status === 'cancelled' && !app.caregiver_id;
+
+                                            return (
+                                                <AppointmentCard
+                                                    key={app.id}
+                                                    name={app.caregiver?.full_name || (isExpired ? 'Bolsa de Trabajo' : 'Cuidador')}
+                                                    role={app.title || 'Servicio Finalizado'}
+                                                    time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
+                                                    date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                                    image={app.caregiver?.avatar_url}
+                                                    status={app.status}
+                                                    label={isExpired ? 'CITA EXPIRADA' : (app.status === 'cancelled' ? 'CANCELADA' : null)}
+                                                    labelColor={isExpired ? 'bg-red-50 text-red-600 border border-red-100' : (app.status === 'cancelled' ? 'bg-gray-100 text-gray-500' : '')}
+                                                    rating={app.reviews?.[0]?.rating}
+                                                    onViewProfile={() => setSelectedCaregiver(app.caregiver)}
+                                                    onRate={() => setRatingAppointment(app)}
+                                                />
+                                            );
+                                        })
                                 ) : (
                                     <p className="text-[var(--text-light)] italic text-center py-8 font-secondary text-lg">No tienes citas completadas registradas.</p>
                                 )}
@@ -856,7 +892,16 @@ const DashboardOverview = () => {
                                                     </div>
                                                     <div className="text-left">
                                                         <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Cuidador'}</p>
-                                                        <p className="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] mt-0.5">Pendiente de Aceptación</p>
+                                                        {(() => {
+                                                            const now = new Date();
+                                                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                                            const isPendingAndRunning = req.date === todayLocal && req.time <= currentTime;
+                                                            return isPendingAndRunning ? (
+                                                                <p className="text-[10px] text-orange-600 font-black uppercase tracking-[0.2em] mt-0.5 bg-orange-50 px-2 py-0.5 rounded-full inline-block">PENDIENTE (EN CURSO)</p>
+                                                            ) : (
+                                                                <p className="text-[10px] text-blue-600 font-black uppercase tracking-[0.2em] mt-0.5">Pendiente de Aceptación</p>
+                                                            );
+                                                        })()}
                                                     </div>
                                                 </div>
 
@@ -931,7 +976,16 @@ const DashboardOverview = () => {
                                                     </div>
                                                     <div className="text-left">
                                                         <p className="font-brand font-bold text-[var(--primary-color)] text-lg line-clamp-1 tracking-tight">{req.caregiver?.full_name || 'Candidato'}</p>
-                                                        <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em] mt-0.5">Nueva Postulación</p>
+                                                        {(() => {
+                                                            const now = new Date();
+                                                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                                            const isPendingAndRunning = req.appointment.date === todayLocal && req.appointment.time <= currentTime;
+                                                            return isPendingAndRunning ? (
+                                                                <p className="text-[10px] text-orange-600 font-black uppercase tracking-[0.2em] mt-0.5 bg-orange-50 px-2 py-0.5 rounded-full inline-block">PENDIENTE (EN CURSO)</p>
+                                                            ) : (
+                                                                <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.2em] mt-0.5">Nueva Postulación</p>
+                                                            );
+                                                        })()}
                                                     </div>
                                                 </div>
 

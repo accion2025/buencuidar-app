@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, Settings, LogOut, Bell, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/layout/Logo';
@@ -8,6 +8,12 @@ import Logo from '../components/layout/Logo';
 const AdminLayout = () => {
     const { signOut } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await signOut();
+        navigate('/login');
+    };
 
     const isActive = (path) => location.pathname === path;
 
@@ -63,11 +69,11 @@ const AdminLayout = () => {
 
                 <div className="p-4 border-t border-slate-800">
                     <button
-                        onClick={signOut}
-                        className="flex items-center gap-3 px-4 py-3 w-full rounded-[16px] hover:bg-red-500/10 hover:text-red-400 transition-colors"
+                        onClick={handleLogout}
+                        className="flex items-center gap-4 px-6 py-5 lg:px-4 lg:py-3 w-full rounded-[16px] hover:bg-red-500/10 hover:text-red-400 transition-colors"
                     >
-                        <LogOut size={20} />
-                        <span className="font-bold">Cerrar Sesión</span>
+                        <LogOut className="w-6 h-6 lg:w-5 lg:h-5" />
+                        <span className="font-bold text-lg lg:text-base">Cerrar Sesión</span>
                     </button>
                 </div>
             </aside>

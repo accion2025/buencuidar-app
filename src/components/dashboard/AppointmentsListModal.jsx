@@ -64,10 +64,23 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
 
                                 {/* Status Badge & Actions */}
                                 <div className="flex sm:flex-col items-center sm:items-end gap-2 text-xs">
-                                    <span className={`px-3 py-1 rounded-full font-bold ${app.status === 'confirmed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                                        }`}>
-                                        {app.status === 'confirmed' ? 'Confirmada' : 'Pendiente'}
-                                    </span>
+                                    {(() => {
+                                        const today = new Date().toLocaleDateString('en-CA');
+                                        const now = new Date();
+                                        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                        const isPendingAndRunning = app.status === 'pending' && app.date === today && app.time <= currentTime;
+
+                                        return (
+                                            <span className={`px-3 py-1 rounded-full font-bold border ${isPendingAndRunning
+                                                ? 'bg-orange-100 text-orange-700 border-orange-200'
+                                                : app.status === 'confirmed'
+                                                    ? 'bg-green-100 text-green-700 border-green-200'
+                                                    : 'bg-yellow-100 text-yellow-700 border-yellow-200'
+                                                }`}>
+                                                {isPendingAndRunning ? 'PENDIENTE' : (app.status === 'confirmed' ? 'Confirmada' : 'Pendiente')}
+                                            </span>
+                                        );
+                                    })()}
 
                                     <div className="flex gap-2 mt-1">
                                         {onEdit && (

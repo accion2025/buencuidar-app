@@ -30,12 +30,16 @@ const CaregiverLayout = () => {
         if (user) fetchUnread();
     }, [user, fetchUnread]);
 
-    // Seguridad: Redirigir si el rol no es cuidador
+    // Seguridad: Redirigir si el rol no es cuidador o si no hay sesión
     useEffect(() => {
-        if (!loading && profile && profile.role !== 'caregiver') {
-            navigate('/dashboard');
+        if (!loading) {
+            if (!user) {
+                navigate('/login');
+            } else if (profile && profile.role !== 'caregiver') {
+                navigate('/dashboard');
+            }
         }
-    }, [profile, loading, navigate]);
+    }, [profile, user, loading, navigate]);
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Resumen', path: '/caregiver' },
@@ -131,10 +135,10 @@ const CaregiverLayout = () => {
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-[16px] transition-colors"
+                        className="flex items-center gap-4 px-6 py-5 lg:px-4 lg:py-3 w-full text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-[16px] transition-colors"
                     >
-                        <LogOut size={20} />
-                        <span className="font-medium">Cerrar Sesión</span>
+                        <LogOut className="w-6 h-6 lg:w-5 lg:h-5" />
+                        <span className="font-bold lg:font-medium text-lg lg:text-base">Cerrar Sesión</span>
                     </button>
                 </div>
             </aside>
