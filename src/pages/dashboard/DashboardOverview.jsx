@@ -23,7 +23,7 @@ const StatCard = ({ icon: Icon, title, value, colorClass, onClick }) => (
     </div>
 );
 
-const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile, onRate, status, label, labelColor }) => (
+const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile, onRate, status, label, labelColor, eventTimeLabel }) => (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 bg-white border border-gray-100 rounded-[16px] mb-4 last:mb-0 hover:border-[var(--secondary-color)]/30 hover:shadow-xl transition-all animate-fade-in group relative overflow-hidden">
         <div className="flex items-center gap-5 relative z-10">
             <div className={`w-14 h-14 rounded-[16px] bg-[var(--accent-color)]/30 text-[var(--primary-color)] flex items-center justify-center font-brand font-bold text-xl overflow-hidden shrink-0 shadow-inner group-hover:scale-105 transition-transform border border-white`}>
@@ -52,6 +52,14 @@ const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile,
                         <span className="text-xs font-bold font-brand opacity-80">{date}</span>
                     </div>
                 </div>
+                {eventTimeLabel && (
+                    <div className="mt-2 flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--secondary-color)] animate-pulse"></div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--secondary-color)] opacity-90">
+                            {eventTimeLabel}
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
 
@@ -861,6 +869,36 @@ const DashboardOverview = () => {
                                             const isPast = (app.date < todayLocal || (app.date === todayLocal && endTime < currentTime));
                                             const isExpired = isPast && ((app.status === 'cancelled' && !app.caregiver_id) || (app.status === 'pending'));
 
+                                            // Calculate eventTimeLabel
+                                            let eventTimeLabel = "";
+                                            try {
+                                                const getEventTimeStr = (app, isExpired) => {
+                                                    let dateObj;
+                                                    let prefix = "";
+                                                    if (app.status === 'completed' || app.status === 'paid') {
+                                                        dateObj = new Date(app.updated_at || app.created_at);
+                                                        prefix = "Finalizada";
+                                                    } else if (app.status === 'cancelled' && app.caregiver_id) {
+                                                        dateObj = new Date(app.updated_at || app.created_at);
+                                                        prefix = "Cancelada";
+                                                    } else if (isExpired) {
+                                                        prefix = "Expiró";
+                                                        const et = app.end_time || app.time || '23:59:59';
+                                                        dateObj = new Date(`${app.date}T${et}`);
+                                                        dateObj.setMinutes(dateObj.getMinutes() + 5);
+                                                    } else {
+                                                        dateObj = new Date(app.updated_at || app.created_at);
+                                                        prefix = "Cancelada"; // Generic fallback
+                                                    }
+                                                    const hStr = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                                    const dStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+                                                    return `${prefix}: ${hStr} - ${dStr}`;
+                                                };
+                                                eventTimeLabel = getEventTimeStr(app, isExpired);
+                                            } catch (e) {
+                                                console.error("Error formatting event label:", e);
+                                            }
+
                                             return (
                                                 <AppointmentCard
                                                     key={app.id}
@@ -872,6 +910,7 @@ const DashboardOverview = () => {
                                                     status={app.status}
                                                     label={isExpired ? 'CITA EXPIRADA' : (app.status === 'cancelled' ? 'CANCELADA' : null)}
                                                     labelColor={isExpired ? 'bg-red-50 text-red-600 border border-red-100' : (app.status === 'cancelled' ? 'bg-gray-100 text-gray-500' : '')}
+                                                    eventTimeLabel={eventTimeLabel}
                                                     rating={app.reviews?.[0]?.rating}
                                                     onViewProfile={() => setSelectedCaregiver(app.caregiver)}
                                                     onRate={() => setRatingAppointment(app)}
