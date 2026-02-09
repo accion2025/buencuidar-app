@@ -128,7 +128,7 @@ const Navbar = () => {
                                                 navigate('/login');
                                             }
                                         }}
-                                        className="flex items-center gap-2 px-4 py-2.5 text-gray-500 hover:text-[var(--primary-color)] hover:bg-gray-100 transition-all bg-gray-50 rounded-[16px] border border-gray-100 shadow-sm group"
+                                        className="flex items-center gap-2 px-4 py-2.5 text-white bg-[#0F3C4C] hover:bg-[#0d3542] transition-all rounded-[16px] shadow-md group"
                                         title="Cerrar Sesión"
                                     >
                                         <LogOut size={18} className="group-hover:scale-110 transition-transform" />
@@ -271,7 +271,7 @@ const Navbar = () => {
                                     navigate('/login');
                                 }
                             }}
-                            className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[20px] bg-white text-[#0F3C4C] hover:bg-gray-100 transition-all border border-white/20 shadow-lg"
+                            className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[20px] bg-[#0d3542] text-white hover:bg-[#0b2d38] transition-all border border-white/10 shadow-lg"
                         >
                             <LogOut size={24} />
                             <span className="font-black text-sm uppercase tracking-widest">Cerrar Sesión</span>
