@@ -641,10 +641,20 @@ const DashboardOverview = () => {
             );
         })
         .sort((a, b) => {
-            // Sort purely by date/time descending (Most recent first)
-            const dateA = new Date(a.date + 'T' + (a.time || '00:00:00'));
-            const dateB = new Date(b.date + 'T' + (b.time || '00:00:00'));
-            return dateB - dateA;
+            // Get effective event time for sorting
+            const getEventTime = (app) => {
+                // For completed or manually cancelled appointments, use the last database update
+                if (app.status === 'completed' || app.status === 'paid' || (app.status === 'cancelled' && app.caregiver_id)) {
+                    return new Date(app.updated_at || app.created_at).getTime();
+                }
+
+                // For expired appointments (either processed or pending in history)
+                // we use the logical expiration time: date + end_time
+                const et = app.end_time || app.time || '23:59:59';
+                return new Date(`${app.date}T${et}`).getTime();
+            };
+
+            return getEventTime(b) - getEventTime(a);
         });
     // Filter for "Citas Programadas" (Modal & Stat Card)
     const upcomingAppointmentsList = appointments.filter(a => {
