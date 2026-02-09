@@ -848,8 +848,8 @@ const DashboardOverview = () => {
                                             const now = new Date();
                                             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
                                             const endTime = app.end_time || app.time;
-                                            const isExpired = (app.status === 'cancelled' && !app.caregiver_id) ||
-                                                (app.status === 'pending' && (app.date < todayLocal || (app.date === todayLocal && endTime < currentTime)));
+                                            const isPast = (app.date < todayLocal || (app.date === todayLocal && endTime < currentTime));
+                                            const isExpired = isPast && ((app.status === 'cancelled' && !app.caregiver_id) || (app.status === 'pending'));
 
                                             return (
                                                 <AppointmentCard
