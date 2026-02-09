@@ -17,6 +17,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
         address: '',
         date: '',
         time: '',
+        endTime: '',
         details: ''
     });
 
@@ -57,6 +58,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                 address: '',
                 date: '',
                 time: '',
+                endTime: '',
                 details: ''
             });
         }
@@ -116,6 +118,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                     address: requestData.address,
                     date: requestData.date,
                     time: requestData.time,
+                    end_time: requestData.endTime,
                     details: requestData.details,
                     created_at: new Date().toISOString()
                 });
@@ -470,6 +473,16 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                             className="w-full border-2 border-gray-100 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-semibold text-slate-700 transition-all bg-gray-50/30 focus:bg-white"
                                             value={requestData.time}
                                             onChange={e => setRequestData({ ...requestData, time: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Hora Fin</label>
+                                        <input
+                                            required
+                                            type="time"
+                                            className="w-full border-2 border-gray-100 rounded-[12px] px-4 py-3 focus:border-[var(--secondary-color)] outline-none font-semibold text-slate-700 transition-all bg-gray-50/30 focus:bg-white"
+                                            value={requestData.endTime}
+                                            onChange={e => setRequestData({ ...requestData, endTime: e.target.value })}
                                         />
                                     </div>
                                 </div>
