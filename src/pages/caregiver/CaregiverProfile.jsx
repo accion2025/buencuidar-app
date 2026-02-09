@@ -96,7 +96,7 @@ const CaregiverProfile = () => {
     const [showCropper, setShowCropper] = useState(false);
     const [newCert, setNewCert] = useState({ title: '', org: '', year: '' });
     const [documents, setDocuments] = useState([]);
-    const [ratingStats, setRatingStats] = useState({ average: 5.0, count: 0 });
+    const [ratingStats, setRatingStats] = useState({ average: 0.0, count: 0 });
     const [debugLogs, setDebugLogs] = useState([]);
 
     // Location lists based on selection
@@ -196,7 +196,7 @@ const CaregiverProfile = () => {
         } else {
             // Fallback to profile data if no reviews table data
             setRatingStats({
-                average: profile?.caregiver_details?.rating || 5.0,
+                average: profile?.caregiver_details?.rating || 0.0,
                 count: profile?.caregiver_details?.reviews_count || 0
             });
         }
@@ -597,7 +597,7 @@ const CaregiverProfile = () => {
                                             />
                                         ))}
                                     </div>
-                                    <span className="text-lg lg:text-xl font-brand font-bold !text-[#FAFAF7]">{ratingStats.average}</span>
+                                    <span className="text-lg lg:text-xl font-brand font-bold !text-[#FAFAF7]">{ratingStats.average} / 5</span>
                                     <span className="text-xs font-secondary !text-[#FAFAF7]">({ratingStats.count} res)</span>
                                 </div>
 
