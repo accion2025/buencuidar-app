@@ -641,12 +641,10 @@ const DashboardOverview = () => {
             );
         })
         .sort((a, b) => {
-            // Priority: Completed/Paid > Cancelled
-            const scoreA = (a.status === 'completed' || a.status === 'paid') ? 1 : 0;
-            const scoreB = (b.status === 'completed' || b.status === 'paid') ? 1 : 0;
-            if (scoreA !== scoreB) return scoreB - scoreA; // High score first
-            // Secondary sort: Date descending (Newest first)
-            return new Date(b.date) - new Date(a.date);
+            // Sort purely by date/time descending (Most recent first)
+            const dateA = new Date(a.date + 'T' + (a.time || '00:00:00'));
+            const dateB = new Date(b.date + 'T' + (b.time || '00:00:00'));
+            return dateB - dateA;
         });
     // Filter for "Citas Programadas" (Modal & Stat Card)
     const upcomingAppointmentsList = appointments.filter(a => {
@@ -845,9 +843,13 @@ const DashboardOverview = () => {
                             <div className="grid gap-6">
                                 {historyAppointments.length > 0 ? (
                                     historyAppointments
-                                        .slice(0, 3)
+                                        .slice(0, 5)
                                         .map(app => {
-                                            const isExpired = app.status === 'cancelled' && !app.caregiver_id;
+                                            const now = new Date();
+                                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                            const endTime = app.end_time || app.time;
+                                            const isExpired = (app.status === 'cancelled' && !app.caregiver_id) ||
+                                                (app.status === 'pending' && (app.date < todayLocal || (app.date === todayLocal && endTime < currentTime)));
 
                                             return (
                                                 <AppointmentCard
