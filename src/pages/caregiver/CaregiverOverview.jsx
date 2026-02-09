@@ -522,7 +522,7 @@ const CaregiverOverview = () => {
 
             // NEW POLICY: Show ALL applications (History), including cancelled/expired
             // We just sort them by date (already sorted by query)
-            setMyApplications(data.slice(0, 5));
+            setMyApplications(data);
         } catch (error) {
             console.error("Error fetching applications:", error);
         }
@@ -1090,18 +1090,20 @@ const CaregiverOverview = () => {
 
                             <div className="space-y-3">
                                 {myApplications.length > 0 ? (
-                                    myApplications.map(app => (
+                                    myApplications.slice(0, 5).map(app => (
                                         <div key={app.id} className="p-3 bg-gray-50 rounded-[16px] border border-gray-100">
                                             <div className="flex justify-between items-start mb-1">
                                                 <p className="text-xs font-bold text-gray-800">{app.appointment?.title || 'Servicio'}</p>
-                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${app.status === 'approved' ? 'bg-green-100 text-green-700' :
+                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${app.status === 'approved' && app.appointment?.status !== 'cancelled' ? 'bg-green-100 text-green-700' :
                                                     app.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                        (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'bg-gray-200 text-gray-600' :
-                                                            'bg-yellow-100 text-yellow-700'
+                                                        (app.status === 'approved' && app.appointment?.status === 'cancelled') ? 'bg-orange-100 text-orange-800' :
+                                                            (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'bg-gray-200 text-gray-600' :
+                                                                'bg-yellow-100 text-yellow-700'
                                                     }`}>
-                                                    {app.status === 'approved' ? 'Aprobada' :
+                                                    {app.status === 'approved' && app.appointment?.status !== 'cancelled' ? 'Aprobada' :
                                                         app.status === 'rejected' ? 'Rechazada' :
-                                                            (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'Cancelada/Exp' : 'Pendiente'}
+                                                            (app.status === 'approved' && app.appointment?.status === 'cancelled') ? 'Servicio Cancelado' :
+                                                                (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'Cancelada/Exp' : 'Pendiente'}
                                                 </span>
                                             </div>
                                             <p className="text-[11px] text-gray-500 mb-2">Cliente: {app.appointment?.client?.full_name || 'Anónimo'}</p>
@@ -1126,12 +1128,14 @@ const CaregiverOverview = () => {
                                     Ver Bolsa de Trabajo
                                 </button>
 
-                                <button
-                                    onClick={() => setIsAppsModalOpen(true)}
-                                    className="w-full mt-4 text-xs text-gray-500 font-bold hover:text-[var(--primary-color)] transition-colors border-t border-gray-100 pt-3 flex items-center justify-center gap-1"
-                                >
-                                    Ver todas ({myApplications?.length || 0})
-                                </button>
+                                {myApplications.length > 5 && (
+                                    <button
+                                        onClick={() => setIsAppsModalOpen(true)}
+                                        className="w-full mt-4 text-xs text-gray-500 font-bold hover:text-[var(--primary-color)] transition-colors border-t border-gray-100 pt-3 flex items-center justify-center gap-1"
+                                    >
+                                        Ver anteriores ({myApplications.length - 5})
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
