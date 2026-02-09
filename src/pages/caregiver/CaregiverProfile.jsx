@@ -618,175 +618,173 @@ const CaregiverProfile = () => {
                             </div>
                         </div>
 
-                    </div>
-
-                    <div className="flex flex-col gap-4 w-full lg:w-auto">
-                        <button
-                            onClick={handleEditOpen}
-                            className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-2xl shadow-green-900/40 flex items-center justify-center gap-3 group border-none"
-                        >
-                            <Edit2 size={18} className="group-hover:rotate-12 transition-transform" />
-                            Editar Mi Perfil PRO
-                        </button>
-                        <button className="bg-white/10 backdrop-blur-md !text-[#FAFAF7] border border-white/10 px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-[var(--primary-color)] transition-all flex items-center justify-center gap-3">
-                            <BookOpen size={18} />
-                            Vista Pública
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid lg:grid-cols-1 xl:grid-cols-[1fr_380px] gap-10">
-                <div className="space-y-10 text-left">
-                    <div className="bg-white rounded-[16px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                        <h3 className="font-brand font-bold text-[10px] text-gray-400 mb-8 tracking-[0.2em] uppercase flex items-center gap-3 relative z-10">
-                            <span className="p-2 bg-blue-50 text-blue-600 rounded-[12px]">
-                                <User size={16} />
-                            </span>
-                            Sobre mi Trayectoria
-                        </h3>
-                        <p className="text-[var(--text-main)] leading-relaxed text-xl font-secondary relative z-10 opacity-90">
-                            {profile.bio || "Este cuidador aún no ha redactado su biografía profesional."}
-                        </p>
-
-                        <div className="mt-16 pt-12 border-t border-gray-100 relative z-10">
-                            <div className="flex justify-between items-center mb-8">
-                                <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
-                                    <span className="p-2 bg-emerald-50 text-[var(--secondary-color)] rounded-[12px]">
-                                        <Star size={16} />
-                                    </span>
-                                    Habilidades Destacadas
-                                </h3>
-                                <button onClick={handleEditOpen} className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 px-4 py-2 rounded-[16px] transition-all flex items-center gap-2 border border-emerald-100">
-                                    <Plus size={14} strokeWidth={3} />
-                                    Gestionar
-                                </button>
-                            </div>
-                            <div className="flex flex-wrap gap-4">
-                                {(profile.skills && profile.skills.length > 0 ? profile.skills : ['Primeros Auxilios', 'Higiene y Confort', 'Indicadores Generales'])
-                                    .filter(skill => !skill.toLowerCase().includes('esto es una prueba'))
-                                    .map(skill => (
-                                        <span key={skill} className="bg-[var(--base-bg)] text-[var(--primary-color)] px-6 py-3 rounded-[16px] text-sm font-bold border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[var(--secondary-color)]/30 hover:scale-105 transition-all">
-                                            <div className="w-2 h-2 bg-[var(--secondary-color)] rounded-full"></div>
-                                            {skill}
-                                        </span>
-                                    ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="card md:!p-12 !p-6 border-none shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                        <div className="flex justify-between items-center mb-10 relative z-10">
-                            <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
-                                <span className="p-2 bg-purple-50 text-purple-600 rounded-[12px]">
-                                    <BookOpen size={16} />
-                                </span>
-                                Formación y Certificaciones
-                            </h3>
-                            <button onClick={handleEditOpen} className="text-purple-600 text-[10px] font-black uppercase tracking-widest hover:bg-purple-50 px-4 py-2 rounded-[16px] transition-all flex items-center gap-2 border border-purple-100">
-                                <Plus size={14} strokeWidth={3} />
-                                Añadir
+                        <div className="flex flex-col gap-4 w-full lg:w-auto">
+                            <button
+                                onClick={handleEditOpen}
+                                className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-2xl shadow-green-900/40 flex items-center justify-center gap-3 group border-none"
+                            >
+                                <Edit2 size={18} className="group-hover:rotate-12 transition-transform" />
+                                Editar Mi Perfil PRO
+                            </button>
+                            <button className="bg-white/10 backdrop-blur-md !text-[#FAFAF7] border border-white/10 px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-[var(--primary-color)] transition-all flex items-center justify-center gap-3">
+                                <BookOpen size={18} />
+                                Vista Pública
                             </button>
                         </div>
-                        <div className="grid md:grid-cols-2 gap-6 relative z-10">
-                            {(profile.certifications || []).map((cert, idx) => (
-                                <div key={idx} className="flex items-center gap-6 p-6 rounded-[16px] border border-gray-100 hover:border-[var(--secondary-color)]/30 hover:bg-white hover:shadow-xl transition-all group">
-                                    <div className="bg-[var(--accent-color)] text-[var(--primary-color)] p-4 rounded-[16px] group-hover:scale-110 transition-transform shadow-inner">
-                                        <Award size={28} />
-                                    </div>
-                                    <div className="text-left">
-                                        <h4 className="font-brand font-bold text-[var(--primary-color)] text-xl leading-tight mb-1">{cert.title}</h4>
-                                        <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest">{cert.org} • {cert.year}</p>
-                                    </div>
+                    </div>
+                </div>
+
+                <div className="grid lg:grid-cols-1 xl:grid-cols-[1fr_380px] gap-10">
+                    <div className="space-y-10 text-left">
+                        <div className="bg-white rounded-[16px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                            <h3 className="font-brand font-bold text-[10px] text-gray-400 mb-8 tracking-[0.2em] uppercase flex items-center gap-3 relative z-10">
+                                <span className="p-2 bg-blue-50 text-blue-600 rounded-[12px]">
+                                    <User size={16} />
+                                </span>
+                                Sobre mi Trayectoria
+                            </h3>
+                            <p className="text-[var(--text-main)] leading-relaxed text-xl font-secondary relative z-10 opacity-90">
+                                {profile.bio || "Este cuidador aún no ha redactado su biografía profesional."}
+                            </p>
+
+                            <div className="mt-16 pt-12 border-t border-gray-100 relative z-10">
+                                <div className="flex justify-between items-center mb-8">
+                                    <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
+                                        <span className="p-2 bg-emerald-50 text-[var(--secondary-color)] rounded-[12px]">
+                                            <Star size={16} />
+                                        </span>
+                                        Habilidades Destacadas
+                                    </h3>
+                                    <button onClick={handleEditOpen} className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 px-4 py-2 rounded-[16px] transition-all flex items-center gap-2 border border-emerald-100">
+                                        <Plus size={14} strokeWidth={3} />
+                                        Gestionar
+                                    </button>
                                 </div>
-                            ))}
+                                <div className="flex flex-wrap gap-4">
+                                    {(profile.skills && profile.skills.length > 0 ? profile.skills : ['Primeros Auxilios', 'Higiene y Confort', 'Indicadores Generales'])
+                                        .filter(skill => !skill.toLowerCase().includes('esto es una prueba'))
+                                        .map(skill => (
+                                            <span key={skill} className="bg-[var(--base-bg)] text-[var(--primary-color)] px-6 py-3 rounded-[16px] text-sm font-bold border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[var(--secondary-color)]/30 hover:scale-105 transition-all">
+                                                <div className="w-2 h-2 bg-[var(--secondary-color)] rounded-full"></div>
+                                                {skill}
+                                            </span>
+                                        ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="card md:!p-12 !p-6 border-none shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                            <div className="flex justify-between items-center mb-10 relative z-10">
+                                <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
+                                    <span className="p-2 bg-purple-50 text-purple-600 rounded-[12px]">
+                                        <BookOpen size={16} />
+                                    </span>
+                                    Formación y Certificaciones
+                                </h3>
+                                <button onClick={handleEditOpen} className="text-purple-600 text-[10px] font-black uppercase tracking-widest hover:bg-purple-50 px-4 py-2 rounded-[16px] transition-all flex items-center gap-2 border border-purple-100">
+                                    <Plus size={14} strokeWidth={3} />
+                                    Añadir
+                                </button>
+                            </div>
+                            <div className="grid md:grid-cols-2 gap-6 relative z-10">
+                                {(profile.certifications || []).map((cert, idx) => (
+                                    <div key={idx} className="flex items-center gap-6 p-6 rounded-[16px] border border-gray-100 hover:border-[var(--secondary-color)]/30 hover:bg-white hover:shadow-xl transition-all group">
+                                        <div className="bg-[var(--accent-color)] text-[var(--primary-color)] p-4 rounded-[16px] group-hover:scale-110 transition-transform shadow-inner">
+                                            <Award size={28} />
+                                        </div>
+                                        <div className="text-left">
+                                            <h4 className="font-brand font-bold text-[var(--primary-color)] text-xl leading-tight mb-1">{cert.title}</h4>
+                                            <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest">{cert.org} • {cert.year}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-10">
+                        <div className="bg-white rounded-[16px] p-6 md:p-10 border border-slate-100 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                            <h3 className="font-brand font-bold text-gray-400 mb-10 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] relative z-10">
+                                <span className="p-2 bg-amber-50 text-amber-500 rounded-[12px]">
+                                    <Award size={16} />
+                                </span>
+                                Insignias Ganadas
+                            </h3>
+                            <div className="grid grid-cols-2 gap-8 text-center relative z-10">
+                                <div className={`flex flex-col items-center group ${Number(ratingStats.average) >= 4.8 && ratingStats.count > 0 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
+                                    <div className="w-20 h-20 bg-gradient-to-br from-amber-50 to-amber-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-amber-200 group-hover:rotate-12 transition-transform border border-amber-200/50">🏆</div>
+                                    <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Top Rated</span>
+                                    <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Rating 4.8+</span>
+                                </div>
+
+                                <div className="flex flex-col items-center group">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-blue-50 to-blue-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-blue-200 group-hover:-rotate-12 transition-transform border border-blue-200/50">⚡</div>
+                                    <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Rápido</span>
+                                    <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Resp. &lt; 1h</span>
+                                </div>
+
+                                <div className="flex flex-col items-center group">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-emerald-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-emerald-200 group-hover:scale-110 transition-transform border border-emerald-200/50">🛡️</div>
+                                    <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Verificado</span>
+                                    <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Doc. Validada</span>
+                                </div>
+
+                                <div className={`flex flex-col items-center group ${ratingStats.count >= 5 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
+                                    <div className="w-20 h-20 bg-gradient-to-br from-purple-50 to-purple-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform border border-purple-200/50">✨</div>
+                                    <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Popular</span>
+                                    <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">+5 Reseñas</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-[#0F3C4C] rounded-[16px] p-6 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
+                            <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+                            <h3 className="font-brand font-bold mb-10 text-[10px] text-gray-400 uppercase tracking-[0.2em] flex items-center gap-3 relative z-10">
+                                <span className="p-2 bg-white/10 rounded-[12px]">
+                                    <ShieldCheck size={16} className="text-[var(--secondary-color)]" />
+                                </span>
+                                Estatus de Verificación
+                            </h3>
+                            <div className="space-y-6 relative z-10">
+                                <CheckRow
+                                    label="Identidad Validada"
+                                    docData={documents.find(d => d.document_type === 'id_card')}
+                                />
+                                <CheckRow
+                                    label="Antecedentes Penales"
+                                    docData={documents.find(d => d.document_type === 'criminal_record')}
+                                />
+                                <CheckRow
+                                    label="Licencia / Certificación"
+                                    docData={documents.find(d => d.document_type === 'professional_license')}
+                                />
+                                <CheckRow
+                                    label="Evaluación de trato humano"
+                                    docData={documents.find(d => d.document_type === 'human_evaluation')}
+                                />
+                            </div>
+                            <div className="mt-10 p-4 bg-white/5 rounded-[16px] border border-white/5 text-[10px] font-secondary !text-[#FAFAF7]/50 leading-relaxed italic">
+                                {documents.length < 4 ?
+                                    'Sube tus documentos faltantes para completar la verificación.' :
+                                    'Tus documentos están siendo procesados por nuestro equipo.'
+                                }
+                            </div>
+
+                            <button
+                                onClick={() => setShowVerificationModal(true)}
+                                className="w-full mt-6 btn btn-secondary !text-[10px] font-black uppercase tracking-widest py-4"
+                            >
+                                {documents.length > 0 ? 'Gestionar Documentación' : 'Subir Documentación'}
+                            </button>
                         </div>
                     </div>
                 </div>
+            </div >
 
-                <div className="space-y-10">
-                    <div className="bg-white rounded-[16px] p-6 md:p-10 border border-slate-100 shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                        <h3 className="font-brand font-bold text-gray-400 mb-10 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] relative z-10">
-                            <span className="p-2 bg-amber-50 text-amber-500 rounded-[12px]">
-                                <Award size={16} />
-                            </span>
-                            Insignias Ganadas
-                        </h3>
-                        <div className="grid grid-cols-2 gap-8 text-center relative z-10">
-                            <div className={`flex flex-col items-center group ${Number(ratingStats.average) >= 4.8 && ratingStats.count > 0 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
-                                <div className="w-20 h-20 bg-gradient-to-br from-amber-50 to-amber-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-amber-200 group-hover:rotate-12 transition-transform border border-amber-200/50">🏆</div>
-                                <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Top Rated</span>
-                                <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Rating 4.8+</span>
-                            </div>
-
-                            <div className="flex flex-col items-center group">
-                                <div className="w-20 h-20 bg-gradient-to-br from-blue-50 to-blue-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-blue-200 group-hover:-rotate-12 transition-transform border border-blue-200/50">⚡</div>
-                                <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Rápido</span>
-                                <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Resp. &lt; 1h</span>
-                            </div>
-
-                            <div className="flex flex-col items-center group">
-                                <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-emerald-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-emerald-200 group-hover:scale-110 transition-transform border border-emerald-200/50">🛡️</div>
-                                <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Verificado</span>
-                                <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Doc. Validada</span>
-                            </div>
-
-                            <div className={`flex flex-col items-center group ${ratingStats.count >= 5 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
-                                <div className="w-20 h-20 bg-gradient-to-br from-purple-50 to-purple-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform border border-purple-200/50">✨</div>
-                                <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Popular</span>
-                                <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">+5 Reseñas</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="bg-[#0F3C4C] rounded-[16px] p-6 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-                        <h3 className="font-brand font-bold mb-10 text-[10px] text-gray-400 uppercase tracking-[0.2em] flex items-center gap-3 relative z-10">
-                            <span className="p-2 bg-white/10 rounded-[12px]">
-                                <ShieldCheck size={16} className="text-[var(--secondary-color)]" />
-                            </span>
-                            Estatus de Verificación
-                        </h3>
-                        <div className="space-y-6 relative z-10">
-                            <CheckRow
-                                label="Identidad Validada"
-                                docData={documents.find(d => d.document_type === 'id_card')}
-                            />
-                            <CheckRow
-                                label="Antecedentes Penales"
-                                docData={documents.find(d => d.document_type === 'criminal_record')}
-                            />
-                            <CheckRow
-                                label="Licencia / Certificación"
-                                docData={documents.find(d => d.document_type === 'professional_license')}
-                            />
-                            <CheckRow
-                                label="Evaluación de trato humano"
-                                docData={documents.find(d => d.document_type === 'human_evaluation')}
-                            />
-                        </div>
-                        <div className="mt-10 p-4 bg-white/5 rounded-[16px] border border-white/5 text-[10px] font-secondary !text-[#FAFAF7]/50 leading-relaxed italic">
-                            {documents.length < 4 ?
-                                'Sube tus documentos faltantes para completar la verificación.' :
-                                'Tus documentos están siendo procesados por nuestro equipo.'
-                            }
-                        </div>
-
-                        <button
-                            onClick={() => setShowVerificationModal(true)}
-                            className="w-full mt-6 btn btn-secondary !text-[10px] font-black uppercase tracking-widest py-4"
-                        >
-                            {documents.length > 0 ? 'Gestionar Documentación' : 'Subir Documentación'}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div >
-
-            { isEditing && (
+            {isEditing && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex flex-col md:items-center md:justify-center p-0 md:p-4">
                     <div className="bg-white w-full max-w-4xl h-[100dvh] md:h-auto md:max-h-[90vh] md:rounded-[32px] flex flex-col animate-slide-up shadow-2xl overflow-hidden">
                         {/* Modal Header */}
@@ -1111,7 +1109,7 @@ const CaregiverProfile = () => {
                     </div>
                 </div>
             )
-}
+            }
         </>
     );
 };
