@@ -651,15 +651,26 @@ const DashboardOverview = () => {
         .sort((a, b) => {
             // Get effective event time for sorting
             const getEventTime = (app) => {
-                // For completed or manually cancelled appointments, use the last database update
                 if (app.status === 'completed' || app.status === 'paid' || (app.status === 'cancelled' && app.caregiver_id)) {
                     return new Date(app.updated_at || app.created_at).getTime();
                 }
 
-                // For expired appointments (either processed or pending in history)
-                // we use the logical expiration time: date + end_time
-                const et = app.end_time || app.time || '23:59:59';
-                return new Date(`${app.date}T${et}`).getTime();
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                const endTime = app.end_time || app.time;
+                const isPast = (app.date < todayLocal || (app.date === todayLocal && endTime < currentTime));
+                const isExpired = isPast && ((app.status === 'cancelled' && !app.caregiver_id) || (app.status === 'pending'));
+
+                if (isExpired) {
+                    const et = app.end_time || app.time || '23:59:59';
+                    const dateObj = new Date(`${app.date}T${et}`);
+                    dateObj.setMinutes(dateObj.getMinutes() + 5);
+                    return dateObj.getTime();
+                } else {
+                    return new Date(app.updated_at || app.created_at).getTime();
+                }
+
+
             };
 
             return getEventTime(b) - getEventTime(a);
@@ -869,32 +880,29 @@ const DashboardOverview = () => {
                                             const isPast = (app.date < todayLocal || (app.date === todayLocal && endTime < currentTime));
                                             const isExpired = isPast && ((app.status === 'cancelled' && !app.caregiver_id) || (app.status === 'pending'));
 
-                                            // Calculate eventTimeLabel
+                                            // Calculate eventTimeLabel (Synchronized with Sort Logic)
                                             let eventTimeLabel = "";
                                             try {
-                                                const getEventTimeStr = (app, isExpired) => {
-                                                    let dateObj;
-                                                    let prefix = "";
-                                                    if (app.status === 'completed' || app.status === 'paid') {
-                                                        dateObj = new Date(app.updated_at || app.created_at);
-                                                        prefix = "Finalizada";
-                                                    } else if (app.status === 'cancelled' && app.caregiver_id) {
-                                                        dateObj = new Date(app.updated_at || app.created_at);
-                                                        prefix = "Cancelada";
-                                                    } else if (isExpired) {
-                                                        prefix = "Expiró";
-                                                        const et = app.end_time || app.time || '23:59:59';
-                                                        dateObj = new Date(`${app.date}T${et}`);
-                                                        dateObj.setMinutes(dateObj.getMinutes() + 5);
-                                                    } else {
-                                                        dateObj = new Date(app.updated_at || app.created_at);
-                                                        prefix = "Cancelada"; // Generic fallback
-                                                    }
-                                                    const hStr = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
-                                                    const dStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-                                                    return `${prefix}: ${hStr} - ${dStr}`;
-                                                };
-                                                eventTimeLabel = getEventTimeStr(app, isExpired);
+                                                let dateObj;
+                                                let prefix = "";
+                                                if (app.status === 'completed' || app.status === 'paid') {
+                                                    dateObj = new Date(app.updated_at || app.created_at);
+                                                    prefix = "Finalizada";
+                                                } else if (app.status === 'cancelled' && app.caregiver_id) {
+                                                    dateObj = new Date(app.updated_at || app.created_at);
+                                                    prefix = "Cancelada";
+                                                } else if (isExpired) {
+                                                    prefix = "Expiró";
+                                                    const et = app.end_time || app.time || '23:59:59';
+                                                    dateObj = new Date(`${app.date}T${et}`);
+                                                    dateObj.setMinutes(dateObj.getMinutes() + 5);
+                                                } else {
+                                                    dateObj = new Date(app.updated_at || app.created_at);
+                                                    prefix = "Cancelada";
+                                                }
+                                                const hStr = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                                const dStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+                                                eventTimeLabel = `${prefix}: ${hStr} - ${dStr}`;
                                             } catch (e) {
                                                 console.error("Error formatting event label:", e);
                                             }
