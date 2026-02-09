@@ -209,7 +209,11 @@ const DashboardOverview = () => {
                     }
 
                     // 4. Status to cancelled (Keep in calendar history)
-                    await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', job.id);
+                    try {
+                        await supabase.from('appointments').update({ status: 'cancelled' }).eq('id', job.id);
+                    } catch (updateErr) {
+                        console.error(`Error updating appointment ${job.id} status:`, updateErr);
+                    }
                 }
                 console.log(`[Cleanup] Processed ${expiredJobs.length} expired appointments from Dashboard.`);
             }
@@ -622,12 +626,20 @@ const DashboardOverview = () => {
     // 2. OR Status is 'confirmed' BUT Date is strictly less than Today (Past)
     // We EXCLUDE 'confirmed' appointments that are for TODAY (they belong in Upcoming)
     const historyAppointments = appointments
-        .filter(a =>
-            a.status === 'cancelled' ||
-            a.status === 'completed' ||
-            a.status === 'paid' ||
-            (a.status === 'confirmed' && a.date < todayLocal)
-        )
+        .filter(a => {
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+            const endTime = a.end_time || a.time;
+            const isExpiredPending = a.status === 'pending' && (a.date < todayLocal || (a.date === todayLocal && endTime < currentTime));
+
+            return (
+                a.status === 'cancelled' ||
+                a.status === 'completed' ||
+                a.status === 'paid' ||
+                isExpiredPending ||
+                (a.status === 'confirmed' && a.date < todayLocal)
+            );
+        })
         .sort((a, b) => {
             // Priority: Completed/Paid > Cancelled
             const scoreA = (a.status === 'completed' || a.status === 'paid') ? 1 : 0;
@@ -876,10 +888,24 @@ const DashboardOverview = () => {
 
                             <div className="space-y-6 relative z-10">
                                 {appointments
-                                    .filter(a => a.caregiver_id !== null && a.status === 'pending')
+                                    .filter(a => {
+                                        if (a.caregiver_id === null || a.status !== 'pending') return false;
+                                        const now = new Date();
+                                        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                        const endTime = a.end_time || a.time;
+                                        const isExpired = a.date < todayLocal || (a.date === todayLocal && endTime < currentTime);
+                                        return !isExpired;
+                                    })
                                     .length > 0 ? (
                                     appointments
-                                        .filter(a => a.caregiver_id !== null && a.status === 'pending')
+                                        .filter(a => {
+                                            if (a.caregiver_id === null || a.status !== 'pending') return false;
+                                            const now = new Date();
+                                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                            const endTime = a.end_time || a.time;
+                                            const isExpired = a.date < todayLocal || (a.date === todayLocal && endTime < currentTime);
+                                            return !isExpired;
+                                        })
                                         .map((req) => (
                                             <div key={req.id} className="bg-white border border-gray-100 rounded-[16px] p-6 animate-fade-in shadow-xl shadow-gray-100 hover:border-[var(--secondary-color)]/20 transition-all group">
                                                 <div className="flex items-center gap-4 mb-6">
@@ -947,6 +973,14 @@ const DashboardOverview = () => {
                                         (a.job_applications || [])
                                             .filter(app => {
                                                 if (app.status !== 'pending') return false;
+
+                                                // Expiration check
+                                                const now = new Date();
+                                                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                                const endTime = a.end_time || a.time;
+                                                const isExpired = a.date < todayLocal || (a.date === todayLocal && endTime < currentTime);
+                                                if (isExpired) return false;
+
                                                 const createdTime = new Date(app.created_at).getTime();
                                                 const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
                                                 return createdTime < fiveMinutesAgo;
