@@ -638,7 +638,7 @@ const CaregiverProfile = () => {
                     <div className="space-y-10 text-left">
                         <div className="bg-white rounded-[16px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                            <h3 className="font-brand font-bold text-[10px] text-gray-400 mb-8 tracking-[0.2em] uppercase flex items-center gap-3 relative z-10">
+                            <h3 className="font-brand font-semibold text-[10px] text-gray-400 mb-8 tracking-[0.2em] uppercase flex items-center gap-3 relative z-10">
                                 <span className="p-2 bg-blue-50 text-blue-600 rounded-[12px]">
                                     <User size={16} />
                                 </span>
@@ -650,7 +650,7 @@ const CaregiverProfile = () => {
 
                             <div className="mt-16 pt-12 border-t border-gray-100 relative z-10">
                                 <div className="flex justify-between items-center mb-8">
-                                    <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
+                                    <h3 className="font-brand font-semibold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
                                         <span className="p-2 bg-emerald-50 text-[var(--secondary-color)] rounded-[12px]">
                                             <Star size={16} />
                                         </span>
@@ -677,7 +677,7 @@ const CaregiverProfile = () => {
                         <div className="bg-white rounded-[16px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <div className="flex justify-between items-center mb-10 relative z-10">
-                                <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
+                                <h3 className="font-brand font-semibold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
                                     <span className="p-2 bg-purple-50 text-purple-600 rounded-[12px]">
                                         <BookOpen size={16} />
                                     </span>
@@ -707,7 +707,7 @@ const CaregiverProfile = () => {
                     <div className="space-y-10">
                         <div className="bg-white rounded-[16px] p-6 md:p-10 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                            <h3 className="font-brand font-bold text-gray-400 mb-10 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] relative z-10">
+                            <h3 className="font-brand font-semibold text-gray-400 mb-10 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] relative z-10">
                                 <span className="p-2 bg-amber-50 text-amber-500 rounded-[12px]">
                                     <Award size={16} />
                                 </span>

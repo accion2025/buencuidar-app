@@ -194,7 +194,7 @@ const CaregiverList = () => {
                                             />
                                             {/* Point 3: X/5 format, no rounding */}
                                             <span className={`text-sm font-black ml-1.5 ${(details?.reviews_count > 0 && details?.rating > 0) ? 'text-amber-600' : 'text-slate-400'}`}>
-                                                {(details?.reviews_count > 0 && details?.rating > 0) ? `${details.rating}/5` : '0/5'}
+                                                {(details?.reviews_count > 0 && details?.rating > 0) ? `${details.rating} / 5` : '0.0 / 5'}
                                             </span>
                                         </div>
                                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-[8px] border border-slate-100">
