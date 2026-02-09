@@ -14,8 +14,18 @@ export const NotificationProvider = ({ children }) => {
                 const isSecure = window.isSecureContext || window.location.hostname === 'localhost';
 
                 if (!isSecure) {
-                    console.error("⚠️ OneSignal requiere HTTPS o localhost para funcionar. Las notificaciones estarán desactivadas.");
+                    console.error("⚠️ OneSignal requiere HTTPS o localhost para funcionar.");
                     return;
+                }
+
+                // 1. Asegurar que el Service Worker esté registrado antes de OneSignal
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+                        console.log("Service Worker registrado correctamente (NotificationContext):", registration.scope);
+                    } catch (swError) {
+                        console.warn("Fallo el registro manual del Service Worker:", swError);
+                    }
                 }
 
                 await OneSignal.init({
@@ -25,12 +35,11 @@ export const NotificationProvider = ({ children }) => {
                         enable: false,
                     },
                     allowLocalhostAsSecureOrigin: true,
-                    // Sincronización con el Service Worker de la PWA
                     serviceWorkerPath: '/sw.js',
                     serviceWorkerParam: { scope: '/' }
                 });
 
-                // High Importance Channel for Android (Audible & Vibration)
+                // Tags de prioridad para asegurar sonido en móviles
                 OneSignal.User.addTags({
                     "priority_alerts": "enabled",
                     "sound_enabled": "true",
