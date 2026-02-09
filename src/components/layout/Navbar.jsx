@@ -119,10 +119,16 @@ const Navbar = () => {
                                     </button>
                                     <button
                                         onClick={async () => {
-                                            await signOut();
-                                            navigate('/login');
+                                            try {
+                                                console.log("Iniciando cierre de sesión...");
+                                                await signOut();
+                                            } catch (e) {
+                                                console.error("Error al cerrar sesión (silencioso):", e);
+                                            } finally {
+                                                navigate('/login');
+                                            }
                                         }}
-                                        className="flex items-center gap-2 px-4 py-2.5 text-gray-500 hover:text-white hover:bg-red-500 transition-all bg-gray-50 rounded-[16px] border border-gray-100 shadow-sm group"
+                                        className="flex items-center gap-2 px-4 py-2.5 text-gray-500 hover:text-[var(--primary-color)] hover:bg-gray-100 transition-all bg-gray-50 rounded-[16px] border border-gray-100 shadow-sm group"
                                         title="Cerrar Sesión"
                                     >
                                         <LogOut size={18} className="group-hover:scale-110 transition-transform" />
@@ -255,11 +261,17 @@ const Navbar = () => {
                     ) : (
                         <button
                             onClick={async () => {
-                                await signOut();
-                                navigate('/login');
-                                setIsSidebarOpen(false);
+                                try {
+                                    setIsSidebarOpen(false);
+                                    console.log("Iniciando cierre de sesión (Mobile)...");
+                                    await signOut();
+                                } catch (e) {
+                                    console.error("Error al cerrar sesión móvil:", e);
+                                } finally {
+                                    navigate('/login');
+                                }
                             }}
-                            className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[20px] bg-red-500/10 text-red-500 hover:bg-red-600 hover:text-white transition-all border border-red-500/20 shadow-lg"
+                            className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[20px] bg-white text-[#0F3C4C] hover:bg-gray-100 transition-all border border-white/20 shadow-lg"
                         >
                             <LogOut size={24} />
                             <span className="font-black text-sm uppercase tracking-widest">Cerrar Sesión</span>
