@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { Bell, Menu, X, LogOut, Home, Activity, Sparkles, LogIn, UserPlus, LayoutDashboard, User } from 'lucide-react';
 import Logo from './Logo';
 import { supabase } from '../../lib/supabase';
@@ -9,38 +10,8 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, profile, signOut } = useAuth();
+    const { unreadNotificationsCount } = useNotifications();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
-
-    React.useEffect(() => {
-        if (!user) return;
-
-        const fetchUnreadCount = async () => {
-            const { count } = await supabase
-                .from('notifications')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id)
-                .eq('is_read', false);
-            setUnreadCount(count || 0);
-        };
-
-        fetchUnreadCount();
-
-        // Real-time subscription for all notification changes
-        const channel = supabase
-            .channel('public:notifications')
-            .on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'notifications',
-                filter: `user_id=eq.${user.id}`
-            }, () => fetchUnreadCount())
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, [user]);
 
     const isRegistrationSuccess = location.pathname === '/registration-success';
     const showUserMenu = user && !isRegistrationSuccess;
@@ -101,7 +72,7 @@ const Navbar = () => {
                                         title="Notificaciones y Mensajes"
                                     >
                                         <Bell size={20} className="group-hover:animate-swing" />
-                                        {unreadCount > 0 && (
+                                        {unreadNotificationsCount > 0 && (
                                             <span className="absolute top-2 right-2 flex h-3 w-3">
                                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                                 <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
@@ -146,7 +117,7 @@ const Navbar = () => {
                                     className="relative p-2 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[12px]"
                                 >
                                     <Bell size={20} />
-                                    {unreadCount > 0 && (
+                                    {unreadNotificationsCount > 0 && (
                                         <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
                                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>

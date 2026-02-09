@@ -107,6 +107,7 @@ function App() {
                   <Route index element={<AdminDashboard />} />
                   <Route path="users" element={<UserManagement />} />
                   <Route path="verification" element={<AdminVerification />} />
+                  <Route path="notifications" element={<Notifications />} />
                   <Route path="settings" element={<div className="p-8">Configuración (Próximamente)</div>} />
                 </Route>
               </Route>

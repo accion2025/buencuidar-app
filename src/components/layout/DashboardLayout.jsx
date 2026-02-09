@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useMessage } from '../../context/MessageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import {
     LayoutDashboard,
     Calendar,
@@ -48,6 +49,7 @@ const DashboardLayout = () => {
     const { profile, signOut, user, loading } = useAuth(); // Destructure user and loading
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { unreadCount } = useMessage(); // Use global context
+    const { unreadNotificationsCount } = useNotifications();
 
     // Redirect if not logged in
     useEffect(() => {
@@ -159,11 +161,11 @@ const DashboardLayout = () => {
 
                     <div className="flex items-center justify-end w-full gap-6">
                         <button
-                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver#notifications' : '/dashboard#messages')}
+                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
                             className="relative text-gray-500 hover:text-[var(--primary-color)] transition-all group"
                         >
                             <Bell size={20} className="group-hover:animate-swing" />
-                            {unreadCount > 0 && (
+                            {unreadNotificationsCount > 0 && (
                                 <span className="absolute -top-1 -right-1 flex h-3 w-3">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>

@@ -6,7 +6,7 @@ import { Bell, Check, Trash2, Clock, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Notifications = () => {
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const navigate = useNavigate();
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -95,6 +95,33 @@ const Notifications = () => {
         }
     };
 
+    const handleNotificationClick = async (notification) => {
+        // 1. Mark as read first
+        if (!notification.is_read) {
+            await markAsRead(notification.id);
+        }
+
+        // 2. Smart Navigation based on metadata
+        const metadata = notification.metadata || {};
+        const targetPath = metadata.target_path;
+
+        if (targetPath) {
+            // Priority 1: Use explicit target_path if exists
+            navigate(targetPath);
+        } else if (metadata.is_chat || metadata.conversation_id) {
+            // Priority 2: Chat notifications
+            navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/dashboard/messages');
+        } else if (metadata.appointment_id) {
+            // Priority 3: Appointment related
+            navigate(profile?.role === 'caregiver' ? '/caregiver/shifts' : '/dashboard/calendar');
+        } else if (metadata.log_id) {
+            // Priority 4: Care logs / Wellness
+            navigate('/dashboard/pulso');
+        } else {
+            console.log("No smart path found for notification:", notification);
+        }
+    };
+
     const getPriorityColor = (priority, type) => {
         if (priority === 'high' || type === 'alert') return 'bg-red-50 border-l-4 border-red-500';
         if (type === 'success') return 'bg-green-50 border-l-4 border-green-500';
@@ -144,11 +171,11 @@ const Notifications = () => {
                     {notifications.map((notification) => (
                         <div
                             key={notification.id}
-                            onClick={() => !notification.is_read && markAsRead(notification.id)}
+                            onClick={() => handleNotificationClick(notification)}
                             className={`
                                 relative p-4 rounded-[12px] shadow-sm transition-all cursor-pointer group hover:shadow-md
                                 ${getPriorityColor(notification.priority, notification.type)}
-                                ${!notification.is_read ? 'bg-white' : 'bg-gray-50 opacity-75'}
+                                ${!notification.is_read ? 'bg-white font-medium' : 'bg-gray-50 opacity-75'}
                             `}
                         >
                             <div className="flex items-start gap-4">

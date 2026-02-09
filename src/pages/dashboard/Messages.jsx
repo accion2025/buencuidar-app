@@ -150,13 +150,16 @@ const Messages = () => {
             .on('postgres_changes',
                 { event: '*', schema: 'public', table: 'messages', filter: `conversation_id=eq.${selectedChat.id}` },
                 (payload) => {
-                    console.log('Real-time event received:', payload.eventType, payload);
+                    console.log(`[Chat:${selectedChat.id}] Evento en tiempo real:`, payload.eventType, payload);
 
                     if (payload.eventType === 'INSERT') {
                         setMessages(prev => {
                             // Verify if it's already there (to avoid double insert from optimistic + real)
                             const exists = prev.some(m => m.id === payload.new.id);
-                            if (exists) return prev;
+                            if (exists) {
+                                console.log(`[Chat:${selectedChat.id}] Mensaje omitido (ya existe):`, payload.new.id);
+                                return prev;
+                            }
 
                             // If it's the current user sending, we likely already have it via optimistic update
                             // but we merge anyway to ensure we have the real DB ID and timestamp
@@ -165,9 +168,14 @@ const Messages = () => {
                         scrollToBottom();
 
                         if (payload.new.sender_id !== user.id) {
+                            console.log(`[Chat:${selectedChat.id}] Nuevo mensaje recibido del otro usuario, marcando como leído.`);
                             markAsRead();
                         }
+                    } else if (payload.eventType === 'UPDATE') {
+                        // Handle updates (e.g., mark as read status changed)
+                        setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m));
                     } else if (payload.eventType === 'DELETE') {
+                        console.log(`[Chat:${selectedChat.id}] Mensaje eliminado:`, payload.old.id);
                         setMessages(prev => prev.filter(m => m.id !== payload.old.id));
                     }
                 }

@@ -3,10 +3,12 @@ import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, Settings, LogOut, Bell, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 import Logo from '../components/layout/Logo';
 
 const AdminLayout = () => {
     const { signOut } = useAuth();
+    const { unreadNotificationsCount } = useNotifications();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -83,9 +85,17 @@ const AdminLayout = () => {
                 <header className="bg-white px-8 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 z-10">
                     <h2 className="font-bold text-gray-800">Panel de Control</h2>
                     <div className="flex items-center gap-4">
-                        <button className="relative p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                        <button
+                            onClick={() => navigate('/admin/notifications')}
+                            className="relative p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"
+                        >
                             <Bell size={20} />
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                            {unreadNotificationsCount > 0 && (
+                                <span className="absolute top-2 right-2 flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500 border border-white"></span>
+                                </span>
+                            )}
                         </button>
                         <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
                             {/* Placeholder Admin Avatar */}

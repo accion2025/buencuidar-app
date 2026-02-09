@@ -1,12 +1,55 @@
 import OneSignal from 'react-onesignal';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { supabase } from '../lib/supabase';
 
 const NotificationContext = createContext({});
 
 export const NotificationProvider = ({ children }) => {
     const { user, profile } = useAuth();
     const [initialized, setInitialized] = useState(false);
+    const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+
+    // Fetch and Subscribe to Notifications
+    useEffect(() => {
+        if (!user) {
+            setUnreadNotificationsCount(0);
+            return;
+        }
+
+        const fetchUnreadCount = async () => {
+            try {
+                const { count, error } = await supabase
+                    .from('notifications')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', user.id)
+                    .eq('is_read', false);
+
+                if (error) throw error;
+                setUnreadNotificationsCount(count || 0);
+            } catch (err) {
+                console.error("Error al obtener conteo de notificaciones:", err);
+            }
+        };
+
+        fetchUnreadCount();
+
+        const channel = supabase
+            .channel(`notifications-count-${user.id}`)
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'notifications',
+                filter: `user_id=eq.${user.id}`
+            }, () => {
+                fetchUnreadCount();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [user]);
 
     useEffect(() => {
         const initOneSignal = async () => {
@@ -16,16 +59,6 @@ export const NotificationProvider = ({ children }) => {
                 if (!isSecure) {
                     console.error("⚠️ OneSignal requiere HTTPS o localhost para funcionar.");
                     return;
-                }
-
-                // 1. Asegurar que el Service Worker esté registrado antes de OneSignal
-                if ('serviceWorker' in navigator) {
-                    try {
-                        const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-                        console.log("Service Worker registrado correctamente (NotificationContext):", registration.scope);
-                    } catch (swError) {
-                        console.warn("Fallo el registro manual del Service Worker:", swError);
-                    }
                 }
 
                 await OneSignal.init({
@@ -97,7 +130,7 @@ export const NotificationProvider = ({ children }) => {
     }, [user, initialized, profile]);
 
     return (
-        <NotificationContext.Provider value={{ initialized }}>
+        <NotificationContext.Provider value={{ initialized, unreadNotificationsCount }}>
             {children}
         </NotificationContext.Provider>
     );

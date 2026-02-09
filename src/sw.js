@@ -21,6 +21,7 @@ if (workbox) {
     // Control inmediato
     self.skipWaiting();
     workbox.core.clientsClaim();
+    console.log("Service Worker ha tomado el control de los clientes (BuenCuidar)");
 } else {
     console.error("Fallo al cargar Workbox");
 }
