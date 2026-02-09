@@ -354,7 +354,7 @@ const CaregiverOverview = () => {
 
             const calculatedRating = allReviews && allReviews.length > 0
                 ? (allReviews.reduce((acc, curr) => acc + curr.rating, 0) / allReviews.length).toFixed(1)
-                : (profile?.caregiver_details?.rating || '5.0');
+                : (profile?.caregiver_details?.rating || '0.0');
 
 
 
@@ -416,7 +416,7 @@ const CaregiverOverview = () => {
             newStats.push(
                 {
                     label: 'Calificación',
-                    value: calculatedRating,
+                    value: `${calculatedRating} / 5`,
                     icon: Star,
                     color: (allReviews?.length > 0) ? 'text-orange-500' : 'text-gray-400',
                     bg: (allReviews?.length > 0) ? 'bg-orange-100' : 'bg-gray-100'
@@ -898,14 +898,23 @@ const CaregiverOverview = () => {
                                     <Star className={`w-12 h-12 ${stats.find(s => s.label === 'Calificación')?.color.includes('orange') ? 'text-orange-400 fill-current' : 'text-gray-300'} drop-shadow-lg`} />
                                 </div>
                                 <h3 className="font-brand font-bold text-3xl mb-4 tracking-tight italic !text-[#FAFAF7]">
-                                    {parseFloat(stats.find(s => s.label === 'Calificación')?.value || '5.0') >= 4.8 ? '¡Eres una Superestrella!' : '¡Buen Trabajo!'}
+                                    {(() => {
+                                        const val = parseFloat(stats.find(s => s.label === 'Calificación')?.value || '0');
+                                        if (val >= 4.8) return '¡Eres una Superestrella!';
+                                        if (val >= 4.5) return '¡Excelente Trabajo!';
+                                        if (val >= 4.0) return '¡Muy Buen Desempeño!';
+                                        if (val > 0) return '¡Vamos por buen camino!';
+                                        return '¡Bienvenido!';
+                                    })()}
                                 </h3>
                                 <p className="!text-[#FAFAF7]/80 text-lg mb-10 font-secondary leading-relaxed mx-auto max-w-xs">
-                                    {parseFloat(stats.find(s => s.label === 'Calificación')?.value || '5.0') >= 4.8
-                                        ? `Has mantenido una calificación excelente de `
-                                        : `Tu calificación actual es de `
-                                    }
-                                    <span className="!text-[#FAFAF7] font-black underline decoration-[var(--accent-color)] underline-offset-4">{stats.find(s => s.label === 'Calificación')?.value || '5.0'}</span>.
+                                    {(() => {
+                                        const val = parseFloat(stats.find(s => s.label === 'Calificación')?.value || '0');
+                                        if (val >= 4.5) return 'Has mantenido una calificación excelente de ';
+                                        if (val > 0) return 'Tu calificación actual basada en tus clientes es de ';
+                                        return 'Tu primera calificación llegará muy pronto. Comienza con ';
+                                    })()}
+                                    <span className="!text-[#FAFAF7] font-black underline decoration-[var(--accent-color)] underline-offset-4">{stats.find(s => s.label === 'Calificación')?.value || '0.0 / 5'}</span>.
                                 </p>
                                 <button
                                     onClick={() => navigate('/caregiver/profile')}
