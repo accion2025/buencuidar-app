@@ -674,7 +674,7 @@ const CaregiverProfile = () => {
                             </div>
                         </div>
 
-                        <div className="card md:!p-12 !p-6 border-none shadow-2xl relative overflow-hidden">
+                        <div className="bg-white rounded-[16px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <div className="flex justify-between items-center mb-10 relative z-10">
                                 <h3 className="font-brand font-bold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
