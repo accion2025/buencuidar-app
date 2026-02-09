@@ -44,12 +44,11 @@ const AppointmentCard = ({ name, role, time, date, image, rating, onViewProfile,
                             </span>
                         )}
                     </div>
-                    <div className="flex items-center gap-3 text-[var(--text-light)] mt-1 flex-wrap">
-                        <div className="flex items-center gap-1.5">
-                            <Clock size={12} className="text-[var(--secondary-color)]" />
-                            <span className="text-xs font-bold font-brand">{time}</span>
-                        </div>
-                        <span className="text-xs font-bold font-brand opacity-80">{date}</span>
+                    <div className="flex items-center gap-2 text-[var(--text-light)] mt-1">
+                        <Clock size={12} className="text-[var(--secondary-color)] shrink-0" />
+                        <span className="text-xs font-bold font-brand">
+                            {time} {date}
+                        </span>
                     </div>
                 </div>
                 {eventTimeLabel && (
@@ -799,7 +798,14 @@ const DashboardOverview = () => {
                                             name={app.caregiver?.full_name || 'Cuidador Asignado'}
                                             role={app.title}
                                             time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
-                                            date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                            date={(() => {
+                                                const d = new Date(app.date + 'T00:00:00');
+                                                const weekday = d.toLocaleDateString('es-ES', { weekday: 'long' });
+                                                const day = d.getDate();
+                                                const month = d.toLocaleDateString('es-ES', { month: 'long' });
+                                                const year = d.getFullYear();
+                                                return `${weekday}, ${day}/${month}/${year}`;
+                                            })()}
                                             image={app.caregiver?.avatar_url}
                                             status={app.status}
                                             onViewProfile={() => setSelectedCaregiver(app.caregiver)}
@@ -834,7 +840,14 @@ const DashboardOverview = () => {
                                                 name={app.caregiver?.full_name || (app.status === 'pending' ? 'Sin cuidador asignado' : 'Cuidador Asignado')}
                                                 role={app.title}
                                                 time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
-                                                date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                                date={(() => {
+                                                    const d = new Date(app.date + 'T00:00:00');
+                                                    const weekday = d.toLocaleDateString('es-ES', { weekday: 'long' });
+                                                    const day = d.getDate();
+                                                    const month = d.toLocaleDateString('es-ES', { month: 'long' });
+                                                    const year = d.getFullYear();
+                                                    return `${weekday}, ${day}/${month}/${year}`;
+                                                })()}
                                                 image={app.caregiver?.avatar_url}
                                                 status={app.status}
                                                 label={isPendingAndRunning ? 'PENDIENTE' : null}
@@ -913,7 +926,14 @@ const DashboardOverview = () => {
                                                     name={app.caregiver?.full_name || (isExpired ? 'Bolsa de Trabajo' : 'Cuidador')}
                                                     role={app.title || 'Servicio Finalizado'}
                                                     time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
-                                                    date={new Date(app.date + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                                    date={(() => {
+                                                        const d = new Date(app.date + 'T00:00:00');
+                                                        const weekday = d.toLocaleDateString('es-ES', { weekday: 'long' });
+                                                        const day = d.getDate();
+                                                        const month = d.toLocaleDateString('es-ES', { month: 'long' });
+                                                        const year = d.getFullYear();
+                                                        return `${weekday}, ${day}/${month}/${year}`;
+                                                    })()}
                                                     image={app.caregiver?.avatar_url}
                                                     status={app.status}
                                                     label={isExpired ? 'CITA EXPIRADA' : (app.status === 'cancelled' ? 'CANCELADA' : null)}
