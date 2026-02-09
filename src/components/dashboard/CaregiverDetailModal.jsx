@@ -453,7 +453,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="space-y-2">
                                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Fecha</label>
                                         <input
