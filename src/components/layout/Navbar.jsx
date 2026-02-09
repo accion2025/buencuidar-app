@@ -122,10 +122,11 @@ const Navbar = () => {
                                             await signOut();
                                             navigate('/login');
                                         }}
-                                        className="p-2 text-gray-400 hover:text-[var(--error-color)] transition-colors bg-gray-50 rounded-[16px]"
+                                        className="flex items-center gap-2 px-4 py-2.5 text-gray-500 hover:text-white hover:bg-red-500 transition-all bg-gray-50 rounded-[16px] border border-gray-100 shadow-sm group"
                                         title="Cerrar Sesión"
                                     >
-                                        <LogOut size={20} />
+                                        <LogOut size={18} className="group-hover:scale-110 transition-transform" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest leading-none">Cerrar Sesión</span>
                                     </button>
                                 </div>
                             )}
@@ -258,10 +259,10 @@ const Navbar = () => {
                                 navigate('/login');
                                 setIsSidebarOpen(false);
                             }}
-                            className="w-full flex items-center gap-3 px-4 py-3 rounded-[16px] text-red-300 hover:bg-red-500/10 hover:text-red-200 transition-colors"
+                            className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[20px] bg-red-500/10 text-red-500 hover:bg-red-600 hover:text-white transition-all border border-red-500/20 shadow-lg"
                         >
-                            <LogOut size={20} />
-                            <span className="font-bold text-sm">Cerrar Sesión</span>
+                            <LogOut size={24} />
+                            <span className="font-black text-sm uppercase tracking-widest">Cerrar Sesión</span>
                         </button>
                     )}
                 </div>
