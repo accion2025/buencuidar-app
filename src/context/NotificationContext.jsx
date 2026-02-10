@@ -9,6 +9,7 @@ export const NotificationProvider = ({ children }) => {
     const { user, profile } = useAuth();
     const [initialized, setInitialized] = useState(false);
     const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+    const [unreadChatCount, setUnreadChatCount] = useState(0);
     const [notifications, setNotifications] = useState([]);
     const [loadingNotifications, setLoadingNotifications] = useState(true);
 
@@ -16,6 +17,7 @@ export const NotificationProvider = ({ children }) => {
     useEffect(() => {
         if (!user) {
             setUnreadNotificationsCount(0);
+            setUnreadChatCount(0);
             setNotifications([]);
             setLoadingNotifications(false);
             return;
@@ -24,28 +26,48 @@ export const NotificationProvider = ({ children }) => {
         const fetchNotificationsData = async () => {
             console.log("🔄 Cargando notificaciones para el usuario:", user.id);
             try {
-                // 1. Fetch unread count
-                const { count, error: countError } = await supabase
-                    .from('notifications')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('user_id', user.id)
-                    .eq('is_read', false);
-
-                if (countError) throw countError;
-                console.log("✅ Conteo de no leídas:", count || 0);
-                setUnreadNotificationsCount(count || 0);
-
-                // 2. Fetch recent notifications feed (last 20)
+                // Fetch more to allow for filtering
                 const { data, error: feedError } = await supabase
                     .from('notifications')
                     .select('*')
                     .eq('user_id', user.id)
                     .order('created_at', { ascending: false })
-                    .limit(20);
+                    .limit(50);
 
                 if (feedError) throw feedError;
-                console.log("✅ Feed de notificaciones actualizado:", data?.length || 0, "ítems.");
-                setNotifications(data || []);
+
+                const now = Date.now();
+
+                // 1. Process maturation (5 min delay for applications)
+                const processed = (data || []).map(notif => {
+                    const isChat = notif.metadata?.is_chat || notif.metadata?.conversation_id || notif.title?.includes('Mensaje');
+
+                    // Specific logic for New Applications (5 min delay)
+                    if (notif.title?.includes('Postulación')) {
+                        const createdTime = new Date(notif.created_at).getTime();
+                        const isMature = createdTime < (now - 5 * 60 * 1000);
+                        return { ...notif, is_hidden_by_delay: !isMature, is_chat: isChat };
+                    }
+
+                    return { ...notif, is_hidden_by_delay: false, is_chat: isChat };
+                });
+
+                // 2. Separate visible items
+                const visible = processed.filter(n => !n.is_hidden_by_delay);
+
+                // 3. Split by category
+                const chatItems = visible.filter(n => n.is_chat);
+                const generalItems = visible.filter(n => !n.is_chat);
+
+                // 4. Set Counts
+                setUnreadChatCount(chatItems.filter(n => !n.is_read).length);
+                setUnreadNotificationsCount(generalItems.filter(n => !n.is_read).length);
+
+                // 5. Context only exposes general items in 'notifications' feed 
+                // (Chat alerts are now visual-only bubble triggers)
+                setNotifications(generalItems);
+
+                console.log(`✅ Conteo: General=${generalItems.filter(n => !n.is_read).length}, Chat=${chatItems.filter(n => !n.is_read).length}`);
             } catch (err) {
                 console.error("❌ Error al obtener notificaciones unificadas:", err);
             } finally {
@@ -55,6 +77,9 @@ export const NotificationProvider = ({ children }) => {
 
         fetchNotificationsData();
 
+        // Periodic refresh (every 1 minute) to "maturate" hidden notifications
+        const refreshInterval = setInterval(fetchNotificationsData, 60000);
+
         const channel = supabase
             .channel(`notifications-unified-${user.id}`)
             .on('postgres_changes', {
@@ -63,15 +88,14 @@ export const NotificationProvider = ({ children }) => {
                 table: 'notifications',
                 filter: `user_id=eq.${user.id}`
             }, (payload) => {
-                console.log("🔔 Cambio en tiempo real detectado en 'notifications':", payload);
+                console.log("🔔 Cambio en tiempo real detectado:", payload.eventType);
                 fetchNotificationsData();
             })
-            .subscribe((status) => {
-                console.log(`📡 Estado suscripción Realtime Notificaciones (${user.id}):`, status);
-            });
+            .subscribe();
 
         return () => {
             supabase.removeChannel(channel);
+            clearInterval(refreshInterval);
         };
     }, [user]);
 
@@ -83,13 +107,13 @@ export const NotificationProvider = ({ children }) => {
                 .eq('id', id);
 
             if (error) throw error;
-            // Optimistic updates are handled by the real-time subscription usually, 
-            // but we can force a local refresh or just wait for the DB trigger.
-            // For better UX, let's update locally immediately:
+            // Immediate local feedback
             setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-            setUnreadNotificationsCount(prev => Math.max(0, prev - 1));
+            // Trigger context counters refresh
+            // We could recalulate locally, but fetchNotificationsData is safer given the state split
+            // For now, let's keep it simple: the next fetch or local state adjustment suffices.
         } catch (error) {
-            console.error('Error marking notification as read in context:', error);
+            console.error('Error marking as read:', error);
         }
     };
 
@@ -175,6 +199,7 @@ export const NotificationProvider = ({ children }) => {
         <NotificationContext.Provider value={{
             initialized,
             unreadNotificationsCount,
+            unreadChatCount,
             notifications,
             loadingNotifications,
             markAsRead

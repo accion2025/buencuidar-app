@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
-import { Bell, Menu, X, LogOut, Home, Activity, Sparkles, LogIn, UserPlus, LayoutDashboard, User } from 'lucide-react';
+import { Bell, Menu, X, LogOut, Home, Activity, Sparkles, LogIn, UserPlus, LayoutDashboard, User, MessageSquare } from 'lucide-react';
 import Logo from './Logo';
 import { supabase } from '../../lib/supabase';
 
@@ -65,22 +65,37 @@ const Navbar = () => {
                                         <span className="text-sm font-black text-[var(--primary-color)]">{profile?.full_name || 'Usuario'}</span>
                                     </div>
 
-                                    {/* Global Notification Bell */}
-                                    <button
-                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
-                                        className="relative p-2.5 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[16px] hover:shadow-md group"
-                                        title="Notificaciones y Mensajes"
-                                    >
-                                        <Bell size={20} className="group-hover:animate-swing" />
-                                        {unreadNotificationsCount > 0 && (
-                                            <span className="absolute top-2 right-2 flex h-3 w-3">
-                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
-                                            </span>
-                                        )}
-                                        {/* Simple label for clarity */}
-                                        <span className="sr-only">Notificaciones</span>
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        {/* Dedicated Chat Bubble */}
+                                        <button
+                                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/messages')}
+                                            className="relative p-2.5 text-gray-400 hover:text-blue-500 transition-all bg-gray-50 rounded-[16px] hover:shadow-md group"
+                                            title="Mensajes y Chat"
+                                        >
+                                            <MessageSquare size={20} className="group-hover:scale-110 transition-transform" />
+                                            {unreadChatCount > 0 && (
+                                                <span className="absolute top-2 right-2 flex h-3 w-3">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500 border-2 border-white"></span>
+                                                </span>
+                                            )}
+                                        </button>
+
+                                        {/* Global Notification Bell (Operational Alerts) */}
+                                        <button
+                                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
+                                            className="relative p-2.5 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[16px] hover:shadow-md group"
+                                            title="Centro de Notificaciones"
+                                        >
+                                            <Bell size={20} className="group-hover:animate-swing" />
+                                            {unreadNotificationsCount > 0 && (
+                                                <span className="absolute top-2 right-2 flex h-3 w-3">
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                                                </span>
+                                            )}
+                                        </button>
+                                    </div>
                                     <button
                                         onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver' : '/dashboard')}
                                         className="btn btn-primary flex items-center gap-2 text-xs tracking-widest uppercase shadow-lg shadow-green-100"
@@ -109,21 +124,37 @@ const Navbar = () => {
                             )}
                         </nav>
 
-                        {/* Mobile Menu Button & Bell */}
                         <div className="md:hidden flex items-center gap-2">
                             {showUserMenu && (
-                                <button
-                                    onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
-                                    className="relative p-2 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[12px]"
-                                >
-                                    <Bell size={20} />
-                                    {unreadNotificationsCount > 0 && (
-                                        <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                                        </span>
-                                    )}
-                                </button>
+                                <>
+                                    {/* Mobile Chat Bubble */}
+                                    <button
+                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/messages')}
+                                        className="relative p-2 text-gray-400 hover:text-blue-500 transition-all bg-gray-50 rounded-[12px]"
+                                    >
+                                        <MessageSquare size={20} />
+                                        {unreadChatCount > 0 && (
+                                            <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500"></span>
+                                            </span>
+                                        )}
+                                    </button>
+
+                                    {/* Mobile Bell */}
+                                    <button
+                                        onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
+                                        className="relative p-2 text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 rounded-[12px]"
+                                    >
+                                        <Bell size={20} />
+                                        {unreadNotificationsCount > 0 && (
+                                            <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                                            </span>
+                                        )}
+                                    </button>
+                                </>
                             )}
                             <button
                                 className="p-2 text-[var(--primary-color)] hover:bg-gray-100 rounded-[12px] transition-colors"

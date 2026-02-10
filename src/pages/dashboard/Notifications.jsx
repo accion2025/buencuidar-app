@@ -40,13 +40,34 @@ const Notifications = () => {
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
-            setNotifications(data || []);
+
+            // Apply filters: 5-minute delay for applications AND exclude all chat
+            const now = Date.now();
+            const filtered = (data || []).filter(notif => {
+                const isChat = notif.metadata?.is_chat || notif.metadata?.conversation_id || notif.title?.includes('Mensaje');
+                if (isChat) return false;
+
+                if (profile?.role === 'family' && notif.title?.includes('Postulación')) {
+                    const createdTime = new Date(notif.created_at).getTime();
+                    return createdTime < (now - 5 * 60 * 1000);
+                }
+                return true;
+            });
+
+            setNotifications(filtered);
         } catch (error) {
             console.error('Error fetching notifications:', error);
         } finally {
-            setLoading(false);
+            setLoading(false); // Using loadingNotifications consistency
         }
     };
+
+    // Add periodic refresh to the page too
+    useEffect(() => {
+        if (!user) return;
+        const interval = setInterval(fetchNotifications, 60000);
+        return () => clearInterval(interval);
+    }, [user]);
 
     const markAsRead = async (id) => {
         try {
