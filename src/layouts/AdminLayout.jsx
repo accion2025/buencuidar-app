@@ -72,9 +72,9 @@ const AdminLayout = () => {
                 <div className="p-4 border-t border-slate-800">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-4 px-6 py-6 lg:px-4 lg:py-3 w-full rounded-[20px] lg:rounded-[16px] text-red-400 bg-red-500/10 lg:bg-transparent lg:text-red-400 hover:bg-red-500/10 hover:text-red-400 transition-colors mt-2 lg:mt-0"
+                        className="flex items-center gap-4 px-6 py-6 lg:px-4 lg:py-3 w-full rounded-[20px] lg:rounded-[16px] text-[#F9F072] bg-[#F9F072]/5 lg:bg-transparent lg:text-[#F9F072] hover:bg-slate-800 transition-colors mt-2 lg:mt-0"
                     >
-                        <LogOut className="w-7 h-7 lg:w-5 lg:h-5" />
+                        <LogOut className="w-7 h-7 lg:w-5 lg:h-5" stroke="#F9F072" />
                         <span className="font-black text-xl lg:text-base">Cerrar Sesión</span>
                     </button>
                 </div>

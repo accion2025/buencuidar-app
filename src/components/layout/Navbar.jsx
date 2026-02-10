@@ -114,10 +114,10 @@ const Navbar = () => {
                                                 navigate('/login');
                                             }
                                         }}
-                                        className="flex items-center gap-2 px-4 py-2.5 text-white bg-[#0F3C4C] hover:bg-[#0d3542] transition-all rounded-[16px] shadow-md group"
+                                        className="flex items-center gap-2 px-4 py-2.5 text-[#F9F072] bg-[#0F3C4C] hover:bg-[#0d3542] transition-all rounded-[16px] shadow-md group"
                                         title="Cerrar Sesión"
                                     >
-                                        <LogOut size={18} className="group-hover:scale-110 transition-transform" />
+                                        <LogOut size={18} className="group-hover:scale-110 transition-transform" stroke="#F9F072" />
                                         <span className="text-[10px] font-black uppercase tracking-widest leading-none">Cerrar Sesión</span>
                                     </button>
                                 </div>
@@ -273,9 +273,9 @@ const Navbar = () => {
                                     navigate('/login');
                                 }
                             }}
-                            className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[20px] bg-[#0d3542] text-white hover:bg-[#0b2d38] transition-all border border-white/10 shadow-lg"
+                            className="w-full flex items-center justify-center gap-4 px-6 py-5 rounded-[20px] bg-[#0d3542] text-[#F9F072] hover:bg-[#0b2d38] transition-all border border-white/10 shadow-lg"
                         >
-                            <LogOut size={24} />
+                            <LogOut size={24} stroke="#F9F072" />
                             <span className="font-black text-sm uppercase tracking-widest">Cerrar Sesión</span>
                         </button>
                     )}

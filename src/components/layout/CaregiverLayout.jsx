@@ -137,9 +137,9 @@ const CaregiverLayout = () => {
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-4 px-6 py-6 lg:px-4 lg:py-3 w-full text-red-400 bg-red-500/10 lg:bg-transparent lg:text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-[20px] lg:rounded-[16px] transition-colors mt-2 lg:mt-0"
+                        className="flex items-center gap-4 px-6 py-6 lg:px-4 lg:py-3 w-full text-[#F9F072] bg-[#F9F072]/5 lg:bg-transparent lg:text-[#F9F072] hover:bg-slate-800 rounded-[20px] lg:rounded-[16px] transition-colors mt-2 lg:mt-0"
                     >
-                        <LogOut className="w-7 h-7 lg:w-5 lg:h-5" />
+                        <LogOut className="w-7 h-7 lg:w-5 lg:h-5" stroke="#F9F072" />
                         <span className="font-black lg:font-medium text-xl lg:text-base">Cerrar Sesión</span>
                     </button>
                 </div>

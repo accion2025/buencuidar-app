@@ -140,9 +140,9 @@ const DashboardLayout = () => {
                 <div className="p-4 border-t border-white/10 bg-[var(--primary-color)]">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-4 px-6 py-6 md:px-4 md:py-3 w-full rounded-[20px] md:rounded-[16px] text-red-100 bg-red-500/10 md:bg-transparent md:text-red-200 hover:bg-red-900/20 hover:text-red-100 transition-colors group mt-2 md:mt-0"
+                        className="flex items-center gap-4 px-6 py-6 md:px-4 md:py-3 w-full rounded-[20px] md:rounded-[16px] text-[#F9F072] bg-[#F9F072]/5 md:bg-transparent hover:bg-white/10 transition-colors group mt-2 md:mt-0"
                     >
-                        <LogOut className="w-7 h-7 md:w-5 md:h-5" />
+                        <LogOut className="w-7 h-7 md:w-5 md:h-5 text-[#F9F072]" />
                         <span className="font-black md:font-medium text-xl md:text-base">Cerrar Sesión</span>
                     </button>
                 </div>
