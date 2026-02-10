@@ -214,6 +214,7 @@ const Settings = () => {
                         </p>
                     </div>
                 ) : (
+                    {/* Botón de activación oculto por limpieza de UI
                     <button
                         onClick={() => {
                             if (typeof OneSignal !== 'undefined' && OneSignal.Slidedown) {
@@ -227,6 +228,7 @@ const Settings = () => {
                         <Bell size={24} className="text-[var(--secondary-color)] group-hover:scale-110 transition-transform" />
                         Activar Notificaciones en dispositivo
                     </button>
+                    */}
                 )}
 
                 <p className="text-[10px] text-center text-gray-400 mt-6 font-black uppercase tracking-widest leading-relaxed">

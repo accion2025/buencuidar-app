@@ -203,6 +203,7 @@ const CaregiverSettings = () => {
                     </div>
                 </div>
 
+                {/* Botón de activación oculto por limpieza de UI
                 <button
                     onClick={() => OneSignal.Slidedown.promptPush()}
                     className="w-full flex items-center justify-center gap-3 p-5 rounded-[24px] bg-[var(--base-bg)] text-[var(--primary-color)] font-brand font-bold text-lg hover:bg-[var(--secondary-color)]/10 transition-all border-2 border-dashed border-[var(--secondary-color)]/30 group"
@@ -210,6 +211,7 @@ const CaregiverSettings = () => {
                     <Bell size={24} className="text-[var(--secondary-color)] group-hover:scale-110 transition-transform" />
                     Activar Notificaciones Audibles
                 </button>
+                */}
 
                 <p className="text-xs text-center text-gray-400 mt-6 font-secondary leading-relaxed">
                     Si no estás recibiendo los avisos de proximidad de turno o alertas de salud, <br />
