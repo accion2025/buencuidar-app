@@ -751,7 +751,7 @@ const DashboardOverview = () => {
                                     {inProgressAppointments.map(app => (
                                         <AppointmentCard
                                             key={app.id}
-                                            name={app.caregiver?.full_name || 'Cuidador Asignado'}
+                                            name={app.caregiver?.full_name || (app.status === 'pending' ? 'Sin cuidador asignado' : 'Cuidador Asignado')}
                                             role={app.title}
                                             time={`${app.time?.substring(0, 5)} - ${app.end_time?.substring(0, 5) || '?'}`}
                                             date={(() => {

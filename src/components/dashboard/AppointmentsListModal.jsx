@@ -45,7 +45,7 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                             <User size={14} className="text-gray-500" />
                                         </div>
                                         <span className="font-bold text-gray-800 text-sm">
-                                            {app.caregiver?.full_name || 'Cuidador Asignado'}
+                                            {app.caregiver?.full_name || (app.status === 'pending' ? 'Sin cuidador asignado' : 'Cuidador Asignado')}
                                         </span>
                                     </div>
                                     <h3 className="font-bold text-lg text-gray-900 leading-tight">
