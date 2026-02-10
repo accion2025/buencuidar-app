@@ -237,8 +237,8 @@ RETURNS TRIGGER AS $$
 DECLARE
     client_name TEXT;
 BEGIN
-    -- Solo si el estado inicial es 'pending' (Solicitud)
-    IF NEW.status = 'pending' THEN
+    -- Solo si el estado inicial es 'pending' (Solicitud) Y hay un cuidador asignado
+    IF NEW.status = 'pending' AND NEW.caregiver_id IS NOT NULL THEN
         SELECT full_name INTO client_name FROM profiles WHERE id = NEW.client_id;
         
         INSERT INTO notifications (user_id, type, title, message, metadata)
