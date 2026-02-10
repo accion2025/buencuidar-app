@@ -213,23 +213,7 @@ const Settings = () => {
                             El navegador bloquea las notificaciones en sitios sin candado de seguridad (HTTPS). Contacta a soporte para habilitar el dominio seguro.
                         </p>
                     </div>
-                ) : (
-                    {/* Botón de activación oculto por limpieza de UI
-                    <button
-                        onClick={() => {
-                            if (typeof OneSignal !== 'undefined' && OneSignal.Slidedown) {
-                                OneSignal.Slidedown.promptPush();
-                            } else {
-                                alert("El sistema de notificaciones está cargando. Por favor, espera un momento.");
-                            }
-                        }}
-                        className="w-full flex items-center justify-center gap-3 p-5 rounded-[24px] bg-[var(--base-bg)] text-[var(--primary-color)] font-brand font-bold text-lg hover:bg-[var(--secondary-color)]/10 transition-all border-2 border-dashed border-[var(--secondary-color)]/30 group"
-                    >
-                        <Bell size={24} className="text-[var(--secondary-color)] group-hover:scale-110 transition-transform" />
-                        Activar Notificaciones en dispositivo
-                    </button>
-                    */}
-                )}
+                ) : null}
 
                 <p className="text-[10px] text-center text-gray-400 mt-6 font-black uppercase tracking-widest leading-relaxed">
                     Haz clic arriba si no recibes avisos.<br />
@@ -279,7 +263,7 @@ const Settings = () => {
                 </div>
             )}
 
-            {/* Diagnostic Panel para Debugging */}
+            {/* Diagnostic Panel para Debugging - OCULTO
             <div className="bg-slate-900 rounded-[24px] p-8 text-left shadow-2xl">
                 <div className="flex items-center gap-3 mb-6">
                     <ShieldCheck size={20} className="text-green-400" />
@@ -349,6 +333,7 @@ const Settings = () => {
                     Si el Push ID es "Null", el dispositivo no está registrado en OneSignal. Intenta "Activar Notificaciones" arriba.
                 </p>
             </div>
+            */}
         </div>
     );
 };
