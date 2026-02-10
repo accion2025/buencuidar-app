@@ -130,12 +130,11 @@ const Notifications = () => {
             // Priority 1: Use explicit target_path if exists
             // Fix: If it's a short path, prepend the role
             let finalPath = targetPath;
-            if (targetPath === '/messages' || targetPath === '/calendar' || targetPath === '/dashboard' || targetPath === '/caregiver') {
+            if (targetPath === '/messages' || targetPath === '/calendar' || targetPath === '/dashboard') {
                 const rolePrefix = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
                 if (targetPath === '/messages') finalPath = `${rolePrefix}/messages`;
                 else if (targetPath === '/calendar') finalPath = `${rolePrefix}/calendar`;
-                else if (targetPath === '/dashboard') finalPath = '/dashboard';
-                else if (targetPath === '/caregiver') finalPath = '/caregiver';
+                else if (targetPath === '/dashboard') finalPath = rolePrefix;
             }
             navigate(finalPath);
         } else if (metadata.is_chat || metadata.conversation_id) {
@@ -169,7 +168,7 @@ const Notifications = () => {
 
         if (meta.type === 'request_received') return <UserPlus className="text-blue-500" size={20} />;
         if (notification.title?.includes('Aceptada')) return <CheckCircle className="text-green-500" size={20} />;
-        if (notification.title?.includes('Rechazada') || notification.title?.includes('Cancelado')) return <XCircle className="text-red-500" size={20} />;
+        if (notification.title?.includes('Rechazada') || notification.title?.includes('Denegada') || notification.title?.includes('Cancelado')) return <XCircle className="text-red-500" size={20} />;
 
         if (type === 'alert') return <AlertCircle className="text-red-500" size={20} />;
         if (type === 'success') return <Check className="text-green-500" size={20} />;

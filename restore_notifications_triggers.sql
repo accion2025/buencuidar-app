@@ -111,7 +111,7 @@ BEGIN
             recipient_id := NEW.client_id;
             SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
             
-            notif_title := '❌ Solicitud Rechazada';
+            notif_title := '❌ Solicitud Denegada';
             notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' no puede aceptar tu solicitud.';
             notif_type := 'alert';
             target_path := '/dashboard/caregivers';
