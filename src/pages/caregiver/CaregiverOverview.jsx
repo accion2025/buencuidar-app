@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DollarSign, Clock, Star, Calendar, ArrowRight, User, Bell, Check, X, Loader2, FileText, Activity, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { supabase } from '../../lib/supabase';
 
 import EditPaymentModal from '../../components/dashboard/EditPaymentModal';
@@ -12,8 +13,8 @@ import AllApplicationsModal from '../../components/dashboard/AllApplicationsModa
 const CaregiverOverview = () => {
     const navigate = useNavigate();
     const { profile, user, profileLoading } = useAuth();
+    const { notifications, markAsRead } = useNotifications();
     const [newRequests, setNewRequests] = useState([]);
-    const [notifications, setNotifications] = useState([]);
     const [myApplications, setMyApplications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLogModalOpen, setIsLogModalOpen] = useState(false);
@@ -25,77 +26,24 @@ const CaregiverOverview = () => {
     const [recentPayments, setRecentPayments] = useState([]);
     const [isActionLoading, setIsActionLoading] = useState(false);
 
-    const handleAcknowledge = async (notification) => {
+    // Unified notifications are now handled by NotificationContext
+    const handleAcknowledge = async (notif) => {
         try {
-            // 1. Mark as seen locally and in DB
-            const { error: updateError } = await supabase
-                .from('appointments')
-                .update({ modification_seen_by_caregiver: true })
-                .eq('id', notification.id);
+            // 1. Mark notification as read
+            await markAsRead(notif.id);
 
-            if (updateError) throw updateError;
-
-            // Updated local state
-            setNotifications(prev => prev.map(n =>
-                n.id === notification.id ? { ...n, modification_seen_by_caregiver: true } : n
-            ));
-
-            // 2. Send acknowledgment message to client
-            if (notification.client_id) {
-                // Formatting date and time for the message
-                const timeString = notification.end_time
-                    ? `${notification.time.substring(0, 5)} - ${notification.end_time.substring(0, 5)}`
-                    : notification.time.substring(0, 5);
-
-                let msgContent = '';
-                if (notification.status === 'cancelled') {
-                    msgContent = `SISTEMA: He recibido el aviso de cancelación para el turno del ${notification.date} (${timeString}). Queda eliminado de mi agenda de trabajo.`;
-                } else if (notification.is_modification) {
-                    msgContent = `SISTEMA: Confirmo que he visto los cambios en el turno para el ${notification.date} (${timeString}). Asistencia confirmada con los nuevos datos.`;
-                } else {
-                    msgContent = `SISTEMA: ¡Cita aprobada! Muchas gracias por la confianza. Confirmo mi asistencia para el ${notification.date} a las ${timeString}.`;
-                }
-
-                // Check for existing conversation
-                const { data: existingConv } = await supabase
-                    .from('conversations')
-                    .select('id')
-                    .or(`and(participant1_id.eq.${user.id},participant2_id.eq.${notification.client_id}),and(participant1_id.eq.${notification.client_id},participant2_id.eq.${user.id})`)
-                    .single();
-
-                let conversationId = existingConv?.id;
-
-                if (!conversationId) {
-                    const { data: newConv, error: createError } = await supabase
-                        .from('conversations')
-                        .insert({
-                            participant1_id: user.id,
-                            participant2_id: notification.client_id,
-                            last_message: msgContent,
-                            last_message_at: new Date().toISOString()
-                        })
-                        .select()
-                        .single();
-                    if (!createError) conversationId = newConv.id;
-                }
-
-                if (conversationId) {
-                    await supabase.from('messages').insert({
-                        conversation_id: conversationId,
-                        sender_id: user.id,
-                        content: msgContent
-                    });
-                    // Update conversation timestamp
-                    await supabase
-                        .from('conversations')
-                        .update({ last_message: msgContent, last_message_at: new Date().toISOString() })
-                        .eq('id', conversationId);
-                }
-                alert("Solicitud denegada.");
+            // 2. If it was an appointment modification, update the appointment too
+            if (notif.metadata?.appointment_id && notif.is_modification) {
+                const { error } = await supabase
+                    .from('appointments')
+                    .update({ modification_seen_by_caregiver: true })
+                    .eq('id', notif.metadata.appointment_id);
+                if (error) throw error;
             }
 
+            fetchDashboardData();
         } catch (error) {
-            console.error('Error acknowledging modification:', error);
+            console.error('Error al confirmar notificación:', error);
         }
     };
     const rawName = profile?.full_name ? profile.full_name.split(' ')[0] : '...';
@@ -129,8 +77,7 @@ const CaregiverOverview = () => {
                         fetchNewRequests(),
                         fetchMyApplications(),
                         fetchDashboardData(),
-                        fetchAvailability(),
-                        fetchNotifications()
+                        fetchAvailability()
                     ]);
                 } catch (error) {
                     console.error("Error loading dashboard data:", error);
@@ -144,39 +91,7 @@ const CaregiverOverview = () => {
         }
     }, [user, profileLoading, profile]);
 
-    const fetchNotifications = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('appointments')
-                .select(`
-                    *,
-                    client:client_id (full_name),
-                    modification_seen_by_caregiver
-                `)
-                .eq('caregiver_id', user.id)
-                .in('status', ['confirmed', 'cancelled'])
-                .order('updated_at', { ascending: false })
-                .limit(10); // Fetches more to allow for filtering
-
-            if (error) throw error;
-
-            // 24-hour expiration for "cancelled" notifications
-            const now = new Date();
-            const filteredData = (data || []).filter(notif => {
-                const isCancellation = notif.status === 'cancelled';
-                if (isCancellation) {
-                    const time = new Date(notif.updated_at || notif.created_at);
-                    const diffInHours = (now - time) / (1000 * 60 * 60);
-                    return diffInHours < 24; // Keep if less than 24 hours old
-                }
-                return true; // Keep confirmed or already acknowledged notifications
-            });
-
-            setNotifications(filteredData.slice(0, 5)); // Maintain UI limit
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    };
+    // Unified notifications handled by context
 
     // ... (keep existing functions)
 
@@ -1015,70 +930,32 @@ const CaregiverOverview = () => {
                             <div className="space-y-4">
                                 {notifications.length > 0 ? (
                                     notifications.map(notif => (
-                                        <div key={notif.id} className="flex gap-3 items-start animate-fade-in border-b border-gray-50 pb-3 last:border-0 last:pb-0">
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${notif.is_modification && !notif.modification_seen_by_caregiver ? 'bg-red-100' :
-                                                notif.status === 'confirmed' ? 'bg-green-100' : 'bg-red-100'
-                                                }`}>
-                                                {notif.status === 'confirmed' && !notif.is_modification ? (
-                                                    <Check size={14} className="text-green-600" />
-                                                ) : notif.status === 'confirmed' && notif.is_modification ? (
-                                                    <Clock size={14} className={notif.modification_seen_by_caregiver ? "text-blue-600" : "text-red-600"} />
-                                                ) : (
-                                                    <X size={14} className="text-red-600" />
-                                                )}
+                                        <div
+                                            key={notif.id}
+                                            onClick={() => !notif.is_read && handleAcknowledge(notif)}
+                                            className={`flex gap-3 items-start animate-fade-in border-b border-gray-50 pb-3 last:border-0 last:pb-0 cursor-pointer hover:bg-gray-50/50 p-2 rounded-lg transition-colors ${!notif.is_read ? 'bg-blue-50/30' : 'opacity-60'}`}
+                                        >
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!notif.is_read ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+                                                {notif.type === 'alert' ? <AlertCircle size={14} /> : <Bell size={14} />}
                                             </div>
                                             <div className="flex-1">
                                                 <div className="text-xs text-gray-800">
-                                                    {notif.status === 'confirmed' ? (
-                                                        notif.is_modification ? (
-                                                            <div>
-                                                                {!notif.modification_seen_by_caregiver ? (
-                                                                    <>
-                                                                        <span className="text-red-600 font-black animate-pulse">¡CAMBIO EN TURNO!</span> Tu cita con <span className="font-bold">{notif.client?.full_name}</span> ha sido modificada.
-                                                                    </>
-                                                                ) : (
-                                                                    <>
-                                                                        <span className="text-blue-600 font-bold">¡TURNO ACTUALIZADO!</span> Los cambios en tu cita con <span className="font-bold">{notif.client?.full_name}</span> han sido revisados.
-                                                                    </>
-                                                                )}
-                                                                {!notif.modification_seen_by_caregiver && (
-                                                                    <button
-                                                                        onClick={() => handleAcknowledge(notif)}
-                                                                        className="mt-2 w-full text-center text-xs bg-red-600 !text-[#FAFAF7] px-3 py-1.5 rounded-md font-bold hover:bg-red-700 transition-colors shadow-sm flex items-center justify-center gap-1"
-                                                                    >
-                                                                        <Check size={12} /> Aceptar cambios y confirmar asistencia
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            <div>
-                                                                <span className="text-green-600 font-bold">¡FELICITACIONES!</span> Tu cita con <span className="font-bold">{notif.client?.full_name}</span> ha sido aprobada.
-                                                                {!notif.modification_seen_by_caregiver && (
-                                                                    <button
-                                                                        onClick={() => handleAcknowledge(notif)}
-                                                                        className="mt-2 w-full text-center text-xs bg-blue-600 !text-[#FAFAF7] px-3 py-1.5 rounded-md font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-1"
-                                                                    >
-                                                                        <Check size={12} /> Muchas gracias, confirmo asistencia
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        )
-                                                    ) : (
-                                                        <div>
-                                                            <span className="text-red-700 font-black animate-pulse uppercase tracking-tighter">¡TURNO CANCELADO!</span> Tu cita con <span className="font-bold">{notif.client?.full_name}</span> ha sido eliminada por el cliente.
-                                                            {!notif.modification_seen_by_caregiver && (
-                                                                <button
-                                                                    onClick={() => handleAcknowledge(notif)}
-                                                                    className="mt-2 w-full text-center text-xs bg-red-700 !text-[#FAFAF7] px-3 py-1.5 rounded-md font-bold hover:bg-red-800 transition-colors shadow-sm flex items-center justify-center gap-1"
-                                                                >
-                                                                    <Check size={12} /> Entendido, cita cancelada
-                                                                </button>
-                                                            )}
-                                                        </div>
+                                                    <p className="font-bold mb-0.5">{notif.title}</p>
+                                                    <p className="text-gray-600 leading-tight">{notif.message}</p>
+                                                    {!notif.is_read && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleAcknowledge(notif);
+                                                            }}
+                                                            className="mt-2 text-[10px] bg-[var(--primary-color)] !text-[#FAFAF7] px-2 py-1 rounded font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] transition-colors"
+                                                        >
+                                                            Marcar como leído
+                                                        </button>
                                                     )}
                                                 </div>
-                                                <p className="text-[10px] text-gray-400 mt-1">
-                                                    {timeAgo(notif.updated_at || notif.created_at)}
+                                                <p className="text-[9px] text-gray-400 mt-1">
+                                                    {new Date(notif.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(notif.created_at).toLocaleDateString()}
                                                 </p>
                                             </div>
                                         </div>

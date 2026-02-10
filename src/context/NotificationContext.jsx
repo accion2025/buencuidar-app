@@ -9,40 +9,58 @@ export const NotificationProvider = ({ children }) => {
     const { user, profile } = useAuth();
     const [initialized, setInitialized] = useState(false);
     const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+    const [notifications, setNotifications] = useState([]);
+    const [loadingNotifications, setLoadingNotifications] = useState(true);
 
     // Fetch and Subscribe to Notifications
     useEffect(() => {
         if (!user) {
             setUnreadNotificationsCount(0);
+            setNotifications([]);
+            setLoadingNotifications(false);
             return;
         }
 
-        const fetchUnreadCount = async () => {
+        const fetchNotificationsData = async () => {
             try {
-                const { count, error } = await supabase
+                // 1. Fetch unread count
+                const { count, error: countError } = await supabase
                     .from('notifications')
                     .select('*', { count: 'exact', head: true })
                     .eq('user_id', user.id)
                     .eq('is_read', false);
 
-                if (error) throw error;
+                if (countError) throw countError;
                 setUnreadNotificationsCount(count || 0);
+
+                // 2. Fetch recent notifications feed (last 20)
+                const { data, error: feedError } = await supabase
+                    .from('notifications')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (feedError) throw feedError;
+                setNotifications(data || []);
             } catch (err) {
-                console.error("Error al obtener conteo de notificaciones:", err);
+                console.error("Error al obtener notificaciones unificadas:", err);
+            } finally {
+                setLoadingNotifications(false);
             }
         };
 
-        fetchUnreadCount();
+        fetchNotificationsData();
 
         const channel = supabase
-            .channel(`notifications-count-${user.id}`)
+            .channel(`notifications-unified-${user.id}`)
             .on('postgres_changes', {
                 event: '*',
                 schema: 'public',
                 table: 'notifications',
                 filter: `user_id=eq.${user.id}`
             }, () => {
-                fetchUnreadCount();
+                fetchNotificationsData();
             })
             .subscribe();
 
@@ -50,6 +68,24 @@ export const NotificationProvider = ({ children }) => {
             supabase.removeChannel(channel);
         };
     }, [user]);
+
+    const markAsRead = async (id) => {
+        try {
+            const { error } = await supabase
+                .from('notifications')
+                .update({ is_read: true })
+                .eq('id', id);
+
+            if (error) throw error;
+            // Optimistic updates are handled by the real-time subscription usually, 
+            // but we can force a local refresh or just wait for the DB trigger.
+            // For better UX, let's update locally immediately:
+            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+            setUnreadNotificationsCount(prev => Math.max(0, prev - 1));
+        } catch (error) {
+            console.error('Error marking notification as read in context:', error);
+        }
+    };
 
     useEffect(() => {
         const initOneSignal = async () => {
@@ -130,7 +166,13 @@ export const NotificationProvider = ({ children }) => {
     }, [user, initialized, profile]);
 
     return (
-        <NotificationContext.Provider value={{ initialized, unreadNotificationsCount }}>
+        <NotificationContext.Provider value={{
+            initialized,
+            unreadNotificationsCount,
+            notifications,
+            loadingNotifications,
+            markAsRead
+        }}>
             {children}
         </NotificationContext.Provider>
     );

@@ -3,6 +3,7 @@ import { Calendar, Clock, Star, TrendingUp, Users, MessageSquare, Bell, Check, I
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { supabase } from '../../lib/supabase';
 import AppointmentsListModal from '../../components/dashboard/AppointmentsListModal';
 import EditAppointmentModal from '../../components/dashboard/EditAppointmentModal'; // New Import
@@ -100,9 +101,9 @@ import RateCaregiverModal from '../../components/dashboard/RateCaregiverModal';
 
 const DashboardOverview = () => {
     const { profile, user } = useAuth();
+    const { notifications, markAsRead } = useNotifications();
     const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);
-    const [notifications, setNotifications] = useState([]);
     const [patients, setPatients] = useState([]);
     const [caregiversCount, setCaregiversCount] = useState(0);
 
@@ -121,7 +122,6 @@ const DashboardOverview = () => {
             const loadData = async () => {
                 await cleanupExpiredJobs();
                 fetchAppointments();
-                fetchNotifications();
                 fetchPatients();
                 fetchCaregiversCount();
             };
@@ -325,50 +325,7 @@ const DashboardOverview = () => {
         }
     };
 
-    const fetchNotifications = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('notifications')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false })
-                .limit(20); // Fetches more to allow for filtering of expired ones
-
-            if (error) throw error;
-
-            // 24-hour expiration for "cancelled" notifications
-            const now = new Date();
-            const filteredData = (data || []).filter(notif => {
-                const isCancellation = notif.message?.toLowerCase().includes('cancelad') ||
-                    notif.title?.toLowerCase().includes('cancelad');
-
-                if (isCancellation) {
-                    const time = new Date(notif.created_at);
-                    const diffInHours = (now - time) / (1000 * 60 * 60);
-                    return diffInHours < 24; // Keep if less than 24 hours old
-                }
-                return true; // Keep other notifications
-            });
-
-            setNotifications(filteredData.slice(0, 10)); // Maintain UI limit
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    };
-
-    const markAsRead = async (id) => {
-        try {
-            const { error } = await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('id', id);
-
-            if (error) throw error;
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-        } catch (error) {
-            console.error('Error marking notification as read:', error);
-        }
-    };
+    // Unified notifications are now handled by NotificationContext
 
     const fetchPatients = async () => {
         try {
@@ -453,7 +410,6 @@ const DashboardOverview = () => {
             }
 
             fetchAppointments();
-            fetchNotifications();
         } catch (error) {
             console.error('Error detallado al procesar solicitud:', error);
             const errorMsg = error.message === 'Failed to fetch'
