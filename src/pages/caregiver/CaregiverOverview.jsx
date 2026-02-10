@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Clock, Star, Calendar, ArrowRight, User, Bell, Check, X, Loader2, FileText, Activity, History, MapPin } from 'lucide-react';
+import { DollarSign, Clock, Star, Calendar, ArrowRight, User, Bell, Check, X, Loader2, FileText, Activity, History, MapPin, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
