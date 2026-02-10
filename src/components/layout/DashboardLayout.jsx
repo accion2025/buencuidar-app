@@ -49,7 +49,7 @@ const DashboardLayout = () => {
     const { profile, signOut, user, loading } = useAuth(); // Destructure user and loading
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { unreadCount } = useMessage(); // Use global context
-    const { unreadNotificationsCount } = useNotifications();
+    const { unreadNotificationsCount, unreadChatCount } = useNotifications();
 
     // Redirect if not logged in
     useEffect(() => {
@@ -160,6 +160,20 @@ const DashboardLayout = () => {
                     </button>
 
                     <div className="flex items-center justify-end w-full gap-6">
+                        <button
+                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/messages')}
+                            className="relative text-gray-500 hover:text-blue-500 transition-all group"
+                            title="Mensajes y Chat"
+                        >
+                            <MessageSquare size={20} className="group-hover:scale-110 transition-transform" />
+                            {unreadChatCount > 0 && (
+                                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500 border-2 border-white"></span>
+                                </span>
+                            )}
+                        </button>
+
                         <button
                             onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
                             className="relative text-gray-500 hover:text-[var(--primary-color)] transition-all group"
