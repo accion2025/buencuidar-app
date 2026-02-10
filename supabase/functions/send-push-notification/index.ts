@@ -17,7 +17,10 @@ serve(async (req) => {
             // Canales de Android (Configurados en OneSignal Dashboard)
             android_channel_id: priority === 'high' ? "high_importance_channel" : "default",
             // Sonido para iOS
-            ios_sound: priority === 'high' ? "notification_sound.wav" : "default",
+            ios_sound: "default",
+            // Etiquetas (Badges) para iOS
+            ios_badgeType: 'Increase',
+            ios_badgeCount: 1,
             // Prioridad de OneSignal (10 = High)
             priority: 10,
             // Patrón de vibración para Android (ms)

@@ -219,6 +219,22 @@ export const NotificationProvider = ({ children }) => {
         syncUser();
     }, [user, initialized, profile]);
 
+    // Update App Badge (PWA Icon)
+    useEffect(() => {
+        const total = unreadNotificationsCount + unreadChatCount;
+        if ('setAppBadge' in navigator) {
+            if (total > 0) {
+                navigator.setAppBadge(total).catch((error) => {
+                    console.error("Error setting app badge:", error);
+                });
+            } else {
+                navigator.clearAppBadge().catch((error) => {
+                    console.error("Error clearing app badge:", error);
+                });
+            }
+        }
+    }, [unreadNotificationsCount, unreadChatCount]);
+
     return (
         <NotificationContext.Provider value={{
             initialized,
