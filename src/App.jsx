@@ -45,9 +45,17 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import AdminVerification from './pages/admin/AdminVerification';
 
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { MessageProvider } from './context/MessageContext';
 import { NotificationProvider } from './context/NotificationContext';
+
+// Helper component for intelligent redirection
+const NavigateToRoleMessages = () => {
+  const { profile, loading } = useAuth();
+  if (loading) return null;
+  const role = profile?.role === 'caregiver' ? 'caregiver' : 'dashboard';
+  return <Navigate to={`/${role}/messages`} replace />;
+};
 
 function App() {
   return (
@@ -72,6 +80,9 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/update-password" element={<UpdatePassword />} />
               <Route path="/search" element={<Search />} />
+
+              {/* Intelligent Redirects for automated notifications */}
+              <Route path="/messages" element={<NavigateToRoleMessages />} />
 
               {/* Family Dashboard Routes (Protected) */}
               <Route path="/dashboard" element={<DashboardLayout />}>
