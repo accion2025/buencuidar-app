@@ -294,7 +294,7 @@ BEGIN
                 jsonb_build_object(
                     'appointment_id', NEW.appointment_id,
                     'type', 'application_rejected',
-                    'target_path', '/search'
+                    'target_path', '/caregiver/jobs'
                 )
             );
         END IF;
