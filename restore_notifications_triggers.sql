@@ -84,28 +84,45 @@ CREATE TRIGGER tr_notify_new_application AFTER INSERT ON job_applications FOR EA
 
 
 -- 3. NOTIFICAR CAMBIOS EN EL ESTADO DE CITAS (Cancelaciones, Confirmaciones, etc.)
+-- 3. NOTIFICAR CAMBIOS EN EL ESTADO DE CITAS (Confirmaciones, Cancelaciones, Denegaciones)
 CREATE OR REPLACE FUNCTION notify_on_appointment_status_change()
 RETURNS TRIGGER AS $$
 DECLARE
     recipient_id UUID;
-    job_title TEXT;
+    caregiver_name TEXT;
     notif_msg TEXT;
+    notif_title TEXT;
     notif_type TEXT := 'info';
+    target_path TEXT;
 BEGIN
-    -- Solo actuar si el estado cambió
     IF OLD.status IS DISTINCT FROM NEW.status THEN
-        -- Si se confirma, notificar al cuidador
+        -- CASO 1: Solicitud ACEPTADA (Notificar a la Familia)
         IF NEW.status = 'confirmed' THEN
-            recipient_id := NEW.caregiver_id;
-            notif_msg := 'Tu turno para "' || NEW.title || '" ha sido confirmado.';
+            recipient_id := NEW.client_id;
+            SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
+            
+            notif_title := '✅ Solicitud Aceptada';
+            notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' ha aceptado tu solicitud de servicio.';
             notif_type := 'success';
-        -- Si se cancela, notificar a la otra parte
-        ELSIF NEW.status = 'cancelled' THEN
-            -- Si el que canceló fue el cliente (auth.uid() = client_id), notificar al cuidador
-            -- Pero para simplificar, notificamos al cuidador si existe.
+            target_path := '/dashboard/calendar';
+
+        -- CASO 2: Solicitud DENEGADA o CANCELADA por Cuidador (Notificar a la Familia)
+        ELSIF NEW.status IN ('cancelled', 'denied', 'rejected') AND OLD.status = 'pending' THEN
+            recipient_id := NEW.client_id;
+            SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
+            
+            notif_title := '❌ Solicitud Rechazada';
+            notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' no puede aceptar tu solicitud.';
+            notif_type := 'alert';
+            target_path := '/dashboard/caregivers';
+
+        -- CASO 3: Turno Confirmado es CANCELADO (Notificar al Cuidador - Logica original simplificada)
+        ELSIF NEW.status = 'cancelled' AND OLD.status = 'confirmed' THEN
             recipient_id := NEW.caregiver_id;
+            notif_title := '📅 Turno Cancelado';
             notif_msg := 'El turno "' || NEW.title || '" ha sido cancelado.';
             notif_type := 'alert';
+            target_path := '/caregiver/shifts';
         END IF;
 
         IF recipient_id IS NOT NULL THEN
@@ -113,12 +130,12 @@ BEGIN
             VALUES (
                 recipient_id,
                 notif_type,
-                '📅 Actualización de Cita',
+                notif_title,
                 notif_msg,
                 jsonb_build_object(
                     'appointment_id', NEW.id,
                     'status', NEW.status,
-                    'target_path', CASE WHEN NEW.caregiver_id IS NOT NULL THEN '/caregiver/shifts' ELSE '/dashboard/calendar' END
+                    'target_path', target_path
                 )
             );
         END IF;
@@ -201,40 +218,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 DROP TRIGGER IF EXISTS tr_notify_care_log ON care_logs;
 CREATE TRIGGER tr_notify_care_log AFTER INSERT ON care_logs FOR EACH ROW EXECUTE FUNCTION notify_on_care_log_insert();
 
-
--- 6. NOTIFICAR NUEVA SOLICITUD DE SERVICIO (Directa)
-CREATE OR REPLACE FUNCTION notify_on_new_request()
-RETURNS TRIGGER AS $$
-DECLARE
-    client_name TEXT;
-BEGIN
-    -- Solo si es una solicitud pendiente y tiene un cuidador asignado (solicitud directa)
-    IF NEW.status = 'pending' AND NEW.caregiver_id IS NOT NULL THEN
-        
-        SELECT full_name INTO client_name FROM profiles WHERE id = NEW.client_id;
-        
-        INSERT INTO notifications (user_id, type, title, message, metadata)
-        VALUES (
-            NEW.caregiver_id,
-            'info',
-            '🆕 Nueva Solicitud de Servicio',
-            COALESCE(client_name, 'Un cliente') || ' te ha enviado una solicitud para: ' || COALESCE(NEW.title, 'un servicio'),
-            jsonb_build_object(
-                'appointment_id', NEW.id,
-                'is_request', true,
-                'target_path', '/caregiver/shifts'
-            )
-        );
-    END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-DROP TRIGGER IF EXISTS tr_notify_new_request ON appointments;
-CREATE TRIGGER tr_notify_new_request AFTER INSERT ON appointments FOR EACH ROW EXECUTE FUNCTION notify_on_new_request();
-
-
--- 7. ASEGURAR QUE REALTIME ESTÁ ACTIVO
+-- 5. ASEGURAR QUE REALTIME ESTÁ ACTIVO
 -- Nota: Esto solo se puede asegurar desde el dashboard de Supabase usualmente, 
 -- pero añadimos la tabla al set de publicaciones por si acaso.
 DO $$
@@ -246,3 +230,33 @@ EXCEPTION
   WHEN OTHERS THEN
     RAISE NOTICE 'No se pudo añadir a la publicación (esto es normal si no eres superuser)';
 END $$;
+
+-- 6. NOTIFICAR NUEVAS SOLICITUDES (Al Cuidador)
+CREATE OR REPLACE FUNCTION notify_on_new_request_insert()
+RETURNS TRIGGER AS $$
+DECLARE
+    client_name TEXT;
+BEGIN
+    -- Solo si el estado inicial es 'pending' (Solicitud)
+    IF NEW.status = 'pending' THEN
+        SELECT full_name INTO client_name FROM profiles WHERE id = NEW.client_id;
+        
+        INSERT INTO notifications (user_id, type, title, message, metadata)
+        VALUES (
+            NEW.caregiver_id,
+            'info',
+            '🆕 Nueva Solicitud',
+            COALESCE(client_name, 'Un usuario') || ' te ha enviado una solicitud de servicio: ' || NEW.title,
+            jsonb_build_object(
+                'appointment_id', NEW.id,
+                'type', 'request_received',
+                'target_path', '/caregiver/shifts' 
+            )
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS tr_notify_new_request ON appointments;
+CREATE TRIGGER tr_notify_new_request AFTER INSERT ON appointments FOR EACH ROW EXECUTE FUNCTION notify_on_new_request_insert();

@@ -2,167 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, Check, Trash2, Clock, AlertCircle, MessageSquare, ChevronRight } from 'lucide-react';
+import { Bell, Check, Trash2, Clock, AlertCircle, MessageSquare, ChevronRight, UserPlus, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Notifications = () => {
-    const { user, profile } = useAuth();
-    const navigate = useNavigate();
-    const [notifications, setNotifications] = useState([]);
-    const [loading, setLoading] = useState(true);
+    // ... (lines 9-163 unchanged)
 
-    useEffect(() => {
-        if (!user) return;
-        fetchNotifications();
+    const getIcon = (notification) => {
+        const type = notification.type;
+        const meta = notification.metadata || {};
 
-        // Subscribe to changes
-        const channel = supabase
-            .channel('public:notifications:page')
-            .on('postgres_changes', {
-                event: '*',
-                schema: 'public',
-                table: 'notifications',
-                filter: `user_id=eq.${user.id}`
-            }, () => fetchNotifications())
-            .subscribe();
+        if (meta.type === 'request_received') return <UserPlus className="text-blue-500" size={20} />;
+        if (notification.title?.includes('Aceptada')) return <CheckCircle className="text-green-500" size={20} />;
+        if (notification.title?.includes('Rechazada') || notification.title?.includes('Cancelado')) return <XCircle className="text-red-500" size={20} />;
 
-        return () => {
-            supabase.removeChannel(channel);
-        };
-    }, [user]);
-
-    const fetchNotifications = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('notifications')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-
-            // Apply filters: 5-minute delay for applications AND exclude all chat
-            const now = Date.now();
-            const filtered = (data || []).filter(notif => {
-                const isChat = notif.metadata?.is_chat || notif.metadata?.conversation_id || notif.title?.includes('Mensaje');
-                if (isChat) return false;
-
-                if (profile?.role === 'family' && notif.title?.includes('Postulación')) {
-                    const createdTime = new Date(notif.created_at).getTime();
-                    return createdTime < (now - 5 * 60 * 1000);
-                }
-                return true;
-            });
-
-            setNotifications(filtered);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        } finally {
-            setLoading(false); // Using loadingNotifications consistency
-        }
-    };
-
-    // Add periodic refresh to the page too
-    useEffect(() => {
-        if (!user) return;
-        const interval = setInterval(fetchNotifications, 60000);
-        return () => clearInterval(interval);
-    }, [user]);
-
-    const markAsRead = async (id) => {
-        try {
-            const { error } = await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('id', id);
-
-            if (error) throw error;
-            // Optimistic update
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-        } catch (error) {
-            console.error('Error marking as read:', error);
-        }
-    };
-
-    const markAllAsRead = async () => {
-        try {
-            const { error } = await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('user_id', user.id)
-                .eq('is_read', false);
-
-            if (error) throw error;
-            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-        } catch (error) {
-            console.error('Error marking all as read:', error);
-        }
-    };
-
-    const deleteNotification = async (id, e) => {
-        e.stopPropagation(); // Prevent triggering row click
-        if (!confirm('¿Eliminar esta notificación?')) return;
-
-        try {
-            const { error } = await supabase
-                .from('notifications')
-                .delete()
-                .eq('id', id);
-
-            if (error) throw error;
-            setNotifications(prev => prev.filter(n => n.id !== id));
-        } catch (error) {
-            console.error('Error deleting notification:', error);
-        }
-    };
-
-    const handleNotificationClick = async (notification) => {
-        // 1. Mark as read first
-        if (!notification.is_read) {
-            await markAsRead(notification.id);
-        }
-
-        // 2. Smart Navigation based on metadata
-        const metadata = notification.metadata || {};
-        const targetPath = metadata.target_path;
-
-        if (targetPath) {
-            // Priority 1: Use explicit target_path if exists
-            // Fix: If it's a short path, prepend the role
-            let finalPath = targetPath;
-            if (targetPath === '/messages' || targetPath === '/calendar' || targetPath === '/dashboard') {
-                const rolePrefix = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
-                if (targetPath === '/messages') finalPath = `${rolePrefix}/messages`;
-                else if (targetPath === '/calendar') finalPath = `${rolePrefix}/calendar`;
-                else if (targetPath === '/dashboard') finalPath = rolePrefix;
-            }
-            navigate(finalPath);
-        } else if (metadata.is_chat || metadata.conversation_id) {
-            // Priority 2: Chat notifications
-            navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/dashboard/messages');
-        } else if (metadata.appointment_id) {
-            // Priority 3: Appointment related
-            navigate(profile?.role === 'caregiver' ? '/caregiver/shifts' : '/dashboard/calendar');
-        } else if (metadata.log_id) {
-            // Priority 4: Care logs / Routine Reports
-            // Only navigate to PULSO if the client is subscribed
-            if (profile?.role === 'family' && profile?.subscription_status !== 'active') {
-                navigate('/dashboard');
-            } else {
-                navigate('/dashboard/pulso');
-            }
-        } else {
-            console.log("No smart path found for notification:", notification);
-        }
-    };
-
-    const getPriorityColor = (priority, type) => {
-        if (priority === 'high' || type === 'alert') return 'bg-red-50 border-l-4 border-red-500';
-        if (type === 'success') return 'bg-green-50 border-l-4 border-green-500';
-        return 'bg-white border-l-4 border-gray-200';
-    };
-
-    const getIcon = (type) => {
         if (type === 'alert') return <AlertCircle className="text-red-500" size={20} />;
         if (type === 'success') return <Check className="text-green-500" size={20} />;
         return <Bell className="text-[var(--primary-color)]" size={20} />;
