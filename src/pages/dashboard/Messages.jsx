@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Send, MoreVertical, Phone, Video, Paperclip, MessageCircle, ArrowLeft, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useMessage } from '../../context/MessageContext';
+import { useNotifications } from '../../context/NotificationContext';
 import { supabase } from '../../lib/supabase';
 import { useLocation } from 'react-router-dom';
 
 const Messages = () => {
     const { user, profile } = useAuth();
     const { fetchUnread } = useMessage();
+    const { markAllChatAsRead } = useNotifications();
     const location = useLocation();
     const [conversations, setConversations] = useState([]);
     const [selectedChat, setSelectedChat] = useState(null);
@@ -15,6 +17,11 @@ const Messages = () => {
     const [inputMessage, setInputMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const messagesEndRef = useRef(null);
+
+    // Clear notification bubble on enter
+    useEffect(() => {
+        markAllChatAsRead();
+    }, []);
 
     // Fetch Conversations
     useEffect(() => {

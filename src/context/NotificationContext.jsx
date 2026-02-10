@@ -117,6 +117,30 @@ export const NotificationProvider = ({ children }) => {
         }
     };
 
+    const markAllChatAsRead = async () => {
+        if (!user) return;
+
+        // 1. Immediate local update for responsiveness
+        setUnreadChatCount(0);
+
+        try {
+            // 2. Update DB
+            // We mark as read all notifications that appear to be chat messages
+            const { error } = await supabase
+                .from('notifications')
+                .update({ is_read: true })
+                .eq('user_id', user.id)
+                .is('is_read', false)
+                .or('title.ilike.%Mensaje%,metadata->>is_chat.eq.true,metadata->>conversation_id.neq.null');
+
+            if (error) throw error;
+            console.log("✅ Todas las notificaciones de chat marcadas como leídas.");
+        } catch (error) {
+            console.error('Error marking all chat notifications as read:', error);
+            // Revert on error? Probably not needed for this UX enhancement
+        }
+    };
+
     useEffect(() => {
         const initOneSignal = async () => {
             try {
@@ -202,7 +226,8 @@ export const NotificationProvider = ({ children }) => {
             unreadChatCount,
             notifications,
             loadingNotifications,
-            markAsRead
+            markAsRead,
+            markAllChatAsRead
         }}>
             {children}
         </NotificationContext.Provider>
