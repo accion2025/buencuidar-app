@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Clock, Star, Calendar, ArrowRight, User, Bell, Check, X, Loader2, FileText, Activity, History } from 'lucide-react';
+import { DollarSign, Clock, Star, Calendar, ArrowRight, User, Bell, Check, X, Loader2, FileText, Activity, History, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
@@ -877,7 +877,22 @@ const CaregiverOverview = () => {
                                             </div>
                                             <div className="flex flex-col gap-3 text-[11px] text-[var(--text-main)] mb-8 font-black uppercase tracking-widest bg-[var(--base-bg)] p-4 rounded-[16px] border border-gray-50">
                                                 <span className="flex items-center gap-3"><Calendar size={14} className="text-[var(--secondary-color)]" /> {req.date}</span>
-                                                <span className="flex items-center gap-3"><Clock size={14} className="text-[var(--secondary-color)]" /> {req.time}</span>
+                                                <span className="flex items-center gap-3">
+                                                    <Clock size={14} className="text-[var(--secondary-color)]" />
+                                                    Desde {req.time?.substring(0, 5)} {req.end_time ? `hasta ${req.end_time?.substring(0, 5)}` : ''}
+                                                </span>
+                                                <span className="flex items-start gap-3">
+                                                    <MapPin size={14} className="text-[var(--secondary-color)] shrink-0 mt-0.5" />
+                                                    <span className="normal-case font-bold">{req.address || 'Ubicación no especificada'}</span>
+                                                </span>
+                                                {req.details && (
+                                                    <div className="mt-2 pt-2 border-t border-gray-100/50">
+                                                        <span className="flex items-start gap-3 opacity-70">
+                                                            <FileText size={14} className="text-[var(--secondary-color)] shrink-0 mt-0.5" />
+                                                            <span className="normal-case font-medium italic line-clamp-3">"{req.details}"</span>
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <button
