@@ -201,7 +201,40 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 DROP TRIGGER IF EXISTS tr_notify_care_log ON care_logs;
 CREATE TRIGGER tr_notify_care_log AFTER INSERT ON care_logs FOR EACH ROW EXECUTE FUNCTION notify_on_care_log_insert();
 
--- 5. ASEGURAR QUE REALTIME ESTÁ ACTIVO
+
+-- 6. NOTIFICAR NUEVA SOLICITUD DE SERVICIO (Directa)
+CREATE OR REPLACE FUNCTION notify_on_new_request()
+RETURNS TRIGGER AS $$
+DECLARE
+    client_name TEXT;
+BEGIN
+    -- Solo si es una solicitud pendiente y tiene un cuidador asignado (solicitud directa)
+    IF NEW.status = 'pending' AND NEW.caregiver_id IS NOT NULL THEN
+        
+        SELECT full_name INTO client_name FROM profiles WHERE id = NEW.client_id;
+        
+        INSERT INTO notifications (user_id, type, title, message, metadata)
+        VALUES (
+            NEW.caregiver_id,
+            'info',
+            '🆕 Nueva Solicitud de Servicio',
+            COALESCE(client_name, 'Un cliente') || ' te ha enviado una solicitud para: ' || COALESCE(NEW.title, 'un servicio'),
+            jsonb_build_object(
+                'appointment_id', NEW.id,
+                'is_request', true,
+                'target_path', '/caregiver/shifts'
+            )
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS tr_notify_new_request ON appointments;
+CREATE TRIGGER tr_notify_new_request AFTER INSERT ON appointments FOR EACH ROW EXECUTE FUNCTION notify_on_new_request();
+
+
+-- 7. ASEGURAR QUE REALTIME ESTÁ ACTIVO
 -- Nota: Esto solo se puede asegurar desde el dashboard de Supabase usualmente, 
 -- pero añadimos la tabla al set de publicaciones por si acaso.
 DO $$
