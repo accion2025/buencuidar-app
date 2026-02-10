@@ -192,32 +192,6 @@ const CaregiverSettings = () => {
             </div>
 
             {/* Push Notifications Section - Moved higher for visibility */}
-            <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 p-8">
-                <div className="flex items-center gap-4 mb-6 text-left">
-                    <div className="bg-orange-100 p-3 rounded-[16px] text-orange-600 shadow-inner">
-                        <Bell size={24} />
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Alertas Audibles</h3>
-                        <p className="text-sm text-gray-500 font-secondary mt-1">Configura las notificaciones en este dispositivo.</p>
-                    </div>
-                </div>
-
-                {/* Botón de activación oculto por limpieza de UI
-                <button
-                    onClick={() => OneSignal.Slidedown.promptPush()}
-                    className="w-full flex items-center justify-center gap-3 p-5 rounded-[24px] bg-[var(--base-bg)] text-[var(--primary-color)] font-brand font-bold text-lg hover:bg-[var(--secondary-color)]/10 transition-all border-2 border-dashed border-[var(--secondary-color)]/30 group"
-                >
-                    <Bell size={24} className="text-[var(--secondary-color)] group-hover:scale-110 transition-transform" />
-                    Activar Notificaciones Audibles
-                </button>
-                */}
-
-                <p className="text-xs text-center text-gray-400 mt-6 font-secondary leading-relaxed">
-                    Si no estás recibiendo los avisos de proximidad de turno o alertas de salud, <br />
-                    haz clic arriba para renovar los permisos de tu dispositivo.
-                </p>
-            </div>
 
             {/* General Settings */}
             <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">

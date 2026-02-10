@@ -192,35 +192,6 @@ const Settings = () => {
                 </div>
             )}
 
-            {/* Manual Push Permission Trigger */}
-            <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 p-8">
-                <div className="flex items-center gap-4 mb-6 text-left">
-                    <div className="bg-orange-100 p-3 rounded-[16px] text-orange-600 shadow-inner">
-                        <Bell size={24} />
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-brand font-bold !text-[#0F3C4C]">Centro de Alertas Audibles</h3>
-                        <p className="text-sm text-gray-500 font-secondary mt-1">Configura las notificaciones en este dispositivo.</p>
-                    </div>
-                </div>
-
-                {!window.isSecureContext && window.location.hostname !== 'localhost' ? (
-                    <div className="p-4 bg-red-50 border border-red-100 rounded-[16px] mb-6">
-                        <p className="text-sm text-red-600 font-brand font-bold">
-                            ⚠️ Conexión no segura (HTTP)
-                        </p>
-                        <p className="text-xs text-red-500 font-secondary mt-1">
-                            El navegador bloquea las notificaciones en sitios sin candado de seguridad (HTTPS). Contacta a soporte para habilitar el dominio seguro.
-                        </p>
-                    </div>
-                ) : null}
-
-                <p className="text-[10px] text-center text-gray-400 mt-6 font-black uppercase tracking-widest leading-relaxed">
-                    Haz clic arriba si no recibes avisos.<br />
-                    Para alertas audibles: Revisa en Ajustes &gt; Aplicaciones &gt; BuenCuidar &gt; Notificaciones que el sonido esté activo.
-                </p>
-            </div>
-
             {/* Account and Security */}
             <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                 <div className="p-8 border-b border-gray-50 bg-slate-50/50">
