@@ -1150,46 +1150,49 @@ const DashboardOverview = () => {
                             </h3>
 
                             <div className="space-y-8 relative z-10">
-                                {notifications.length > 0 ? (
-                                    notifications.map((notif) => (
-                                        <div key={notif.id} className={`flex gap-5 items-start animate-fade-in transition-all ${notif.is_read ? 'opacity-40 grayscale-[0.5]' : 'hover:scale-[1.02]'}`}>
-                                            <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center flex-shrink-0 shadow-lg border-2 ${notif.type === 'alert' || notif.type === 'warning' ? 'bg-red-50 text-[var(--error-color)] border-red-100' :
-                                                notif.type === 'success' ? 'bg-emerald-50 text-[var(--secondary-color)] border-emerald-100' : 'bg-blue-50 text-blue-600 border-blue-100'
-                                                }`}>
-                                                {notif.type === 'alert' || notif.type === 'warning' ? (
-                                                    <AlertTriangle size={22} />
-                                                ) : notif.type === 'success' ? (
-                                                    <CheckCircle size={22} />
-                                                ) : (
-                                                    <Info size={22} />
-                                                )}
-                                            </div>
-                                            <div className="flex-1 text-left min-w-0">
-                                                <div className="flex justify-between items-start gap-4">
-                                                    <p className={`text-base font-brand leading-tight truncate ${notif.is_read ? 'font-medium text-[var(--text-main)]' : 'font-bold text-[var(--primary-color)]'}`}>
-                                                        {notif.title}
-                                                    </p>
-                                                    {!notif.is_read && (
-                                                        <button onClick={() => markAsRead(notif.id)} className="text-[var(--secondary-color)] hover:bg-[var(--secondary-color)]/10 p-2 rounded-[16px] transition-colors bg-[var(--base-bg)] border border-gray-100">
-                                                            <Check size={16} strokeWidth={4} />
-                                                        </button>
+                                {(() => {
+                                    const taskNotifications = notifications.filter(notif => notif.metadata?.log_id);
+                                    return taskNotifications.length > 0 ? (
+                                        taskNotifications.map((notif) => (
+                                            <div key={notif.id} className={`flex gap-5 items-start animate-fade-in transition-all ${notif.is_read ? 'opacity-40 grayscale-[0.5]' : 'hover:scale-[1.02]'}`}>
+                                                <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center flex-shrink-0 shadow-lg border-2 ${notif.type === 'alert' || notif.type === 'warning' ? 'bg-red-50 text-[var(--error-color)] border-red-100' :
+                                                    notif.type === 'success' ? 'bg-emerald-50 text-[var(--secondary-color)] border-emerald-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+                                                    }`}>
+                                                    {notif.type === 'alert' || notif.type === 'warning' ? (
+                                                        <AlertTriangle size={22} />
+                                                    ) : notif.type === 'success' ? (
+                                                        <CheckCircle size={22} />
+                                                    ) : (
+                                                        <Info size={22} />
                                                     )}
                                                 </div>
-                                                <p className="text-sm text-[var(--text-light)] mt-2 leading-relaxed font-secondary line-clamp-2">
-                                                    {notif.message}
-                                                </p>
-                                                <div className="flex items-center gap-2 mt-3 text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em]">
-                                                    <Clock size={12} />
-                                                    {timeAgo(notif.created_at)}
+                                                <div className="flex-1 text-left min-w-0">
+                                                    <div className="flex justify-between items-start gap-4">
+                                                        <p className={`text-base font-brand leading-tight truncate ${notif.is_read ? 'font-medium text-[var(--text-main)]' : 'font-bold text-[var(--primary-color)]'}`}>
+                                                            {notif.title}
+                                                        </p>
+                                                        {!notif.is_read && (
+                                                            <button onClick={() => markAsRead(notif.id)} className="text-[var(--secondary-color)] hover:bg-[var(--secondary-color)]/10 p-2 rounded-[16px] transition-colors bg-[var(--base-bg)] border border-gray-100">
+                                                                <Check size={16} strokeWidth={4} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-sm text-[var(--text-light)] mt-2 leading-relaxed font-secondary line-clamp-2">
+                                                        {notif.message}
+                                                    </p>
+                                                    <div className="flex items-center gap-2 mt-3 text-[10px] text-gray-400 font-bold uppercase tracking-[0.15em]">
+                                                        <Clock size={12} />
+                                                        {timeAgo(notif.created_at)}
+                                                    </div>
                                                 </div>
                                             </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
+                                            <p className="text-[var(--text-light)] text-sm font-secondary">No hay reportes de cuidado recientes.</p>
                                         </div>
-                                    ))
-                                ) : (
-                                    <div className="text-center py-10 bg-[var(--base-bg)]/50 rounded-[16px] border border-dashed border-gray-200">
-                                        <p className="text-[var(--text-light)] text-sm font-secondary">No tienes nuevas notificaciones.</p>
-                                    </div>
-                                )}
+                                    );
+                                })()}
                             </div>
 
                             <button
