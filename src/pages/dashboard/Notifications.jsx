@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, Check, Trash2, Clock, AlertCircle } from 'lucide-react';
+import { Bell, Check, Trash2, Clock, AlertCircle, MessageSquare, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Notifications = () => {
@@ -123,8 +123,13 @@ const Notifications = () => {
             // Priority 3: Appointment related
             navigate(profile?.role === 'caregiver' ? '/caregiver/shifts' : '/dashboard/calendar');
         } else if (metadata.log_id) {
-            // Priority 4: Care logs / Wellness
-            navigate('/dashboard/pulso');
+            // Priority 4: Care logs / Routine Reports
+            // Only navigate to PULSO if the client is subscribed
+            if (profile?.role === 'family' && profile?.subscription_status !== 'active') {
+                navigate('/dashboard');
+            } else {
+                navigate('/dashboard/pulso');
+            }
         } else {
             console.log("No smart path found for notification:", notification);
         }
@@ -221,6 +226,22 @@ const Notifications = () => {
                                         </span>
                                     </div>
                                 </div>
+                                {(notification.metadata?.is_chat || notification.metadata?.conversation_id) && (
+                                    <div className="flex-shrink-0 self-center ml-2">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleNotificationClick(notification);
+                                            }}
+                                            className="bg-[var(--primary-color)] text-white p-2 rounded-full hover:bg-[var(--secondary-color)] transition-colors shadow-sm flex items-center gap-1 group/btn"
+                                            title="Ir al Chat"
+                                        >
+                                            <MessageSquare size={16} />
+                                            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline-block pr-1">Chat</span>
+                                            <ChevronRight size={14} className="group-hover/btn:translate-x-0.5 transition-transform" />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}

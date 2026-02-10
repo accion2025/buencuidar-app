@@ -16,13 +16,17 @@ BEGIN
     SELECT full_name INTO sender_name FROM profiles WHERE id = NEW.sender_id;
 
     IF recipient_id IS NOT NULL THEN
-        -- Evitar duplicados si ya existe una notificación de chat sin leer para esta conversación
-        IF NOT EXISTS (
-            SELECT 1 FROM notifications 
-            WHERE user_id = recipient_id 
-            AND is_read = false 
-            AND (metadata->>'conversation_id')::uuid = NEW.conversation_id
-        ) THEN
+        -- Agrupar notificaciones: Si ya existe una sin leer, actualizar la fecha y el mensaje
+        UPDATE notifications 
+        SET 
+            created_at = NOW(),
+            message = COALESCE(sender_name, 'Alguien') || ' te ha enviado un mensaje.'
+        WHERE user_id = recipient_id 
+        AND is_read = false 
+        AND (metadata->>'conversation_id')::uuid = NEW.conversation_id;
+
+        -- Si no se actualizó ninguna (no existía una previa sin leer), insertar nueva
+        IF NOT FOUND THEN
             INSERT INTO notifications (user_id, type, title, message, metadata)
             VALUES (
                 recipient_id,
@@ -154,6 +158,48 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS tr_notify_appointment_mod ON appointments;
 CREATE TRIGGER tr_notify_appointment_mod AFTER UPDATE ON appointments FOR EACH ROW EXECUTE FUNCTION notify_on_appointment_modification();
+
+
+-- 5. NOTIFICAR ACTIVIDAD EN BITÁCORA (RUTINAS)
+CREATE OR REPLACE FUNCTION notify_on_care_log_insert()
+RETURNS TRIGGER AS $$
+DECLARE
+    target_client_id UUID;
+    caregiver_name TEXT;
+    notif_title TEXT := '✅ Informe de Rutinas';
+    notif_message TEXT;
+BEGIN
+    SELECT client_id INTO target_client_id FROM appointments WHERE id = NEW.appointment_id;
+    SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
+
+    IF target_client_id IS NOT NULL THEN
+        notif_message := COALESCE(caregiver_name, 'El cuidador') || ' completó: ' || NEW.action;
+        
+        -- Si es una alerta o emergencia, cambiar el título y tipo
+        IF NEW.category IN ('Alerta', 'Emergencia') THEN
+            notif_title := '⚠️ Alerta de Cuidado';
+        END IF;
+
+        INSERT INTO notifications (user_id, type, title, message, metadata)
+        VALUES (
+            target_client_id,
+            CASE WHEN NEW.category IN ('Alerta', 'Emergencia') THEN 'alert' ELSE 'success' END,
+            notif_title,
+            notif_message,
+            jsonb_build_object(
+                'log_id', NEW.id,
+                'appointment_id', NEW.appointment_id,
+                'is_priority', (NEW.category IN ('Alerta', 'Emergencia')),
+                'target_path', '/dashboard/pulso'
+            )
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS tr_notify_care_log ON care_logs;
+CREATE TRIGGER tr_notify_care_log AFTER INSERT ON care_logs FOR EACH ROW EXECUTE FUNCTION notify_on_care_log_insert();
 
 -- 5. ASEGURAR QUE REALTIME ESTÁ ACTIVO
 -- Nota: Esto solo se puede asegurar desde el dashboard de Supabase usualmente, 
