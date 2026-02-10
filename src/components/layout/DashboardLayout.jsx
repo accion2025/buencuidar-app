@@ -97,9 +97,15 @@ const DashboardLayout = () => {
     };
 
     const handleLogout = async () => {
-        setIsMobileMenuOpen(false);
-        await signOut();
-        navigate('/login');
+        try {
+            setIsMobileMenuOpen(false);
+            console.log("Iniciando cierre de sesión (Dashboard)...");
+            await signOut();
+        } catch (e) {
+            console.error("Error al cerrar sesión (Dashboard):", e);
+        } finally {
+            navigate('/login');
+        }
     };
 
     return (

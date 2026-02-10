@@ -13,8 +13,14 @@ const AdminLayout = () => {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
-        await signOut();
-        navigate('/login');
+        try {
+            console.log("Iniciando cierre de sesión (Admin)...");
+            await signOut();
+        } catch (e) {
+            console.error("Error al cerrar sesión (Admin):", e);
+        } finally {
+            navigate('/login');
+        }
     };
 
     const isActive = (path) => location.pathname === path;

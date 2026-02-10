@@ -60,9 +60,15 @@ const CaregiverLayout = () => {
     };
 
     const handleLogout = async () => {
-        setIsSidebarOpen(false);
-        await signOut();
-        navigate('/login');
+        try {
+            setIsSidebarOpen(false);
+            console.log("Iniciando cierre de sesión (Caregiver)...");
+            await signOut();
+        } catch (e) {
+            console.error("Error al cerrar sesión (Caregiver):", e);
+        } finally {
+            navigate('/login');
+        }
     };
 
     if (loading) return null;
