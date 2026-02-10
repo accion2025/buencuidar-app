@@ -22,6 +22,7 @@ export const NotificationProvider = ({ children }) => {
         }
 
         const fetchNotificationsData = async () => {
+            console.log("🔄 Cargando notificaciones para el usuario:", user.id);
             try {
                 // 1. Fetch unread count
                 const { count, error: countError } = await supabase
@@ -31,6 +32,7 @@ export const NotificationProvider = ({ children }) => {
                     .eq('is_read', false);
 
                 if (countError) throw countError;
+                console.log("✅ Conteo de no leídas:", count || 0);
                 setUnreadNotificationsCount(count || 0);
 
                 // 2. Fetch recent notifications feed (last 20)
@@ -42,9 +44,10 @@ export const NotificationProvider = ({ children }) => {
                     .limit(20);
 
                 if (feedError) throw feedError;
+                console.log("✅ Feed de notificaciones actualizado:", data?.length || 0, "ítems.");
                 setNotifications(data || []);
             } catch (err) {
-                console.error("Error al obtener notificaciones unificadas:", err);
+                console.error("❌ Error al obtener notificaciones unificadas:", err);
             } finally {
                 setLoadingNotifications(false);
             }
@@ -59,10 +62,13 @@ export const NotificationProvider = ({ children }) => {
                 schema: 'public',
                 table: 'notifications',
                 filter: `user_id=eq.${user.id}`
-            }, () => {
+            }, (payload) => {
+                console.log("🔔 Cambio en tiempo real detectado en 'notifications':", payload);
                 fetchNotificationsData();
             })
-            .subscribe();
+            .subscribe((status) => {
+                console.log(`📡 Estado suscripción Realtime Notificaciones (${user.id}):`, status);
+            });
 
         return () => {
             supabase.removeChannel(channel);
