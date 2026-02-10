@@ -22,7 +22,7 @@ import InstallPrompt from '../InstallPrompt';
 
 const CaregiverLayout = () => {
     const { unreadCount, fetchUnread } = useMessage();
-    const { unreadNotificationsCount } = useNotifications();
+    const { unreadNotificationsCount, unreadChatCount } = useNotifications();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default to false for mobile
     const navigate = useNavigate();
     const { profile, signOut, loading, user } = useAuth();
@@ -159,18 +159,34 @@ const CaregiverLayout = () => {
                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{profile?.full_name}</span>
                         </div>
                     </div>
-                    <button
-                        onClick={() => navigate('/caregiver/notifications')}
-                        className="relative text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 p-2 rounded-[12px] hover:shadow-md group"
-                    >
-                        <Bell size={22} className="group-hover:animate-swing" />
-                        {unreadNotificationsCount > 0 && (
-                            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
-                            </span>
-                        )}
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => navigate('/caregiver/messages')}
+                            className="relative text-gray-400 hover:text-blue-500 transition-all bg-gray-50 p-2 rounded-[12px] hover:shadow-md group"
+                            title="Mensajes y Chat"
+                        >
+                            <MessageSquare size={22} className="group-hover:scale-110 transition-transform" />
+                            {unreadChatCount > 0 && (
+                                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500 border-2 border-white"></span>
+                                </span>
+                            )}
+                        </button>
+
+                        <button
+                            onClick={() => navigate('/caregiver/notifications')}
+                            className="relative text-gray-400 hover:text-[var(--secondary-color)] transition-all bg-gray-50 p-2 rounded-[12px] hover:shadow-md group"
+                        >
+                            <Bell size={22} className="group-hover:animate-swing" />
+                            {unreadNotificationsCount > 0 && (
+                                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
+                                </span>
+                            )}
+                        </button>
+                    </div>
                 </header>
 
                 {/* Page Content */}
