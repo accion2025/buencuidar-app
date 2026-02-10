@@ -250,7 +250,7 @@ BEGIN
             jsonb_build_object(
                 'appointment_id', NEW.id,
                 'type', 'request_received',
-                'target_path', '/caregiver/shifts' 
+                'target_path', '/caregiver' 
             )
         );
     END IF;

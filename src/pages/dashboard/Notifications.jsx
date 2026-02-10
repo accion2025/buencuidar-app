@@ -130,11 +130,12 @@ const Notifications = () => {
             // Priority 1: Use explicit target_path if exists
             // Fix: If it's a short path, prepend the role
             let finalPath = targetPath;
-            if (targetPath === '/messages' || targetPath === '/calendar' || targetPath === '/dashboard') {
+            if (targetPath === '/messages' || targetPath === '/calendar' || targetPath === '/dashboard' || targetPath === '/caregiver') {
                 const rolePrefix = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
                 if (targetPath === '/messages') finalPath = `${rolePrefix}/messages`;
                 else if (targetPath === '/calendar') finalPath = `${rolePrefix}/calendar`;
-                else if (targetPath === '/dashboard') finalPath = rolePrefix;
+                else if (targetPath === '/dashboard') finalPath = '/dashboard';
+                else if (targetPath === '/caregiver') finalPath = '/caregiver';
             }
             navigate(finalPath);
         } else if (metadata.is_chat || metadata.conversation_id) {
