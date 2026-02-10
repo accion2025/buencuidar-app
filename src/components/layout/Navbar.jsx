@@ -10,7 +10,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, profile, signOut } = useAuth();
-    const { unreadNotificationsCount } = useNotifications();
+    const { unreadNotificationsCount, unreadChatCount } = useNotifications();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const isRegistrationSuccess = location.pathname === '/registration-success';
