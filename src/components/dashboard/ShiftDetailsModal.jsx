@@ -2,7 +2,7 @@ import React from 'react';
 import { X, Calendar, Clock, MapPin, User, Navigation, Phone, MessageCircle, AlertTriangle, FileText, CheckCircle } from 'lucide-react';
 import { translateAppointmentStatus, translateAppointmentType } from '../../utils/translations';
 
-const ShiftDetailsModal = ({ isOpen, onClose, shift, onStartShift }) => {
+const ShiftDetailsModal = ({ isOpen, onClose, shift, onAction, isLoading }) => {
     if (!isOpen || !shift) return null;
 
     const statusColors = {
