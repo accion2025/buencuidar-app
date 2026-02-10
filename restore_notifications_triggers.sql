@@ -96,8 +96,8 @@ DECLARE
     target_path TEXT;
 BEGIN
     IF OLD.status IS DISTINCT FROM NEW.status THEN
-        -- CASO 1: Solicitud ACEPTADA (Notificar a la Familia)
-        IF NEW.status = 'confirmed' THEN
+        -- CASO 1: Solicitud ACEPTADA por Cuidador (Notificar a la Familia solo si era solicitud directa)
+        IF NEW.status = 'confirmed' AND OLD.caregiver_id IS NOT NULL THEN
             recipient_id := NEW.client_id;
             SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
             
@@ -105,9 +105,9 @@ BEGIN
             notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' ha aceptado tu solicitud de servicio.';
             notif_type := 'success';
             target_path := '/dashboard/calendar';
-
-        -- CASO 2: Solicitud DENEGADA o CANCELADA por Cuidador (Notificar a la Familia)
-        ELSIF NEW.status IN ('cancelled', 'denied', 'rejected') AND OLD.status = 'pending' THEN
+ 
+        -- CASO 2: Solicitud DENEGADA o CANCELADA por Cuidador (Notificar a la Familia solo si era solicitud directa)
+        ELSIF NEW.status IN ('cancelled', 'denied', 'rejected') AND OLD.status = 'pending' AND OLD.caregiver_id IS NOT NULL THEN
             recipient_id := NEW.client_id;
             SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
             
@@ -257,6 +257,51 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
+ 
 DROP TRIGGER IF EXISTS tr_notify_new_request ON appointments;
 CREATE TRIGGER tr_notify_new_request AFTER INSERT ON appointments FOR EACH ROW EXECUTE FUNCTION notify_on_new_request_insert();
+ 
+ 
+-- 7. NOTIFICAR RESULTADO DE POSTULACIÓN (Al Cuidador)
+CREATE OR REPLACE FUNCTION notify_on_application_status_update()
+RETURNS TRIGGER AS $$
+DECLARE
+    job_title TEXT;
+BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status THEN
+        SELECT title INTO job_title FROM appointments WHERE id = NEW.appointment_id;
+ 
+        IF NEW.status = 'approved' THEN
+            INSERT INTO notifications (user_id, type, title, message, metadata)
+            VALUES (
+                NEW.caregiver_id,
+                'success',
+                '✅ Postulación Aceptada',
+                '¡Felicidades! Tu postulación para "' || COALESCE(job_title, 'un servicio') || '" ha sido aceptada.',
+                jsonb_build_object(
+                    'appointment_id', NEW.appointment_id,
+                    'type', 'application_approved',
+                    'target_path', '/caregiver/shifts'
+                )
+            );
+        ELSIF NEW.status = 'rejected' THEN
+            INSERT INTO notifications (user_id, type, title, message, metadata)
+            VALUES (
+                NEW.caregiver_id,
+                'info',
+                '💼 Postulación Finalizada',
+                'La oferta para "' || COALESCE(job_title, 'un servicio') || '" ya no está disponible o tu postulación ha sido declinada.',
+                jsonb_build_object(
+                    'appointment_id', NEW.appointment_id,
+                    'type', 'application_rejected',
+                    'target_path', '/search'
+                )
+            );
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+ 
+DROP TRIGGER IF EXISTS tr_notify_application_status ON job_applications;
+CREATE TRIGGER tr_notify_application_status AFTER UPDATE ON job_applications FOR EACH ROW EXECUTE FUNCTION notify_on_application_status_update();
