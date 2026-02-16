@@ -89,7 +89,7 @@ function App() {
               {/* Family Dashboard Routes (Protected) */}
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardOverview />} />
-                {/* <Route path="cuidado-plus" element={<CuidadoPlusPanel />} /> */} {/* Disabled for V1.0 */}
+                <Route path="cuidado-plus" element={<CuidadoPlusPanel />} />
                 <Route path="cleanup" element={<CleanupData />} />
                 <Route path="pulso" element={<MonitoringCenter />} />
                 <Route path="calendar" element={<CalendarPage />} />
