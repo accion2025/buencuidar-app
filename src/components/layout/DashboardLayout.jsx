@@ -69,7 +69,7 @@ const DashboardLayout = () => {
             label: 'Resumen',
             path: profile?.role === 'caregiver' ? '/caregiver' : '/dashboard'
         },
-        {
+        /* {
             icon: Activity,
             label: <span className="font-brand font-bold">
                 <span className="!text-[#FAFAF7]">B</span>
@@ -77,7 +77,7 @@ const DashboardLayout = () => {
             </span>,
             path: '/dashboard/pulso',
             locked: profile?.role === 'family' && !can('accessMonitoring')
-        },
+        }, */
         /* {
             icon: Shield,
             label: <span className="font-brand font-bold">
