@@ -78,15 +78,15 @@ const DashboardLayout = () => {
             path: '/dashboard/pulso',
             locked: profile?.role === 'family' && !can('accessMonitoring')
         },
-        /* {
+        {
             icon: Shield,
             label: <span className="font-brand font-bold">
                 <span className="!text-[#FAFAF7]">B</span>
                 <span className="text-[#2FAE8F]">C</span> <span className="text-[#C5A265]"> Cuidado+</span>
             </span>,
-            path: '/dashboard/pulso',
-            // locked: !isSubscribed // Optional: lock if not subscribed
-        }, */
+            path: '/dashboard/cuidado-plus',
+            locked: !isSubscribed
+        },
         { icon: Calendar, label: 'Calendario', path: '/dashboard/calendar' },
         { icon: MessageSquare, label: 'Mensajes', path: '/dashboard/messages', badge: unreadCount },
         { icon: CreditCard, label: 'Mi Suscripción', path: '/dashboard/subscription' },
