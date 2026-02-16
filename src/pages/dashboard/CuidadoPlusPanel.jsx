@@ -676,7 +676,7 @@ const CuidadoPlusPanel = () => {
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
                 <Loader2 size={48} className="animate-spin text-[#C5A265]" />
-                <p className="text-[#0F3C4C] font-brand font-bold animate-pulse">Sincronizando la experiencia BC PULSO...</p>
+                <p className="text-[#0F3C4C] font-brand font-bold animate-pulse">Sincronizando la experiencia BC Cuidado+...</p>
             </div>
         );
     }
@@ -689,16 +689,15 @@ const CuidadoPlusPanel = () => {
                     <div className="flex items-center gap-3">
                         <AlertCircle size={32} className="animate-bounce" />
                         <div className="text-center md:text-left">
-                            <h2 className="text-xl font-black uppercase tracking-tighter">ALERTA DE EMERGENCIA (PULSO)</h2>
+                            <h2 className="text-xl font-black uppercase tracking-tighter">ALERTA DE EMERGENCIA (CUIDADO+)</h2>
                             <p className="text-sm font-bold opacity-90">Un cuidador en servicio ha activado el protocolo de pánico.</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
                         <button
-                            onClick={() => window.location.href = '/dashboard/monitoring'}
                             className="bg-white text-red-600 px-6 py-2 rounded-full font-black uppercase text-xs hover:bg-gray-100 transition-all"
                         >
-                            Ir a PULSO (Vivo)
+                            Ir a CUIDADO+ (Vivo)
                         </button>
                         <button
                             onClick={async () => {
@@ -721,7 +720,7 @@ const CuidadoPlusPanel = () => {
                 <div className="relative z-10 text-white">
                     <div className="flex items-center gap-4 mb-2">
                         <h1 className="text-5xl font-brand font-bold !text-[#FAFAF7] tracking-tighter italic drop-shadow-sm">
-                            B<span className="text-[#2FAE8F]">C</span> <span className="text-[#C5A265]">PULSO</span>
+                            B<span className="text-[#2FAE8F]">C</span> <span className="text-[#C5A265]">Cuidado+</span>
                         </h1>
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-[#C5A265]/30 bg-[#C5A265]/10 text-[#C5A265] backdrop-blur-md flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-[#C5A265] animate-pulse"></span>
@@ -756,7 +755,7 @@ const CuidadoPlusPanel = () => {
                         <ShieldCheck size={48} strokeWidth={1.5} />
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                        <h2 className="text-2xl font-brand font-bold mb-2 text-[#0F3C4C]">BC PULSO garantiza la excelencia en cada servicio contratado.</h2>
+                        <h2 className="text-2xl font-brand font-bold mb-2 text-[#0F3C4C]">BC Cuidado+ garantiza la excelencia en cada servicio contratado.</h2>
                         <p className="text-[#0F3C4C]/70 font-secondary leading-relaxed">
                             Gestiona tus servicios de alta especialización, revisa postulaciones de cuidadores certificados y monitorea el bienestar de tus seres queridos.
                         </p>
@@ -784,7 +783,7 @@ const CuidadoPlusPanel = () => {
                             <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
                         </span>
                     )}
-                    Agenda de Cuidado PULSO Sincronizada
+                    Agenda de Cuidado Cuidado+ Sincronizada
                 </h2>
                 {inProgressServices.length > 0 ? (
                     <div className="grid lg:grid-cols-1 gap-8">
