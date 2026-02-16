@@ -1,29 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Activity,
-    Heart,
-    Thermometer,
-    Wind,
-    Pill,
-    Clock,
-    AlertCircle,
-    ChevronRight,
-    CircleCheck,
-    CircleDashed,
-    History,
-    ShieldCheck,
-    Lock,
-    Settings,
-    Check,
-    ClipboardList,
-    Star,
-    Download
+    Activity, Heart, Clock, Star, Download, ShieldCheck,
+    History, AlertCircle, CircleCheck, CircleDashed, Check,
+    Utensils, Pill, Bath, ClipboardList, Wind, Thermometer,
+    ChevronRight, Lock, Settings
 } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
+import { usePermissions } from '../../hooks/usePermissions';
 import ConfigureAgendaModal from '../../components/dashboard/ConfigureAgendaModal';
 import { formatTimeAgo } from '../../utils/time';
+import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { safeDateParse } from '../../utils/time';
@@ -32,11 +19,9 @@ import { safeDateParse } from '../../utils/time';
 
 const MonitoringCenter = () => {
     const { profile, user, loading: authLoading } = useAuth();
+    const { can, plan } = usePermissions();
     const navigate = useNavigate();
     const [lastUpdate, setLastUpdate] = useState("Sincronizando...");
-
-    // Subscription Check
-    const isSubscribed = profile?.subscription_status === 'active';
 
     if (authLoading) {
         return (
@@ -49,7 +34,7 @@ const MonitoringCenter = () => {
         );
     }
 
-    if (!isSubscribed) {
+    if (!can('accessMonitoring')) {
         return (
             <div className="flex-grow flex items-center justify-center py-20 px-4">
                 <div className="max-w-3xl w-full card !p-0 overflow-hidden shadow-2xl border-none animate-fade-in-up">
@@ -113,6 +98,7 @@ const MonitoringCenter = () => {
     });
     const [hoursStats, setHoursStats] = useState({ confirmed: 0, pending: 0 });
     const [averageRating, setAverageRating] = useState(null);
+    const [activeAlert, setActiveAlert] = useState(null);
 
     // Report Range States
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -121,15 +107,78 @@ const MonitoringCenter = () => {
     const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
     useEffect(() => {
-        if (isSubscribed) {
+        if (can('accessMonitoring') && profile?.id) {
             fetchLiveData();
+
+            // 1. Realtime Subscription for Emergency Alerts
+            const alertsChannel = supabase
+                .channel(`family-alerts-${profile.id}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'emergency_alerts',
+                        filter: `client_id=eq.${profile.id}`
+                    },
+                    (payload) => {
+                        console.log('🔔 Cambio en Alerta detectado:', payload);
+                        if (payload.eventType === 'INSERT' && payload.new.status === 'active') {
+                            setActiveAlert(payload.new);
+                        } else if (payload.eventType === 'UPDATE' && payload.new.status === 'resolved') {
+                            setActiveAlert(null);
+                        } else if (payload.eventType === 'DELETE') {
+                            setActiveAlert(null);
+                        }
+                    }
+                )
+                .subscribe();
+
+            // 2. Realtime Subscription for Care Logs (Bitácora)
+            // We subscribe to all changes and refresh to ensure data consistency
+            const logsChannel = supabase
+                .channel(`family-logs-${profile.id}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'INSERT',
+                        schema: 'public',
+                        table: 'care_logs'
+                        // Note: cannot easily filter by client_id in care_logs via realtime 
+                        // unless we add client_id to the table. We refresh on any insert 
+                        // and fetchLiveData will handle the client-side filtering.
+                    },
+                    (payload) => {
+                        console.log('📝 Nuevo registro de bitácora detectado, sincronizando...');
+                        fetchLiveData();
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(alertsChannel);
+                supabase.removeChannel(logsChannel);
+            };
         }
-    }, [isSubscribed]);
+    }, [can, profile?.id]);
 
     const fetchLiveData = async () => {
         try {
             setLoadingData(true);
             const today = new Date().toISOString().split('T')[0];
+
+            // 0. Fetch INITIAL active alerts
+            const { data: initialAlerts } = await supabase
+                .from('emergency_alerts')
+                .select('*')
+                .eq('client_id', profile.id)
+                .eq('status', 'active')
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (initialAlerts && initialAlerts.length > 0) {
+                setActiveAlert(initialAlerts[0]);
+            }
 
             // Strategy: 
             // 1. Prioritize 'in_progress' appointments (Active NOW)
@@ -141,9 +190,10 @@ const MonitoringCenter = () => {
             // 1. Check In Progress
             const { data: inProgress, error: ipError } = await supabase
                 .from('appointments')
-                .select('id, date, time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
+                .select('id, date, time, end_time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
                 .eq('client_id', profile.id)
                 .eq('status', 'in_progress')
+                .neq('type', 'Cuidado+')
                 .limit(1);
 
             if (ipError) throw ipError;
@@ -154,9 +204,10 @@ const MonitoringCenter = () => {
                 // 2. Check Upcoming (Today/Future Confirmed)
                 const { data: nextUp, error: nextError } = await supabase
                     .from('appointments')
-                    .select('id, date, time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
+                    .select('id, date, time, end_time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
                     .eq('client_id', profile.id)
                     .in('status', ['confirmed'])
+                    .neq('type', 'Cuidado+')
                     .gte('date', today)
                     .order('date', { ascending: true })
                     .order('time', { ascending: true })
@@ -217,20 +268,32 @@ const MonitoringCenter = () => {
                     mood: { value: 'Pendiente', status: '' }
                 };
 
-                // Filter logs that belong to Wellness category
                 const wellnessLogs = (logs || []).filter(l => l.category === 'Wellness');
 
-                // Process in chronological order so that the latest report (at the top of logs if sorted DESC) 
-                // is the one that stays if we add a break or reverse, but here we iterate and first found wins.
                 wellnessLogs.forEach(log => {
-                    if (log.action === 'Estado General' && newWellness.general.value === 'Pendiente') {
-                        newWellness.general = { value: log.detail, status: log.detail === 'Estable' ? 'Normal' : 'Atención' };
+                    // Estado General
+                    if ((log.action === 'Estado General' || log.action === 'General') && newWellness.general.value === 'Pendiente') {
+                        const val = log.detail;
+                        newWellness.general = {
+                            value: val,
+                            status: ['Estable', 'Normal', 'Bueno', 'Excelente'].includes(val) ? 'Normal' : (['Pendiente', 'Duda'].includes(val) ? 'Evaluación' : 'Atención')
+                        };
                     }
-                    if (log.action === 'Nivel de Energía' && newWellness.energy.value === 'Pendiente') {
-                        newWellness.energy = { value: log.detail, status: log.detail === 'Alto' || log.detail === 'Adecuado' ? 'Bueno' : 'Bajo' };
+                    // Energía
+                    if ((log.action === 'Nivel de Energía' || log.action === 'Energía') && newWellness.energy.value === 'Pendiente') {
+                        const val = log.detail;
+                        newWellness.energy = {
+                            value: val,
+                            status: ['Alto', 'Adecuado', 'Normal', 'Estable'].includes(val) ? 'Bueno' : (['Bajo', 'Cansado'].includes(val) ? 'Agotado' : 'Observación')
+                        };
                     }
-                    if (log.action === 'Bienestar Hoy' && newWellness.mood.value === 'Pendiente') {
-                        newWellness.mood = { value: log.detail, status: log.detail === 'Feliz' || log.detail === 'Tranquilo' ? 'Excelente' : 'Regular' };
+                    // Ánimo / Bienestar Hoy
+                    if ((log.action === 'Bienestar Hoy' || log.action === 'Estado de Ánimo' || log.action === 'Mood') && newWellness.mood.value === 'Pendiente') {
+                        const val = log.detail;
+                        newWellness.mood = {
+                            value: val,
+                            status: ['Feliz', 'Tranquilo', 'Estable', 'Bueno'].includes(val) ? 'Excelente' : (['Triste', 'Agitado', 'Molesto'].includes(val) ? 'Sensible' : 'Neutral')
+                        };
                     }
                 });
 
@@ -258,7 +321,8 @@ const MonitoringCenter = () => {
             const { data: appsData, error: appsError } = await supabase
                 .from('appointments')
                 .select('date, time, end_time, status')
-                .eq('client_id', profile.id);
+                .eq('client_id', profile.id)
+                .neq('type', 'Cuidado+');
 
             if (appsError) throw appsError;
 
@@ -302,28 +366,59 @@ const MonitoringCenter = () => {
 
     // Determine the agenda source
     let agendaItems = [];
-    if (activeAppointment?.care_agenda && Array.isArray(activeAppointment.care_agenda) && activeAppointment.care_agenda.length > 0) {
-        agendaItems = activeAppointment.care_agenda;
-    } else if (activeAppointment?.details) {
-        // Fallback to parsing details if care_agenda is empty
-        agendaItems = activeAppointment.details.includes('[PLAN DE CUIDADO]')
-            ? activeAppointment.details.split('[PLAN DE CUIDADO]')[1].split('---SERVICES---')[0].split('•').map(s => s.trim()).filter(s => s && s.length > 2)
-            : activeAppointment.details.split(/[\n•]/).map(s => s.trim()).filter(s => s.length > 2);
+    if (activeAppointment) {
+        if (activeAppointment.care_agenda && Array.isArray(activeAppointment.care_agenda) && activeAppointment.care_agenda.length > 0) {
+            agendaItems = activeAppointment.care_agenda;
+        } else if (activeAppointment.details) {
+            // Handle Cuidado+ JSON format
+            if (activeAppointment.details.includes('---SERVICES---')) {
+                try {
+                    const jsonStr = activeAppointment.details.split('---SERVICES---')[1];
+                    const services = JSON.parse(jsonStr);
+                    if (Array.isArray(services)) {
+                        agendaItems = services;
+                    }
+                } catch (e) {
+                    console.error("Error parsing services in MonitoringCenter", e);
+                }
+            }
+
+            // Fallback to old format or manual notes
+            if (agendaItems.length === 0) {
+                agendaItems = activeAppointment.details.includes('[PLAN DE CUIDADO]')
+                    ? activeAppointment.details.split('[PLAN DE CUIDADO]')[1].split('---SERVICES---')[0].split('•').map(s => s.trim()).filter(s => s && s.length > 2)
+                    : activeAppointment.details.split(/[\n•]/).map(s => s.trim()).filter(s => s.length > 2);
+            }
+        }
     }
 
-    const completedSet = new Set(careLogs.map(log => log.action));
-
+    // Unified Matching Logic: The caregiver app adds (Time) to the action name.
+    // We need to match either the Base Name or the Base Name + Time.
     const careAgenda = agendaItems.map((item, idx) => {
-        const activityName = typeof item === 'string' ? item : (item.activity || item.name);
+        const baseName = typeof item === 'string' ? item : (item.activity || item.name || item.activity_name);
         const activityTime = typeof item === 'string' ? '---' : (item.time || '---');
-        const isDone = completedSet.has(activityName);
+        const category = typeof item === 'object' ? (item.program_name || item.category || item.program) : null;
+
+        // Exact match or match by base name (ignoring the suffix added by caregiver app)
+        const isDone = careLogs.some(log =>
+            log.action === baseName ||
+            log.action.startsWith(`${baseName} (`) ||
+            log.action === `${baseName} (${activityTime})`
+        );
+
+        let IconComponent = CircleDashed;
+        if (isDone) IconComponent = CircleCheck;
+        else if (baseName.toLowerCase().includes('comida') || baseName.toLowerCase().includes('aliment') || baseName.toLowerCase().includes('desayuno') || baseName.toLowerCase().includes('cena')) IconComponent = Utensils;
+        else if (baseName.toLowerCase().includes('medic') || baseName.toLowerCase().includes('pastill')) IconComponent = Pill;
+        else if (baseName.toLowerCase().includes('baño') || baseName.toLowerCase().includes('aseo')) IconComponent = Bath;
 
         return {
-            name: activityName,
+            name: baseName,
+            category: category,
             time: activityTime !== '---' ? `Programado: ${activityTime}` : 'Sin horario asignado',
             frequency: 'Según plan',
             status: isDone ? 'Completado' : 'Pendiente',
-            icon: isDone ? CircleCheck : CircleDashed,
+            icon: IconComponent,
             iconColor: isDone ? 'text-green-500' : 'text-gray-400'
         };
     });
@@ -536,9 +631,38 @@ const MonitoringCenter = () => {
     };
 
 
-
     return (
         <>
+            {/* Active Emergency Alert Banner */}
+            {activeAlert && activeAlert.status === 'active' && (
+                <div className="fixed top-0 left-0 right-0 z-[200] bg-red-600 !text-white p-4 shadow-2xl animate-pulse flex flex-col md:flex-row items-center justify-center gap-4 border-b-4 border-red-800">
+                    <div className="flex items-center gap-3">
+                        <AlertCircle size={32} className="animate-bounce" />
+                        <div className="text-center md:text-left">
+                            <h2 className="text-xl font-black uppercase tracking-tighter">ALERTA DE EMERGENCIA ACTIVA</h2>
+                            <p className="text-sm font-bold opacity-90">El cuidador ha enviado una señal de auxilio inmediata.</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => window.location.href = `tel:${caregiver?.phone || ''}`}
+                            className="bg-white text-red-600 px-6 py-2 rounded-full font-black uppercase text-xs hover:bg-gray-100 transition-all"
+                        >
+                            Llamar Cuidador
+                        </button>
+                        <button
+                            onClick={async () => {
+                                await supabase.from('emergency_alerts').update({ status: 'resolved', resolved_at: new Date(), resolved_by: user.id }).eq('id', activeAlert.id);
+                                setActiveAlert(null);
+                            }}
+                            className="bg-red-800 text-white px-6 py-2 rounded-full font-black uppercase text-xs hover:bg-red-900 transition-all border border-red-400/30"
+                        >
+                            Entendido / Resolver
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {activeAppointment && (
                 <ConfigureAgendaModal
                     isOpen={showAgendaModal}
@@ -601,7 +725,7 @@ const MonitoringCenter = () => {
                 </div>
             )}
 
-            <div className="space-y-10 animate-fade-in max-w-[1600px] mx-auto pb-16 pt-4 px-4">
+            <div className="space-y-10 animate-fade-in max-w-7xl mx-auto pb-16 pt-4 px-4">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[var(--primary-color)] p-8 rounded-[16px] shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px] opacity-10"></div>
@@ -623,18 +747,24 @@ const MonitoringCenter = () => {
                             <Clock size={16} /> Última actualización: {lastUpdate}
                         </p>
                     </div>
-                    {/* Alerta Familiar Button */}
-                    <div className="flex flex-col items-end gap-2 w-full md:w-auto relative z-10">
+                    {/* Alerta Familiar Info Box */}
+                    <div className="flex flex-col items-end gap-3 w-full md:w-auto relative z-10">
                         <button
                             onClick={() => setIsReportModalOpen(true)}
-                            className="w-full md:w-auto bg-white/10 hover:bg-white/20 !text-[#FAFAF7] px-6 py-3 rounded-[16px] font-black uppercase tracking-widest flex items-center justify-center gap-3 border border-white/20 transition-all hover:scale-105 active:scale-95 mb-2"
+                            className="w-full max-w-[280px] bg-white/10 hover:bg-white/20 !text-[#FAFAF7] px-6 py-2.5 rounded-[12px] font-black uppercase tracking-widest flex items-center justify-center gap-3 border border-white/20 transition-all hover:scale-105 active:scale-95"
                         >
-                            <Download size={20} /> Descargar Reporte
+                            <Download size={18} /> Descargar Reporte
                         </button>
-                        <button className="w-full md:w-auto bg-[var(--error-color)] hover:bg-red-700 !text-[#FAFAF7] px-10 py-4 rounded-[16px] font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-2xl shadow-red-900/40 transition-all hover:scale-105 active:scale-95 group border-none">
-                            <AlertCircle size={24} className="group-hover:animate-bounce" /> ALERTA FAMILIAR
-                        </button>
-                        <p className="text-[10px] !text-[#FAFAF7]/40 font-bold uppercase tracking-widest text-center md:text-right w-full">Seguridad Prioritaria</p>
+
+                        <div className="bg-white/5 border border-white/10 p-4 rounded-xl backdrop-blur-md max-w-[280px] text-right">
+                            <div className="flex items-center justify-end gap-2 mb-1">
+                                <ShieldCheck size={16} className="text-[#2FAE8F]" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-[#2FAE8F]">Seguridad BuenCuidar Activa</span>
+                            </div>
+                            <p className="text-[11px] text-white font-secondary leading-tight italic">
+                                Sistema de Alerta Familiar Inteligente: El cuidador dispone de un botón de alerta familiar y digital para cualquier eventualidad.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -713,7 +843,7 @@ const MonitoringCenter = () => {
                                                 <div className="flex items-center gap-2">
                                                     {log.category === 'Wellness' && <Heart size={16} className="text-indigo-500" fill="currentColor" />}
                                                     <h4 className={`font-brand font-bold text-lg leading-tight transition-colors ${log.category === 'Wellness' ? 'text-indigo-900 group-hover:text-indigo-600' : 'text-[var(--primary-color)] group-hover:text-[var(--secondary-color)]'}`}>
-                                                        {log.category === 'Wellness' ? `BIENESTAR: ${log.action}` : log.action}
+                                                        {log.category ? `${log.category.toUpperCase()}: ${log.action}` : log.action}
                                                     </h4>
                                                 </div>
                                                 <span className={`text-[10px] font-black !text-[#FAFAF7] px-3 py-1 rounded-full self-start md:self-auto shrink-0 uppercase tracking-widest ${log.category === 'Wellness' ? 'bg-indigo-600' : 'bg-[var(--primary-color)]'}`}>
@@ -778,7 +908,12 @@ const MonitoringCenter = () => {
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-brand font-bold text-[var(--primary-color)] text-sm truncate">{item.name}</h4>
-                                                <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest">{item.frequency}</p>
+                                                {item.category && (
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-blue-600/60 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100/50 mt-0.5 inline-block">
+                                                        {item.category}
+                                                    </span>
+                                                )}
+                                                <p className="text-[10px] text-[var(--text-light)] font-black uppercase tracking-widest mt-1">{item.frequency}</p>
                                             </div>
                                             {item.status === 'Completado' && (
                                                 <div className="bg-[var(--secondary-color)] !text-[#FAFAF7] p-1 rounded-full">
@@ -825,9 +960,17 @@ const MonitoringCenter = () => {
                                         </div>
                                         <div>
                                             <p className="font-brand font-bold text-[var(--primary-color)] text-lg">{caregiver.full_name}</p>
-                                            <p className="text-[10px] text-[var(--secondary-color)] font-black uppercase tracking-[0.1em] flex items-center gap-1.5 mt-1">
-                                                <span className="w-2 h-2 bg-[var(--secondary-color)] rounded-full animate-pulse"></span> En servicio
-                                            </p>
+                                            <div className="flex flex-col">
+                                                <p className={`text-[10px] font-black uppercase tracking-[0.1em] flex items-center gap-1.5 mt-1 ${isUpcoming ? 'text-[var(--warning-color)]' : 'text-[var(--secondary-color)]'}`}>
+                                                    <span className={`w-2 h-2 rounded-full ${isUpcoming ? 'bg-[var(--warning-color)]' : 'bg-[var(--secondary-color)] animate-pulse'}`}></span>
+                                                    {isUpcoming ? 'Turno Programado' : 'En servicio'}
+                                                </p>
+                                                {activeAppointment && (
+                                                    <p className="text-[10px] text-[var(--text-light)] font-medium ml-3.5 mt-1 opacity-80">
+                                                        {new Date(activeAppointment.date + 'T12:00:00').toLocaleDateString()} • {activeAppointment.time?.slice(0, 5)} - {activeAppointment.end_time?.slice(0, 5)}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <button

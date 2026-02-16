@@ -1,9 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageCircle, User, X, Calendar, Activity } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { Search, MapPin, DollarSign, Clock, Filter, Briefcase, MessageSquare, User, X, Calendar, Activity, ShieldCheck } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { translateAppointmentType } from '../../utils/translations';
+import { CARE_AGENDA_CATEGORIES } from '../../constants/careAgenda';
+
+const ACTIVITY_TRANSLATIONS = {
+    'light_tasks': 'Tareas domésticas',
+    'routine_org': 'Organización de rutina',
+    'food_prep': 'Preparación de alimentos',
+    'hygiene': 'Higiene y aseo personal',
+    'medication': 'Control de medicación',
+    'mobility': 'Movilidad y transferencias',
+    'companionship': 'Acompañamiento',
+    'exercise': 'Ejercicios físicos',
+    'transport': 'Acompañamiento en transporte',
+    'shopping': 'Compras y recados',
+    'cognitive': 'Estimulación cognitiva',
+    'night_care': 'Cuidado nocturno'
+};
 
 const JobBoard = () => {
     const { user, profile } = useAuth();
@@ -12,7 +28,7 @@ const JobBoard = () => {
     const [loading, setLoading] = useState(true);
     const [applying, setApplying] = useState(null);
     const [startingChat, setStartingChat] = useState(null);
-    const [appliedJobs, setAppliedJobs] = useState({}); // Map: appointment_id -> status ('pending', 'rejected', 'approved')
+    const [appliedJobs, setAppliedJobs] = useState({}); // Map: appointment_id -> status ('pending', 'rejected', 'accepted')
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const JOBS_PER_PAGE = 10;
@@ -37,6 +53,7 @@ const JobBoard = () => {
                     .select('id, title, date, time, end_time, client_id')
                     .eq('status', 'pending')
                     .is('caregiver_id', null)
+                    .neq('type', 'Cuidado+')
                     .gte('date', todayStr); // Allow fetching today's jobs to check time locally
 
                 if (fetchError) throw fetchError;
@@ -164,6 +181,7 @@ const JobBoard = () => {
                 `)
                 .eq('status', 'pending')
                 .is('caregiver_id', null)
+                .neq('type', 'Cuidado+')
                 .gte('date', todayStr) // Fetch today and future, filter time later
                 .order('date', { ascending: true })
                 .order('time', { ascending: true })
@@ -233,30 +251,26 @@ const JobBoard = () => {
     };
 
     const handleApply = async (job) => {
-        if (!user) {
-            alert("Error: No se detecta usuario conectado. (User is null)");
-            return;
-        }
+        if (!user) return;
+        const checkId = job.isGroup ? job.appointments[0].id : job.id;
+        const isCurrentlyApplied = appliedJobs[checkId];
 
-        const isCancelling = appliedJobs[job.id] === 'pending';
-
-        if (isCancelling) {
-            if (!window.confirm("¿Deseas cancelar tu solicitud para esta oferta?")) return;
-
+        if (isCurrentlyApplied) {
+            // Cancel flow
             setApplying(job.id);
             try {
+                const idsToCancel = job.isGroup ? job.appointments.map(a => a.id) : [job.id];
                 const { error } = await supabase
                     .from('job_applications')
                     .delete()
-                    .eq('appointment_id', job.id)
+                    .in('appointment_id', idsToCancel)
                     .eq('caregiver_id', user.id);
 
                 if (error) throw error;
 
-                // Update local state
                 setAppliedJobs(prev => {
                     const next = { ...prev };
-                    delete next[job.id];
+                    idsToCancel.forEach(id => delete next[id]);
                     return next;
                 });
             } catch (error) {
@@ -270,27 +284,29 @@ const JobBoard = () => {
 
         setApplying(job.id);
         try {
-            // New Flow: Insert into job_applications table
-            const payload = {
-                appointment_id: job.id,
+            const appointments = job.isGroup ? job.appointments : [job];
+            const payloads = appointments.map(a => ({
+                appointment_id: a.id,
                 caregiver_id: user.id,
                 status: 'pending'
-            };
+            }));
 
             const { error } = await supabase
                 .from('job_applications')
-                .insert([payload]);
+                .insert(payloads);
 
             if (error) throw error;
 
-            // Show success state locally
-            setAppliedJobs(prev => ({ ...prev, [job.id]: 'pending' }));
+            const newAppliedState = { ...appliedJobs };
+            appointments.forEach(a => {
+                newAppliedState[a.id] = 'pending';
+            });
+            setAppliedJobs(newAppliedState);
 
         } catch (error) {
             console.error("Error applying:", error);
             if (error.code === '23505') {
                 alert("Ya te has postulado a esta oferta.");
-                setAppliedJobs(prev => ({ ...prev, [job.id]: 'pending' })); // Assume pending if exists
             } else {
                 alert(`Error al postularse: ${error.message}`);
             }
@@ -299,42 +315,27 @@ const JobBoard = () => {
         }
     };
 
-    const handleMessage = async (job) => {
-        if (!user || !job.client?.id) return;
-        setStartingChat(job.id);
-
+    // Start chat conversation
+    const handleStartChat = async (job) => {
+        if (!user) return;
         try {
-            // 1. Check if conversation exists
-            const { data: existingConvs, error: fetchError } = await supabase
+            setStartingChat(job.id);
+            const clientId = job.client?.id || job.client_id;
+            const { data: existing, error: fetchError } = await supabase
                 .from('conversations')
                 .select('id')
                 .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`)
-                .or(`participant1_id.eq.${job.client.id},participant2_id.eq.${job.client.id}`);
-
-            // Filter manually to ensure exact pair match (Supabase OR syntax can be tricky for exact pairing)
-            // A conversation must allow BOTH participants.
-            // Simplified query approach:
-
-            // Re-query with explicit AND for the pair
-            // (p1 = me AND p2 = them) OR (p1 = them AND p2 = me)
-            const { data: conversations, error } = await supabase
-                .from('conversations')
-                .select('id')
-                .or(`and(participant1_id.eq.${user.id},participant2_id.eq.${job.client.id}),and(participant1_id.eq.${job.client.id},participant2_id.eq.${user.id})`);
-
-            if (error) throw error;
+                .or(`participant1_id.eq.${clientId},participant2_id.eq.${clientId}`);
 
             let conversationId;
-
-            if (conversations && conversations.length > 0) {
-                conversationId = conversations[0].id;
+            if (existing && existing.length > 0) {
+                conversationId = existing[0].id;
             } else {
-                // 2. Create new conversation
                 const { data: newConv, error: createError } = await supabase
                     .from('conversations')
                     .insert([{
                         participant1_id: user.id,
-                        participant2_id: job.client.id,
+                        participant2_id: clientId,
                         last_message: 'Hola, tengo interés en esta vacante.',
                         last_message_at: new Date()
                     }])
@@ -344,7 +345,6 @@ const JobBoard = () => {
                 if (createError) throw createError;
                 conversationId = newConv.id;
 
-                // 2b. Insert the actual initial message
                 await supabase
                     .from('messages')
                     .insert([{
@@ -354,9 +354,9 @@ const JobBoard = () => {
                     }]);
             }
 
-            // 3. Navigate
-            navigate('/caregiver/messages', { state: { conversationId: conversationId } });
-
+            if (conversationId) {
+                navigate('/caregiver/messages', { state: { conversationId: conversationId } });
+            }
         } catch (error) {
             console.error('Error starting chat:', error);
             alert('No se pudo iniciar el chat');
@@ -365,24 +365,79 @@ const JobBoard = () => {
         }
     };
 
+    const groupJobs = (allJobs) => {
+        const groups = {};
+        const individualJobs = [];
+
+        allJobs.forEach(job => {
+            if (job.service_group_id) {
+                if (!groups[job.service_group_id]) {
+                    groups[job.service_group_id] = {
+                        ...job,
+                        isGroup: true,
+                        appointments: [job],
+                        dates: [job.date],
+                        allPrograms: job.details?.includes('Cuidado Especializado:') ? job.details.split('\n')[0].replace('Cuidado Especializado: ', '').split(' + ') : [],
+                        care_agenda: job.care_agenda || (job.details?.includes('---SERVICES---') ? JSON.parse(job.details.split('---SERVICES---')[1]) : [])
+                    };
+                } else {
+                    groups[job.service_group_id].appointments.push(job);
+                    groups[job.service_group_id].dates.push(job.date);
+                }
+            } else {
+                individualJobs.push({
+                    ...job,
+                    isGroup: false,
+                    care_agenda: job.care_agenda || (job.details?.includes('---SERVICES---') ? JSON.parse(job.details.split('---SERVICES---')[1]) : [])
+                });
+            }
+        });
+
+        const refinedGroups = Object.values(groups).map(g => {
+            g.dates.sort();
+            g.startDate = g.dates[0];
+            g.endDate = g.dates[g.dates.length - 1];
+            return g;
+        });
+
+        return [...refinedGroups, ...individualJobs].sort((a, b) => {
+            const dateA = a.isGroup ? a.startDate : a.date;
+            const dateB = b.isGroup ? b.startDate : b.date;
+            return dateA.localeCompare(dateB);
+        });
+    };
+
+    const displayJobs = groupJobs(jobs);
+
     // DEBUG: Verify component re-render
     // console.log("JobBoard Rendered. User:", user);
 
     return (
         <div className="space-y-6 animate-fade-in" translate="no">
-            {/* ... header ... */}
+            {/* Header */}
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-brand font-bold !text-[#0F3C4C]">Bolsa de Trabajo</h1>
                     <p className="text-gray-500 font-secondary mt-1">Encuentra oportunidades que se ajusten a tu horario.</p>
                 </div>
-                <div className="flex gap-2">
-                    <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-[16px] text-sm font-medium hover:bg-gray-50">
-                        <Filter size={16} /> Filtros
-                    </button>
-                    <button onClick={() => fetchJobs(0)} className="text-blue-600 text-sm font-medium hover:underline self-center">
-                        Actualizar
-                    </button>
+                <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-2">
+                        <button className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-[16px] text-sm font-medium hover:bg-gray-50">
+                            <Filter size={16} /> Filtros
+                        </button>
+                        <button onClick={() => fetchJobs(0)} className="text-blue-600 text-sm font-medium hover:underline">
+                            Actualizar
+                        </button>
+                    </div>
+
+                    {!loading && hasMore && (
+                        <button
+                            onClick={handleLoadMore}
+                            className="text-xs font-black uppercase tracking-widest text-gray-500 hover:text-[#0F3C4C] border-b border-dashed border-gray-300 hover:border-[#0F3C4C] transition-colors pb-0.5"
+                        >
+                            + Cargar más ofertas
+                        </button>
+                    )}
                 </div>
             </header>
 
@@ -399,27 +454,112 @@ const JobBoard = () => {
             {/* Job List */}
             {loading ? (
                 <div className="text-center py-12 text-gray-400">Cargando ofertas...</div>
-            ) : jobs.length === 0 ? (
+            ) : displayJobs.length === 0 ? (
                 <div className="text-center py-12">
                     <Briefcase size={48} className="mx-auto text-gray-300 mb-4" />
                     <p className="text-gray-500">No hay ofertas disponibles en este momento.</p>
                 </div>
             ) : (
-                <div className="grid md:grid-cols-2 gap-4">
-                    {jobs.map(job => {
-                        const applicationStatus = appliedJobs[job.id]; // 'pending', 'rejected', 'approved' or undefined
+                <div className="grid md:grid-cols-2 gap-6">
+                    {displayJobs.map(job => {
+                        const checkId = job.isGroup ? job.appointments[0].id : job.id;
+                        const applicationStatus = appliedJobs[checkId];
                         const isPulso = job.client?.subscription_status === 'active';
+                        const isPack = job.isGroup;
+
+                        // Helper to get valid categories for this specific job
+                        const getValidAgendaCategories = (agenda) => {
+                            if (!agenda || agenda.length === 0) return [];
+                            return [...new Set(agenda.map(item => {
+                                const activityName = typeof item === 'string' ? item : (item.activity || item.name);
+                                let category = null;
+
+                                // 1. Try finding by Activity Name (Direct match in any category)
+                                category = CARE_AGENDA_CATEGORIES.find(cat => {
+                                    if (cat.activities?.includes(activityName)) return true;
+                                    if (cat.sections) {
+                                        return cat.sections.some(sec => sec.activities?.includes(activityName));
+                                    }
+                                    return false;
+                                });
+
+                                // 2. Try finding by Category ID (if activityName matches a category ID directly)
+                                if (!category) {
+                                    category = CARE_AGENDA_CATEGORIES.find(cat => cat.id === activityName);
+                                }
+
+                                // 3. Map legacy keys to new categories
+                                if (!category) {
+                                    const LEGACY_MAP = {
+                                        // Original Legacy
+                                        'medication': 'technical_advanced',
+                                        'companionship': 'connective',
+                                        'exercise': 'technical_routine',
+                                        'transport': 'mobility',
+                                        'shopping': 'home_food',
+                                        'night_care': 'high_specialized',
+
+                                        // ServiceSelector Mappings
+                                        // Vida Diaria
+                                        'hygiene': 'dependent_life',
+                                        'mobility': 'mobility', // Self-match fallback
+                                        'routine_org': 'dependent_life',
+
+                                        // Hogar
+                                        'food_prep': 'home_food',
+                                        'light_tasks': 'home_food',
+                                        'activity_reminders': 'dependent_life',
+
+                                        // Emocional
+                                        'active_company': 'connective',
+                                        'emotional_support': 'connective',
+                                        'recreational': 'connective',
+
+                                        // Movilidad
+                                        'outdoor_accompany': 'mobility',
+                                        'appointments_support': 'mobility',
+                                        'safe_transfers': 'mobility',
+
+                                        // Coordinación
+                                        'family_comm': 'dependent_life',
+                                        'routine_followup': 'dependent_life',
+                                        'agenda_org': 'dependent_life',
+
+                                        // Activación
+                                        'gentle_walks': 'technical_routine',
+                                        'light_exercises': 'technical_routine',
+                                        'stretches': 'technical_routine',
+
+                                        // Humanizado
+                                        'close_presence': 'high_specialized',
+                                        'personalized_attention': 'high_specialized',
+                                        'delicate_support': 'high_specialized'
+                                    };
+                                    const mappedId = LEGACY_MAP[activityName];
+                                    if (mappedId) {
+                                        category = CARE_AGENDA_CATEGORIES.find(cat => cat.id === mappedId);
+                                    }
+                                }
+
+                                return category ? category.name : null;
+                            }).filter(Boolean))];
+                        };
+
+                        const careAgenda = job.care_agenda || [];
+                        const validCategories = getValidAgendaCategories(careAgenda);
+                        const hasAgendaItems = careAgenda.length > 0;
+                        const hasValidAgenda = hasAgendaItems; // Strict check: must have items
 
                         return (
                             <div key={job.id} className="bg-white p-8 rounded-[16px] border border-slate-100 hover:border-[var(--secondary-color)]/30 hover:shadow-2xl hover:shadow-slate-200 transition-all group relative overflow-hidden flex flex-col">
                                 <div className="absolute top-0 right-0 flex flex-col items-end z-10">
-                                    {isPulso && (
-                                        <div className="bg-[#4F46E5] !text-[#FAFAF7] text-[10px] font-black px-4 py-1.5 rounded-bl-2xl shadow-lg flex items-center gap-2 uppercase tracking-widest">
+                                    {isPulso && !isPack && (
+                                        <div className="bg-[#4F46E5] !text-[#FAFAF7] text-[9px] font-black px-4 py-1.5 rounded-bl-2xl shadow-lg flex items-center gap-2 uppercase tracking-widest">
                                             <Briefcase size={10} className="animate-pulse" /> SERVICIO PULSO
                                         </div>
                                     )}
-                                    {job.care_agenda?.length > 0 && (
-                                        <div className={`bg-amber-500 !text-white text-[9px] font-black px-4 py-1.5 shadow-lg flex items-center gap-2 uppercase tracking-widest ${isPulso ? 'rounded-bl-xl' : 'rounded-bl-2xl'}`}>
+                                    {hasValidAgenda && (
+                                        <div className={`bg-amber-500 !text-[#FAFAF7] text-[9px] font-black px-4 py-1.5 shadow-lg flex items-center gap-2 uppercase tracking-widest ${isPulso && !isPack ? 'rounded-bl-xl' : 'rounded-bl-2xl'}`}>
                                             <Clock size={10} /> EXIGE AGENDA DE CUIDADOS
                                         </div>
                                     )}
@@ -427,118 +567,127 @@ const JobBoard = () => {
                                 <h3 className="text-2xl font-brand font-bold !text-[#0F3C4C] mb-1 group-hover:text-[var(--secondary-color)] transition-colors uppercase tracking-tight pr-24">{job.title}</h3>
                                 <div className="flex items-center gap-2 text-xs text-[#07212e] font-black uppercase tracking-widest mb-6 opacity-60">
                                     <User size={14} className="text-[var(--secondary-color)]" />
-                                    <span>Cliente: {job.client?.full_name || 'Particular'}</span>
+                                    <span className="text-[#0F3C4C]">Cliente: {job.client?.full_name || 'Particular'}</span>
                                 </div>
 
-                                <div className="space-y-2 text-sm text-gray-600 mb-4">
-                                    <div className="flex flex-col gap-1 mb-2">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Dirección del Servicio</span>
+                                <div className="space-y-4 text-sm text-gray-600 mb-4">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[10px] font-black text-[#0F3C4C] uppercase tracking-widest">Dirección del Servicio</span>
                                         <div className="flex items-center gap-2">
                                             <MapPin size={16} className="text-gray-400" />
                                             <span className="font-bold text-gray-700">{job.address || 'Dirección no especificada'}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-[#0F3C4C] font-semibold">
-                                        <Calendar size={16} className="text-[var(--secondary-color)]" />
-                                        {new Date(job.date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                    </div>
-                                    <div className="flex items-center gap-2 text-[#0F3C4C] font-semibold">
-                                        <Clock size={16} className="text-[var(--secondary-color)]" />
-                                        {job.time?.substring(0, 5)} {job.end_time ? `- ${job.end_time.substring(0, 5)}` : ''}
-                                    </div>
-                                    <div className="flex items-center gap-3 font-brand font-bold text-[#0F3C4C] text-lg bg-slate-50 p-4 rounded-[16px] border border-slate-100">
-                                        <DollarSign size={20} className="text-[var(--secondary-color)]" /> {job.offered_rate || 'Por definir'}
-                                    </div>
-                                </div>
 
-                                {/* Care Plan / Bitácora Section */}
-                                <div className="mb-4">
-                                    {(() => {
-                                        // Priority 1: Structured Agenda
-                                        if (job.care_agenda?.length > 0) {
-                                            return (
+                                    <div className="grid grid-cols-1 gap-3 bg-slate-50/50 p-4 rounded-[16px] border border-slate-100">
+                                        <div className="flex items-center gap-2 text-[#0F3C4C] font-black uppercase text-[10px] tracking-wider">
+                                            <Calendar size={14} className="text-[var(--secondary-color)]" />
+                                            {isPack ? (
+                                                <span>
+                                                    {(() => {
+                                                        const formatDate = (dStr, withYear) => {
+                                                            const d = new Date(dStr + 'T12:00:00');
+                                                            const weekday = d.toLocaleDateString('es-ES', { weekday: 'long' });
+                                                            const day = d.getDate();
+                                                            const month = d.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '');
+                                                            return withYear
+                                                                ? `${weekday}, ${day} ${month} de ${d.getFullYear()}`
+                                                                : `${weekday}, ${day} ${month}`;
+                                                        };
+                                                        return `${formatDate(job.startDate, false)} - ${formatDate(job.endDate, true)}`;
+                                                    })()}
+                                                </span>
+                                            ) : (
+                                                <span>{new Date(job.date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 text-[#0F3C4C] font-black uppercase text-[10px] tracking-wider">
+                                            <Clock size={14} className="text-[var(--secondary-color)]" />
+                                            Turno: {job.time?.substring(0, 5)} {job.end_time ? `- ${job.end_time.substring(0, 5)}` : ''}
+                                        </div>
+                                    </div>
+                                    {/* Programs (for Pack) or Activities (for Singles) */}
+                                    <div className="mb-2">
+                                        {isPack && job.allPrograms?.length > 0 ? (
+                                            <div className="space-y-4">
                                                 <div className="space-y-2">
-                                                    <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest flex items-center gap-2">
-                                                        <Clock size={12} /> Agenda Programada
-                                                    </span>
+                                                    <span className="text-[10px] font-black text-[#0F3C4C] uppercase tracking-widest">Programas Incluidos</span>
                                                     <div className="flex flex-wrap gap-1.5">
-                                                        {job.care_agenda.map((item, i) => (
-                                                            <span key={i} className="text-[10px] bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-amber-100 flex items-center gap-1.5">
-                                                                <span className="opacity-60">{item.time}</span> {item.activity}
+                                                        {job.allPrograms.map((p, idx) => (
+                                                            <span key={idx} className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[9px] font-black uppercase rounded-full border border-emerald-100">
+                                                                {p}
                                                             </span>
                                                         ))}
                                                     </div>
                                                 </div>
-                                            );
-                                        }
-
-                                        // Priority 2: Standard Plan (Fallback)
-                                        const details = job.details || '';
-                                        const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(---SERVICES---|$)/);
-                                        const services = planMatch ? planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean) : [];
-
-                                        if (services.length > 0) {
-                                            return (
-                                                <div className="space-y-2">
-                                                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                                        <Activity size={12} /> Actividades Definidas
-                                                    </span>
-                                                    <div className="flex flex-wrap gap-1.5">
-                                                        {services.map((s, i) => (
-                                                            <span key={i} className="text-[10px] bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] px-3 py-1.5 rounded-full font-black uppercase tracking-tighter border border-[var(--secondary-color)]/10 flex items-center gap-1.5">
-                                                                <Briefcase size={10} /> {s}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    })()}
-                                </div>
-
-                                {applicationStatus === 'rejected' ? (
-                                    <div className="w-full py-2.5 rounded-[16px] font-bold text-center bg-red-100 text-red-600 border border-red-200 cursor-not-allowed">
-                                        Solicitud Denegada
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-3 w-full">
-                                        {applicationStatus === 'pending' ? (
-                                            <>
-                                                <div className="w-full py-4 rounded-[16px] font-black uppercase tracking-widest text-xs text-center bg-green-100 text-green-700 border border-green-200 shadow-sm flex items-center justify-center gap-2">
-                                                    <Briefcase size={16} /> ¡SOLICITUD ENVIADA!
-                                                </div>
-                                                <button
-                                                    onClick={() => handleApply(job)}
-                                                    className="w-full py-3 rounded-[16px] font-bold uppercase tracking-widest text-[10px] border border-red-200 text-red-500 hover:bg-red-50 transition-all flex items-center justify-center gap-2"
-                                                >
-                                                    <X size={14} /> CANCELAR SOLICITUD
-                                                </button>
-                                            </>
+                                            </div>
                                         ) : (
+                                            hasValidAgenda ? (
+                                                <div className="space-y-2">
+                                                    <span className="text-[11px] font-black text-[#0F3C4C] uppercase tracking-widest">Agenda de Cuidado</span>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {validCategories.map((catName, i) => (
+                                                            <span key={i} className="px-3 py-1 bg-amber-50 text-amber-700 text-[9px] font-black uppercase rounded-full border border-amber-100">
+                                                                {catName}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-2">
+                                                    <span className="text-[11px] font-black text-[#0F3C4C] uppercase tracking-widest">Información del Servicio</span>
+                                                    <p className="text-xs text-slate-500 font-medium italic">
+                                                        {job.details?.split('---SERVICES---')[0]?.replace('[PLAN DE CUIDADO]', '').trim() || 'Acompañamiento y cuidado general según necesidades del paciente.'}
+                                                    </p>
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                                        <div className="flex items-center gap-2">
+                                            <DollarSign size={20} className="text-[var(--secondary-color)]" />
+                                            <span className="text-2xl font-brand font-bold text-[#0F3C4C]">{job.offered_rate || 'Por definir'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="mt-auto pt-6 flex flex-col gap-3">
+                                    {applicationStatus === 'pending' ? (
+                                        <>
+                                            <div className="w-full py-4 rounded-[16px] font-black uppercase tracking-widest text-xs text-center bg-green-100 text-green-700 border border-green-200 shadow-sm flex items-center justify-center gap-2">
+                                                <Briefcase size={16} /> ¡SOLICITUD ENVIADA!
+                                            </div>
                                             <button
                                                 onClick={() => handleApply(job)}
                                                 disabled={applying === job.id}
-                                                className="w-full py-5 rounded-[16px] font-black uppercase tracking-widest text-xs transition-all disabled:cursor-not-allowed shadow-xl bg-[var(--primary-color)] !text-[#FAFAF7] border-none hover:bg-[#1a5a70] shadow-blue-900/20 disabled:opacity-50"
+                                                className="text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors"
                                             >
-                                                {applying === job.id ? 'PROCESANDO...' : 'ENVIAR SOLICITUD'}
+                                                {applying === job.id ? 'CANCELANDO...' : 'CANCELAR SOLICITUD'}
                                             </button>
-                                        )}
-                                    </div>
-                                )}
+                                        </>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleApply(job)}
+                                            disabled={applying === job.id}
+                                            className="w-full py-5 bg-[#0F3C4C] !text-[#FAFAF7] rounded-[16px] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#164b5f] hover:scale-[1.02] transition-all disabled:opacity-50"
+                                        >
+                                            {applying === job.id ? 'PROCESANDO...' : 'ENVIAR SOLICITUD'}
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         );
                     })}
                 </div>
             )}
 
-            {/* Empty State / More jobs */}
-            {!loading && jobs.length > 0 && hasMore && (
-                <div className="text-center py-8">
-                    <button onClick={handleLoadMore} className="text-blue-600 font-medium hover:underline">
-                        Cargar más ofertas ({jobs.length} mostradas)
-                    </button>
-                    <div className="text-xs text-gray-400 mt-2">Página {page + 1}</div>
+            {!loading && displayJobs.length > 0 && hasMore && (
+                <div className="text-center py-12 border-t border-gray-100 mt-8">
+                    <p className="text-gray-400 text-xs uppercase tracking-widest">
+                        Mostrando {jobs.length} resultados
+                    </p>
                 </div>
             )}
         </div>

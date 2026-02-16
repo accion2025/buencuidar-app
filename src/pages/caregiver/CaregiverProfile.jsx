@@ -531,14 +531,14 @@ const CaregiverProfile = () => {
                     />
                 )}
                 {/* Premium Header Profile */}
-                <div className={`bg-gradient-to-br ${isPro ? 'from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F]' : 'from-slate-700 to-slate-900'} rounded-[16px] p-6 md:p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12 transition-all duration-700`}>
+                <div className={`bg-gradient-to-br ${isPro ? 'from-[#0F3C4C] via-[#1a5a70] to-[#2FAE8F]' : 'from-slate-700 to-slate-900'} rounded-[12px] p-6 md:p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12 transition-all duration-700`}>
                     <div className={`absolute top-0 right-0 w-[200px] h-[200px] md:w-[500px] md:h-[500px] ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-400'} rounded-full -translate-y-1/2 translate-x-1/2 blur-[80px] md:blur-[150px] opacity-20 transition-colors duration-700`}></div>
                     <div className={`absolute bottom-0 left-0 w-40 h-40 md:w-80 md:h-80 ${isPro ? 'bg-[var(--accent-color)]' : 'bg-slate-500'} rounded-full translate-y-1/2 -translate-x-1/2 blur-[80px] md:blur-[120px] opacity-10 transition-colors duration-700`}></div>
 
                     <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-[auto_1fr_auto] items-center lg:items-end gap-10">
                         {/* Avatar Display */}
                         <div className="relative group shrink-0">
-                            <div className="w-32 h-32 md:w-48 md:h-48 rounded-[16px] border-[6px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40">
+                            <div className="w-32 h-32 md:w-48 md:h-48 rounded-[12px] border-[6px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40">
                                 {uploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20">
                                         <Loader2 className="animate-spin text-white" size={40} />
@@ -555,7 +555,7 @@ const CaregiverProfile = () => {
                                     <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
                                 </label>
                             </div>
-                            <div className={`absolute -bottom-2 -right-2 ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-500'} w-10 h-10 rounded-[16px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]`} title={isPro ? "Verificado PRO" : "Perfil Estándar"}>
+                            <div className={`absolute -bottom-2 -right-2 ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-500'} w-10 h-10 rounded-[12px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]`} title={isPro ? "Verificado PRO" : "Perfil Estándar"}>
                                 {isPro ? <Check size={20} strokeWidth={4} /> : <ShieldCheck size={20} strokeWidth={2.5} />}
                             </div>
                         </div>
@@ -573,7 +573,7 @@ const CaregiverProfile = () => {
 
 
                                 <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-white/10 rounded-[16px] border border-white/10">
+                                    <div className="p-3 bg-white/10 rounded-[12px] border border-white/10">
                                         <Phone size={24} className="text-[var(--secondary-color)]" />
                                     </div>
                                     <div className="text-left">
@@ -621,12 +621,12 @@ const CaregiverProfile = () => {
                         <div className="flex flex-col gap-4 w-full lg:w-auto">
                             <button
                                 onClick={handleEditOpen}
-                                className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-2xl shadow-green-900/40 flex items-center justify-center gap-3 group border-none"
+                                className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-5 rounded-[16px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all shadow-2xl shadow-green-900/40 flex items-center justify-center gap-3 group border-none"
                             >
                                 <Edit2 size={18} className="group-hover:rotate-12 transition-transform" />
                                 Editar Mi Perfil PRO
                             </button>
-                            <button className="bg-white/10 backdrop-blur-md !text-[#FAFAF7] border border-white/10 px-8 py-5 rounded-[24px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-[var(--primary-color)] transition-all flex items-center justify-center gap-3">
+                            <button className="bg-white/10 backdrop-blur-md !text-[#FAFAF7] border border-white/10 px-8 py-5 rounded-[16px] font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white hover:text-[var(--primary-color)] transition-all flex items-center justify-center gap-3">
                                 <BookOpen size={18} />
                                 Vista Pública
                             </button>
@@ -636,7 +636,7 @@ const CaregiverProfile = () => {
 
                 <div className="grid lg:grid-cols-1 xl:grid-cols-[1fr_380px] gap-10">
                     <div className="space-y-10 text-left">
-                        <div className="bg-white rounded-[16px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
+                        <div className="bg-white rounded-[12px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <h3 className="font-brand font-semibold text-[10px] text-gray-400 mb-8 tracking-[0.2em] uppercase flex items-center gap-3 relative z-10">
                                 <span className="p-2 bg-blue-50 text-blue-600 rounded-[12px]">
@@ -656,7 +656,7 @@ const CaregiverProfile = () => {
                                         </span>
                                         Habilidades Destacadas
                                     </h3>
-                                    <button onClick={handleEditOpen} className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 px-4 py-2 rounded-[16px] transition-all flex items-center gap-2 border border-emerald-100">
+                                    <button onClick={handleEditOpen} className="text-[var(--secondary-color)] text-[10px] font-black uppercase tracking-widest hover:bg-emerald-50 px-4 py-2 rounded-[12px] transition-all flex items-center gap-2 border border-emerald-100">
                                         <Plus size={14} strokeWidth={3} />
                                         Gestionar
                                     </button>
@@ -665,7 +665,7 @@ const CaregiverProfile = () => {
                                     {(profile.skills && profile.skills.length > 0 ? profile.skills : ['Primeros Auxilios', 'Higiene y Confort', 'Indicadores Generales'])
                                         .filter(skill => !skill.toLowerCase().includes('esto es una prueba'))
                                         .map(skill => (
-                                            <span key={skill} className="bg-[var(--base-bg)] text-[var(--primary-color)] px-6 py-3 rounded-[16px] text-sm font-bold border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[var(--secondary-color)]/30 hover:scale-105 transition-all">
+                                            <span key={skill} className="bg-[var(--base-bg)] text-[var(--primary-color)] px-6 py-3 rounded-[12px] text-sm font-bold border border-gray-100 shadow-sm flex items-center gap-3 hover:border-[var(--secondary-color)]/30 hover:scale-105 transition-all">
                                                 <div className="w-2 h-2 bg-[var(--secondary-color)] rounded-full"></div>
                                                 {skill}
                                             </span>
@@ -674,7 +674,7 @@ const CaregiverProfile = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-[16px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
+                        <div className="bg-white rounded-[12px] p-6 md:p-12 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--secondary-color)]/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <div className="flex justify-between items-center mb-10 relative z-10">
                                 <h3 className="font-brand font-semibold text-[10px] text-gray-400 tracking-[0.2em] uppercase flex items-center gap-3">
@@ -683,15 +683,15 @@ const CaregiverProfile = () => {
                                     </span>
                                     Formación y Certificaciones
                                 </h3>
-                                <button onClick={handleEditOpen} className="text-purple-600 text-[10px] font-black uppercase tracking-widest hover:bg-purple-50 px-4 py-2 rounded-[16px] transition-all flex items-center gap-2 border border-purple-100">
+                                <button onClick={handleEditOpen} className="text-purple-600 text-[10px] font-black uppercase tracking-widest hover:bg-purple-50 px-4 py-2 rounded-[12px] transition-all flex items-center gap-2 border border-purple-100">
                                     <Plus size={14} strokeWidth={3} />
                                     Añadir
                                 </button>
                             </div>
                             <div className="grid md:grid-cols-2 gap-6 relative z-10">
                                 {(profile.certifications || []).map((cert, idx) => (
-                                    <div key={idx} className="flex items-center gap-6 p-6 rounded-[16px] border border-gray-100 hover:border-[var(--secondary-color)]/30 hover:bg-white hover:shadow-xl transition-all group">
-                                        <div className="bg-[var(--accent-color)] text-[var(--primary-color)] p-4 rounded-[16px] group-hover:scale-110 transition-transform shadow-inner">
+                                    <div key={idx} className="flex items-center gap-6 p-6 rounded-[12px] border border-gray-100 hover:border-[var(--secondary-color)]/30 hover:bg-white hover:shadow-xl transition-all group">
+                                        <div className="bg-[var(--accent-color)] text-[var(--primary-color)] p-4 rounded-[12px] group-hover:scale-110 transition-transform shadow-inner">
                                             <Award size={28} />
                                         </div>
                                         <div className="text-left">
@@ -705,7 +705,7 @@ const CaregiverProfile = () => {
                     </div>
 
                     <div className="space-y-10">
-                        <div className="bg-white rounded-[16px] p-6 md:p-10 border border-slate-100 shadow-2xl relative overflow-hidden">
+                        <div className="bg-white rounded-[12px] p-6 md:p-10 border border-slate-100 shadow-2xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
                             <h3 className="font-brand font-semibold text-gray-400 mb-10 flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] relative z-10">
                                 <span className="p-2 bg-amber-50 text-amber-500 rounded-[12px]">
@@ -715,32 +715,32 @@ const CaregiverProfile = () => {
                             </h3>
                             <div className="grid grid-cols-2 gap-8 text-center relative z-10">
                                 <div className={`flex flex-col items-center group ${Number(ratingStats.average) >= 4.8 && ratingStats.count > 0 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
-                                    <div className="w-20 h-20 bg-gradient-to-br from-amber-50 to-amber-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-amber-200 group-hover:rotate-12 transition-transform border border-amber-200/50">🏆</div>
+                                    <div className="w-20 h-20 bg-gradient-to-br from-amber-50 to-amber-200 rounded-[12px] flex items-center justify-center text-4xl shadow-lg shadow-amber-200 group-hover:rotate-12 transition-transform border border-amber-200/50">🏆</div>
                                     <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Top Rated</span>
                                     <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Rating 4.8+</span>
                                 </div>
 
                                 <div className="flex flex-col items-center group">
-                                    <div className="w-20 h-20 bg-gradient-to-br from-blue-50 to-blue-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-blue-200 group-hover:-rotate-12 transition-transform border border-blue-200/50">⚡</div>
+                                    <div className="w-20 h-20 bg-gradient-to-br from-blue-50 to-blue-200 rounded-[12px] flex items-center justify-center text-4xl shadow-lg shadow-blue-200 group-hover:-rotate-12 transition-transform border border-blue-200/50">⚡</div>
                                     <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Rápido</span>
                                     <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Resp. &lt; 1h</span>
                                 </div>
 
                                 <div className="flex flex-col items-center group">
-                                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-emerald-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-emerald-200 group-hover:scale-110 transition-transform border border-emerald-200/50">🛡️</div>
+                                    <div className="w-20 h-20 bg-gradient-to-br from-emerald-50 to-emerald-200 rounded-[12px] flex items-center justify-center text-4xl shadow-lg shadow-emerald-200 group-hover:scale-110 transition-transform border border-emerald-200/50">🛡️</div>
                                     <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Verificado</span>
                                     <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">Doc. Validada</span>
                                 </div>
 
                                 <div className={`flex flex-col items-center group ${ratingStats.count >= 5 ? 'opacity-100' : 'opacity-30 grayscale'}`}>
-                                    <div className="w-20 h-20 bg-gradient-to-br from-purple-50 to-purple-200 rounded-[16px] flex items-center justify-center text-4xl shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform border border-purple-200/50">✨</div>
+                                    <div className="w-20 h-20 bg-gradient-to-br from-purple-50 to-purple-200 rounded-[12px] flex items-center justify-center text-4xl shadow-lg shadow-purple-200 group-hover:scale-110 transition-transform border border-purple-200/50">✨</div>
                                     <span className="text-[10px] font-black text-[var(--primary-color)] mt-4 tracking-[0.15em] uppercase">Popular</span>
                                     <span className="text-[9px] text-[var(--text-light)] font-bold uppercase mt-1">+5 Reseñas</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-[#0F3C4C] rounded-[16px] p-6 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
+                        <div className="bg-[#0F3C4C] rounded-[12px] p-6 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
                             <h3 className="font-brand font-bold mb-10 text-[10px] text-gray-400 uppercase tracking-[0.2em] flex items-center gap-3 relative z-10">
                                 <span className="p-2 bg-white/10 rounded-[12px]">
@@ -766,7 +766,7 @@ const CaregiverProfile = () => {
                                     docData={documents.find(d => d.document_type === 'human_evaluation')}
                                 />
                             </div>
-                            <div className="mt-10 p-4 bg-white/5 rounded-[16px] border border-white/5 text-[10px] font-secondary !text-[#FAFAF7]/50 leading-relaxed italic">
+                            <div className="mt-10 p-4 bg-white/5 rounded-[12px] border border-white/5 text-[10px] font-secondary !text-[#FAFAF7]/50 leading-relaxed italic">
                                 {documents.length < 4 ?
                                     'Sube tus documentos faltantes para completar la verificación.' :
                                     'Tus documentos están siendo procesados por nuestro equipo.'
@@ -786,14 +786,14 @@ const CaregiverProfile = () => {
 
             {isEditing && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex flex-col md:items-center md:justify-center p-0 md:p-4">
-                    <div className="bg-white w-full max-w-4xl h-[100dvh] md:h-auto md:max-h-[90vh] md:rounded-[32px] flex flex-col animate-slide-up shadow-2xl overflow-hidden">
+                    <div className="bg-white w-full max-w-4xl h-[100dvh] md:h-auto md:max-h-[90vh] md:rounded-[24px] flex flex-col animate-slide-up shadow-2xl overflow-hidden">
                         {/* Modal Header */}
                         <div className="p-4 md:p-10 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0">
                             <div>
                                 <h3 className="text-xl md:text-3xl font-brand font-bold text-[var(--primary-color)] tracking-tight">Editar Perfil Profesional</h3>
                                 <p className="text-[10px] md:text-sm text-[var(--text-light)] md:mt-2 font-secondary font-bold">Actualiza tu información para destacar.</p>
                             </div>
-                            <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-red-500 p-2 md:p-3 rounded-[16px] hover:bg-red-50 transition-all">
+                            <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-red-500 p-2 md:p-3 rounded-[12px] hover:bg-red-50 transition-all">
                                 <X size={24} className="md:w-8 md:h-8" />
                             </button>
                         </div>

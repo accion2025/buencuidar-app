@@ -26,6 +26,8 @@ import MonitoringCenter from './pages/dashboard/MonitoringCenter';
 import CaregiverList from './pages/dashboard/CaregiverList';
 import SubscriptionPlans from './pages/dashboard/SubscriptionPlans';
 import SubscriptionManagement from './pages/dashboard/SubscriptionManagement';
+import CuidadoPlusPanel from './pages/dashboard/CuidadoPlusPanel';
+import CleanupData from './pages/dashboard/CleanupData'; // New Import
 
 import CaregiverLayout from './components/layout/CaregiverLayout';
 import CaregiverOverview from './pages/caregiver/CaregiverOverview';
@@ -87,6 +89,8 @@ function App() {
               {/* Family Dashboard Routes (Protected) */}
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardOverview />} />
+                {/* <Route path="cuidado-plus" element={<CuidadoPlusPanel />} /> */} {/* Disabled for V1.0 */}
+                <Route path="cleanup" element={<CleanupData />} />
                 <Route path="pulso" element={<MonitoringCenter />} />
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="messages" element={<Messages />} />

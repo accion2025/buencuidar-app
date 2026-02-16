@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { formatLocation } from '../../utils/location';
 import { useAuth } from '../../context/AuthContext';
 
-const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
+const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideContactButton = false }) => {
     const { user, profile } = useAuth();
     const [reviews, setReviews] = useState([]);
     const [realStats, setRealStats] = useState({ rating: '5.0', count: 0 });
@@ -146,7 +146,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
     const specialization = details?.specialization || caregiver.specialization || "Cuidador Especializado";
     const experience = details?.experience || caregiver.experience || "1";
     const location = details?.location || caregiver.location || "Ubicación no disponible";
-    const bio = caregiver.bio || details?.bio || "Este cuidador se especializa en brindar atención compasiva y profesional, enfocándose en el bienestar integral del paciente.";
+    const bio = caregiver.bio || details?.bio || "Este cuidador se especializa en brindar atención compasiva y profesional, enfocándose en el bienestar integral de la persona atendida.";
     const skills = details?.skills || caregiver.skills || ['Cuidados Básicos'];
     const certifications = details?.certifications || caregiver.certifications || [];
     const hourlyRate = details?.hourly_rate || caregiver.hourly_rate || 150;
@@ -287,18 +287,20 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                                 </div>
 
                                 {/* Contacto Box */}
-                                <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center gap-2 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all text-center">
-                                    <div className="flex items-center gap-2 text-purple-600">
-                                        <MessageCircle size={14} />
-                                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contacto</p>
+                                {!hideContactButton && (
+                                    <div className="bg-slate-50 rounded-2xl p-4 flex flex-col items-center gap-2 border border-transparent hover:border-slate-100 hover:bg-white hover:shadow-lg transition-all text-center">
+                                        <div className="flex items-center gap-2 text-purple-600">
+                                            <MessageCircle size={14} />
+                                            <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contacto</p>
+                                        </div>
+                                        <a
+                                            href={`tel:${caregiver.phone}`}
+                                            className="text-sm font-brand font-bold text-[var(--secondary-color)] hover:underline truncate max-w-full"
+                                        >
+                                            {caregiver.phone || 'No disponible'}
+                                        </a>
                                     </div>
-                                    <a
-                                        href={`tel:${caregiver.phone}`}
-                                        className="text-sm font-brand font-bold text-[var(--secondary-color)] hover:underline truncate max-w-full"
-                                    >
-                                        {caregiver.phone || 'No disponible'}
-                                    </a>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -531,23 +533,25 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact }) => {
                     >
                         Salir
                     </button>
-                    <button
-                        onClick={() => {
-                            if (!user) {
-                                alert("Por favor inicia sesión para contactar.");
-                                return;
-                            }
-                            if (profile?.role !== 'family') {
-                                alert("Solo los usuarios registrados como 'Familia' pueden enviar solicitudes de servicio.");
-                                return;
-                            }
-                            setShowRequestForm(true);
-                        }}
-                        className="flex-[2] bg-[#0F4C5C] !text-[#FAFAF7] font-black py-3 sm:py-4 rounded-[16px] hover:shadow-xl hover:shadow-[#0F4C5C]/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-widest text-xs sm:text-sm"
-                    >
-                        <Mail size={18} />
-                        Contactar
-                    </button>
+                    {!hideContactButton && (
+                        <button
+                            onClick={() => {
+                                if (!user) {
+                                    alert("Por favor inicia sesión para contactar.");
+                                    return;
+                                }
+                                if (profile?.role !== 'family') {
+                                    alert("Solo los usuarios registrados como 'Familia' pueden enviar solicitudes de servicio.");
+                                    return;
+                                }
+                                setShowRequestForm(true);
+                            }}
+                            className="flex-[2] bg-[#0F4C5C] !text-[#FAFAF7] font-black py-3 sm:py-4 rounded-[16px] hover:shadow-xl hover:shadow-[#0F4C5C]/20 hover:-translate-y-1 transition-all flex items-center justify-center gap-2 sm:gap-3 uppercase tracking-widest text-xs sm:text-sm"
+                        >
+                            <Mail size={18} />
+                            Contactar
+                        </button>
+                    )}
                 </div>
             </div>
             {/* Footer Ends */}

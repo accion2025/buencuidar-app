@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Heart, Activity, Wind, Save, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
-const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSaved }) => {
+const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, initialLogs, onSaved }) => {
     const [loading, setLoading] = useState(false);
     const [fetchingInitial, setFetchingInitial] = useState(true);
     const [generalState, setGeneralState] = useState('Estable');
@@ -22,20 +22,28 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
 
             try {
                 setFetchingInitial(true);
-                const { data, error } = await supabase
-                    .from('care_logs')
-                    .select('action, detail')
-                    .eq('appointment_id', appointmentId)
-                    .eq('category', 'Wellness')
-                    .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                let data = initialLogs;
+
+                if (!data) {
+                    const { data: fetchedData, error } = await supabase
+                        .from('care_logs')
+                        .select('action, detail, category')
+                        .eq('appointment_id', appointmentId)
+                        .eq('category', 'Wellness')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+                    data = fetchedData;
+                }
 
                 if (data && data.length > 0) {
                     // Because we want the latest for each action type
-                    const latestGeneral = data.find(l => l.action === 'Estado General');
-                    const latestEnergy = data.find(l => l.action === 'Nivel de Energía');
-                    const latestMood = data.find(l => l.action === 'Bienestar Hoy');
+                    // If using initialLogs, we filter by category Wellness first
+                    const wellnessLogs = data.filter(l => l.category === 'Wellness');
+                    const latestGeneral = wellnessLogs.find(l => l.action === 'Estado General');
+                    const latestEnergy = wellnessLogs.find(l => l.action === 'Nivel de Energía');
+                    const latestMood = wellnessLogs.find(l => l.action === 'Bienestar Hoy');
 
                     if (latestGeneral) setGeneralState(latestGeneral.detail);
                     if (latestEnergy) setEnergyLevel(latestEnergy.detail);
@@ -88,8 +96,14 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
             if (error) throw error;
 
             if (onSaved) onSaved();
-            onClose();
-            alert("Reporte de bienestar guardado con éxito.");
+
+            // Success feedback
+            setLoading(false);
+
+            // Use a slight delay to show "Saved" state if desired, or just close
+            setTimeout(() => {
+                onClose();
+            }, 500);
 
         } catch (error) {
             console.error("Error saving wellness report:", error);
@@ -112,7 +126,7 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                 </button>
 
                 <h2 className="text-xl font-bold text-gray-800 mb-1">Reporte de Bienestar</h2>
-                <p className="text-sm text-gray-500 mb-6">Indica cómo se encuentra el paciente ahora.</p>
+                <p className="text-sm text-gray-500 mb-6">Indica cómo se encuentra la persona atendida ahora.</p>
 
                 <div className="space-y-6">
                     {fetchingInitial ? (
@@ -191,14 +205,14 @@ const WellnessReportModal = ({ isOpen, onClose, appointmentId, caregiverId, onSa
                 <div className="mt-8 pt-4 border-t border-gray-100 flex gap-3">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white border border-gray-200 text-gray-500 font-bold py-3 rounded-[16px] hover:bg-gray-50 transition-colors"
+                        className="flex-1 bg-white border border-gray-200 text-gray-500 font-bold py-3 rounded-[12px] hover:bg-gray-50 transition-colors"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex-[2] bg-slate-900 !text-[#FAFAF7] font-bold py-3 rounded-[16px] hover:bg-slate-800 transition-colors shadow-lg flex items-center justify-center gap-2"
+                        className="flex-[2] bg-slate-900 !text-[#FAFAF7] font-bold py-3 rounded-[12px] hover:bg-slate-800 transition-colors shadow-lg flex items-center justify-center gap-2"
                     >
                         {loading ? <Loader2 size={18} className="animate-spin" /> : <><Save size={18} /> Guardar</>}
                     </button>

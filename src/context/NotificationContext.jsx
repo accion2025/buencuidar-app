@@ -1,5 +1,5 @@
 import OneSignal from 'react-onesignal';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -13,6 +13,68 @@ export const NotificationProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
     const [loadingNotifications, setLoadingNotifications] = useState(true);
 
+    const fetchNotificationsData = useCallback(async (limit = 20, append = false) => {
+        if (!user) return;
+
+        console.log(`🔄 Cargando ${limit} notificaciones para el usuario:`, user.id);
+        try {
+            const { data, error: feedError } = await supabase
+                .from('notifications')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false })
+                .limit(limit);
+
+            if (feedError) throw feedError;
+
+            const now = Date.now();
+
+            // 1. Process maturation (5 min delay for applications)
+            const processed = (data || []).map(notif => {
+                const isChat = notif.metadata?.is_chat || notif.metadata?.conversation_id || notif.title?.includes('Mensaje');
+
+                if (notif.title?.includes('Postulación')) {
+                    const createdTime = new Date(notif.created_at).getTime();
+                    const isMature = createdTime < (now - 5 * 60 * 1000);
+                    return { ...notif, is_hidden_by_delay: !isMature, is_chat: isChat };
+                }
+
+                return { ...notif, is_hidden_by_delay: false, is_chat: isChat };
+            });
+
+            // 2. Separate visible items
+            const visible = processed.filter(n => !n.is_hidden_by_delay);
+
+            // 3. Split by category
+            const chatItems = visible.filter(n => n.is_chat);
+            const generalItems = visible.filter(n => !n.is_chat);
+
+            // 4. Set Counts (for the global counter, we might need a separate count query for total accuracy, 
+            // but for now we use the latest batch)
+            setUnreadChatCount(chatItems.filter(n => !n.is_read).length);
+            setUnreadNotificationsCount(generalItems.filter(n => !n.is_read).length);
+
+            // 5. Update feed
+            if (append) {
+                setNotifications(prev => {
+                    const existingIds = new Set(prev.map(n => n.id));
+                    const newItems = generalItems.filter(n => !existingIds.has(n.id));
+                    return [...prev, ...newItems];
+                });
+            } else {
+                setNotifications(generalItems);
+            }
+
+            console.log(`✅ Conteo: General=${generalItems.filter(n => !n.is_read).length}, Chat=${chatItems.filter(n => !n.is_read).length}`);
+            return data;
+        } catch (err) {
+            console.error("❌ Error al obtener notificaciones unificadas:", err);
+            return [];
+        } finally {
+            setLoadingNotifications(false);
+        }
+    }, [user]);
+
     // Fetch and Subscribe to Notifications
     useEffect(() => {
         if (!user) {
@@ -22,58 +84,6 @@ export const NotificationProvider = ({ children }) => {
             setLoadingNotifications(false);
             return;
         }
-
-        const fetchNotificationsData = async () => {
-            console.log("🔄 Cargando notificaciones para el usuario:", user.id);
-            try {
-                // Fetch more to allow for filtering
-                const { data, error: feedError } = await supabase
-                    .from('notifications')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false })
-                    .limit(50);
-
-                if (feedError) throw feedError;
-
-                const now = Date.now();
-
-                // 1. Process maturation (5 min delay for applications)
-                const processed = (data || []).map(notif => {
-                    const isChat = notif.metadata?.is_chat || notif.metadata?.conversation_id || notif.title?.includes('Mensaje');
-
-                    // Specific logic for New Applications (5 min delay)
-                    if (notif.title?.includes('Postulación')) {
-                        const createdTime = new Date(notif.created_at).getTime();
-                        const isMature = createdTime < (now - 5 * 60 * 1000);
-                        return { ...notif, is_hidden_by_delay: !isMature, is_chat: isChat };
-                    }
-
-                    return { ...notif, is_hidden_by_delay: false, is_chat: isChat };
-                });
-
-                // 2. Separate visible items
-                const visible = processed.filter(n => !n.is_hidden_by_delay);
-
-                // 3. Split by category
-                const chatItems = visible.filter(n => n.is_chat);
-                const generalItems = visible.filter(n => !n.is_chat);
-
-                // 4. Set Counts
-                setUnreadChatCount(chatItems.filter(n => !n.is_read).length);
-                setUnreadNotificationsCount(generalItems.filter(n => !n.is_read).length);
-
-                // 5. Context only exposes general items in 'notifications' feed 
-                // (Chat alerts are now visual-only bubble triggers)
-                setNotifications(generalItems);
-
-                console.log(`✅ Conteo: General=${generalItems.filter(n => !n.is_read).length}, Chat=${chatItems.filter(n => !n.is_read).length}`);
-            } catch (err) {
-                console.error("❌ Error al obtener notificaciones unificadas:", err);
-            } finally {
-                setLoadingNotifications(false);
-            }
-        };
 
         fetchNotificationsData();
 
@@ -97,23 +107,68 @@ export const NotificationProvider = ({ children }) => {
             supabase.removeChannel(channel);
             clearInterval(refreshInterval);
         };
-    }, [user]);
+    }, [user, fetchNotificationsData]);
 
     const markAsRead = async (id) => {
         try {
+            // Immediate local feedback for responsiveness
+            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+            setUnreadNotificationsCount(prev => Math.max(0, prev - 1));
+
             const { error } = await supabase
                 .from('notifications')
                 .update({ is_read: true })
                 .eq('id', id);
 
             if (error) throw error;
-            // Immediate local feedback
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-            // Trigger context counters refresh
-            // We could recalulate locally, but fetchNotificationsData is safer given the state split
-            // For now, let's keep it simple: the next fetch or local state adjustment suffices.
         } catch (error) {
             console.error('Error marking as read:', error);
+            // Optional: revert local state on error if needed
+        }
+    };
+
+    const markAllGeneralAsRead = async () => {
+        if (!user) return;
+
+        // 1. Immediate local update
+        setUnreadNotificationsCount(0);
+        setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+
+        try {
+            // 2. Update DB for all non-chat notifications
+            const { error } = await supabase
+                .from('notifications')
+                .update({ is_read: true })
+                .eq('user_id', user.id)
+                .is('is_read', false)
+                .not('title', 'ilike', '%Mensaje%'); // Simpler exclusion filter
+
+            if (error) throw error;
+        } catch (error) {
+            console.error('Error marking all notifications as read:', error);
+        }
+    };
+
+    const deleteAllGeneral = async () => {
+        if (!user) return;
+
+        // 1. Immediate local update
+        setNotifications([]);
+        setUnreadNotificationsCount(0);
+
+        try {
+            // 2. Delete from DB (non-chat)
+            const { error } = await supabase
+                .from('notifications')
+                .delete()
+                .eq('user_id', user.id)
+                .not('title', 'ilike', '%Mensaje%');
+
+            if (error) throw error;
+        } catch (error) {
+            console.error('Error deleting all notifications:', error);
+            // Re-fetch on error to restore state if delete failed
+            fetchNotificationsData();
         }
     };
 
@@ -137,7 +192,6 @@ export const NotificationProvider = ({ children }) => {
             console.log("✅ Todas las notificaciones de chat marcadas como leídas.");
         } catch (error) {
             console.error('Error marking all chat notifications as read:', error);
-            // Revert on error? Probably not needed for this UX enhancement
         }
     };
 
@@ -243,7 +297,10 @@ export const NotificationProvider = ({ children }) => {
             notifications,
             loadingNotifications,
             markAsRead,
-            markAllChatAsRead
+            markAllChatAsRead,
+            markAllGeneralAsRead,
+            deleteAllGeneral,
+            refreshNotifications: fetchNotificationsData
         }}>
             {children}
         </NotificationContext.Provider>

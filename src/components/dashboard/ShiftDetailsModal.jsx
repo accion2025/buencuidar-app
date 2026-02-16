@@ -22,10 +22,14 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onAction, isLoading }) => {
 
                     {/* Close Button */}
                     <button
-                        onClick={onClose}
-                        className="absolute top-4 right-4 bg-black/20 hover:bg-black/30 !text-[#FAFAF7] p-2 rounded-full transition-all backdrop-blur-sm z-20"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onClose();
+                        }}
+                        className="absolute top-4 right-4 bg-black/40 hover:bg-black/60 !text-[#FAFAF7] p-2.5 rounded-full transition-all backdrop-blur-md z-[100] cursor-pointer group"
+                        title="Cerrar"
                     >
-                        <X size={20} />
+                        <X size={20} className="group-hover:rotate-90 transition-transform" />
                     </button>
                 </div>
 
@@ -61,63 +65,101 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onAction, isLoading }) => {
                         </div>
                     </div>
 
+                    {/* Client Info */}
+                    {shift.client?.full_name && (
+                        <div className="mt-4 bg-indigo-50 p-4 rounded-[16px] border border-indigo-100 flex items-center gap-4">
+                            <div className="bg-white p-2 rounded-full text-indigo-600 shadow-sm shrink-0">
+                                <User size={20} />
+                            </div>
+                            <div>
+                                <h4 className="text-[10px] font-black uppercase text-indigo-400 tracking-widest leading-none mb-1">Cliente</h4>
+                                <p className="text-indigo-900 font-brand font-bold text-lg leading-tight">{shift.client.full_name}</p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* New: Description & Agenda Section */}
                     {(() => {
                         const hasStructuredAgenda = shift.care_agenda?.length > 0;
                         const details = shift.details || '';
                         let description = details;
-                        let services = [];
+                        let servicesFromDetails = [];
 
-                        const planMarker = "[PLAN DE CUIDADO]";
                         const servicesMarker = "---SERVICES---";
 
-                        // Extract plan details if no structured agenda
-                        if (!hasStructuredAgenda) {
-                            const planMatch = details.match(/\[PLAN DE CUIDADO\]([\s\S]*?)(\[INSTRUCCIONES ADICIONALES\]|---SERVICES---|$)/);
-                            if (planMatch) {
-                                services = planMatch[1].trim().split('\n').map(s => s.replace('• ', '').trim()).filter(Boolean);
+                        // NEW PARSING LOGIC based on "Cuidado+" format
+                        if (details.includes(servicesMarker)) {
+                            const parts = details.split(servicesMarker);
+                            description = parts[0].trim(); // "Cuidado Especializado: ..."
+                            const jsonPart = parts[1].trim();
+
+                            try {
+                                if (jsonPart) {
+                                    servicesFromDetails = JSON.parse(jsonPart);
+                                }
+                            } catch (e) {
+                                console.error("Error parsing services JSON in details:", e);
+                            }
+                        } else {
+                            // Fallback for legacy "Plan de Cuidado" format if needed, or just leave description as is
+                            const planMarker = "[PLAN DE CUIDADO]";
+                            if (details.includes(planMarker)) {
+                                const parts = details.split(planMarker);
+                                description = parts[0].trim();
+                                // Try to extract bullet points
+                                const planPart = parts[1];
+                                if (planPart) {
+                                    const lines = planPart.split('\n');
+                                    const bullets = lines.filter(l => l.trim().startsWith('•') || l.trim().startsWith('-'));
+                                    if (bullets.length > 0) {
+                                        servicesFromDetails = bullets.map(b => ({ name: b.replace(/^[•-]\s*/, '').trim(), category: 'General' }));
+                                    }
+                                }
                             }
                         }
 
-                        // Extract description cleanup
-                        if (details.includes(planMarker)) {
-                            const parts = details.split(planMarker);
-                            const beforePlan = parts[0].trim();
-                            const afterPlan = parts[1] ? parts[1].split(servicesMarker)[1]?.split(servicesMarker)[1]?.trim() : '';
+                        // Consolidate agenda source
+                        const finalAgenda = hasStructuredAgenda ? shift.care_agenda : servicesFromDetails;
+                        const showAgenda = finalAgenda && finalAgenda.length > 0;
 
-                            const descMatch = details.match(/\[INSTRUCCIONES ADICIONALES\]\n?([\s\S]*?)(---SERVICES---|$)/);
-                            if (descMatch) {
-                                description = descMatch[1].trim();
-                            } else {
-                                description = (beforePlan + "\n" + (afterPlan || '')).trim();
-                            }
-                        }
-
-                        if (description === details && details.includes(planMarker)) {
-                            description = "";
-                        }
-
+                        // Clean up description if it's just the default placeholder or empty
                         const ignorePhrases = ['Sin instrucciones adicionales', 'Sin instrucciones especiales'];
                         if (ignorePhrases.some(phrase => description.trim().toLowerCase() === phrase.toLowerCase())) {
                             description = "";
                         }
 
-                        if (!description && !hasStructuredAgenda && services.length === 0) return null;
+                        if (!description && !showAgenda) return null;
 
                         return (
                             <div className="mt-8 space-y-8">
-                                {/* Structured Agenda Priority */}
-                                {hasStructuredAgenda && (
+                                {/* Structured Agenda / Services List */}
+                                {showAgenda && (
                                     <section>
                                         <h3 className="font-brand font-bold text-[#0F3C4C] text-lg mb-4 flex items-center gap-3">
                                             <div className="p-2 bg-amber-50 text-amber-600 rounded-[16px]"><Clock size={18} /></div>
-                                            Agenda Programada
+                                            Agenda de Actividades
                                         </h3>
                                         <div className="space-y-3">
-                                            {shift.care_agenda.map((item, idx) => (
+                                            {finalAgenda.map((item, idx) => (
                                                 <div key={idx} className="flex items-center gap-4 p-4 bg-amber-50/30 rounded-[18px] border border-amber-100/50 group hover:bg-white hover:shadow-lg hover:shadow-amber-900/5 transition-all">
-                                                    <span className="text-xs font-black text-amber-600 bg-white px-3 py-1.5 rounded-[12px] shadow-sm shrink-0">{item.time}</span>
-                                                    <span className="text-sm text-slate-700 font-bold">{item.activity}</span>
+                                                    {item.cycles && item.cycles.length > 0 ? (
+                                                        <div className="flex flex-col gap-1 shrink-0">
+                                                            {item.cycles.map((c, cIdx) => (
+                                                                <span key={cIdx} className="text-[10px] font-black text-amber-600 bg-white px-2 py-1 rounded-[8px] shadow-sm text-center">
+                                                                    {c.startTime || '??'} - {c.endTime || '??'}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-xs font-black text-amber-600 bg-white px-3 py-1.5 rounded-[12px] shadow-sm shrink-0">
+                                                            {item.time || 'Flexible'}
+                                                        </span>
+                                                    )}
+
+                                                    <div className="flex-1">
+                                                        <span className="text-sm text-slate-700 font-bold block">{item.name || item.activity}</span>
+                                                        {item.category && <span className="text-[10px] text-amber-600/70 uppercase tracking-wider font-bold">{item.category}</span>}
+                                                    </div>
                                                     <CheckCircle size={16} className="text-amber-200 ml-auto group-hover:text-amber-500 transition-colors" />
                                                 </div>
                                             ))}
@@ -125,30 +167,17 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onAction, isLoading }) => {
                                     </section>
                                 )}
 
-                                {/* Instructions / Fallback Services */}
-                                {(description || (!hasStructuredAgenda && services.length > 0)) && (
+                                {/* Instructions / Description */}
+                                {description && (
                                     <section>
                                         <h3 className="font-brand font-bold text-[#0F3C4C] text-lg mb-4 flex items-center gap-3">
                                             <div className="p-2 bg-blue-50 text-[var(--primary-color)] rounded-[16px]"><FileText size={18} /></div>
                                             Instrucciones del Servicio
                                         </h3>
 
-                                        {description && (
-                                            <div className="p-6 sm:p-8 bg-slate-50 rounded-[16px] border border-slate-100 text-sm sm:text-base text-[#07212e] leading-relaxed font-medium mb-4 shadow-inner relative overflow-hidden">
-                                                <p className="relative z-10 font-secondary italic">"{description}"</p>
-                                            </div>
-                                        )}
-
-                                        {!hasStructuredAgenda && services.length > 0 && (
-                                            <div className="grid grid-cols-1 gap-2">
-                                                {services.map((service, idx) => (
-                                                    <div key={idx} className="flex items-center gap-3 p-3 bg-white rounded-[16px] border border-slate-100 shadow-sm">
-                                                        <CheckCircle size={16} className="text-green-500 shrink-0" />
-                                                        <span className="text-xs sm:text-sm text-slate-700 font-bold">{service}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
+                                        <div className="p-6 sm:p-8 bg-slate-50 rounded-[16px] border border-slate-100 text-sm sm:text-base text-[#07212e] leading-relaxed font-medium mb-4 shadow-inner relative overflow-hidden">
+                                            <p className="relative z-10 font-secondary italic whitespace-pre-line">"{description}"</p>
+                                        </div>
                                     </section>
                                 )}
                             </div>
@@ -156,25 +185,16 @@ const ShiftDetailsModal = ({ isOpen, onClose, shift, onAction, isLoading }) => {
                     })()}
 
                     {/* Location Card */}
-                    <div className="mt-8 bg-[#0F3C4C] p-6 sm:p-8 rounded-[16px] border border-white/5 flex flex-col sm:flex-row items-start gap-4 sm:gap-6 shadow-2xl relative overflow-hidden group !text-[#FAFAF7]">
+                    <div className="mt-8 bg-[#0F3C44] p-6 sm:p-8 rounded-[16px] border border-white/5 flex flex-col sm:flex-row items-start gap-4 sm:gap-6 shadow-2xl relative overflow-hidden group !text-[#FAFAF7] bg-opacity-95">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl opacity-10 transition-all group-hover:opacity-20"></div>
-                        <div className="bg-white/10 text-[var(--accent-color)] p-3 sm:p-4 rounded-[16px] relative z-10 shadow-lg shrink-0">
+                        <div className="bg-white/10 text-[var(--accent-color)] p-3 sm:p-4 rounded-[16px] relative z-10 shadow-lg shrink-0 border border-white/10">
                             <MapPin size={24} className="sm:w-7 sm:h-7" />
                         </div>
                         <div className="flex-1 relative z-10">
                             <h4 className="font-black !text-[#FAFAF7]/40 text-[10px] uppercase tracking-[0.2em] mb-2 leading-none">Dirección del Servicio</h4>
-                            <p className="text-sm sm:text-base !text-[#FAFAF7] font-brand font-bold leading-tight mb-6">
-                                {shift.address || 'Dirección no especificada'}
+                            <p className="text-sm sm:text-base !text-[#FAFAF7] font-brand font-bold leading-tight">
+                                {shift.address || shift.client?.address || 'Sin dirección específica para este servicio'}
                             </p>
-                            <a
-                                href={shift.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shift.address)}` : '#'}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`text-[10px] font-black bg-[var(--secondary-color)] !text-[#FAFAF7] px-6 py-3 rounded-[16px] flex items-center justify-center gap-2 hover:bg-emerald-600 transition-all w-full sm:w-fit uppercase tracking-widest shadow-xl shadow-green-900/40 ${!shift.address ? 'opacity-50 pointer-events-none' : ''}`}
-                            >
-                                <Navigation size={12} fill="currentColor" />
-                                Ver Ruta en el Mapa
-                            </a>
                         </div>
                     </div>
 

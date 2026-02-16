@@ -7,7 +7,7 @@ const DOCUMENT_TYPES = [
     { id: 'id_card', label: 'Identificación Oficial (INE/Pasaporte)', icon: FileText, description: 'Sube una foto clara de ambos lados de tu identificación.' },
     { id: 'criminal_record', label: 'Antecedentes Penales', icon: ShieldCheck, description: 'Certificado de no antecedentes penales con vigencia menor a 3 meses.' },
     { id: 'professional_license', label: 'Cédula o Certificación', icon: Check, description: 'Título o cédula profesional que avale tus conocimientos.' },
-    { id: 'human_evaluation', label: 'Evaluación de trato humano', icon: ShieldCheck, description: 'Certificado de evaluación de confianza y trato al paciente.' }
+    { id: 'human_evaluation', label: 'Evaluación de trato humano', icon: ShieldCheck, description: 'Certificado de evaluación de confianza y trato a la persona atendida.' }
 ];
 
 const MAX_RETRIES = 3; // Constante vital para la estabilidad de la carga
@@ -250,7 +250,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
     return createPortal(
         <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-0 md:p-6 text-left overflow-hidden">
-            <div className="bg-white rounded-none md:rounded-[24px] shadow-2xl w-full max-w-2xl h-full md:h-auto md:max-h-[90dvh] flex flex-col animate-slide-up border-none md:border border-white/20 relative">
+            <div className="bg-white rounded-none md:rounded-[16px] shadow-2xl w-full max-w-2xl h-full md:h-auto md:max-h-[90dvh] flex flex-col animate-slide-up border-none md:border border-white/20 relative">
                 <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 sticky top-0 z-10 backdrop-blur-sm">
                     <div>
                         <h3 className="text-xl font-brand font-bold text-[var(--primary-color)] flex items-center gap-2">
@@ -266,13 +266,13 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
                 <div className="flex-1 overflow-y-auto p-8 space-y-6">
                     {error && (
-                        <div className="p-4 bg-red-50 border border-red-100 rounded-[16px] text-red-600 flex items-center gap-3 text-sm animate-shake">
+                        <div className="p-4 bg-red-50 border border-red-100 rounded-[12px] text-red-600 flex items-center gap-3 text-sm animate-shake">
                             <AlertCircle size={20} />
                             {error}
                         </div>
                     )}
                     {success && (
-                        <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-[16px] text-[var(--secondary-color)] flex items-center gap-3 text-sm animate-fade-in">
+                        <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-[12px] text-[var(--secondary-color)] flex items-center gap-3 text-sm animate-fade-in">
                             <Check size={20} />
                             {success}
                         </div>
@@ -284,7 +284,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                             const existingDoc = userDocs.find(d => d.document_type === doc.id);
 
                             return (
-                                <div key={doc.id} className={`p-6 rounded-[24px] border transition-all ${existingDoc ? 'bg-emerald-50/20 border-emerald-100' : 'bg-[var(--base-bg)]/30 border-gray-100'
+                                <div key={doc.id} className={`p-6 rounded-[16px] border transition-all ${existingDoc ? 'bg-emerald-50/20 border-emerald-100' : 'bg-[var(--base-bg)]/30 border-gray-100'
                                     } hover:shadow-md group relative overflow-hidden`}>
                                     {existingDoc?.status === 'verified' && (
                                         <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
@@ -292,7 +292,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                                         <div className="flex items-start gap-4">
-                                            <div className={`p-3 rounded-[16px] shadow-sm border transition-transform group-hover:scale-105 ${existingDoc?.status === 'verified' ? 'bg-emerald-500 text-white border-emerald-400' : 'bg-white text-[var(--primary-color)] border-gray-100'
+                                            <div className={`p-3 rounded-[12px] shadow-sm border transition-transform group-hover:scale-105 ${existingDoc?.status === 'verified' ? 'bg-emerald-500 text-white border-emerald-400' : 'bg-white text-[var(--primary-color)] border-gray-100'
                                                 }`}>
                                                 {existingDoc?.status === 'verified' ? <Check size={24} strokeWidth={3} /> : <doc.icon size={24} />}
                                             </div>
@@ -319,7 +319,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                             </div>
                                         </div>
 
-                                        <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[16px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
+                                        <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[12px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
                                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                             : existingDoc?.status === 'verified'
                                                 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100'
@@ -347,7 +347,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                         })}
                     </div>
 
-                    <div className="p-6 bg-blue-50/50 rounded-[16px] border border-blue-100">
+                    <div className="p-6 bg-blue-50/50 rounded-[12px] border border-blue-100">
                         <div className="flex gap-4">
                             <AlertCircle size={24} className="text-blue-600 shrink-0" />
                             <div>
@@ -363,7 +363,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 <div className="p-8 border-t border-gray-100 bg-white">
                     <button
                         onClick={onClose}
-                        className="w-full bg-[var(--base-bg)] text-[var(--primary-color)] font-black py-4 rounded-[16px] hover:bg-gray-100 transition-all uppercase tracking-widest text-xs"
+                        className="w-full bg-[var(--base-bg)] text-[var(--primary-color)] font-black py-4 rounded-[12px] hover:bg-gray-100 transition-all uppercase tracking-widest text-xs"
                     >
                         Cerrar y Revisar Después
                     </button>

@@ -104,17 +104,17 @@ const RateCaregiverModal = ({ isOpen, onClose, appointment, onSuccess }) => {
                         <button
                             type="submit"
                             disabled={rating === 0 || isSubmitting}
-                            className={`w-full py-3 rounded-[16px] font-bold !text-[#FAFAF7] flex items-center justify-center gap-2 transition-all ${rating > 0 && !isSubmitting
-                                ? 'bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200'
+                            className={`w-full py-3.5 rounded-[16px] font-black text-[10px] uppercase tracking-[0.2em] !text-[#FAFAF7] flex items-center justify-center gap-2 transition-all ${rating > 0 && !isSubmitting
+                                ? 'bg-[var(--secondary-color)] hover:bg-[#238a71] shadow-lg shadow-green-100'
                                 : 'bg-gray-300 cursor-not-allowed'
                                 }`}
                         >
                             {isSubmitting ? (
                                 <>
-                                    <Loader2 size={18} className="animate-spin" /> Enviando...
+                                    <Loader2 size={16} className="animate-spin" /> Procesando...
                                 </>
                             ) : (
-                                'Enviar Calificación'
+                                'Confirmar Calificación'
                             )}
                         </button>
                     </form>

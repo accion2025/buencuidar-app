@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Backups and large files
+Backup_BUENCUIDAR_V1.1_Local.zip
+*.zip
+*.sql
+!supabase/migrations/*.sql
+*.dump

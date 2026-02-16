@@ -70,6 +70,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- 3. Enable the single unified trigger
+DROP TRIGGER IF EXISTS tr_unified_care_logs_notify ON care_logs;
 CREATE TRIGGER tr_unified_care_logs_notify
     AFTER INSERT ON care_logs
     FOR EACH ROW

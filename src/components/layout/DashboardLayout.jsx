@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useMessage } from '../../context/MessageContext';
 import { useNotifications } from '../../context/NotificationContext';
+import { usePermissions } from '../../hooks/usePermissions';
 import {
     LayoutDashboard,
     Calendar,
@@ -19,6 +20,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import InstallPrompt from '../InstallPrompt';
+import Topbar from './Topbar';
 
 const SidebarItem = ({ icon: Icon, label, path, active, onClick, badge, locked }) => {
     return (
@@ -47,6 +49,7 @@ const DashboardLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { profile, signOut, user, loading } = useAuth(); // Destructure user and loading
+    const { can } = usePermissions();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { unreadCount } = useMessage(); // Use global context
     const { unreadNotificationsCount, unreadChatCount } = useNotifications();
@@ -73,8 +76,17 @@ const DashboardLayout = () => {
                 <span className="text-[#2FAE8F]">C</span> <span className="text-[#2FAE8F]">PULSO</span>
             </span>,
             path: '/dashboard/pulso',
-            locked: profile?.role === 'family' && !isSubscribed
+            locked: profile?.role === 'family' && !can('accessMonitoring')
         },
+        /* {
+            icon: Shield,
+            label: <span className="font-brand font-bold">
+                <span className="!text-[#FAFAF7]">B</span>
+                <span className="text-[#2FAE8F]">C</span> <span className="text-[#C5A265]"> Cuidado+</span>
+            </span>,
+            path: '/dashboard/pulso',
+            // locked: !isSubscribed // Optional: lock if not subscribed
+        }, */
         { icon: Calendar, label: 'Calendario', path: '/dashboard/calendar' },
         { icon: MessageSquare, label: 'Mensajes', path: '/dashboard/messages', badge: unreadCount },
         { icon: CreditCard, label: 'Mi Suscripción', path: '/dashboard/subscription' },
@@ -157,63 +169,12 @@ const DashboardLayout = () => {
             {/* Main Content Area */}
             <div className="flex-grow flex flex-col h-full overflow-hidden">
                 {/* Top Header */}
-                <header className="bg-white shadow-sm h-16 flex items-center justify-between px-6 z-40">
-                    <button
-                        className="md:hidden text-gray-600"
-                        onClick={() => setIsMobileMenuOpen(true)}
-                    >
-                        <Menu size={24} />
-                    </button>
-
-                    <div className="flex items-center justify-end w-full gap-6">
-                        <button
-                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/messages')}
-                            className="relative text-gray-500 hover:text-blue-500 transition-all group"
-                            title="Mensajes y Chat"
-                        >
-                            <MessageSquare size={20} className="group-hover:scale-110 transition-transform" />
-                            {unreadChatCount > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500 border-2 border-white"></span>
-                                </span>
-                            )}
-                        </button>
-
-                        <button
-                            onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/notifications' : '/dashboard/notifications')}
-                            className="relative text-gray-500 hover:text-[var(--primary-color)] transition-all group"
-                        >
-                            <Bell size={20} className="group-hover:animate-swing" />
-                            {unreadNotificationsCount > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-white"></span>
-                                </span>
-                            )}
-                        </button>
-
-                        <div className="flex items-center gap-3 pl-6 border-l border-gray-200">
-                            <div className="text-right hidden sm:block">
-                                <p className="text-sm font-semibold text-gray-800">{profile?.full_name || 'Usuario'}</p>
-                                <p className="text-xs text-gray-500">
-                                    {profile?.role === 'caregiver'
-                                        ? `CUIDADOR PRO`
-                                        : profile?.role === 'admin'
-                                            ? 'Administrador del Sistema'
-                                            : 'Familia / Usuario'}
-                                </p>
-                            </div>
-                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-[var(--primary-color)] font-bold border-2 border-white shadow-sm overflow-hidden">
-                                {profile?.avatar_url ? (
-                                    <img src={profile.avatar_url} alt="User" className="w-full h-full object-cover" />
-                                ) : (
-                                    <span>{profile?.full_name?.charAt(0).toUpperCase() || 'U'}</span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </header>
+                <Topbar
+                    profile={profile}
+                    unreadChatCount={unreadChatCount}
+                    unreadNotificationsCount={unreadNotificationsCount}
+                    onMenuClick={() => setIsMobileMenuOpen(true)}
+                />
 
                 {/* Page Content */}
                 <main className="flex-grow overflow-y-auto p-4 md:p-10">

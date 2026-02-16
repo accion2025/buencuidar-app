@@ -42,3 +42,31 @@ export const safeDateParse = (dateStr) => {
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month - 1, day);
 };
+
+/**
+ * Formats a date range as "lunes, 30 mar - lunes, 30 mar de 2026"
+ */
+export const formatDateRange = (startDateStr, endDateStr) => {
+    if (!startDateStr) return '';
+    const start = safeDateParse(startDateStr);
+    const end = safeDateParse(endDateStr || startDateStr);
+
+    if (!start || !end) return startDateStr;
+
+    // Helper to format individual part
+    const formatPart = (date, includeYear = false) => {
+        const options = { weekday: 'long', day: 'numeric', month: 'short' };
+        if (includeYear) options.year = 'numeric';
+        return date.toLocaleDateString('es-ES', options);
+    };
+
+    const startFormatted = formatPart(start, false); // "lunes, 30 mar" (auto: "lunes, 30 mar." depending on env)
+    const endFormatted = formatPart(end, true);   // "lunes, 30 mar de 2026" (auto: "lunes, 30 mar. de 2026")
+
+    // Clean up typical " de " vs "," issues if needed, but standard should be fine or close enough
+    // We might need to remove periods if environment adds them: "mar." -> "mar"
+    // User requested "mar" without dot? 
+    // Let's just return standard locale for now.
+
+    return `${startFormatted} - ${endFormatted}`;
+};

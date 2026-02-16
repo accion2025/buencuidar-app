@@ -4,16 +4,42 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { Bell, Check, Trash2, Clock, AlertCircle, MessageSquare, ChevronRight, UserPlus, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useNotifications } from '../../context/NotificationContext';
 
 const Notifications = () => {
     const { user, profile } = useAuth();
+    const {
+        notifications: contextNotifications,
+        markAsRead: contextMarkAsRead,
+        markAllGeneralAsRead,
+        deleteAllGeneral,
+        refreshNotifications,
+        loadingNotifications
+    } = useNotifications();
     const navigate = useNavigate();
-    const [notifications, setNotifications] = useState([]);
+    const [notificationsBatch, setNotificationsBatch] = useState(20);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [notifications, setNotifications] = useState([]);
+
+    useEffect(() => {
+        if (contextNotifications) {
+            setNotifications(contextNotifications);
+            setLoading(loadingNotifications);
+
+            // Si el contexto tiene menos notificaciones de las que pedimos en el último lote, 
+            // es probable que no haya más en la DB.
+            if (contextNotifications.length < notificationsBatch) {
+                setHasMore(false);
+            } else {
+                setHasMore(true);
+            }
+        }
+    }, [contextNotifications, loadingNotifications, notificationsBatch]);
 
     useEffect(() => {
         if (!user) return;
-        fetchNotifications();
 
         // Subscribe to changes
         const channel = supabase
@@ -23,80 +49,44 @@ const Notifications = () => {
                 schema: 'public',
                 table: 'notifications',
                 filter: `user_id=eq.${user.id}`
-            }, () => fetchNotifications())
+            }, () => refreshNotifications && refreshNotifications(notificationsBatch))
             .subscribe();
 
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [user]);
+    }, [user, notificationsBatch, refreshNotifications]);
 
-    const fetchNotifications = async () => {
-        try {
-            const { data, error } = await supabase
-                .from('notifications')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
+    const handleLoadMore = async () => {
+        if (isFetchingMore || !hasMore) return;
 
-            if (error) throw error;
+        setIsFetchingMore(true);
+        const nextBatchSize = notificationsBatch + 20;
 
-            // Apply filters: 5-minute delay for applications AND exclude all chat
-            const now = Date.now();
-            const filtered = (data || []).filter(notif => {
-                const isChat = notif.metadata?.is_chat || notif.metadata?.conversation_id || notif.title?.includes('Mensaje');
-                if (isChat) return false;
+        // El contexto se encargará de hacer el fetch y actualizar la lista visible
+        if (refreshNotifications) {
+            const data = await refreshNotifications(nextBatchSize);
+            setNotificationsBatch(nextBatchSize);
 
-                if (profile?.role === 'family' && notif.title?.includes('Postulación')) {
-                    const createdTime = new Date(notif.created_at).getTime();
-                    return createdTime < (now - 5 * 60 * 1000);
-                }
-                return true;
-            });
-
-            setNotifications(filtered);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        } finally {
-            setLoading(false); // Using loadingNotifications consistency
+            // Si la data devuelta es menor al nuevo tamaño solicitado, detuvimos la paginación
+            if (!data || data.length < nextBatchSize) {
+                setHasMore(false);
+            }
         }
+        setIsFetchingMore(false);
     };
 
-    // Add periodic refresh to the page too
-    useEffect(() => {
-        if (!user) return;
-        const interval = setInterval(fetchNotifications, 60000);
-        return () => clearInterval(interval);
-    }, [user]);
-
     const markAsRead = async (id) => {
-        try {
-            const { error } = await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('id', id);
-
-            if (error) throw error;
-            // Optimistic update
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-        } catch (error) {
-            console.error('Error marking as read:', error);
-        }
+        await contextMarkAsRead(id);
     };
 
     const markAllAsRead = async () => {
-        try {
-            const { error } = await supabase
-                .from('notifications')
-                .update({ is_read: true })
-                .eq('user_id', user.id)
-                .eq('is_read', false);
+        await markAllGeneralAsRead();
+    };
 
-            if (error) throw error;
-            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-        } catch (error) {
-            console.error('Error marking all as read:', error);
-        }
+    const handleDeleteAll = async () => {
+        if (!confirm('¿Estás seguro de que deseas eliminar todas las notificaciones? Esta acción no se puede deshacer.')) return;
+        await deleteAllGeneral();
     };
 
     const deleteNotification = async (id, e) => {
@@ -110,49 +100,92 @@ const Notifications = () => {
                 .eq('id', id);
 
             if (error) throw error;
-            setNotifications(prev => prev.filter(n => n.id !== id));
+            // El canal de real-time o el refresh automático actualizará la lista
+            if (refreshNotifications) refreshNotifications(notificationsBatch);
         } catch (error) {
             console.error('Error deleting notification:', error);
         }
     };
 
-    const handleNotificationClick = async (notification) => {
-        // 1. Mark as read first
+    const handleNotificationClick = (notification) => {
+        // 1. Mark as read (background)
         if (!notification.is_read) {
-            await markAsRead(notification.id);
+            markAsRead(notification.id);
         }
 
-        // 2. Smart Navigation based on metadata
         const metadata = notification.metadata || {};
-        const targetPath = metadata.target_path;
+        const isCaregiver = profile?.role === 'caregiver';
 
+        // 2. Specific Caregiver Redirections for resolving applications
+        if (isCaregiver) {
+            if (notification.title?.includes('Aceptada')) {
+                navigate('/caregiver/shifts');
+                return;
+            }
+            if (notification.title?.includes('Rechazada') || notification.title?.includes('Denegada') || notification.title?.includes('Cancelado')) {
+                navigate('/caregiver/jobs');
+                return;
+            }
+        }
+
+        // 3. Robust Detection: Application Received (Cuidado+ or Job Board) for Families
+        const isApplication =
+            metadata.notif_category === 'application' ||
+            notification.title?.includes('Postulación');
+
+        if (isApplication && !isCaregiver) {
+            if (profile?.subscription_status === 'active') {
+                navigate('/dashboard/pulso');
+            } else {
+                navigate('/dashboard');
+            }
+            return;
+        }
+
+        // 4. Smart Navigation for other types
+        const targetPath = metadata.target_path;
         if (targetPath) {
-            // Priority 1: Use explicit target_path if exists
-            // Fix: If it's a short path, prepend the role
             let finalPath = targetPath;
             if (targetPath === '/messages' || targetPath === '/calendar' || targetPath === '/dashboard') {
-                const rolePrefix = profile?.role === 'caregiver' ? '/caregiver' : '/dashboard';
+                const rolePrefix = isCaregiver ? '/caregiver' : '/dashboard';
                 if (targetPath === '/messages') finalPath = `${rolePrefix}/messages`;
-                else if (targetPath === '/calendar') finalPath = `${rolePrefix}/calendar`;
+                else if (targetPath === '/calendar') finalPath = isCaregiver ? '/caregiver/shifts' : '/dashboard/calendar';
                 else if (targetPath === '/dashboard') finalPath = rolePrefix;
             }
             navigate(finalPath);
         } else if (metadata.is_chat || metadata.conversation_id) {
-            // Priority 2: Chat notifications
-            navigate(profile?.role === 'caregiver' ? '/caregiver/messages' : '/dashboard/messages');
-        } else if (metadata.appointment_id) {
-            // Priority 3: Appointment related
-            navigate(profile?.role === 'caregiver' ? '/caregiver/shifts' : '/dashboard/calendar');
-        } else if (metadata.log_id) {
-            // Priority 4: Care logs / Routine Reports
-            // Only navigate to PULSO if the client is subscribed
-            if (profile?.role === 'family' && profile?.subscription_status !== 'active') {
-                navigate('/dashboard');
-            } else {
-                navigate('/dashboard/pulso');
-            }
+            navigate(isCaregiver ? '/caregiver/messages' : '/dashboard/messages');
         } else {
-            console.log("No smart path found for notification:", notification);
+            // 5. Cuidado+ Notifications: activities & wellness reports → BC Cuidado+
+            const isCuidadoPlusLog =
+                metadata.category === 'Plan de Cuidado' ||
+                metadata.category === 'Wellness' ||
+                notification.title?.includes('Tarea Completada') ||
+                notification.title?.includes('Reporte de Bienestar');
+
+            if (isCuidadoPlusLog && !isCaregiver) {
+                if (profile?.subscription_status === 'active') {
+                    navigate('/dashboard/pulso');
+                } else {
+                    navigate('/dashboard');
+                }
+            } else if (metadata.appointment_id) {
+                navigate(isCaregiver ? '/caregiver/shifts' : '/dashboard/calendar');
+            } else if (metadata.log_id) {
+                if (!isCaregiver && profile?.subscription_status !== 'active') {
+                    navigate('/dashboard');
+                } else {
+                    navigate(isCaregiver ? '/caregiver' : '/dashboard/pulso');
+                }
+            } else if (metadata.category === 'Plan de Cuidado' || metadata.category === 'Wellness') {
+                if (!isCaregiver && profile?.subscription_status !== 'active') {
+                    navigate('/dashboard');
+                } else {
+                    navigate(isCaregiver ? '/caregiver' : '/dashboard/pulso');
+                }
+            } else {
+                console.log("No smart path found for notification:", notification);
+            }
         }
     };
 
@@ -175,7 +208,7 @@ const Notifications = () => {
         return <Bell className="text-[var(--primary-color)]" size={20} />;
     };
 
-    if (loading) {
+    if (loading && notifications.length === 0) {
         return (
             <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-color)]"></div>
@@ -184,31 +217,44 @@ const Notifications = () => {
     }
 
     return (
-        <div className="container mx-auto max-w-4xl">
-            <div className="flex justify-between items-center mb-6">
+        <div className="container mx-auto max-w-4xl px-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Notificaciones</h1>
-                    <p className="text-gray-500 text-sm">Mantente al día con tus actividades</p>
+                    <h1 className="text-2xl font-bold text-gray-800">Centro de Notificaciones</h1>
+                    <p className="text-gray-500 text-sm">Gestiona tus comunicaciones y alertas</p>
                 </div>
-                {notifications.some(n => !n.is_read) && (
-                    <button
-                        onClick={markAllAsRead}
-                        className="text-sm text-[var(--primary-color)] font-bold hover:underline flex items-center gap-2"
-                    >
-                        <Check size={16} />
-                        Marcar todas como leídas
-                    </button>
-                )}
+                <div className="flex flex-wrap items-center gap-3">
+                    {notifications.length > 0 && (
+                        <button
+                            onClick={handleDeleteAll}
+                            className="text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-50 px-4 py-2 rounded-full hover:bg-red-100 transition-colors flex items-center gap-2"
+                        >
+                            <Trash2 size={12} />
+                            Limpiar todo
+                        </button>
+                    )}
+                    {notifications.some(n => !n.is_read) && (
+                        <button
+                            onClick={markAllAsRead}
+                            className="text-[10px] font-black uppercase tracking-widest text-[var(--primary-color)] bg-green-50 px-4 py-2 rounded-full hover:bg-green-100 transition-colors flex items-center gap-2"
+                        >
+                            <Check size={12} />
+                            Leer todo
+                        </button>
+                    )}
+                </div>
             </div>
 
             {notifications.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-[16px] shadow-sm">
-                    <Bell size={48} className="mx-auto text-gray-300 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900">Sin notificaciones</h3>
-                    <p className="text-gray-500">No tienes alertas pendientes por ahora.</p>
+                <div className="text-center py-20 bg-white rounded-[24px] shadow-sm border border-gray-100">
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Bell size={32} className="text-gray-300" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Tu buzón está vacío</h3>
+                    <p className="text-gray-500 max-w-xs mx-auto text-sm mt-1">No tienes alertas pendientes. ¡Buen trabajo!</p>
                 </div>
             ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                     {notifications.map((notification) => (
                         <div
                             key={notification.id}
@@ -221,7 +267,7 @@ const Notifications = () => {
                         >
                             <div className="flex items-start gap-4">
                                 <div className="mt-1 flex-shrink-0">
-                                    {getIcon(notification.type)}
+                                    {getIcon(notification)}
                                 </div>
                                 <div className="flex-grow">
                                     <div className="flex justify-between items-start">
@@ -273,6 +319,31 @@ const Notifications = () => {
                             </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {hasMore && notifications.length > 0 && (
+                <div className="mt-10 flex justify-center pb-12">
+                    <button
+                        onClick={handleLoadMore}
+                        disabled={isFetchingMore}
+                        className="
+                            px-8 py-3 rounded-full bg-white border border-gray-200 
+                            text-[10px] font-black uppercase tracking-[0.2em] text-gray-400
+                            hover:border-[var(--primary-color)] hover:text-[var(--primary-color)] 
+                            transition-all shadow-sm hover:shadow-md disabled:opacity-50
+                            flex items-center gap-2
+                        "
+                    >
+                        {isFetchingMore ? (
+                            <>
+                                <div className="w-3 h-3 border-2 border-[var(--primary-color)] border-t-transparent rounded-full animate-spin"></div>
+                                Cargando...
+                            </>
+                        ) : (
+                            'Cargar más notificaciones'
+                        )}
+                    </button>
                 </div>
             )}
         </div>

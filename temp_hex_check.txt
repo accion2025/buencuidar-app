@@ -1,0 +1,20 @@
+﻿                                                        'HeartPulse': HeartPulse,
+                                                        'Accessibility': Accessibility,
+                                                        'HandHeart': HandHeart,
+                                                        'Coffee': Coffee
+                                                    };
+
+                                                    // 3. Group Agenda Items by Category
+                                                    if (agendaItems.length > 0) {
+                                                        const groupedAgenda = {};
+
+                                                        agendaItems.forEach(item => {
+                                                            const activityName = typeof item === 'string' ? item : (item.activity_name || item.activity || item.name);
+                                                            const cleanName = cleanActionName(activityName);
+
+                                                            // Match category from official CARE_AGENDA_CATEGORIES or infer from item
+                                                            let category = CARE_AGENDA_CATEGORIES.find(cat =>
+                                                                (item.category_id === cat.id) ||
+                                                                (cat.activities && cat.activities.some(a => activityName.toLowerCase().includes(a.toLowerCase())))
+                                                            );
+

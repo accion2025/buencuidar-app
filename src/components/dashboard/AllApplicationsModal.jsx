@@ -54,15 +54,15 @@ const AllApplicationsModal = ({ isOpen, onClose, applications }) => {
                                 </div>
 
                                 <div className="flex items-center sm:flex-col sm:items-end justify-between sm:justify-center gap-2">
-                                    <span className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest ${app.status === 'approved' && app.appointment?.status !== 'cancelled' ? 'bg-green-100 text-green-700' :
+                                    <span className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest ${app.status === 'accepted' && app.appointment?.status !== 'cancelled' ? 'bg-green-100 text-green-700' :
                                         app.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                            (app.status === 'approved' && app.appointment?.status === 'cancelled') ? 'bg-orange-100 text-orange-800' :
+                                            (app.status === 'accepted' && app.appointment?.status === 'cancelled') ? 'bg-orange-100 text-orange-800' :
                                                 (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'bg-gray-200 text-gray-600' :
                                                     'bg-yellow-100 text-yellow-700'
                                         }`}>
-                                        {app.status === 'approved' && app.appointment?.status !== 'cancelled' ? 'Aprobada' :
+                                        {app.status === 'accepted' && app.appointment?.status !== 'cancelled' ? 'Aprobada' :
                                             app.status === 'rejected' ? 'Denegada' :
-                                                (app.status === 'approved' && app.appointment?.status === 'cancelled') ? 'Servicio Cancelado' :
+                                                (app.status === 'accepted' && app.appointment?.status === 'cancelled') ? 'Servicio Cancelado' :
                                                     (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'Cancelada/Exp' : 'Pendiente'}
                                     </span>
                                     <span className="text-[10px] text-gray-400 font-mono">

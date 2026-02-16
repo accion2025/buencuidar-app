@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';
+import { usePermissions } from '../../hooks/usePermissions';
 import { supabase } from '../../lib/supabase';
 import AppointmentsListModal from '../../components/dashboard/AppointmentsListModal';
 import EditAppointmentModal from '../../components/dashboard/EditAppointmentModal'; // New Import
@@ -102,10 +103,13 @@ import RateCaregiverModal from '../../components/dashboard/RateCaregiverModal';
 const DashboardOverview = () => {
     const { profile, user } = useAuth();
     const { notifications, markAsRead } = useNotifications();
+    const { can } = usePermissions();
     const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);
     const [patients, setPatients] = useState([]);
     const [caregiversCount, setCaregiversCount] = useState(0);
+
+    const [activeAlert, setActiveAlert] = useState(null);
 
     // Modals State
     const [showListModal, setShowListModal] = useState(false);
@@ -118,16 +122,57 @@ const DashboardOverview = () => {
     const firstName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase();
 
     useEffect(() => {
-        if (user) {
+        if (user && profile?.id) {
             const loadData = async () => {
                 await cleanupExpiredJobs();
                 fetchAppointments();
                 fetchPatients();
                 fetchCaregiversCount();
+
+                // Fetch INITIAL active alerts
+                const { data: initialAlerts } = await supabase
+                    .from('emergency_alerts')
+                    .select('*')
+                    .eq('client_id', profile.id)
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (initialAlerts && initialAlerts.length > 0) {
+                    setActiveAlert(initialAlerts[0]);
+                }
             };
             loadData();
+
+            // Realtime Subscription for Emergency Alerts
+            const alertsChannel = supabase
+                .channel(`dashboard-alerts-${profile.id}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'emergency_alerts',
+                        filter: `client_id=eq.${profile.id}`
+                    },
+                    (payload) => {
+                        console.log('🔔 Cambio en Alerta detectado:', payload);
+                        if (payload.eventType === 'INSERT' && payload.new.status === 'active') {
+                            setActiveAlert(payload.new);
+                        } else if (payload.eventType === 'UPDATE' && payload.new.status === 'resolved') {
+                            setActiveAlert(null);
+                        } else if (payload.eventType === 'DELETE') {
+                            setActiveAlert(null);
+                        }
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(alertsChannel);
+            };
         }
-    }, [user]);
+    }, [user, profile?.id]);
 
     const cleanupExpiredJobs = async () => {
         try {
@@ -249,6 +294,7 @@ const DashboardOverview = () => {
                     )
                 `)
                 .eq('client_id', user.id)
+                .neq('type', 'Cuidado+') // EXCLUDE Cuidado+ services (Shown only in Cuidado+ Panel)
                 .order('date', { ascending: false });
 
 
@@ -363,7 +409,6 @@ const DashboardOverview = () => {
                 throw new Error("No se encontró el ID del cuidador en la solicitud.");
             }
             if (isApproved) {
-                // 1. Confirm the appointment with this caregiver
                 const { error: appError } = await supabase
                     .from('appointments')
                     .update({
@@ -376,7 +421,7 @@ const DashboardOverview = () => {
 
                 if (appError) throw appError;
 
-                // 2. Mark this application as approved
+                // 2. Mark this application as approved (MATCHING DB CONSTRAINT)
                 const { error: jobError } = await supabase
                     .from('job_applications')
                     .update({ status: 'approved' })
@@ -475,7 +520,7 @@ const DashboardOverview = () => {
 
     // Filter appointments for "Citas en curso"
     const inProgressAppointments = appointments.filter(a =>
-        a.status === 'in_progress' && a.date === todayLocal
+        a.status === 'in_progress' && a.date === todayLocal && a.type !== 'Cuidado+'
     );
 
     // Filter appointments for "Próximas Visitas" (Confirmed)
@@ -484,6 +529,7 @@ const DashboardOverview = () => {
         .filter(a => {
             if (a.status === 'cancelled') return false;
             if (a.date < todayLocal) return false;
+            if (a.type === 'Cuidado+') return false;
 
             // If it's today, check if it already finished
             if (a.date === todayLocal) {
@@ -492,6 +538,9 @@ const DashboardOverview = () => {
                 const endTime = a.end_time || a.time;
                 if (endTime < currentTime) return false;
             }
+
+            // Exclude appointments already in progress
+            if (a.status === 'in_progress') return false;
 
             return (a.status === 'confirmed' || a.status === 'pending');
         })
@@ -596,11 +645,13 @@ const DashboardOverview = () => {
             const isExpiredPending = a.status === 'pending' && (a.date < todayLocal || (a.date === todayLocal && endTime < currentTime));
 
             return (
-                a.status === 'cancelled' ||
-                a.status === 'completed' ||
-                a.status === 'paid' ||
-                isExpiredPending ||
-                (a.status === 'confirmed' && a.date < todayLocal)
+                a.type !== 'Cuidado+' && (
+                    a.status === 'cancelled' ||
+                    a.status === 'completed' ||
+                    a.status === 'paid' ||
+                    isExpiredPending ||
+                    (a.status === 'confirmed' && a.date < todayLocal)
+                )
             );
         })
         .sort((a, b) => {
@@ -641,6 +692,7 @@ const DashboardOverview = () => {
         return (
             (a.status === 'confirmed' || a.status === 'pending' || a.status === 'in_progress') &&
             a.status !== 'cancelled' &&
+            a.type !== 'Cuidado+' &&
             !isPastDate &&
             !isExpiredToday
         );
@@ -686,6 +738,27 @@ const DashboardOverview = () => {
             />
 
             <div className="max-w-7xl mx-auto animate-fade-in relative pb-12">
+                {/* Emergency Alert Banner */}
+                {activeAlert && (
+                    <div className="mb-10 bg-red-600 !text-white p-6 rounded-[24px] shadow-2xl animate-pulse flex flex-col md:flex-row items-center justify-between gap-6 border-4 border-red-500/50">
+                        <div className="flex items-center gap-6">
+                            <div className="bg-white/20 p-4 rounded-2xl">
+                                <AlertTriangle size={32} className="text-white" />
+                            </div>
+                            <div className="text-left">
+                                <h3 className="font-black text-2xl uppercase tracking-wider mb-1">¡ALERTA DE EMERGENCIA ACTIVA!</h3>
+                                <p className="text-red-50 opacity-90 font-medium">El cuidador ha activado una alerta de emergencia para {activeAlert.patient_name || 'un familiar'}.</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => navigate('/dashboard/pulso')}
+                            className="bg-white text-red-600 px-8 py-4 rounded-xl font-black uppercase tracking-widest text-sm hover:bg-red-50 transition-all shadow-lg active:scale-95 flex items-center gap-3"
+                        >
+                            VER EN PULSO <Activity size={18} />
+                        </button>
+                    </div>
+                )}
+
                 <div className="bg-gradient-to-br from-[var(--primary-color)] to-[#1a5a70] rounded-[16px] p-10 !text-[#FAFAF7] shadow-2xl relative overflow-hidden mb-12">
                     <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--secondary-color)] rounded-full -translate-y-1/2 translate-x-1/2 blur-[120px] opacity-20"></div>
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[100px] opacity-10"></div>
@@ -740,7 +813,13 @@ const DashboardOverview = () => {
                                         <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Servicio en Curso</h3>
                                     </div>
                                     <button
-                                        onClick={() => navigate('/dashboard/pulso')}
+                                        onClick={() => {
+                                            if (can('accessMonitoring')) {
+                                                navigate('/dashboard/pulso');
+                                            } else {
+                                                navigate('/dashboard/plans');
+                                            }
+                                        }}
                                         className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline flex items-center gap-2"
                                     >
                                         Ver en PULSO <Activity size={14} />
@@ -1003,7 +1082,7 @@ const DashboardOverview = () => {
 
                             <div className="space-y-6 relative z-10">
                                 {appointments
-                                    .filter(a => a.caregiver_id === null) // Solamente ofertas de la bolsa
+                                    .filter(a => a.caregiver_id === null && a.status !== 'cancelled') // Solamente ofertas activas de la bolsa
                                     .flatMap(a =>
                                         (a.job_applications || [])
                                             .filter(app => {
@@ -1151,7 +1230,9 @@ const DashboardOverview = () => {
 
                             <div className="space-y-8 relative z-10">
                                 {(() => {
-                                    const taskNotifications = notifications.filter(notif => notif.metadata?.log_id);
+                                    const taskNotifications = notifications
+                                        .filter(notif => notif.metadata?.log_id && notif.metadata?.target_path !== '/dashboard/pulso')
+                                        .slice(0, 5);
                                     return taskNotifications.length > 0 ? (
                                         taskNotifications.map((notif) => (
                                             <div key={notif.id} className={`flex gap-5 items-start animate-fade-in transition-all ${notif.is_read ? 'opacity-40 grayscale-[0.5]' : 'hover:scale-[1.02]'}`}>

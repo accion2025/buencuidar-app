@@ -168,7 +168,7 @@ const Register = () => {
                                     </div>
                                     <div>
                                         <h3 className={`font-bold uppercase tracking-widest text-xs ${formData.role === 'family' ? 'text-[var(--primary-color)]' : 'text-gray-500'}`}>Busco Cuidado</h3>
-                                        <p className="text-[10px] text-gray-400 font-secondary mt-1">Para familias y pacientes</p>
+                                        <p className="text-[10px] text-gray-400 font-secondary mt-1">Para familias y personas atendidas</p>
                                     </div>
                                 </button>
 
