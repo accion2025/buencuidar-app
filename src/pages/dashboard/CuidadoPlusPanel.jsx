@@ -783,7 +783,7 @@ const CuidadoPlusPanel = () => {
                             <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
                         </span>
                     )}
-                    Agenda de Cuidado Cuidado+ Sincronizada
+                    Agenda de Cuidado+
                 </h2>
                 {inProgressServices.length > 0 ? (
                     <div className="grid lg:grid-cols-1 gap-8">
