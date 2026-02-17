@@ -7,7 +7,7 @@ import { useNotifications } from '../../context/NotificationContext';
 import { usePermissions } from '../../hooks/usePermissions';
 
 const Notifications = () => {
-    const { profile } = useAuth();
+    const { user, profile } = useAuth();
     const { can } = usePermissions();
     const {
         notifications: contextNotifications,
