@@ -114,7 +114,7 @@ BEGIN
             notif_title := '❌ Solicitud Denegada';
             notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' no puede aceptar tu solicitud.';
             notif_type := 'alert';
-            target_path := '/dashboard';
+            target_path := '/search';
 
         -- CASO 3: Turno Confirmado es CANCELADO (Notificar al Cuidador - Logica original simplificada)
         ELSIF NEW.status = 'cancelled' AND OLD.status = 'confirmed' THEN
@@ -233,8 +233,9 @@ DECLARE
     caregiver_name TEXT;
     notif_title TEXT := '✅ Informe de Rutinas';
     notif_message TEXT;
+    is_pulso BOOLEAN;
 BEGIN
-    SELECT client_id INTO target_client_id FROM appointments WHERE id = NEW.appointment_id;
+    SELECT client_id, (type = 'Cuidado+') INTO target_client_id, is_pulso FROM appointments WHERE id = NEW.appointment_id;
     SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
 
     IF target_client_id IS NOT NULL THEN
@@ -255,7 +256,7 @@ BEGIN
                 'log_id', NEW.id,
                 'appointment_id', NEW.appointment_id,
                 'is_priority', (NEW.category IN ('Alerta', 'Emergencia')),
-                'target_path', '/dashboard/pulso'
+                'target_path', CASE WHEN is_pulso THEN '/dashboard/pulso' ELSE '/dashboard' END
             )
         );
     END IF;
@@ -350,6 +351,38 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 8. NOTIFICAR CANCELACIÓN (Asegurar Redirección a Bolsa de Trabajo)
+CREATE OR REPLACE FUNCTION notify_caregiver_on_appointment_cancel()
+RETURNS TRIGGER AS $$
+DECLARE
+    day_str TEXT;
+BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status AND NEW.status = 'cancelled' AND NEW.caregiver_id IS NOT NULL THEN
+        day_str := to_char(NEW.date, 'DD/MM/YYYY');
+        
+        INSERT INTO notifications (user_id, type, title, message, metadata)
+        VALUES (
+            NEW.caregiver_id,
+            'error',
+            '❌ Turno Cancelado',
+            'El cliente ha cancelado el turno del día ' || day_str || ': "' || NEW.title || '".',
+            jsonb_build_object(
+                'appointment_id', NEW.id,
+                'service_group_id', NEW.service_group_id,
+                'target_path', '/caregiver/jobs'
+            )
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS tr_notify_on_appointment_cancel ON appointments;
+CREATE TRIGGER tr_notify_on_appointment_cancel
+    AFTER UPDATE ON appointments
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_caregiver_on_appointment_cancel();
  
 DROP TRIGGER IF EXISTS tr_notify_application_status ON job_applications;
 CREATE TRIGGER tr_notify_application_status AFTER UPDATE ON job_applications FOR EACH ROW EXECUTE FUNCTION notify_on_application_status_update();

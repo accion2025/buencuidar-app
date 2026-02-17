@@ -34,21 +34,20 @@ Para todos los tipos de notificaciones mencionados, se establece la siguiente re
 
 *   **Redirección Inteligente**: Al hacer clic o "pinchar" sobre una notificación, la aplicación redirigirá automáticamente al usuario a la sección o página específica relacionada con el evento (por ejemplo, al detalle de la cita, al perfil del cuidador o a la bitácora PULSO).---
 
-## 4. Tabla de Redireccionamiento 📍
+## 4. Matriz de Redirección (Actualizada V1.0.15) 📍
 
-La siguiente tabla resume el destino al que será dirigido el usuario al interactuar con cada tipo de notificación:
-
-| Perfil | Tipo de Notificación | Destino (Página) |
-| :--- | :--- | :--- |
-| **FAMILIA** | Postulación a una cita publicada | DASHBOARD |
-| **FAMILIA** | Respuesta a solicitud hecha a un cuidador | DASHBOARD |
-| **FAMILIA** | Actividad completada por el cuidador | BC PULSO |
-| **FAMILIA** | Recepción de reporte de bienestar | BC PULSO |
-| **CUIDADOR** | Aprobación o denegación de postulación | BOLSA DE TRABAJO |
-| **CUIDADOR** | Aviso de cancelación de cita | BOLSA DE TRABAJO |
-| **CUIDADOR** | Cambio de fecha u hora en una cita | MIS TURNOS / PRÓXIMOS |
-| **CUIDADOR** | Cambio de agenda de cuidado | MIS TURNOS / PRÓXIMOS |
-| **CUIDADOR** | Solicitud directa de usuario familia | DASHBOARD |
-| **FAMILIA** | Confirmación: Cuidador vio aviso de cancelación | DASHBOARD |
-| **FAMILIA** | Confirmación: Cuidador vio cambio de fecha/hora | DASHBOARD |
-| **FAMILIA** | Confirmación: Cuidador vio cambio de agenda | DASHBOARD |
+| Perfil | Notificación | Suscripción / Servicio | Destino (Página) |
+| :--- | :--- | :--- | :--- |
+| **FAMILIA** | Nueva postulación a cita | Básico / Pulso | **DASHBOARD** |
+| **FAMILIA** | Solicitud Aceptada | Básico / Pulso | **DASHBOARD** |
+| **FAMILIA** | Solicitud Denegada | Básico / Pulso | **BUSCADOR** |
+| **FAMILIA** | Tarea completada | **PULSO** | **BC PULSO** |
+| **FAMILIA** | Reporte de Bienestar | **PULSO** | **BC PULSO** |
+| **FAMILIA** | Tarea completada | **Básico** | **DASHBOARD** |
+| **FAMILIA** | Confirmación de lectura del cuidador | Básico / Pulso | **DASHBOARD** |
+| **CUIDADOR** | Postulación **Aprobada** | N/A | **MIS TURNOS** |
+| **CUIDADOR** | Postulación **Denegada** | N/A | **BOLSA DE TRABAJO** |
+| **CUIDADOR** | Turno Cancelado | N/A | **BOLSA DE TRABAJO** |
+| **CUIDADOR** | Turno Reprogramado (Fecha/Hora) | N/A | **MIS TURNOS** |
+| **CUIDADOR** | Cambio en Agenda de Cuidado | N/A | **MIS TURNOS** |
+| **CUIDADOR** | Nueva Solicitud Directa | N/A | **DASHBOARD** |

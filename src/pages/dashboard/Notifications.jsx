@@ -124,8 +124,12 @@ const Notifications = () => {
         // 3. Fallback Redirection Logic (Legacy or missing target_path) based on V1.0.7 Policy
         if (!isCaregiver) {
             // Role: FAMILY
-            if (metadata.notif_category === 'application' || notification.title?.includes('Solicitud')) {
+            if (metadata.notif_category === 'application' || notification.title?.includes('Postulación') || notification.title?.includes('Aceptada')) {
                 navigate('/dashboard');
+                return;
+            }
+            if (notification.title?.includes('Denegada')) {
+                navigate('/search');
                 return;
             }
             if (metadata.log_id || notification.title?.includes('Tarea') || notification.title?.includes('Bienestar')) {
@@ -139,11 +143,11 @@ const Notifications = () => {
             navigate('/dashboard'); // Default Family
         } else {
             // Role: CAREGIVER
-            if (notification.title?.includes('Postulación') || notification.title?.includes('Cancelado')) {
+            if (notification.title?.includes('Denegada') || notification.title?.includes('Cancelado')) {
                 navigate('/caregiver/jobs');
                 return;
             }
-            if (metadata.notif_category === 'reprogramming' || metadata.notif_category === 'agenda_change' || notification.title?.includes('Turno') || notification.title?.includes('Agenda')) {
+            if (metadata.notif_category === 'reprogramming' || metadata.notif_category === 'agenda_change' || notification.title?.includes('Aprobada') || notification.title?.includes('Turno') || notification.title?.includes('Agenda')) {
                 navigate('/caregiver/shifts');
                 return;
             }
