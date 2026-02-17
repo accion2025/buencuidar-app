@@ -193,7 +193,6 @@ const MonitoringCenter = () => {
                 .select('id, date, time, end_time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
                 .eq('client_id', profile.id)
                 .eq('status', 'in_progress')
-                .neq('type', 'Cuidado+')
                 .limit(1);
 
             if (ipError) throw ipError;
@@ -207,7 +206,6 @@ const MonitoringCenter = () => {
                     .select('id, date, time, end_time, status, caregiver_id, details, care_agenda, title, patient_id, familiar:patients(full_name)')
                     .eq('client_id', profile.id)
                     .in('status', ['confirmed'])
-                    .neq('type', 'Cuidado+')
                     .gte('date', today)
                     .order('date', { ascending: true })
                     .order('time', { ascending: true })
@@ -322,7 +320,6 @@ const MonitoringCenter = () => {
                 .from('appointments')
                 .select('date, time, end_time, status')
                 .eq('client_id', profile.id)
-                .neq('type', 'Cuidado+');
 
             if (appsError) throw appsError;
 
