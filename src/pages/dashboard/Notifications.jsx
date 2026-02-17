@@ -115,77 +115,49 @@ const Notifications = () => {
         const metadata = notification.metadata || {};
         const isCaregiver = profile?.role === 'caregiver';
 
-        // 2. Specific Category Redirections (New v1.0 Policies)
-        if (metadata.notif_category === 'application' && !isCaregiver) {
-            navigate(profile?.subscription_status === 'active' ? '/dashboard/monitoring' : '/dashboard');
+        // 2. High Priority: Use target_path from metadata if it exists
+        if (metadata.target_path) {
+            navigate(metadata.target_path);
             return;
         }
 
-        if (isCaregiver) {
-            if (notification.title?.includes('Aceptada') || notification.title?.includes('Aprobada')) {
-                navigate('/caregiver/shifts');
+        // 3. Fallback Redirection Logic (Legacy or missing target_path) based on V1.0.7 Policy
+        if (!isCaregiver) {
+            // Role: FAMILY
+            if (metadata.notif_category === 'application' || notification.title?.includes('Solicitud')) {
+                navigate('/dashboard');
                 return;
             }
-            if (notification.title?.includes('Rechazada') || notification.title?.includes('Denegada') || notification.title?.includes('Cancelado')) {
+            if (metadata.log_id || notification.title?.includes('Tarea') || notification.title?.includes('Bienestar')) {
+                navigate('/dashboard/pulso');
+                return;
+            }
+            if (metadata.is_chat || metadata.conversation_id) {
+                navigate('/dashboard/messages');
+                return;
+            }
+            navigate('/dashboard'); // Default Family
+        } else {
+            // Role: CAREGIVER
+            if (notification.title?.includes('Postulación') || notification.title?.includes('Cancelado')) {
                 navigate('/caregiver/jobs');
                 return;
             }
-            if (notification.title?.includes('Calificación')) {
-                navigate('/caregiver');
-                return;
-            }
-            if (metadata.notif_category === 'reprogramming' || metadata.notif_category === 'agenda_change') {
+            if (metadata.notif_category === 'reprogramming' || metadata.notif_category === 'agenda_change' || notification.title?.includes('Turno') || notification.title?.includes('Agenda')) {
                 navigate('/caregiver/shifts');
                 return;
             }
-        }
-
-        // 4. Smart Navigation for other types
-        const targetPath = metadata.target_path;
-        if (targetPath) {
-            let finalPath = targetPath;
-            if (targetPath === '/messages' || targetPath === '/calendar' || targetPath === '/dashboard') {
-                const rolePrefix = isCaregiver ? '/caregiver' : '/dashboard';
-                if (targetPath === '/messages') finalPath = `${rolePrefix}/messages`;
-                else if (targetPath === '/calendar') finalPath = isCaregiver ? '/caregiver/shifts' : '/dashboard/calendar';
-                else if (targetPath === '/dashboard') finalPath = rolePrefix;
+            if (notification.title?.includes('Solicitud')) {
+                navigate('/caregiver');
+                return;
             }
-            navigate(finalPath);
-        } else if (metadata.is_chat || metadata.conversation_id) {
-            navigate(isCaregiver ? '/caregiver/messages' : '/dashboard/messages');
-        } else {
-            // 5. BC PULSO Notifications: activities & wellness reports → Monitoring Center
-            const isPulsoLog =
-                metadata.category === 'Plan de Cuidado' ||
-                metadata.category === 'Wellness' ||
-                notification.title?.includes('Tarea Completada') ||
-                notification.title?.includes('Reporte de Bienestar');
-
-            if (isPulsoLog && !isCaregiver) {
-                if (profile?.subscription_status === 'active') {
-                    navigate('/dashboard/monitoring');
-                } else {
-                    navigate('/dashboard');
-                }
-            } else if (metadata.appointment_id) {
-                navigate(isCaregiver ? '/caregiver/shifts' : '/dashboard/calendar');
-            } else if (metadata.log_id) {
-                if (!isCaregiver && profile?.subscription_status !== 'active') {
-                    navigate('/dashboard');
-                } else {
-                    navigate(isCaregiver ? '/caregiver' : '/dashboard/monitoring');
-                }
-            } else if (metadata.category === 'Plan de Cuidado' || metadata.category === 'Wellness') {
-                if (!isCaregiver && profile?.subscription_status !== 'active') {
-                    navigate('/dashboard');
-                } else {
-                    navigate(isCaregiver ? '/caregiver' : '/dashboard/monitoring');
-                }
-            } else {
-                console.log("No smart path found for notification:", notification);
+            if (metadata.is_chat || metadata.conversation_id) {
+                navigate('/caregiver/messages');
+                return;
             }
+            navigate('/caregiver'); // Default Caregiver
         }
-    };
+    }; bauu
 
     const getPriorityColor = (priority, type) => {
         if (priority === 'high' || type === 'alert') return 'bg-red-50 border-l-4 border-red-500';

@@ -1,0 +1,134 @@
+-- 20260217110000_update_notification_targets.sql
+-- Updates target_path in notification triggers to match v1.0.7 redirection policies.
+
+-- 1. Update Family Notification Targets
+CREATE OR REPLACE FUNCTION notify_family_on_new_application()
+RETURNS TRIGGER AS $$
+DECLARE
+    target_client_id UUID;
+    appointment_title TEXT;
+BEGIN
+    SELECT client_id, title INTO target_client_id, appointment_title
+    FROM appointments 
+    WHERE id = NEW.appointment_id;
+
+    IF target_client_id IS NOT NULL THEN
+        INSERT INTO notifications (user_id, type, title, message, metadata)
+        VALUES (
+            target_client_id,
+            'info',
+            '📄 Nueva Postulación',
+            'Has recibido una nueva postulación para: "' || appointment_title || '"',
+            jsonb_build_object(
+                'appointment_id', NEW.appointment_id,
+                'application_id', NEW.id,
+                'notif_category', 'application',
+                'target_path', '/dashboard' -- Changed from conditional to fixed Dashbaord
+            )
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 2. Update Caregiver Notification Targets
+CREATE OR REPLACE FUNCTION notify_caregiver_on_application_status_change()
+RETURNS TRIGGER AS $$
+DECLARE
+    appointment_title TEXT;
+BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status AND NEW.status IN ('approved', 'rejected') THEN
+        SELECT title INTO appointment_title FROM appointments WHERE id = NEW.appointment_id;
+
+        INSERT INTO notifications (user_id, type, title, message, metadata)
+        VALUES (
+            NEW.caregiver_id,
+            CASE WHEN NEW.status = 'approved' THEN 'success' ELSE 'error' END,
+            CASE WHEN NEW.status = 'approved' THEN '✅ Postulación Aprobada' ELSE '🚫 Postulación Denegada' END,
+            CASE 
+                WHEN NEW.status = 'approved' THEN 'Tu postulación para "' || appointment_title || '" ha sido aceptada.'
+                ELSE 'Lo sentimos, tu postulación para "' || appointment_title || '" no fue seleccionada.'
+            END,
+            jsonb_build_object(
+                'appointment_id', NEW.appointment_id,
+                'status', NEW.status,
+                'target_path', '/caregiver/jobs' -- Both approved/denied go to Jobs board per policy
+            )
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 3. Update Care Log Targets (Activity/Wellness -> BC PULSO)
+CREATE OR REPLACE FUNCTION notify_client_on_care_log_insert()
+RETURNS TRIGGER AS $$
+DECLARE
+    target_client_id UUID;
+    caregiver_name TEXT;
+    is_priority_alert BOOLEAN := false;
+    notif_title TEXT;
+    notif_message TEXT;
+    notif_type TEXT := 'success';
+    recent_count INTEGER;
+BEGIN
+    SELECT client_id INTO target_client_id FROM appointments WHERE id = NEW.appointment_id;
+    SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
+
+    IF target_client_id IS NULL THEN RETURN NEW; END IF;
+
+    IF NEW.category IN ('Alerta', 'Emergencia') THEN
+        notif_type := 'alert';
+        notif_title := '⚠️ Alerta de Cuidado';
+        notif_message := 'El cuidador ' || COALESCE(caregiver_name, 'Asignado') || ' ha reportado: ' || NEW.action;
+        is_priority_alert := true;
+    ELSIF NEW.category = 'Wellness' THEN
+        SELECT count(*) INTO recent_count FROM notifications 
+        WHERE user_id = target_client_id AND title = '🧘 Reporte de Bienestar'
+        AND (metadata->>'appointment_id')::uuid = NEW.appointment_id
+        AND created_at > NOW() - INTERVAL '30 seconds';
+        IF recent_count > 0 THEN RETURN NEW; END IF;
+        notif_type := 'info';
+        notif_title := '🧘 Reporte de Bienestar';
+        notif_message := COALESCE(caregiver_name, 'El cuidador') || ' ha registrado el estado de bienestar.';
+    ELSE
+        notif_type := 'success';
+        notif_title := '✅ Tarea Completada';
+        notif_message := COALESCE(caregiver_name, 'El cuidador') || ' completó: ' || NEW.action;
+    END IF;
+
+    INSERT INTO notifications (user_id, type, title, message, metadata)
+    VALUES (
+        target_client_id,
+        notif_type,
+        notif_title,
+        notif_message,
+        jsonb_build_object(
+            'appointment_id', NEW.appointment_id,
+            'log_id', NEW.id,
+            'target_path', '/dashboard/pulso' -- Standard target for all Pulse activities
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 4. Notify Caregiver on Direct Request (Family -> Cuidador)
+-- Ensure direct requests lead to Caregiver Dashboard
+CREATE OR REPLACE FUNCTION notify_caregiver_on_direct_request()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO notifications (user_id, type, title, message, metadata)
+    VALUES (
+        NEW.caregiver_id,
+        'info',
+        '📩 Nueva Solicitud Directa',
+        'Has recibido una solicitud de trabajo. ¡Revisa los detalles!',
+        jsonb_build_object(
+            'appointment_id', NEW.appointment_id,
+            'target_path', '/caregiver' -- Caregiver Dashboard
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;bauu
