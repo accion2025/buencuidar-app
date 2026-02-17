@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, Check, Trash2, Clock, AlertCircle, MessageSquare, ChevronRight, UserPlus, CheckCircle, XCircle } from 'lucide-react';
+import { Bell, Check, Trash2, Clock, AlertCircle, MessageSquare, ChevronRight, UserPlus, CheckCircle, XCircle, Star, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
 
@@ -85,7 +84,7 @@ const Notifications = () => {
     };
 
     const handleDeleteAll = async () => {
-        if (!confirm('¿Estás seguro de que deseas eliminar todas las notificaciones? Esta acción no se puede deshacer.')) return;
+        if (!confirm('¿Estás seguro de que deseas eliminar todas las notificaciones? Esta acción no se puede rehacer.')) return;
         await deleteAllGeneral();
     };
 
@@ -116,9 +115,14 @@ const Notifications = () => {
         const metadata = notification.metadata || {};
         const isCaregiver = profile?.role === 'caregiver';
 
-        // 2. Specific Caregiver Redirections for resolving applications
+        // 2. Specific Category Redirections (New v1.0 Policies)
+        if (metadata.notif_category === 'application' && !isCaregiver) {
+            navigate(profile?.subscription_status === 'active' ? '/dashboard/pulso' : '/dashboard');
+            return;
+        }
+
         if (isCaregiver) {
-            if (notification.title?.includes('Aceptada')) {
+            if (notification.title?.includes('Aceptada') || notification.title?.includes('Aprobada')) {
                 navigate('/caregiver/shifts');
                 return;
             }
@@ -126,20 +130,10 @@ const Notifications = () => {
                 navigate('/caregiver/jobs');
                 return;
             }
-        }
-
-        // 3. Robust Detection: Application Received (Cuidado+ or Job Board) for Families
-        const isApplication =
-            metadata.notif_category === 'application' ||
-            notification.title?.includes('Postulación');
-
-        if (isApplication && !isCaregiver) {
-            if (profile?.subscription_status === 'active') {
-                navigate('/dashboard/pulso');
-            } else {
-                navigate('/dashboard');
+            if (notification.title?.includes('Calificación')) {
+                navigate('/caregiver');
+                return;
             }
-            return;
         }
 
         // 4. Smart Navigation for other types
@@ -198,13 +192,16 @@ const Notifications = () => {
     const getIcon = (notification) => {
         const type = notification.type;
         const meta = notification.metadata || {};
+        const title = notification.title || '';
 
-        if (meta.type === 'request_received') return <UserPlus className="text-blue-500" size={20} />;
-        if (notification.title?.includes('Aceptada')) return <CheckCircle className="text-green-500" size={20} />;
-        if (notification.title?.includes('Rechazada') || notification.title?.includes('Denegada') || notification.title?.includes('Cancelado')) return <XCircle className="text-red-500" size={20} />;
+        if (meta.type === 'request_received' || meta.notif_category === 'application') return <UserPlus className="text-blue-500" size={20} />;
+        if (title.includes('Aceptada') || title.includes('Aprobada')) return <CheckCircle className="text-green-500" size={20} />;
+        if (title.includes('Rechazada') || title.includes('Denegada') || title.includes('Cancelado')) return <XCircle className="text-red-500" size={20} />;
+        if (title.includes('Calificación')) return <Star className="text-amber-500" size={20} />;
 
-        if (type === 'alert') return <AlertCircle className="text-red-500" size={20} />;
+        if (type === 'alert' || type === 'error') return <AlertCircle className="text-red-500" size={20} />;
         if (type === 'success') return <Check className="text-green-500" size={20} />;
+        if (type === 'warning') return <AlertTriangle className="text-amber-500" size={20} />;
         return <Bell className="text-[var(--primary-color)]" size={20} />;
     };
 
