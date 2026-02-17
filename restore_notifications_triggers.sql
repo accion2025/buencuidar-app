@@ -104,7 +104,7 @@ BEGIN
             notif_title := '✅ Solicitud Aceptada';
             notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' ha aceptado tu solicitud de servicio.';
             notif_type := 'success';
-            target_path := '/dashboard/calendar';
+            target_path := '/dashboard';
  
         -- CASO 2: Solicitud DENEGADA o CANCELADA por Cuidador (Notificar a la Familia solo si era solicitud directa)
         ELSIF NEW.status IN ('cancelled', 'denied', 'rejected') AND OLD.status = 'pending' AND OLD.caregiver_id IS NOT NULL THEN
@@ -114,7 +114,7 @@ BEGIN
             notif_title := '❌ Solicitud Denegada';
             notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' no puede aceptar tu solicitud.';
             notif_type := 'alert';
-            target_path := '/search';
+            target_path := '/dashboard';
 
         -- CASO 3: Turno Confirmado es CANCELADO (Notificar al Cuidador - Logica original simplificada)
         ELSIF NEW.status = 'cancelled' AND OLD.status = 'confirmed' THEN

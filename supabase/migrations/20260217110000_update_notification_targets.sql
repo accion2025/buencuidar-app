@@ -132,3 +132,62 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+-- 5. Update Appointment Status targets for Family (Solicitud Aceptada/Denegada -> Dashboard)
+CREATE OR REPLACE FUNCTION notify_on_appointment_status_change()
+RETURNS TRIGGER AS $$
+DECLARE
+    recipient_id UUID;
+    caregiver_name TEXT;
+    notif_msg TEXT;
+    notif_title TEXT;
+    notif_type TEXT := 'info';
+    target_path TEXT;
+BEGIN
+    IF OLD.status IS DISTINCT FROM NEW.status THEN
+        -- CASO 1: Solicitud ACEPTADA por Cuidador (Familia -> Dashboard)
+        IF NEW.status = 'confirmed' AND OLD.caregiver_id IS NOT NULL THEN
+            recipient_id := NEW.client_id;
+            SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
+            
+            notif_title := '✅ Solicitud Aceptada';
+            notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' ha aceptado tu solicitud de servicio.';
+            notif_type := 'success';
+            target_path := '/dashboard';
+ 
+        -- CASO 2: Solicitud DENEGADA o CANCELADA por Cuidador (Familia -> Dashboard)
+        ELSIF NEW.status IN ('cancelled', 'denied', 'rejected') AND OLD.status = 'pending' AND OLD.caregiver_id IS NOT NULL THEN
+            recipient_id := NEW.client_id;
+            SELECT full_name INTO caregiver_name FROM profiles WHERE id = NEW.caregiver_id;
+            
+            notif_title := '❌ Solicitud Denegada';
+            notif_msg := COALESCE(caregiver_name, 'El cuidador') || ' no puede aceptar tu solicitud.';
+            notif_type := 'alert';
+            target_path := '/dashboard';
+
+        -- CASO 3: Turno Confirmado es CANCELADO (Cuidador -> Shifts)
+        ELSIF NEW.status = 'cancelled' AND OLD.status = 'confirmed' THEN
+            recipient_id := NEW.caregiver_id;
+            notif_title := '📅 Turno Cancelado';
+            notif_msg := 'El turno "' || NEW.title || '" ha sido cancelado.';
+            notif_type := 'alert';
+            target_path := '/caregiver/shifts';
+        END IF;
+
+        IF recipient_id IS NOT NULL THEN
+            INSERT INTO notifications (user_id, type, title, message, metadata)
+            VALUES (
+                recipient_id,
+                notif_type,
+                notif_title,
+                notif_msg,
+                jsonb_build_object(
+                    'appointment_id', NEW.id,
+                    'status', NEW.status,
+                    'target_path', target_path
+                )
+            );
+        END IF;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
