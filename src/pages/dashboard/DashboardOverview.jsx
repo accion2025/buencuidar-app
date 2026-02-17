@@ -750,12 +750,12 @@ const DashboardOverview = () => {
                                 <p className="text-red-50 opacity-90 font-medium">El cuidador ha activado una alerta de emergencia para {activeAlert.patient_name || 'un familiar'}.</p>
                             </div>
                         </div>
-                        /* <button
+                        <button
                             onClick={() => navigate('/dashboard/pulso')}
                             className="bg-white text-red-600 px-8 py-4 rounded-xl font-black uppercase tracking-widest text-sm hover:bg-red-50 transition-all shadow-lg active:scale-95 flex items-center gap-3"
                         >
                             VER EN PULSO <Activity size={18} />
-                        </button> */
+                        </button>
                     </div>
                 )}
 
@@ -812,7 +812,7 @@ const DashboardOverview = () => {
                                         </div>
                                         <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] tracking-tight">Servicio en Curso</h3>
                                     </div>
-                                    {/* <button
+                                    <button
                                         onClick={() => {
                                             if (can('accessMonitoring')) {
                                                 navigate('/dashboard/pulso');
@@ -823,7 +823,7 @@ const DashboardOverview = () => {
                                         className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-widest hover:underline flex items-center gap-2"
                                     >
                                         Ver en PULSO <Activity size={14} />
-                                    </button> */}
+                                    </button>
                                 </div>
 
                                 <div className="space-y-4">
