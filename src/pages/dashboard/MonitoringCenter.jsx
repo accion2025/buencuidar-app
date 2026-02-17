@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { safeDateParse } from '../../utils/time';
+import { CARE_AGENDA_CATEGORIES } from '../../constants/careAgenda';
 
 // Local helper removed, using safeDateParse from utils
 
@@ -394,7 +395,21 @@ const MonitoringCenter = () => {
     const careAgenda = agendaItems.map((item, idx) => {
         const baseName = typeof item === 'string' ? item : (item.activity || item.name || item.activity_name);
         const activityTime = typeof item === 'string' ? '---' : (item.time || '---');
-        const category = typeof item === 'object' ? (item.program_name || item.category || item.program) : null;
+        let category = typeof item === 'object' ? (item.program_name || item.category || item.program) : null;
+
+        // Auto-resolve category if missing
+        if (!category && baseName) {
+            const match = CARE_AGENDA_CATEGORIES.find(cat => {
+                // Check flat activities
+                if (cat.activities?.some(a => a === baseName || baseName.includes(a))) return true;
+                // Check nested sections
+                if (cat.sections) {
+                    return cat.sections.some(sec => sec.activities?.some(a => a === baseName || baseName.includes(a)));
+                }
+                return false;
+            });
+            if (match) category = match.name;
+        }
 
         // Exact match or match by base name (ignoring the suffix added by caregiver app)
         const isDone = careLogs.some(log =>
@@ -413,7 +428,7 @@ const MonitoringCenter = () => {
             name: baseName,
             category: category,
             time: activityTime !== '---' ? `Programado: ${activityTime}` : 'Sin horario asignado',
-            frequency: 'Según plan',
+            frequency: '',
             status: isDone ? 'Completado' : 'Pendiente',
             icon: IconComponent,
             iconColor: isDone ? 'text-green-500' : 'text-gray-400'

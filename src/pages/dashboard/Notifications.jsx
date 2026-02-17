@@ -117,7 +117,7 @@ const Notifications = () => {
 
         // 2. Specific Category Redirections (New v1.0 Policies)
         if (metadata.notif_category === 'application' && !isCaregiver) {
-            navigate(profile?.subscription_status === 'active' ? '/dashboard/pulso' : '/dashboard');
+            navigate(profile?.subscription_status === 'active' ? '/dashboard/monitoring' : '/dashboard');
             return;
         }
 
@@ -132,6 +132,10 @@ const Notifications = () => {
             }
             if (notification.title?.includes('Calificación')) {
                 navigate('/caregiver');
+                return;
+            }
+            if (metadata.notif_category === 'reprogramming' || metadata.notif_category === 'agenda_change') {
+                navigate('/caregiver/shifts');
                 return;
             }
         }
@@ -150,16 +154,16 @@ const Notifications = () => {
         } else if (metadata.is_chat || metadata.conversation_id) {
             navigate(isCaregiver ? '/caregiver/messages' : '/dashboard/messages');
         } else {
-            // 5. Cuidado+ Notifications: activities & wellness reports → BC Cuidado+
-            const isCuidadoPlusLog =
+            // 5. BC PULSO Notifications: activities & wellness reports → Monitoring Center
+            const isPulsoLog =
                 metadata.category === 'Plan de Cuidado' ||
                 metadata.category === 'Wellness' ||
                 notification.title?.includes('Tarea Completada') ||
                 notification.title?.includes('Reporte de Bienestar');
 
-            if (isCuidadoPlusLog && !isCaregiver) {
+            if (isPulsoLog && !isCaregiver) {
                 if (profile?.subscription_status === 'active') {
-                    navigate('/dashboard/pulso');
+                    navigate('/dashboard/monitoring');
                 } else {
                     navigate('/dashboard');
                 }
@@ -169,13 +173,13 @@ const Notifications = () => {
                 if (!isCaregiver && profile?.subscription_status !== 'active') {
                     navigate('/dashboard');
                 } else {
-                    navigate(isCaregiver ? '/caregiver' : '/dashboard/pulso');
+                    navigate(isCaregiver ? '/caregiver' : '/dashboard/monitoring');
                 }
             } else if (metadata.category === 'Plan de Cuidado' || metadata.category === 'Wellness') {
                 if (!isCaregiver && profile?.subscription_status !== 'active') {
                     navigate('/dashboard');
                 } else {
-                    navigate(isCaregiver ? '/caregiver' : '/dashboard/pulso');
+                    navigate(isCaregiver ? '/caregiver' : '/dashboard/monitoring');
                 }
             } else {
                 console.log("No smart path found for notification:", notification);
