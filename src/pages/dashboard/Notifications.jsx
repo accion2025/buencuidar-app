@@ -3,10 +3,11 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { Bell, Check, Trash2, Clock, AlertCircle, MessageSquare, ChevronRight, UserPlus, CheckCircle, XCircle, Star, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useNotifications } from '../../context/NotificationContext';
+import { usePermissions } from '../../hooks/usePermissions';
 
 const Notifications = () => {
-    const { user, profile } = useAuth();
+    const { profile } = useAuth();
+    const { can } = usePermissions();
     const {
         notifications: contextNotifications,
         markAsRead: contextMarkAsRead,
@@ -117,10 +118,18 @@ const Notifications = () => {
 
         // 2. High Priority: Use target_path from metadata if it exists
         if (metadata.target_path) {
-            // ROBUSTNESS FIX (V1.0.16): Overwrite legacy or incorrect paths for specific events
-            if (!isCaregiver && notification.title?.includes('Aceptada') && metadata.target_path === '/dashboard/calendar') {
-                navigate('/dashboard');
-                return;
+            // ROBUSTNESS FIX (V1.0.16/17): Overwrite legacy or incorrect paths for specific events/plans
+            if (!isCaregiver) {
+                // Fix for legacy 'Aceptada'
+                if (notification.title?.includes('Aceptada') && metadata.target_path === '/dashboard/calendar') {
+                    navigate('/dashboard');
+                    return;
+                }
+                // Fix for Restricted Monitoring (V1.0.17)
+                if (metadata.target_path.includes('/pulso') && !can('accessMonitoring')) {
+                    navigate('/dashboard');
+                    return;
+                }
             }
             navigate(metadata.target_path);
             return;
@@ -138,7 +147,8 @@ const Notifications = () => {
                 return;
             }
             if (metadata.log_id || notification.title?.includes('Tarea') || notification.title?.includes('Bienestar')) {
-                navigate('/dashboard/pulso');
+                // Only navigate to Pulso if user has permission (V1.0.17)
+                navigate(can('accessMonitoring') ? '/dashboard/pulso' : '/dashboard');
                 return;
             }
             if (metadata.is_chat || metadata.conversation_id) {
