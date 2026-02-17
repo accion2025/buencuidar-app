@@ -235,7 +235,7 @@ const DashboardOverview = () => {
                                         participant1_id: job.client_id,
                                         participant2_id: applicant.caregiver_id,
                                         last_message: msgContent,
-                                        last_message_at: new Date()
+                                        last_message_at: new Date().toISOString()
                                     }).select().single();
                                     convId = newConv?.id;
                                 }

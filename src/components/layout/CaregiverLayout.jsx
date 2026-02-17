@@ -114,7 +114,7 @@ const CaregiverLayout = () => {
                                     </span>
                                 )}
                                 {item.badge > 0 && (
-                                    <span className="absolute right-3 bg-red-500 !text-[#FAFAF7] text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                                    <span className="absolute right-3 bg-blue-600 !text-[#FAFAF7] text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-bounce shadow-lg">
                                         {item.badge}
                                     </span>
                                 )}

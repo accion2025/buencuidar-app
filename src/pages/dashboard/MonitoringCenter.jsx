@@ -615,7 +615,7 @@ const MonitoringCenter = () => {
                         participant1_id: user.id,
                         participant2_id: caregiver.id,
                         last_message: 'Hola, quiero coordinar una entrevista.',
-                        last_message_at: new Date()
+                        last_message_at: new Date().toISOString()
                     }])
                     .select()
                     .single();

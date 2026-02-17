@@ -178,6 +178,23 @@ const Messages = () => {
                             console.log(`[Chat:${selectedChat.id}] Nuevo mensaje recibido del otro usuario, marcando como leído.`);
                             markAsRead();
                         }
+
+                        // Synchronize sidebar (update last message and move to top)
+                        setConversations(prev => {
+                            const convIndex = prev.findIndex(c => c.id === selectedChat.id);
+                            if (convIndex === -1) return prev;
+
+                            const updatedConv = {
+                                ...prev[convIndex],
+                                lastMessage: payload.new.content,
+                                time: new Date(payload.new.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                updatedAt: payload.new.created_at,
+                                unread: payload.new.sender_id !== user.id ? 0 : prev[convIndex].unread
+                            };
+
+                            const filtered = prev.filter(c => c.id !== selectedChat.id);
+                            return [updatedConv, ...filtered];
+                        });
                     } else if (payload.eventType === 'UPDATE') {
                         // Handle updates (e.g., mark as read status changed)
                         setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m));
@@ -247,7 +264,7 @@ const Messages = () => {
                 .from('conversations')
                 .update({
                     last_message: text,
-                    last_message_at: new Date()
+                    last_message_at: new Date().toISOString()
                 })
                 .eq('id', selectedChat.id);
 
