@@ -77,7 +77,7 @@ BEGIN
                 system_msg := '[BuenCuidar Informa]: Se ha enviado una notificación automática al cuidador sobre: "' || NEW.title || '" en la cita "' || COALESCE(appointment_title, 'solicitada') || '".';
 
                 INSERT INTO messages (conversation_id, sender_id, content)
-                VALUES (target_conv_id, '00000000-0000-0000-0000-000000000000', system_msg);
+                VALUES (target_conv_id, NULL, system_msg);
 
                 -- Update conversation last message
                 UPDATE conversations 
