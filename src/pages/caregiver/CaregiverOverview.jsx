@@ -687,8 +687,8 @@ const CaregiverOverview = () => {
                     <div className="absolute bottom-0 left-0 w-64 h-64 bg-[var(--accent-color)] rounded-full translate-y-1/2 -translate-x-1/2 blur-[100px] opacity-10"></div>
 
                     <div className="relative z-10">
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-                            <div className="flex flex-col md:flex-row items-start md:items-center gap-10">
+                        <div className="grid lg:grid-cols-3 gap-8 items-start md:items-center">
+                            <div className="lg:col-span-2 flex flex-col md:flex-row items-start md:items-center gap-10">
                                 {/* Avatar integration in overview */}
                                 <div className="w-24 h-24 rounded-[20px] border-[4px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden shrink-0 ring-4 ring-white/10">
                                     <img
@@ -709,11 +709,11 @@ const CaregiverOverview = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex gap-4">
+                            <div className="lg:col-span-1 flex items-center gap-2 justify-start">
                                 <button
                                     onClick={handleFamilyAlert}
                                     disabled={isAlertLoading || (!activeAlert && !activeAppointment)}
-                                    className={`flex items-center gap-2 px-6 py-3 rounded-full font-black uppercase tracking-widest text-sm transition-all shadow-xl hover:scale-105 active:scale-95 border-none ${activeAlert
+                                    className={`btn flex items-center gap-2 px-4 py-2 rounded-[16px] font-black uppercase tracking-widest text-[10px] sm:text-xs transition-all shadow-xl hover:scale-105 active:scale-95 border-none whitespace-nowrap ${activeAlert
                                         ? 'bg-white !text-red-600 animate-pulse ring-4 ring-white/30'
                                         : (activeAppointment ? 'bg-red-600 !text-white' : 'bg-slate-300 !text-slate-500 cursor-not-allowed grayscale')
                                         }`}
@@ -723,9 +723,9 @@ const CaregiverOverview = () => {
                                 </button>
                                 <button
                                     onClick={() => navigate('/caregiver/jobs')}
-                                    className="btn bg-[var(--secondary-color)] hover:bg-emerald-600 !text-[#FAFAF7] px-8 py-5 rounded-[16px] font-black uppercase tracking-widest shadow-2xl shadow-green-900/40 border-none group transition-all"
+                                    className="btn bg-[var(--secondary-color)] hover:bg-emerald-600 !text-[#FAFAF7] px-4 py-2 rounded-[16px] font-black uppercase tracking-widest text-[10px] sm:text-xs shadow-2xl shadow-green-900/40 border-none group transition-all whitespace-nowrap"
                                 >
-                                    Buscar Nuevos Turnos
+                                    Buscar Turnos
                                     <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform ml-2" />
                                 </button>
                             </div>
