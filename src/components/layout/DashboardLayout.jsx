@@ -171,7 +171,7 @@ const DashboardLayout = () => {
                 {/* Top Header */}
                 <Topbar
                     profile={profile}
-                    unreadChatCount={unreadChatCount}
+                    unreadChatCount={unreadCount}
                     unreadNotificationsCount={unreadNotificationsCount}
                     onMenuClick={() => setIsMobileMenuOpen(true)}
                 />

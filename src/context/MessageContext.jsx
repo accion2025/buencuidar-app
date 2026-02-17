@@ -62,8 +62,12 @@ export const MessageProvider = ({ children }) => {
             })
             .subscribe();
 
+        // Periodic fallback sync (every 30 seconds)
+        const syncInterval = setInterval(fetchUnread, 30000);
+
         return () => {
             supabase.removeChannel(channel);
+            clearInterval(syncInterval);
         };
     }, [user, fetchUnread]);
 
