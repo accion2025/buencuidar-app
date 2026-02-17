@@ -1336,15 +1336,22 @@ const CaregiverOverview = () => {
                                         <div key={app.id} className="p-3 bg-gray-50 rounded-[12px] border border-gray-100">
                                             <div className="flex justify-between items-start mb-1">
                                                 <p className="text-xs font-bold text-gray-800">{app.appointment?.title || 'Servicio'}</p>
-                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${app.status === 'accepted' && app.appointment?.status !== 'cancelled' ? 'bg-green-100 text-green-700' :
-                                                    app.status === 'rejected' ? 'bg-red-100 text-red-700' :
-                                                        (app.status === 'accepted' && app.appointment?.status === 'cancelled') ? 'bg-orange-100 text-orange-800' :
-                                                            (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'bg-gray-200 text-gray-600' :
-                                                                'bg-yellow-100 text-yellow-700'
+                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${// Case 1: Appointment is finished (Completed/Paid)
+                                                    (app.appointment?.status === 'completed' || app.appointment?.status === 'paid')
+                                                        ? (app.status === 'accepted' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500')
+                                                        : // Case 2: Appointment is active/confirmed
+                                                        (app.appointment?.status === 'confirmed' || app.appointment?.status === 'in_progress')
+                                                            ? (app.status === 'accepted' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500')
+                                                            : // Case 3: Rejected/Cancelled
+                                                            app.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                                                                (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'bg-gray-200 text-gray-600' :
+                                                                    'bg-yellow-100 text-yellow-700'
                                                     }`}>
-                                                    {app.status === 'accepted' && app.appointment?.status !== 'cancelled' ? 'Aprobada' :
-                                                        app.status === 'rejected' ? 'Denegada' :
-                                                            (app.status === 'accepted' && app.appointment?.status === 'cancelled') ? 'Servicio Cancelado' :
+                                                    {(app.appointment?.status === 'completed' || app.appointment?.status === 'paid')
+                                                        ? (app.status === 'accepted' ? 'Completado' : 'Finalizado')
+                                                        : (app.appointment?.status === 'confirmed' || app.appointment?.status === 'in_progress')
+                                                            ? (app.status === 'accepted' ? 'Confirmado' : 'Cerrado')
+                                                            : app.status === 'rejected' ? 'Denegada' :
                                                                 (app.status === 'cancelled' || app.appointment?.status === 'cancelled') ? 'Cancelada/Exp' : 'Pendiente'}
                                                 </span>
                                             </div>
