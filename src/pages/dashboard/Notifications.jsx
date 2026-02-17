@@ -157,7 +157,7 @@ const Notifications = () => {
             }
             navigate('/caregiver'); // Default Caregiver
         }
-    }; bauu
+    };
 
     const getPriorityColor = (priority, type) => {
         if (priority === 'high' || type === 'alert') return 'bg-red-50 border-l-4 border-red-500';
