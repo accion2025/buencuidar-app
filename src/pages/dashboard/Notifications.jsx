@@ -117,11 +117,16 @@ const Notifications = () => {
 
         // 2. High Priority: Use target_path from metadata if it exists
         if (metadata.target_path) {
+            // ROBUSTNESS FIX (V1.0.16): Overwrite legacy or incorrect paths for specific events
+            if (!isCaregiver && notification.title?.includes('Aceptada') && metadata.target_path === '/dashboard/calendar') {
+                navigate('/dashboard');
+                return;
+            }
             navigate(metadata.target_path);
             return;
         }
 
-        // 3. Fallback Redirection Logic (Legacy or missing target_path) based on V1.0.7 Policy
+        // 3. Fallback Redirection Logic (Legacy or missing target_path) based on V1.0.15 Policy
         if (!isCaregiver) {
             // Role: FAMILY
             if (metadata.notif_category === 'application' || notification.title?.includes('Postulación') || notification.title?.includes('Aceptada')) {
