@@ -418,6 +418,36 @@ const Messages = () => {
                                     const showDateSeparator = lastDate !== msgDate.toDateString();
                                     lastDate = msgDate.toDateString();
 
+                                    const isPlatformMessage = !msg.sender_id;
+
+                                    if (isPlatformMessage) {
+                                        return (
+                                            <React.Fragment key={msg.id}>
+                                                {showDateSeparator && (
+                                                    <div className="flex justify-center my-6">
+                                                        <span className="bg-gray-200/50 text-gray-500 text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full">
+                                                            {dateLabel}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-center my-4 w-full">
+                                                    <div className="bg-[#FDFCF6] border border-[#F1E9D2] rounded-[20px] px-6 py-3 max-w-[90%] text-center shadow-sm">
+                                                        <div className="flex items-center justify-center gap-2 mb-1 text-[#B4944B] font-bold text-[10px] uppercase tracking-widest">
+                                                            <MessageCircle size={12} className="fill-[#B4944B]/20" />
+                                                            BuenCuidar Informa
+                                                        </div>
+                                                        <p className="text-gray-700 text-sm leading-relaxed font-medium">
+                                                            {msg.content.replace('[BuenCuidar Informa]: ', '')}
+                                                        </p>
+                                                        <p className="text-[9px] text-[#B4944B]/60 mt-1 font-semibold">
+                                                            {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </React.Fragment>
+                                        );
+                                    }
+
                                     return (
                                         <React.Fragment key={msg.id}>
                                             {showDateSeparator && (

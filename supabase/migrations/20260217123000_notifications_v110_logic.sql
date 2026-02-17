@@ -1,12 +1,8 @@
 -- 20260217123000_notifications_v110_logic.sql
 -- Goal: Implement read confirmations for families and automated platform messages in chat.
 
--- 0. Ensure a Platform Profile exists for system messages
-INSERT INTO profiles (id, full_name, role)
-VALUES ('00000000-0000-0000-0000-000000000000', 'BuenCuidar (Plataforma)', 'admin')
-ON CONFLICT (id) DO UPDATE SET full_name = 'BuenCuidar (Plataforma)';
-
 -- 1. FUNCTION: Notify family when a caregiver acknowledges a critical notification
+
 
 CREATE OR REPLACE FUNCTION notify_family_on_caregiver_read()
 RETURNS TRIGGER AS $$
