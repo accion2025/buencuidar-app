@@ -50,7 +50,7 @@ const Messages = () => {
                     .from('messages')
                     .select('conversation_id')
                     .eq('is_read', false)
-                    .neq('sender_id', user.id)
+                    .or(`sender_id.neq.${user.id},sender_id.is.null`)
                     .in('conversation_id', data.map(c => c.id));
 
                 // Count per conversation
@@ -139,7 +139,7 @@ const Messages = () => {
                 .from('messages')
                 .update({ is_read: true })
                 .eq('conversation_id', selectedChat.id)
-                .neq('sender_id', user.id)
+                .or(`sender_id.neq.${user.id},sender_id.is.null`)
                 .eq('is_read', false);
 
             if (error) {

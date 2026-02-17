@@ -119,7 +119,7 @@ BEGIN
         -- CASO 3: Turno Confirmado es CANCELADO (Notificar al Cuidador - Logica original simplificada)
         ELSIF NEW.status = 'cancelled' AND OLD.status = 'confirmed' THEN
             recipient_id := NEW.caregiver_id;
-            notif_title := '📅 Turno Cancelado';
+            notif_title := '❌ Turno Cancelado';
             notif_msg := 'El turno "' || NEW.title || '" ha sido cancelado.';
             notif_type := 'alert';
             target_path := '/caregiver/shifts';
@@ -180,7 +180,7 @@ BEGIN
             FROM notifications
             WHERE user_id = NEW.caregiver_id
             AND (metadata->>'service_group_id')::uuid = NEW.service_group_id
-            AND title IN ('✏️ Cita Modificada', '📦 Paquete Modificado')
+            AND title IN ('📝 Cambio en Agenda', '✏️ Cita Modificada', '📦 Paquete Modificado')
             AND created_at > NOW() - INTERVAL '10 seconds'
             LIMIT 1;
 
@@ -204,7 +204,7 @@ BEGIN
         VALUES (
             NEW.caregiver_id,
             'warning',
-            '✏️ Cita Modificada',
+            '📝 Cambio en Agenda',
             CASE 
                 WHEN NEW.service_group_id IS NOT NULL THEN 'Se ha modificado tu turno del día ' || day_str || ' en el paquete: "' || NEW.title || '".'
                 ELSE 'Se han realizado cambios en los detalles de tu turno: "' || NEW.title || '".'

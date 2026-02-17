@@ -33,7 +33,7 @@ export const MessageProvider = ({ children }) => {
                     .from('messages')
                     .select('*', { count: 'exact', head: true })
                     .in('conversation_id', ids)
-                    .neq('sender_id', user.id)
+                    .or(`sender_id.neq.${user.id},sender_id.is.null`)
                     .eq('is_read', false);
 
                 setUnreadCount(count || 0);

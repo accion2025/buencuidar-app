@@ -15,7 +15,7 @@ BEGIN
     -- Only when marking as read
     IF OLD.is_read = false AND NEW.is_read = true THEN
         -- Check if it's a critical notification for caregivers
-        IF NEW.title IN ('❌ Turno Cancelado', '📅 Turno Reprogramado', '📝 Cambio en Agenda') THEN
+        IF NEW.title IN ('❌ Turno Cancelado', '📅 Turno Reprogramado', '📝 Cambio en Agenda', '✏️ Cita Modificada') THEN
             
             -- Get context from metadata
             SELECT client_id, title INTO target_client_id, appointment_title 
@@ -56,7 +56,7 @@ DECLARE
     system_msg TEXT;
 BEGIN
     -- Only for critical caregiver notifications (Cancel, Reprogram, Agenda)
-    IF NEW.title IN ('❌ Turno Cancelado', '📅 Turno Reprogramado', '📝 Cambio en Agenda') THEN
+    IF NEW.title IN ('❌ Turno Cancelado', '📅 Turno Reprogramado', '📝 Cambio en Agenda', '✏️ Cita Modificada') THEN
         
         -- Get context
         SELECT client_id, caregiver_id, title 
