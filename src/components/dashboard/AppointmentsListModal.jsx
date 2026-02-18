@@ -1,6 +1,7 @@
-import { X, Calendar, Clock, MapPin, User, Trash2, Pencil } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, User, Trash2, Pencil, Settings } from 'lucide-react';
+import { usePermissions } from '../../hooks/usePermissions';
 
-const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete }) => {
+const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete, onConfigureAgenda }) => {
     if (!isOpen) return null;
 
     // Filter and Sort appointments (v1.0: No packages, all individual)
@@ -93,6 +94,18 @@ const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete
                                             >
                                                 <Pencil size={14} />
                                                 EDITAR
+                                            </button>
+                                        )}
+
+                                        {/* AGENDA BUTTON (PULSO ONLY) */}
+                                        {onConfigureAgenda && can('manualAgendaUpdate') && (
+                                            <button
+                                                onClick={() => onConfigureAgenda(item)}
+                                                className="px-3 py-1.5 bg-emerald-50 text-emerald-600 font-black rounded-[16px] hover:bg-emerald-100 transition-all flex items-center gap-1.5 border border-emerald-100 shadow-sm"
+                                                title="Configurar Agenda Técnica"
+                                            >
+                                                <Settings size={14} />
+                                                AGENDA
                                             </button>
                                         )}
 

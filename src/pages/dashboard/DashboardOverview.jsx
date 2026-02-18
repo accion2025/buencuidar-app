@@ -7,7 +7,8 @@ import { useNotifications } from '../../context/NotificationContext';
 import { usePermissions } from '../../hooks/usePermissions';
 import { supabase } from '../../lib/supabase';
 import AppointmentsListModal from '../../components/dashboard/AppointmentsListModal';
-import EditAppointmentModal from '../../components/dashboard/EditAppointmentModal'; // New Import
+import EditAppointmentModal from '../../components/dashboard/EditAppointmentModal';
+import ConfigureAgendaModal from '../../components/dashboard/ConfigureAgendaModal';
 
 const StatCard = ({ icon: Icon, title, value, colorClass, onClick }) => (
     <div
@@ -116,6 +117,9 @@ const DashboardOverview = () => {
     const [editingAppointment, setEditingAppointment] = useState(null);
     const [selectedCaregiver, setSelectedCaregiver] = useState(null); // For Detail Modal
     const [ratingAppointment, setRatingAppointment] = useState(null); // For Rating Modal
+    const [showAgendaModal, setShowAgendaModal] = useState(false);
+    const [selectedAgendaId, setSelectedAgendaId] = useState(null);
+    const [currentCareAgenda, setCurrentCareAgenda] = useState([]);
 
 
     const rawName = profile?.full_name ? profile.full_name.split(' ')[0] : '...';
@@ -470,6 +474,12 @@ const DashboardOverview = () => {
         // Actually user might want to go back to list... but for simplicity let's open Edit Modal on top
     };
 
+    const handleOpenAgenda = (appointment) => {
+        setSelectedAgendaId(appointment.id);
+        setCurrentCareAgenda(appointment.care_agenda || []);
+        setShowAgendaModal(true);
+    };
+
     const handleSaveChanges = async (updatedData) => {
         if (!editingAppointment?.id) return;
 
@@ -706,6 +716,21 @@ const DashboardOverview = () => {
                 appointments={upcomingAppointmentsList}
                 onEdit={handleEditClick}
                 onDelete={handleDeleteAppointment}
+                onConfigureAgenda={handleOpenAgenda}
+            />
+
+            <ConfigureAgendaModal
+                isOpen={showAgendaModal}
+                onClose={() => setShowAgendaModal(false)}
+                appointmentId={selectedAgendaId}
+                currentAgenda={currentCareAgenda}
+                onSave={async (newAgenda) => {
+                    // Update local state to reflect changes immediately
+                    setAppointments(prev => prev.map(app =>
+                        app.id === selectedAgendaId ? { ...app, care_agenda: newAgenda } : app
+                    ));
+                    await fetchAppointments(); // Refresh from DB
+                }}
             />
 
             <EditAppointmentModal
