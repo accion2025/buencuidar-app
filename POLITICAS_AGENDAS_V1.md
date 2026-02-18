@@ -14,6 +14,11 @@ La capacidad de crear o editar una agenda depende estrictamente del plan del usu
 ### 1.2 Regla de Inmutabilidad
 No se permite la creación ni modificación de agendas para citas con estado `finalized`, `cancelled` o citas cuya fecha sea anterior a la actual.
 
+### 1.3 Restricciones de Horario en Edición
+Cuando se edita una agenda, no se podrán definir horarios para las actividades que:
+*   Sean anteriores a la hora en la que se realiza la edición (no se pueden programar tareas en el pasado).
+*   Sean posteriores a la hora definida como fin de la cita.
+
 ---
 
 ## 2. Catálogo: Servicio Básico (Intención de Cuidado)

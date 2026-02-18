@@ -120,6 +120,7 @@ const DashboardOverview = () => {
     const [showAgendaModal, setShowAgendaModal] = useState(false);
     const [selectedAgendaId, setSelectedAgendaId] = useState(null);
     const [currentCareAgenda, setCurrentCareAgenda] = useState([]);
+    const [selectedAppointmentMetadata, setSelectedAppointmentMetadata] = useState(null);
 
 
     const rawName = profile?.full_name ? profile.full_name.split(' ')[0] : '...';
@@ -477,6 +478,10 @@ const DashboardOverview = () => {
     const handleOpenAgenda = (appointment) => {
         setSelectedAgendaId(appointment.id);
         setCurrentCareAgenda(appointment.care_agenda || []);
+        setSelectedAppointmentMetadata({
+            date: appointment.date,
+            endTime: appointment.end_time || appointment.time
+        });
         setShowAgendaModal(true);
     };
 
@@ -724,6 +729,8 @@ const DashboardOverview = () => {
                 onClose={() => setShowAgendaModal(false)}
                 appointmentId={selectedAgendaId}
                 currentAgenda={currentCareAgenda}
+                appointmentDate={selectedAppointmentMetadata?.date}
+                appointmentEndTime={selectedAppointmentMetadata?.endTime}
                 onSave={async (newAgenda) => {
                     // Update local state to reflect changes immediately
                     setAppointments(prev => prev.map(app =>

@@ -10,7 +10,7 @@ const IconMap = {
     Brain, Activity, ClipboardList, ShieldCheck, Heart, Stethoscope, UserCog, Home
 };
 
-const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = [], onSave }) => {
+const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = [], appointmentDate, appointmentEndTime, onSave }) => {
     const { can } = usePermissions();
     const navigate = useNavigate();
     // ...
@@ -62,6 +62,27 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Validation: Time limits
+            const now = new Date();
+            const todayLocal = now.toLocaleDateString('en-CA');
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            for (const [activity, time] of Object.entries(selectedActivities)) {
+                // 1. End Time Limit
+                if (appointmentEndTime && time > appointmentEndTime) {
+                    alert(`Error: La actividad "${activity}" se programó a las ${time}, pero la cita termina a las ${appointmentEndTime.substring(0, 5)}.`);
+                    setSaving(false);
+                    return;
+                }
+
+                // 2. Present/Future Limit (only if the appointment is today)
+                if (appointmentDate === todayLocal && time < currentTime) {
+                    alert(`Error: La actividad "${activity}" se programó a las ${time}, pero esa hora ya ha pasado.`);
+                    setSaving(false);
+                    return;
+                }
+            }
+
             // Convert map to array of objects including category (program_name)
             const agendaArray = Object.entries(selectedActivities).map(([activity, time]) => {
                 // Find which category this activity belongs to
