@@ -12,46 +12,8 @@ const DOCUMENT_TYPES = [
 
 const MAX_RETRIES = 1;
 
-// Función de ultra-optimización para móviles: Redimensiona antes de procesar
-const preprocessImage = async (file, maxDimension = 1500) => {
-    if (file.type === 'application/pdf') return file;
-
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isMobile) return file;
-
-    return new Promise((resolve) => {
-        const timeout = setTimeout(() => resolve(file), 5000);
-        const img = new Image();
-        const objectUrl = URL.createObjectURL(file);
-
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let { width, height } = img;
-            const ratio = Math.min(maxDimension / width, maxDimension / height, 1);
-            width *= ratio;
-            height *= ratio;
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            canvas.toBlob((blob) => {
-                clearTimeout(timeout);
-                URL.revokeObjectURL(objectUrl);
-                resolve(blob || file);
-            }, 'image/jpeg', 0.8);
-        };
-
-        img.onerror = () => {
-            clearTimeout(timeout);
-            URL.revokeObjectURL(objectUrl);
-            resolve(file);
-        };
-
-        img.src = objectUrl;
-    });
-};
+// Función de bypass para móviles: No procesamos para ahorrar RAM (V1.0.42)
+const preprocessImage = async (file) => file;
 
 const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     const [uploading, setUploading] = useState(null);
@@ -68,12 +30,22 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             const time = new Date().toLocaleTimeString();
             const dataStr = obj ? (typeof obj === 'object' ? JSON.stringify(obj).substring(0, 100) : String(obj)) : '';
             const fullMsg = `${time} - ${msg} ${dataStr}`;
-            setDebugLogs(prev => Array.isArray(prev) ? [fullMsg, ...prev].slice(0, 15) : [fullMsg]);
-            console.log("UI_DEBUG:", fullMsg);
+
+            const savedLogs = JSON.parse(localStorage.getItem('bc_verify_logs') || '[]');
+            const updatedLogs = [fullMsg, ...savedLogs].slice(0, 100);
+            localStorage.setItem('bc_verify_logs', JSON.stringify(updatedLogs));
+
+            setDebugLogs(updatedLogs.slice(0, 15));
+            console.log("UI_VERIFY_DEBUG:", fullMsg);
         } catch (e) {
             console.error("Log error:", e);
         }
     };
+
+    React.useEffect(() => {
+        const savedLogs = JSON.parse(localStorage.getItem('bc_verify_logs') || '[]');
+        setDebugLogs(savedLogs.slice(0, 15));
+    }, []);
 
     React.useEffect(() => {
         if (isOpen && caregiverId) {
@@ -138,36 +110,29 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         addLog(`Iniciando carga de ${docType} V2.2...`);
 
         try {
-            // --- PASO 1a: Sesión Garantizada (Uso de ID persistente del componente) ---
             const activeUserId = caregiverId;
             if (!activeUserId) throw new Error("ID de cuidador no identificado");
 
-            // --- PASO 1b: Procesamiento (V1.0.41: Calidad reducida para velocidad) ---
-            const processedBlob = await preprocessImage(file, 800);
-            // Nota: preprocessImage debería usar una calidad interna menor o aquí forzamos algo en el futuro.
+            addLog("🚀 Iniciando carga directa (V1.0.42)...");
 
-            // Envío elemental para móviles (Binario Puro)
             const fileExt = file.name.split('.').pop();
             const fileName = `${docType}-${Date.now()}.${fileExt}`;
             const isPdf = fileExt.toLowerCase() === 'pdf';
-            const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
+            const contentType = isPdf ? 'application/pdf' : (file.type || 'image/jpeg');
 
             const filePath = `${activeUserId}/${fileName}`;
-            addLog("📤 Preparando transmisión binaria...");
+            addLog(`📤 Enviando ${fileName} (${(file.size / 1024).toFixed(0)}KB)...`);
 
-            const buffer = await processedBlob.arrayBuffer();
-            const binaryData = new Uint8Array(buffer);
-
-            // Timeout de Seguridad (20s)
+            // Usamos el archivo original directamente para evitar consumo de RAM por Canvas
             const uploadPromise = supabase.storage
                 .from('documents')
-                .upload(filePath, binaryData, {
+                .upload(filePath, file, {
                     contentType: contentType,
                     upsert: true
                 });
 
             const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("La subida tardó demasiado. Revisa tu conexión Wifi.")), 20000)
+                setTimeout(() => reject(new Error("Tiempo de espera agotado (60s). Verifica tu Wifi.")), 60000)
             );
 
             const { error: uploadError } = await Promise.race([uploadPromise, timeoutPromise]);

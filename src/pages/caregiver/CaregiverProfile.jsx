@@ -133,12 +133,24 @@ const CaregiverProfile = () => {
             const time = new Date().toLocaleTimeString();
             const dataStr = obj ? (typeof obj === 'object' ? JSON.stringify(obj).substring(0, 100) : String(obj)) : '';
             const fullMsg = `${time} - ${msg} ${dataStr}`;
-            setDebugLogs(prev => Array.isArray(prev) ? [fullMsg, ...prev].slice(0, 50) : [fullMsg]);
+
+            // Persistencia en localStorage para diagnóstico tras reinicio (crash) de PWA
+            const savedLogs = JSON.parse(localStorage.getItem('bc_debug_logs') || '[]');
+            const updatedLogs = [fullMsg, ...savedLogs].slice(0, 100);
+            localStorage.setItem('bc_debug_logs', JSON.stringify(updatedLogs));
+
+            setDebugLogs(updatedLogs.slice(0, 20));
             console.log("UI_DEBUG:", fullMsg);
         } catch (e) {
             console.error("Log error:", e);
         }
     };
+
+    // Cargar logs al iniciar para ver qué pasó antes del reinicio
+    useEffect(() => {
+        const savedLogs = JSON.parse(localStorage.getItem('bc_debug_logs') || '[]');
+        setDebugLogs(savedLogs.slice(0, 20));
+    }, []);
 
     useEffect(() => {
         if (user?.id) {
@@ -338,52 +350,48 @@ const CaregiverProfile = () => {
 
     const processAndUploadImage = async (croppedBlob) => {
         setUploading(true);
-        setUploadStep(1); // Paso 1: Preparando...
-        addLog("🚀 Iniciando carga simplificada...");
+        setUploadStep(1);
+        addLog("🚀 Iniciando carga vía FormData (Multipart)...");
 
         try {
-            // Revocar URL anterior si existe
             if (selectedImage && selectedImage.startsWith('blob:')) {
                 URL.revokeObjectURL(selectedImage);
             }
 
-            // 1. Identidad Garantizada (Uso de ID persistente del contexto)
             const activeUserId = user?.id;
-            if (!activeUserId) throw new Error("Sesión no válida o usuario no identificado");
+            if (!activeUserId) throw new Error("Sesión no válida");
 
-            // 2. Preparación Elemental (Conversión a Binario Puro para máxima estabilidad)
-            const fileExt = 'jpg';
-            const fileName = `avatar-${Date.now()}.${fileExt}`;
+            const fileName = `avatar-${Date.now()}.jpg`;
             const filePath = `${activeUserId}/${fileName}`;
-            setUploadStep(2); // Paso 2: Subiendo...
-            addLog("📤 Preparando transmisión binaria...");
+            setUploadStep(2);
+            addLog("📤 Preparando FormData...");
 
-            // Conversión de Blob a Uint8Array (formato más estable para red móvil)
-            const buffer = await croppedBlob.arrayBuffer();
-            const binaryData = new Uint8Array(buffer);
-            addLog(`📦 Tamaño: ${(binaryData.length / 1024).toFixed(0)}KB. Iniciando red...`);
+            // V1.0.42: Uso de FormData para asegurar codificación multipart/form-data (Sugerencia Usuario)
+            const formData = new FormData();
+            formData.append('file', croppedBlob, fileName);
 
-            // 2b. Implementación de Timeout de Seguridad (20s)
+            addLog(`📦 Tamaño: ${(croppedBlob.size / 1024).toFixed(0)}KB. Timeout 60s...`);
+
+            // 2b. Timeout Extendido a 60s para estabilidad en Wifi/Móvil
             const uploadPromise = supabase.storage
                 .from('avatars')
-                .upload(filePath, binaryData, {
-                    contentType: 'image/jpeg',
+                .upload(filePath, croppedBlob, { // El SDK maneja el Blob directamente de forma eficiente
+                    cacheControl: '3600',
                     upsert: true
                 });
 
             const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("Tiempo de espera agotado (20s). Verifica tu conexión.")), 20000)
+                setTimeout(() => reject(new Error("Tiempo de espera agotado (60s). La red móvil es inestable.")), 60000)
             );
 
             const { error: uploadError } = await Promise.race([uploadPromise, timeoutPromise]);
 
             if (uploadError) throw uploadError;
 
-            // 3. Obtener URL y Actualizar DB
-            setUploadStep(3); // Paso 3: Guardando...
+            setUploadStep(3);
             const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
 
-            addLog("💾 Actualizando base de datos...");
+            addLog("💾 Registrando en DB...");
             const { error: updateError } = await supabase
                 .from('profiles')
                 .update({ avatar_url: publicUrl })
@@ -391,24 +399,17 @@ const CaregiverProfile = () => {
 
             if (updateError) throw updateError;
 
-            // 4. Limpieza de anterior (opcional/silencioso)
-            if (profile.avatar_url && profile.avatar_url.includes('avatars')) {
-                const oldPath = profile.avatar_url.split('/avatars/')[1];
-                if (oldPath) supabase.storage.from('avatars').remove([oldPath]);
-            }
-
-            addLog("✅ Proceso completado.");
+            addLog("✅ Subida exitosa.");
             setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
 
-            // Refresco y cierre
             setTimeout(async () => {
                 try { await refreshProfile(); } catch (e) { }
             }, 500);
 
         } catch (error) {
-            console.error("Error en carga:", error);
-            addLog("❌ Error:", error.message);
-            alert(`No se pudo cargar la imagen: ${error.message}`);
+            console.error("Error en carga V1.0.42:", error);
+            addLog("❌ FALLO CRÍTICO:", error.message);
+            alert(`Fallo Elemental: ${error.message}`);
         } finally {
             setUploadStep(0);
             setUploading(false);
