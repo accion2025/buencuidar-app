@@ -141,21 +141,22 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         addLog(`Iniciando carga de ${docType} V2.1...`);
 
         try {
-            // --- PASO 1a: Sesión Garantizada ---
-            const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-            if (authError || !authUser) throw new Error("Sesión expirada");
-            const activeUserId = authUser.id;
+            // --- PASO 1a: Sesión Garantizada (Uso de ID persistente del componente) ---
+            const activeUserId = caregiverId;
+            if (!activeUserId) throw new Error("ID de cuidador no identificado");
 
             // --- PASO 1b: Procesamiento ---
-            const fileToUpload = await preprocessImage(file);
+            const processedBlob = await preprocessImage(file);
 
-            // --- PASO 2: Subida ---
+            // Conversión vital para móviles: Asegurar que el objeto sea un File con nombre y tipo
             const fileExt = file.name.split('.').pop();
             const fileName = `${docType}-${Date.now()}.${fileExt}`;
-            const filePath = `${activeUserId}/${fileName}`;
-
             const isPdf = fileExt.toLowerCase() === 'pdf';
             const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
+
+            const fileToUpload = new File([processedBlob], fileName, { type: contentType });
+
+            const filePath = `${activeUserId}/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('documents')

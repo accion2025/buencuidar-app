@@ -362,20 +362,20 @@ const CaregiverProfile = () => {
                 URL.revokeObjectURL(selectedImage);
             }
 
-            // 1. Sesión
-            const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-            if (authError || !authUser) throw new Error("Sesión no válida");
-            const activeUserId = authUser.id;
+            // 1. Identidad Garantizada (Uso de ID persistente del contexto)
+            const activeUserId = user?.id;
+            if (!activeUserId) throw new Error("Sesión no válida o usuario no identificado");
 
-            // 2. Subida Directa
+            // 2. Preparación de Archivo (Conversión vital para móviles)
             const fileName = `avatar-${Date.now()}.jpg`;
+            const imageFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
             const filePath = `${activeUserId}/${fileName}`;
             setUploadStep(2); // Paso 2: Subiendo...
             addLog("📤 Subiendo archivo...");
 
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
-                .upload(filePath, croppedBlob, {
+                .upload(filePath, imageFile, {
                     contentType: 'image/jpeg',
                     upsert: true
                 });
