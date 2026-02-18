@@ -101,7 +101,9 @@ export const NotificationProvider = ({ children }) => {
                 console.log("🔔 Cambio en tiempo real detectado:", payload.eventType);
                 fetchNotificationsData();
             })
-            .subscribe();
+            .subscribe((status) => {
+                console.log("📡 Estado de la suscripción Realtime:", status);
+            });
 
         return () => {
             supabase.removeChannel(channel);
