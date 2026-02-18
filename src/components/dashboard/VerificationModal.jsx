@@ -135,10 +135,7 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         setError(null);
         setSuccess(null);
 
-        // Yield for UI update (Aumentado para A10s)
-        await new Promise(r => setTimeout(r, 300));
-
-        addLog(`Iniciando carga de ${docType} V2.1...`);
+        addLog(`Iniciando carga de ${docType} V2.2...`);
 
         try {
             // --- PASO 1a: Sesión Garantizada (Uso de ID persistente del componente) ---
@@ -148,19 +145,17 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             // --- PASO 1b: Procesamiento ---
             const processedBlob = await preprocessImage(file);
 
-            // Conversión vital para móviles: Asegurar que el objeto sea un File con nombre y tipo
+            // Envío elemental para móviles
             const fileExt = file.name.split('.').pop();
             const fileName = `${docType}-${Date.now()}.${fileExt}`;
             const isPdf = fileExt.toLowerCase() === 'pdf';
             const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
 
-            const fileToUpload = new File([processedBlob], fileName, { type: contentType });
-
             const filePath = `${activeUserId}/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('documents')
-                .upload(filePath, fileToUpload, {
+                .upload(filePath, processedBlob, {
                     contentType: contentType,
                     upsert: true
                 });

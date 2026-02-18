@@ -24,7 +24,7 @@ const AVAILABLE_SKILLS = [
 const MAX_RETRIES = 1; // Simplificación radical
 
 // Función de ultra-optimización para móviles: Redimensiona antes de procesar
-const preprocessImage = async (file, maxDimension = 1200) => {
+const preprocessImage = async (file, maxDimension = 800) => {
     // Si no es móvil o no es imagen, devolvemos el original para evitar fallos en PC
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isMobile || (file && !file.type.startsWith('image/'))) return file;
@@ -341,10 +341,8 @@ const CaregiverProfile = () => {
             addLog("✅ Recorte completado. Cerrando editor...");
             setShowCropper(false);
 
-            // Retardo vital para el A10s: Dejar que la UI se limpie antes de lanzar el heavy-upload
-            setTimeout(() => {
-                processAndUploadImage(croppedBlob);
-            }, 400);
+            // Subida inmediata para evitar pérdida de contexto en móviles
+            processAndUploadImage(croppedBlob);
         } catch (err) {
             addLog("❌ Error fatal al cerrar cropper:", err);
             setShowCropper(false);
@@ -366,16 +364,16 @@ const CaregiverProfile = () => {
             const activeUserId = user?.id;
             if (!activeUserId) throw new Error("Sesión no válida o usuario no identificado");
 
-            // 2. Preparación de Archivo (Conversión vital para móviles)
-            const fileName = `avatar-${Date.now()}.jpg`;
-            const imageFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
+            // 2. Preparación Elemental (Uso de Blob nativo para máxima compatibilidad)
+            const fileExt = 'jpg';
+            const fileName = `avatar-${Date.now()}.${fileExt}`;
             const filePath = `${activeUserId}/${fileName}`;
             setUploadStep(2); // Paso 2: Subiendo...
-            addLog("📤 Subiendo archivo...");
+            addLog("📤 Subiendo datos binarios...");
 
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
-                .upload(filePath, imageFile, {
+                .upload(filePath, croppedBlob, {
                     contentType: 'image/jpeg',
                     upsert: true
                 });
@@ -406,18 +404,17 @@ const CaregiverProfile = () => {
             // Refresco y cierre
             setTimeout(async () => {
                 try { await refreshProfile(); } catch (e) { }
-                setUploadStep(0);
-                setUploading(false);
-            }, 1000);
+            }, 500);
 
         } catch (error) {
             console.error("Error en carga:", error);
             addLog("❌ Error:", error.message);
-            setUploading(false);
-            setUploadStep(0);
             alert(`No se pudo cargar la imagen: ${error.message}`);
+        } finally {
+            setUploadStep(0);
+            setUploading(false);
+            setSelectedImage(null);
         }
-        setSelectedImage(null);
     };
 
     const handleDeleteAvatar = async () => {
