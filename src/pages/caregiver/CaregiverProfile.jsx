@@ -317,23 +317,10 @@ const CaregiverProfile = () => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        addLog("⚙️ Pre-procesando imagen para ahorro de RAM...");
-        setUploading(true); // Mostrar loader mientras procesamos
-        setUploadStep("Pre-vuelo");
-
-        try {
-            // Paso Crítico: Redimensionar ANTES de pasarlo al editor de recorte
-            const optimizedBlob = await preprocessImage(file);
-            const objectUrl = URL.createObjectURL(optimizedBlob);
-
-            setSelectedImage(objectUrl);
-            setShowCropper(true);
-        } catch (err) {
-            console.error("Error en pre-procesamiento:", err);
-            alert("No se pudo procesar la imagen. Intenta con otra.");
-        } finally {
-            setUploading(false);
-        }
+        // V1.0.41: Ya no pre-procesamos aquí para ahorrar RAM. 
+        // Pasamos el archivo directamente al cropper para que el navegador solo maneje una copia pesada.
+        setSelectedImage(URL.createObjectURL(file));
+        setShowCropper(true);
     };
 
     const handleCropComplete = (croppedBlob) => {
@@ -510,7 +497,7 @@ const CaregiverProfile = () => {
                         <div className="relative group shrink-0">
                             <div className="w-32 h-32 md:w-48 md:h-48 rounded-[12px] border-[6px] border-white/20 bg-slate-800 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40 flex items-center justify-center">
                                 {uploading ? (
-                                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20">
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-20">
                                         <Loader2 className="animate-spin text-white" size={40} />
                                     </div>
                                 ) : null}
@@ -525,7 +512,7 @@ const CaregiverProfile = () => {
                                         <User size={120} style={{ color: '#0F3C4C' }} strokeWidth={1.5} />
                                     </div>
                                 )}
-                                <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer !text-[#FAFAF7] backdrop-blur-sm">
+                                <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer !text-[#FAFAF7]">
                                     <Camera size={32} className="mb-2" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Cambiar Foto</span>
                                     <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />

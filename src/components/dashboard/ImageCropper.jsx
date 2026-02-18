@@ -30,7 +30,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel, addLog = () => { } }
                     alert('Error al procesar la imagen.');
                 }
                 setIsSaving(false);
-            }, 'image/jpeg', 0.4);
+            }, 'image/jpeg', 0.5);
 
         } catch (e) {
             console.error('Error saving cropped image:', e);
@@ -40,7 +40,7 @@ const ImageCropper = ({ imageSrc, onCropComplete, onCancel, addLog = () => { } }
     };
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4">
             <div className="bg-white rounded-[24px] overflow-hidden shadow-2xl w-full max-w-[340px] flex flex-col animate-scale-in">
                 <div className="relative w-full bg-black flex justify-center items-center py-4" style={{ touchAction: 'none' }}>
                     <AvatarEditor

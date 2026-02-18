@@ -142,8 +142,9 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             const activeUserId = caregiverId;
             if (!activeUserId) throw new Error("ID de cuidador no identificado");
 
-            // --- PASO 1b: Procesamiento ---
-            const processedBlob = await preprocessImage(file);
+            // --- PASO 1b: Procesamiento (V1.0.41: Calidad reducida para velocidad) ---
+            const processedBlob = await preprocessImage(file, 800);
+            // Nota: preprocessImage debería usar una calidad interna menor o aquí forzamos algo en el futuro.
 
             // Envío elemental para móviles (Binario Puro)
             const fileExt = file.name.split('.').pop();
@@ -259,9 +260,9 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
     };
 
     return createPortal(
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[9999] flex items-center justify-center p-0 md:p-6 text-left overflow-hidden">
+        <div className="fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-0 md:p-6 text-left overflow-hidden">
             <div className="bg-white rounded-none md:rounded-[16px] shadow-2xl w-full max-w-2xl h-full md:h-auto md:max-h-[90dvh] flex flex-col animate-slide-up border-none md:border border-white/20 relative">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 sticky top-0 z-10 backdrop-blur-sm">
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 sticky top-0 z-10">
                     <div>
                         <h3 className="text-xl font-brand font-bold text-[var(--primary-color)] flex items-center gap-2">
                             <ShieldCheck size={24} className="text-[var(--secondary-color)]" />
