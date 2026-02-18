@@ -127,7 +127,7 @@ const DashboardLayout = () => {
                 className={`
                     fixed top-0 left-0 z-50 w-64 h-[100dvh] bg-[var(--primary-color)] !text-[#FAFAF7] transition-transform duration-300 ease-in-out
                     ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-                    md:relative md:translate-x-0 flex flex-col
+                    lg:relative lg:translate-x-0 flex flex-col
                 `}
             >
                 {/* Logo Area */}
@@ -158,10 +158,10 @@ const DashboardLayout = () => {
                 <div className="p-4 border-t border-white/10 bg-[var(--primary-color)]">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-4 px-6 py-6 md:px-4 md:py-3 w-full rounded-[20px] md:rounded-[16px] text-[#F9F072] bg-[#F9F072]/5 md:bg-transparent hover:bg-white/10 transition-colors group mt-2 md:mt-0"
+                        className="flex items-center gap-4 px-6 py-6 lg:px-4 lg:py-3 w-full rounded-[20px] lg:rounded-[16px] text-[#F9F072] bg-[#F9F072]/5 lg:bg-transparent hover:bg-white/10 transition-colors group mt-2 lg:mt-0"
                     >
-                        <LogOut className="w-7 h-7 md:w-5 md:h-5 text-[#F9F072]" />
-                        <span className="font-black md:font-medium text-xl md:text-base">Cerrar Sesión</span>
+                        <LogOut className="w-7 h-7 lg:w-5 lg:h-5 text-[#F9F072]" />
+                        <span className="font-black lg:font-medium text-xl lg:text-base">Cerrar Sesión</span>
                     </button>
                 </div>
             </aside>
@@ -177,7 +177,7 @@ const DashboardLayout = () => {
                 />
 
                 {/* Page Content */}
-                <main className="flex-grow overflow-y-auto p-4 md:p-10">
+                <main className="flex-grow overflow-y-auto p-4 lg:p-10">
                     <Outlet />
                 </main>
             </div>
@@ -185,7 +185,7 @@ const DashboardLayout = () => {
             {/* Mobile Overlay */}
             {isMobileMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
