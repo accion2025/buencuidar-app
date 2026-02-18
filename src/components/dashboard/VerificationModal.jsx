@@ -10,7 +10,7 @@ const DOCUMENT_TYPES = [
     { id: 'human_evaluation', label: 'Evaluación de trato humano', icon: ShieldCheck, description: 'Certificado de evaluación de confianza y trato a la persona atendida.' }
 ];
 
-const MAX_RETRIES = 3; // Constante vital para la estabilidad de la carga
+const MAX_RETRIES = 1;
 
 // Función de ultra-optimización para móviles: Redimensiona antes de procesar
 const preprocessImage = async (file, maxDimension = 1500) => {
@@ -111,8 +111,17 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
     if (!isOpen) return null;
 
-    const handleUpload = async (e, docType) => {
-        const file = e.target.files?.[0];
+    const getFriendlyErrorMessage = (err) => {
+        const msg = err.message || String(err);
+        if (msg.includes('unique or exclusion constraint')) return 'Ya has subido un documento de este tipo. Se está actualizando el anterior.';
+        if (msg.includes('storage')) return 'Error en el servidor de archivos. Por favor, asegúrate de que el archivo sea menor a 5MB.';
+        if (msg.includes('JWT')) return 'Tu sesión ha expirado. Por favor, cierra sesión y vuelve a entrar.';
+        if (msg.includes('policy')) return 'No tienes permisos para realizar esta acción o tu sesión expiró.';
+        if (msg.includes('network')) return 'Error de conexión. Revisa tu internet e inténtalo de nuevo.';
+        return `Ocurrió un inconveniente: ${msg}`;
+    };
+
+    const handleUpload = async (file, docType) => {
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
@@ -131,95 +140,67 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
 
         addLog(`Iniciando carga de ${docType} V2.1...`);
 
-        let attempt = 0;
-        let success = false;
-        let currentStep = "inicio";
+        try {
+            // --- PASO 1a: Sesión Garantizada ---
+            const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+            if (authError || !authUser) throw new Error("Sesión expirada");
+            const activeUserId = authUser.id;
 
-        while (attempt < MAX_RETRIES && !success) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 120000); // 120s total
+            // --- PASO 1b: Procesamiento ---
+            const fileToUpload = await preprocessImage(file);
 
-            try {
-                attempt++;
+            // --- PASO 2: Subida ---
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${docType}-${Date.now()}.${fileExt}`;
+            const filePath = `${activeUserId}/${fileName}`;
 
-                // --- PASO 1a: Sesión Garantizada ---
-                currentStep = "1a";
-                const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-                if (authError || !authUser) throw new Error("Sesión expirada");
-                const activeUserId = authUser.id;
+            const isPdf = fileExt.toLowerCase() === 'pdf';
+            const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
 
-                // --- PASO 1b: Procesamiento ---
-                currentStep = "1b";
-                const fileToUpload = await preprocessImage(file);
+            const { error: uploadError } = await supabase.storage
+                .from('documents')
+                .upload(filePath, fileToUpload, {
+                    contentType: contentType,
+                    upsert: true
+                });
 
-                // --- PASO 2: Subida ---
-                currentStep = "2";
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${docType}-${Date.now()}.${fileExt}`;
-                const filePath = `${activeUserId}/${fileName}`;
+            if (uploadError) throw uploadError;
 
-                const isPdf = fileExt.toLowerCase() === 'pdf';
-                const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
-
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('documents')
-                    .upload(filePath, fileToUpload, {
-                        contentType: contentType,
-                        upsert: true,
-                        resumable: false
-                    });
-
-                if (uploadError) throw uploadError;
-                let uploadResult = { data: uploadData, error: uploadError };
-
-                if (uploadResult?.error) throw uploadResult.error;
-
-                clearTimeout(timeoutId);
-                currentStep = "3";
-                setUploadStep(3); // Paso 3: Guardando registro...
-                const { error: dbError } = await supabase
-                    .from('caregiver_documents')
-                    .upsert({
-                        caregiver_id: activeUserId,
-                        document_type: docType,
-                        file_path: filePath,
-                        status: 'pending'
-                    }, { onConflict: 'caregiver_id,document_type' });
-
-                if (dbError) throw dbError;
-
-                await supabase
-                    .from('profiles')
-                    .update({ verification_status: 'in_review' })
-                    .eq('id', activeUserId)
-                    .eq('verification_status', 'pending');
-
-                currentStep = "4";
-                setUploadStep(4); // Paso 4: Finalizando...
-                setSuccess(`Documento "${docType}" subido correctamente.`);
-                await fetchUserDocs();
-                if (onComplete) onComplete();
-                success = true;
-
-            } catch (err) {
-                clearTimeout(timeoutId);
-                console.error(`Error attempt ${attempt}:`, err);
-                let lastError = err; // Local para el alert posterior
-                const debugMsg = `ERROR EN ${currentStep}: ${err.message || err}`;
-                alert(debugMsg);
-
-                if (err.message === "AUTH_TIMEOUT") {
-                    setError("⚠️ SERVIDOR EN MANTENIMIENTO: La autenticación no respondió. Cierra sesión y vuelve a entrar.");
-                    break;
-                }
-
-                if (attempt < MAX_RETRIES) {
-                    setUploadStep(2);
-                    setUploadProgress(0);
-                    // Esperar un poco antes de reintentar (exponential backoff)
-                    await new Promise(r => setTimeout(r, 4000 * attempt));
-                }
+            // --- LIMPIEZA DE ARCHIVO ANTERIOR ---
+            const existingDoc = userDocs.find(d => d.document_type === docType);
+            if (existingDoc && existingDoc.file_path) {
+                supabase.storage.from('documents').remove([existingDoc.file_path]);
             }
+
+            // --- PASO 3: Guardando registro ---
+            setUploadStep(3);
+            const { error: dbError } = await supabase
+                .from('caregiver_documents')
+                .upsert({
+                    caregiver_id: activeUserId,
+                    document_type: docType,
+                    file_path: filePath,
+                    status: 'pending'
+                }, { onConflict: 'caregiver_id,document_type' });
+
+            if (dbError) throw dbError;
+
+            await supabase
+                .from('profiles')
+                .update({ verification_status: 'in_review' })
+                .eq('id', activeUserId)
+                .eq('verification_status', 'pending');
+
+            setUploadStep(4);
+            setSuccess(`Documento "${docType}" subido correctamente.`);
+            await fetchUserDocs();
+            if (onComplete) onComplete();
+
+        } catch (err) {
+            console.error("Error en carga:", err);
+            const userFriendlyMsg = getFriendlyErrorMessage(err);
+            setError(userFriendlyMsg);
+            setUploadStep(0);
         }
 
         if (!success) {
@@ -246,6 +227,53 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
         }
         setUploading(null);
         setUploadStep(0);
+    };
+
+    const handleDeleteDocument = async (docType, filePath) => {
+        if (!confirm(`¿Estás seguro de que deseas eliminar el documento "${docType}"?`)) return;
+
+        setUploading(docType);
+        addLog(`🗑️ Eliminando documento ${docType}...`);
+
+        try {
+            // 1. Borrar de Storage
+            if (filePath) {
+                const { error: storageError } = await supabase.storage.from('documents').remove([filePath]);
+                if (storageError) addLog("Aviso: Error al borrar de Storage.");
+            }
+
+            // 2. Borrar de Base de Datos
+            const { error: dbError } = await supabase
+                .from('caregiver_documents')
+                .delete()
+                .eq('caregiver_id', caregiverId)
+                .eq('document_type', docType);
+
+            if (dbError) throw dbError;
+
+            // 3. Verificar si quedan otros documentos
+            const { data: remainingDocs } = await supabase
+                .from('caregiver_documents')
+                .select('id')
+                .eq('caregiver_id', caregiverId);
+
+            if (!remainingDocs || remainingDocs.length === 0) {
+                await supabase
+                    .from('profiles')
+                    .update({ verification_status: 'pending' })
+                    .eq('id', caregiverId);
+            }
+
+            setSuccess("Documento eliminado correctamente.");
+            await fetchUserDocs();
+            if (onComplete) onComplete();
+
+        } catch (err) {
+            console.error("Error al eliminar documento:", err);
+            setError("No se pudo eliminar el documento.");
+        } finally {
+            setUploading(null);
+        }
     };
 
     return createPortal(
@@ -319,28 +347,41 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                                             </div>
                                         </div>
 
-                                        <label className={`relative shrink-0 flex items-center justify-center gap-2 px-6 py-3 rounded-[12px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : existingDoc?.status === 'verified'
-                                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100'
-                                                : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
-                                            }`}>
-                                            {uploading === doc.id ? (
-                                                <Loader2 size={16} className="animate-spin" />
-                                            ) : (
-                                                <>
-                                                    <Upload size={16} />
-                                                    {existingDoc ? 'Actualizar' : 'Elegir Archivo'}
-                                                </>
+                                        <div className="flex flex-col gap-2 shrink-0">
+                                            <label className={`relative flex items-center justify-center gap-2 px-6 py-3 rounded-[12px] font-black text-xs uppercase tracking-widest transition-all cursor-pointer ${uploading === doc.id
+                                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                                : existingDoc?.status === 'verified'
+                                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100'
+                                                    : 'bg-[var(--primary-color)] !text-[#FAFAF7] hover:brightness-110 shadow-lg shadow-blue-900/10'
+                                                }`}>
+                                                {uploading === doc.id ? (
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        <Upload size={16} />
+                                                        {existingDoc ? 'Actualizar' : 'Elegir Archivo'}
+                                                    </>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                    accept="image/*,application/pdf"
+                                                    onChange={(e) => handleUpload(e.target.files?.[0], doc.id)}
+                                                    disabled={uploading !== null}
+                                                />
+                                            </label>
+
+                                            {existingDoc && (
+                                                <button
+                                                    onClick={() => handleDeleteDocument(doc.id, existingDoc.file_path)}
+                                                    disabled={uploading !== null}
+                                                    className="flex items-center justify-center gap-2 px-6 py-2 rounded-[12px] font-black text-[10px] bg-red-50 text-red-500 hover:bg-red-100 transition-all uppercase tracking-widest border border-red-100 disabled:opacity-50"
+                                                >
+                                                    <X size={14} />
+                                                    Eliminar
+                                                </button>
                                             )}
-                                            <input
-                                                type="file"
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                                accept="image/*,application/pdf"
-                                                onChange={(e) => handleUpload(e, doc.id)}
-                                                disabled={uploading !== null}
-                                            />
-                                        </label>
+                                        </div>
                                     </div>
                                 </div>
                             );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Star, Edit2, BookOpen, Award, Check, X, Loader2, Camera, Phone, Briefcase, User, Plus, ShieldCheck, CreditCard, Clock } from 'lucide-react';
+import { MapPin, Star, Edit2, BookOpen, Award, Check, X, Loader2, Camera, Phone, Briefcase, User, Plus, ShieldCheck, CreditCard, Clock, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import VerificationModal from '../../components/dashboard/VerificationModal';
@@ -21,7 +21,7 @@ const AVAILABLE_SKILLS = [
     "Apoyo en Recuperación"
 ];
 
-const MAX_RETRIES = 3; // Constante vital para el proceso de carga
+const MAX_RETRIES = 1; // Simplificación radical
 
 // Función de ultra-optimización para móviles: Redimensiona antes de procesar
 const preprocessImage = async (file, maxDimension = 1200) => {
@@ -133,7 +133,7 @@ const CaregiverProfile = () => {
             const time = new Date().toLocaleTimeString();
             const dataStr = obj ? (typeof obj === 'object' ? JSON.stringify(obj).substring(0, 100) : String(obj)) : '';
             const fullMsg = `${time} - ${msg} ${dataStr}`;
-            setDebugLogs(prev => Array.isArray(prev) ? [fullMsg, ...prev].slice(0, 15) : [fullMsg]);
+            setDebugLogs(prev => Array.isArray(prev) ? [fullMsg, ...prev].slice(0, 50) : [fullMsg]);
             console.log("UI_DEBUG:", fullMsg);
         } catch (e) {
             console.error("Log error:", e);
@@ -147,16 +147,6 @@ const CaregiverProfile = () => {
         }
     }, [user?.id]);
 
-    useEffect(() => {
-        let interval;
-        if (uploading) {
-            addLog("Iniciando monitor de vida (Heartbeat)...");
-            interval = setInterval(() => {
-                addLog("Ejecutando... (Heartbeat)");
-            }, 5000);
-        }
-        return () => clearInterval(interval);
-    }, [uploading]);
 
     // Bloquear scroll del contenedor principal (Layout) y Body
     useEffect(() => {
@@ -361,138 +351,107 @@ const CaregiverProfile = () => {
 
     const processAndUploadImage = async (croppedBlob) => {
         setUploading(true);
-        setUploadStep(1);
-        setUploadProgress(0);
-        setError(null);
+        setUploadStep(1); // Paso 1: Preparando...
+        addLog("🚀 Iniciando carga simplificada...");
 
-        if (selectedImage && selectedImage.startsWith('blob:')) {
-            URL.revokeObjectURL(selectedImage);
-        }
-
-        addLog("🚀 Lanzando Carga V2.1.2...");
-        let attempt = 0;
-        let success = false;
-        let lastError = null;
-        let currentStep = "inicio";
-
-        while (attempt < MAX_RETRIES && !success) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 120000);
-
-            try {
-                attempt++;
-
-                // --- PASO 1a: Sesión Garantizada ---
-                currentStep = "1a";
-                alert("Depuración: Obteniendo sesión de usuario...");
-                const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-                if (authError || !authUser) {
-                    alert("Error sesión: " + (authError?.message || "No hay usuario"));
-                    throw new Error("Sesión expirada. Por favor, reingresa.");
-                }
-                const activeUserId = authUser.id;
-                alert("Sesión confirmada: " + activeUserId);
-
-                // --- PASO 1b: Preparación del BLOB ---
-                currentStep = "1b";
-                const fileToUpload = croppedBlob;
-
-                // --- PASO 2: Subida Directa ---
-                currentStep = "2";
-                const fileName = `avatar-${Date.now()}.jpg`;
-                const filePath = `${activeUserId}/${fileName}`;
-                addLog(`Subiendo a avatars/${filePath}...`);
-
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('avatars')
-                    .upload(filePath, fileToUpload, {
-                        contentType: 'image/jpeg',
-                        upsert: true,
-                        resumable: false
-                    });
-
-                if (uploadError) {
-                    alert("Error Storage: " + uploadError.message);
-                    throw uploadError;
-                }
-                alert("¡Subida exitosa al storage!");
-
-                let uploadResult = { data: uploadData, error: uploadError };
-
-                if (uploadResult?.error) throw uploadResult.error;
-
-                clearTimeout(timeoutId);
-
-                currentStep = "3";
-                setUploadStep(3); // Paso 3: Registrando...
-                const { data: { publicUrl } } = supabase.storage
-                    .from('avatars')
-                    .getPublicUrl(filePath);
-
-                alert("Actualizando perfil con URL: " + publicUrl);
-                const { error: updateError } = await supabase
-                    .from('profiles')
-                    .update({ avatar_url: publicUrl })
-                    .eq('id', activeUserId);
-
-                if (updateError) {
-                    alert("Error Base de Datos: " + updateError.message);
-                    throw updateError;
-                }
-                alert("¡Perfil actualizado con éxito!");
-
-                currentStep = "4";
-                setUploadStep(4); // Paso 4: Finalizando...
-                setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
-
-                setTimeout(async () => {
-                    await refreshProfile();
-                    setUploadStep(0);
-                    setUploading(false);
-                }, 1000);
-
-                success = true;
-
-            } catch (error) {
-                addLog(`ERROR ${currentStep}:`, error);
-                clearTimeout(timeoutId);
-                console.error(`Error attempt ${attempt}:`, error);
-                lastError = error;
-
-                if (error.message === "AUTH_TIMEOUT") {
-                    alert("⚠️ SERVIDOR EN MANTENIMIENTO\nLa llave de acceso no respondió en 8s.\n\nPor favor:\n1. Cierra sesión y vuelve a entrar.\n2. Si persiste, intenta en 10 minutos.");
-                    break;
-                }
-
-                if (attempt < MAX_RETRIES) {
-                    setUploadStep(2);
-                    setUploadProgress(0);
-                    await new Promise(r => setTimeout(r, 4000 * attempt));
-                }
-            }
-        }
-
-        if (!success) {
-            let errorMsg = "No se pudo subir la foto.";
-            if (lastError?.name === 'AbortError' || lastError?.message?.includes('TIMEOUT')) {
-                errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
-            } else if (lastError?.status === 403 || lastError?.message?.includes('security policy')) {
-                errorMsg = "Error de Permisos (RLS). El servidor denegó la subida.";
+        try {
+            // Revocar URL anterior si existe
+            if (selectedImage && selectedImage.startsWith('blob:')) {
+                URL.revokeObjectURL(selectedImage);
             }
 
-            const debugInfo = `
-                Status: ${lastError?.status || 'N/A'}
-                Name: ${lastError?.name || 'N/A'}
-                Code: ${lastError?.code || 'N/A'}
-                Msg: ${lastError?.message}
-            `.trim();
+            // 1. Sesión
+            const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+            if (authError || !authUser) throw new Error("Sesión no válida");
+            const activeUserId = authUser.id;
 
-            alert(`${errorMsg}\n\nDETALLE TÉCNICO:\n${debugInfo}\n\nPASO FALLIDO: ${currentStep}`);
+            // 2. Subida Directa
+            const fileName = `avatar-${Date.now()}.jpg`;
+            const filePath = `${activeUserId}/${fileName}`;
+            setUploadStep(2); // Paso 2: Subiendo...
+            addLog("📤 Subiendo archivo...");
+
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, croppedBlob, {
+                    contentType: 'image/jpeg',
+                    upsert: true
+                });
+
+            if (uploadError) throw uploadError;
+
+            // 3. Obtener URL y Actualizar DB
+            setUploadStep(3); // Paso 3: Guardando...
+            const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
+
+            addLog("💾 Actualizando base de datos...");
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ avatar_url: publicUrl })
+                .eq('id', activeUserId);
+
+            if (updateError) throw updateError;
+
+            // 4. Limpieza de anterior (opcional/silencioso)
+            if (profile.avatar_url && profile.avatar_url.includes('avatars')) {
+                const oldPath = profile.avatar_url.split('/avatars/')[1];
+                if (oldPath) supabase.storage.from('avatars').remove([oldPath]);
+            }
+
+            addLog("✅ Proceso completado.");
+            setProfile(prev => ({ ...prev, avatar_url: publicUrl }));
+
+            // Refresco y cierre
+            setTimeout(async () => {
+                try { await refreshProfile(); } catch (e) { }
+                setUploadStep(0);
+                setUploading(false);
+            }, 1000);
+
+        } catch (error) {
+            console.error("Error en carga:", error);
+            addLog("❌ Error:", error.message);
+            alert(`No se pudo cargar la imagen: ${error.message}`);
             setUploading(false);
             setUploadStep(0);
         }
-
         setSelectedImage(null);
+    };
+
+    const handleDeleteAvatar = async () => {
+        if (!profile.avatar_url) return;
+        if (!confirm("¿Estás seguro de que deseas eliminar tu foto de perfil?")) return;
+
+        setUploading(true);
+        addLog("🗑️ Iniciando eliminación de avatar...");
+
+        try {
+            // 1. Borrar archivo físico del Storage
+            const oldPath = profile.avatar_url.split('/avatars/')[1];
+            if (oldPath) {
+                const { error: storageError } = await supabase.storage.from('avatars').remove([oldPath]);
+                if (storageError) addLog("Aviso: Error al borrar archivo físico (puede que ya no exista)");
+            }
+
+            // 2. Actualizar base de datos
+            const { error: dbError } = await supabase
+                .from('profiles')
+                .update({ avatar_url: null })
+                .eq('id', user.id);
+
+            if (dbError) throw dbError;
+
+            // 3. Sincronizar UI
+            addLog("✅ Avatar eliminado con éxito.");
+            setProfile(prev => ({ ...prev, avatar_url: null }));
+            await refreshProfile();
+
+        } catch (error) {
+            console.error("Error al eliminar avatar:", error);
+            alert("No se pudo eliminar la foto de perfil.");
+        } finally {
+            setUploading(false);
+        }
     };
 
     const isPro = profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
@@ -538,22 +497,38 @@ const CaregiverProfile = () => {
                     <div className="relative z-10 flex flex-col lg:grid lg:grid-cols-[auto_1fr_auto] items-center lg:items-end gap-10">
                         {/* Avatar Display */}
                         <div className="relative group shrink-0">
-                            <div className="w-32 h-32 md:w-48 md:h-48 rounded-[12px] border-[6px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40">
+                            <div className="w-32 h-32 md:w-48 md:h-48 rounded-[12px] border-[6px] border-white/20 bg-slate-800 shadow-2xl relative overflow-hidden ring-4 ring-white shadow-blue-900/40 flex items-center justify-center">
                                 {uploading ? (
                                     <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20">
                                         <Loader2 className="animate-spin text-white" size={40} />
                                     </div>
                                 ) : null}
-                                <img
-                                    src={profile.avatar_url || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"}
-                                    alt="Profile"
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                />
+                                {profile.avatar_url ? (
+                                    <img
+                                        src={profile.avatar_url}
+                                        alt="Profile"
+                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: '#A7D8E8' }}>
+                                        <User size={120} style={{ color: '#0F3C4C' }} strokeWidth={1.5} />
+                                    </div>
+                                )}
                                 <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer !text-[#FAFAF7] backdrop-blur-sm">
                                     <Camera size={32} className="mb-2" />
                                     <span className="text-[10px] font-black uppercase tracking-widest">Cambiar Foto</span>
                                     <input type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" onChange={handleFileSelect} disabled={uploading} />
                                 </label>
+
+                                {profile.avatar_url && (
+                                    <button
+                                        onClick={handleDeleteAvatar}
+                                        className="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-30 shadow-lg"
+                                        title="Eliminar Foto"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                )}
                             </div>
                             <div className={`absolute -bottom-2 -right-2 ${isPro ? 'bg-[var(--secondary-color)]' : 'bg-slate-500'} w-10 h-10 rounded-[12px] border-[4px] border-white shadow-xl flex items-center justify-center !text-[#FAFAF7]`} title={isPro ? "Verificado PRO" : "Perfil Estándar"}>
                                 {isPro ? <Check size={20} strokeWidth={4} /> : <ShieldCheck size={20} strokeWidth={2.5} />}
@@ -783,6 +758,7 @@ const CaregiverProfile = () => {
                     </div>
                 </div>
             </div >
+
 
             {isEditing && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex flex-col md:items-center md:justify-center p-0 md:p-4">

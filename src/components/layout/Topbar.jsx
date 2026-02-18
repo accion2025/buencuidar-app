@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, Bell, Menu } from 'lucide-react';
+import { MessageSquare, Bell, Menu, User } from 'lucide-react';
 
 const Topbar = ({ profile, unreadChatCount, unreadNotificationsCount, onMenuClick }) => {
     const navigate = useNavigate();
@@ -73,12 +73,13 @@ const Topbar = ({ profile, unreadChatCount, unreadNotificationsCount, onMenuClic
                     </div>
                     <div
                         onClick={() => navigate(profile?.role === 'caregiver' ? '/caregiver/profile' : '/dashboard/profile')}
-                        className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[var(--primary-color)] font-bold border-2 border-white shadow-sm overflow-hidden cursor-pointer hover:border-[var(--primary-color)] transition-all"
+                        className="w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 border-white shadow-sm overflow-hidden cursor-pointer hover:border-[var(--primary-color)] transition-all"
+                        style={{ backgroundColor: profile?.avatar_url ? 'transparent' : '#A7D8E8' }}
                     >
                         {profile?.avatar_url ? (
                             <img src={profile.avatar_url} alt="User Avatar" className="w-full h-full object-cover" />
                         ) : (
-                            <span className="text-sm">{profile?.full_name?.charAt(0).toUpperCase() || 'U'}</span>
+                            <User size={24} style={{ color: '#0F3C4C' }} strokeWidth={1.5} />
                         )}
                     </div>
                 </div>

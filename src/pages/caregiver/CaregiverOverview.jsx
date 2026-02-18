@@ -744,12 +744,18 @@ const CaregiverOverview = () => {
                         <div className="grid lg:grid-cols-3 gap-8 items-start md:items-center">
                             <div className="lg:col-span-2 flex flex-col md:flex-row items-start md:items-center gap-10">
                                 {/* Avatar integration in overview */}
-                                <div className="w-24 h-24 rounded-[20px] border-[4px] border-white/20 bg-slate-900 shadow-2xl relative overflow-hidden shrink-0 ring-4 ring-white/10">
-                                    <img
-                                        src={profile?.avatar_url || "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"}
-                                        alt="Profile"
-                                        className="w-full h-full object-cover"
-                                    />
+                                <div className="w-24 h-24 rounded-[20px] border-[4px] border-white/20 shadow-2xl relative overflow-hidden shrink-0 ring-4 ring-white/10 flex items-center justify-center">
+                                    {profile?.avatar_url ? (
+                                        <img
+                                            src={profile.avatar_url}
+                                            alt="Profile"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: '#A7D8E8' }}>
+                                            <User size={64} style={{ color: '#0F3C4C' }} strokeWidth={1.5} />
+                                        </div>
+                                    )}
                                 </div>
                                 <div>
                                     <span className={`bg-white/10 ${isPro ? 'text-[var(--accent-color)] border-white/20' : 'text-slate-400 border-white/5'} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 inline-block border backdrop-blur-md transition-colors`}>
