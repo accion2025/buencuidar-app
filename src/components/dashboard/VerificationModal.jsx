@@ -195,38 +195,13 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             setSuccess(`Documento "${docType}" subido correctamente.`);
             await fetchUserDocs();
             if (onComplete) onComplete();
-
         } catch (err) {
             console.error("Error en carga:", err);
-            const userFriendlyMsg = getFriendlyErrorMessage(err);
-            setError(userFriendlyMsg);
+            setError(getFriendlyErrorMessage(err));
+        } finally {
+            setUploading(null);
             setUploadStep(0);
         }
-
-        if (!success) {
-            let errorMsg = `No se pudo subir el documento "${docType}".`;
-            if (lastError?.message === 'AUTH_TIMEOUT') {
-                setError("⚠️ Error de Autenticación (Servidor en mantenimiento).");
-            } else {
-                if (lastError?.name === 'AbortError' || lastError?.message?.includes('TIMEOUT')) {
-                    errorMsg = "La conexión se cerró por falta de respuesta (Timeout).";
-                } else if (lastError?.status === 403 || lastError?.message?.includes('security policy')) {
-                    errorMsg = "Error de Permisos (RLS). El servidor denegó la carga de documentos.";
-                } else if (lastError?.message?.includes('storage')) {
-                    errorMsg += " Error en el servidor de archivos.";
-                }
-
-                const debugInfo = `
-                    Status: ${lastError?.status || 'N/A'}
-                    Msg: ${lastError?.message}
-                    Step: ${currentStep}
-                `.trim();
-
-                setError(`${errorMsg}\n\nDETALLE:\n${debugInfo}`);
-            }
-        }
-        setUploading(null);
-        setUploadStep(0);
     };
 
     const handleDeleteDocument = async (docType, filePath) => {

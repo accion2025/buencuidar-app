@@ -299,12 +299,14 @@ const CaregiverProfile = () => {
             await refreshProfile();
 
             addLog("✅ Perfil guardado con éxito.");
+            setSaving(false); // Apagar loader ANTES de la alerta
             setIsEditing(false);
             alert("¡Perfil actualizado correctamente!");
 
         } catch (error) {
             console.error("Error fatal en handleSave:", error);
             addLog("❌ Error en guardado:", error.message);
+            setSaving(false); // Apagar loader en caso de error
             alert(`No se pudo guardar el perfil:\n\n${error.message}`);
         } finally {
             setSaving(false);
@@ -411,9 +413,9 @@ const CaregiverProfile = () => {
         } catch (error) {
             console.error("Error en carga:", error);
             addLog("❌ Error:", error.message);
-            alert(`No se pudo cargar la imagen: ${error.message}`);
             setUploading(false);
             setUploadStep(0);
+            alert(`No se pudo cargar la imagen: ${error.message}`);
         }
         setSelectedImage(null);
     };
