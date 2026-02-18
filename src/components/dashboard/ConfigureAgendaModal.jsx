@@ -66,21 +66,28 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
             const now = new Date();
             const todayLocal = now.toLocaleDateString('en-CA');
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const cleanEndTime = appointmentEndTime ? appointmentEndTime.substring(0, 5) : null;
+
+            const infractions = [];
 
             for (const [activity, time] of Object.entries(selectedActivities)) {
+                const cleanTime = time.substring(0, 5);
+
                 // 1. End Time Limit
-                if (appointmentEndTime && time > appointmentEndTime) {
-                    alert(`Infracción de Horario: La actividad "${activity}" se programó a las ${time}, pero excede el límite de la cita (Fin: ${appointmentEndTime.substring(0, 5)}).`);
-                    setSaving(false);
-                    return;
+                if (cleanEndTime && cleanTime > cleanEndTime) {
+                    infractions.push(`• Horario: "${activity}" (${cleanTime}) excede el fin de la cita (${cleanEndTime}).`);
                 }
 
                 // 2. Present/Future Limit (only if the appointment is today)
-                if (appointmentDate === todayLocal && time < currentTime) {
-                    alert(`Infracción Cronológica: No es posible programar "${activity}" a las ${time} porque ese horario ya ha pasado.`);
-                    setSaving(false);
-                    return;
+                if (appointmentDate === todayLocal && cleanTime < currentTime) {
+                    infractions.push(`• Cronológica: "${activity}" (${cleanTime}) ya ha pasado (Actual: ${currentTime}).`);
                 }
+            }
+
+            if (infractions.length > 0) {
+                alert(`Se han detectado las siguientes infracciones en la agenda:\n\n${infractions.join('\n')}\n\nPor favor, corrija los horarios para continuar.`);
+                setSaving(false);
+                return;
             }
 
             // Convert map to array of objects including category (program_name)
