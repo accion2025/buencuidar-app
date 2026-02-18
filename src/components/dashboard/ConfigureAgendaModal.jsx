@@ -70,14 +70,14 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
             for (const [activity, time] of Object.entries(selectedActivities)) {
                 // 1. End Time Limit
                 if (appointmentEndTime && time > appointmentEndTime) {
-                    alert(`Error: La actividad "${activity}" se programó a las ${time}, pero la cita termina a las ${appointmentEndTime.substring(0, 5)}.`);
+                    alert(`Infracción de Horario: La actividad "${activity}" se programó a las ${time}, pero excede el límite de la cita (Fin: ${appointmentEndTime.substring(0, 5)}).`);
                     setSaving(false);
                     return;
                 }
 
                 // 2. Present/Future Limit (only if the appointment is today)
                 if (appointmentDate === todayLocal && time < currentTime) {
-                    alert(`Error: La actividad "${activity}" se programó a las ${time}, pero esa hora ya ha pasado.`);
+                    alert(`Infracción Cronológica: No es posible programar "${activity}" a las ${time} porque ese horario ya ha pasado.`);
                     setSaving(false);
                     return;
                 }
