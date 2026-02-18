@@ -364,19 +364,31 @@ const CaregiverProfile = () => {
             const activeUserId = user?.id;
             if (!activeUserId) throw new Error("Sesión no válida o usuario no identificado");
 
-            // 2. Preparación Elemental (Uso de Blob nativo para máxima compatibilidad)
+            // 2. Preparación Elemental (Conversión a Binario Puro para máxima estabilidad)
             const fileExt = 'jpg';
             const fileName = `avatar-${Date.now()}.${fileExt}`;
             const filePath = `${activeUserId}/${fileName}`;
             setUploadStep(2); // Paso 2: Subiendo...
-            addLog("📤 Subiendo datos binarios...");
+            addLog("📤 Preparando transmisión binaria...");
 
-            const { error: uploadError } = await supabase.storage
+            // Conversión de Blob a Uint8Array (formato más estable para red móvil)
+            const buffer = await croppedBlob.arrayBuffer();
+            const binaryData = new Uint8Array(buffer);
+            addLog(`📦 Tamaño: ${(binaryData.length / 1024).toFixed(0)}KB. Iniciando red...`);
+
+            // 2b. Implementación de Timeout de Seguridad (20s)
+            const uploadPromise = supabase.storage
                 .from('avatars')
-                .upload(filePath, croppedBlob, {
+                .upload(filePath, binaryData, {
                     contentType: 'image/jpeg',
                     upsert: true
                 });
+
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Tiempo de espera agotado (20s). Verifica tu conexión.")), 20000)
+            );
+
+            const { error: uploadError } = await Promise.race([uploadPromise, timeoutPromise]);
 
             if (uploadError) throw uploadError;
 

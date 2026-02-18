@@ -18,6 +18,12 @@ if (workbox) {
     // Precachear rutas inyectadas por VitePWA
     workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
 
+    // 3b. EXCLUSIÓN CRÍTICA: Ignorar Supabase para evitar bloqueos en subidas binarias pesadas
+    workbox.routing.registerRoute(
+        ({ url }) => url.host.includes('supabase.co'),
+        new workbox.strategies.NetworkOnly()
+    );
+
     // Control inmediato
     self.skipWaiting();
     workbox.core.clientsClaim();

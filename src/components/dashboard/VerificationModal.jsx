@@ -145,20 +145,31 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
             // --- PASO 1b: Procesamiento ---
             const processedBlob = await preprocessImage(file);
 
-            // Envío elemental para móviles
+            // Envío elemental para móviles (Binario Puro)
             const fileExt = file.name.split('.').pop();
             const fileName = `${docType}-${Date.now()}.${fileExt}`;
             const isPdf = fileExt.toLowerCase() === 'pdf';
             const contentType = isPdf ? 'application/pdf' : 'image/jpeg';
 
             const filePath = `${activeUserId}/${fileName}`;
+            addLog("📤 Preparando transmisión binaria...");
 
-            const { error: uploadError } = await supabase.storage
+            const buffer = await processedBlob.arrayBuffer();
+            const binaryData = new Uint8Array(buffer);
+
+            // Timeout de Seguridad (20s)
+            const uploadPromise = supabase.storage
                 .from('documents')
-                .upload(filePath, processedBlob, {
+                .upload(filePath, binaryData, {
                     contentType: contentType,
                     upsert: true
                 });
+
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("La subida tardó demasiado. Revisa tu conexión Wifi.")), 20000)
+            );
+
+            const { error: uploadError } = await Promise.race([uploadPromise, timeoutPromise]);
 
             if (uploadError) throw uploadError;
 
