@@ -715,9 +715,9 @@ const CaregiverProfile = () => {
                             </div>
                         </div>
 
-                        <div className="bg-[#0F3C4C] rounded-[12px] p-6 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
+                        <div className="bg-[#0F3C4C] rounded-[12px] px-4 py-8 md:p-10 border border-white/5 shadow-2xl relative overflow-hidden !text-[#FAFAF7]">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-                            <h3 className="font-brand font-bold mb-10 text-[10px] text-gray-400 uppercase tracking-[0.2em] flex items-center gap-3 relative z-10">
+                            <h3 className="font-brand font-bold mb-10 text-[6px] !text-white uppercase flex items-center gap-2 relative z-10">
                                 <span className="p-2 bg-white/10 rounded-[12px]">
                                     <ShieldCheck size={16} className="text-[var(--secondary-color)]" />
                                 </span>
