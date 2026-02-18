@@ -2,6 +2,7 @@ import { X, Calendar, Clock, MapPin, User, Trash2, Pencil, Settings } from 'luci
 import { usePermissions } from '../../hooks/usePermissions';
 
 const AppointmentsListModal = ({ isOpen, onClose, appointments, onEdit, onDelete, onConfigureAgenda }) => {
+    const { can } = usePermissions();
     if (!isOpen) return null;
 
     // Filter and Sort appointments (v1.0: No packages, all individual)
