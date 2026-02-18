@@ -57,12 +57,66 @@ const CaregiverOverview = () => {
             // 1. Mark notification as read
             await markAsRead(notif.id);
 
-            // 2. If it was an appointment modification, update the appointment too
-            if (notif.metadata?.appointment_id && notif.is_modification) {
+            // 2. Identify critical notifications for chat confirmation
+            const criticalTitles = ['❌ Turno Cancelado', '📅 Turno Reprogramado', '📝 Cambio en Agenda', '✏️ Cita Modificada'];
+            const isCritical = criticalTitles.includes(notif.title);
+            const appointmentId = notif.metadata?.appointment_id;
+
+            if (isCritical && appointmentId) {
+                // Fetch appointment to get client_id
+                const { data: appointment } = await supabase
+                    .from('appointments')
+                    .select('client_id, title')
+                    .eq('id', appointmentId)
+                    .single();
+
+                if (appointment?.client_id) {
+                    // Find or create conversation
+                    let { data: conv } = await supabase
+                        .from('conversations')
+                        .select('id')
+                        .or(`and(participant1_id.eq.${user.id},participant2_id.eq.${appointment.client_id}),and(participant1_id.eq.${appointment.client_id},participant2_id.eq.${user.id})`)
+                        .single();
+
+                    if (!conv) {
+                        const { data: newConv } = await supabase
+                            .from('conversations')
+                            .insert([{
+                                participant1_id: user.id,
+                                participant2_id: appointment.client_id,
+                                last_message: 'Iniciando conversación',
+                                last_message_at: new Date().toISOString()
+                            }])
+                            .select()
+                            .single();
+                        conv = newConv;
+                    }
+
+                    if (conv) {
+                        const confirmMsg = `He recibido la notificación sobre: "${notif.title}" para la cita "${appointment.title || 'solicitada'}". Confirmado.`;
+
+                        // Insert Message
+                        await supabase.from('messages').insert([{
+                            conversation_id: conv.id,
+                            sender_id: user.id,
+                            content: confirmMsg
+                        }]);
+
+                        // Update Conversation
+                        await supabase.from('conversations').update({
+                            last_message: confirmMsg,
+                            last_message_at: new Date().toISOString()
+                        }).eq('id', conv.id);
+                    }
+                }
+            }
+
+            // 3. If it was an appointment modification, update the appointment too
+            if (appointmentId && notif.is_modification) {
                 const { error } = await supabase
                     .from('appointments')
                     .update({ modification_seen_by_caregiver: true })
-                    .eq('id', notif.metadata.appointment_id);
+                    .eq('id', appointmentId);
                 if (error) throw error;
             }
 
@@ -1295,7 +1349,9 @@ const CaregiverOverview = () => {
                                                                 }}
                                                                 className="mt-2 text-[10px] bg-[var(--primary-color)] !text-[#FAFAF7] px-2 py-1 rounded font-black uppercase tracking-widest hover:bg-[var(--secondary-color)] transition-colors"
                                                             >
-                                                                Marcar como leído
+                                                                {['❌ Turno Cancelado', '📅 Turno Reprogramado', '📝 Cambio en Agenda', '✏️ Cita Modificada'].includes(notif.title)
+                                                                    ? 'Enviar confirmación de lectura'
+                                                                    : 'Marcar como leído'}
                                                             </button>
                                                         )}
                                                     </div>
