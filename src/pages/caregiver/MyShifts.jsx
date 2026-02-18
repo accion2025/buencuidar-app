@@ -151,7 +151,7 @@ const MyShifts = () => {
         const filtered = shifts.filter(shift => {
             if (activeTab === 'upcoming') return ['confirmed', 'pending'].includes(shift.status);
             if (activeTab === 'completed') return ['completed', 'paid'].includes(shift.status);
-            if (activeTab === 'cancelled') return shift.status === 'cancelled';
+            if (activeTab === 'cancelled') return ['cancelled', 'denied'].includes(shift.status);
             return true;
         });
 
@@ -201,8 +201,8 @@ const MyShifts = () => {
 
     const processedItems = getProcessedShifts();
     const upcomingCount = shifts.filter(s => ['confirmed', 'pending'].includes(s.status)).length;
-    const completedCount = shifts.filter(s => s.status === 'completed').length;
-    const cancelledCount = shifts.filter(s => s.status === 'cancelled').length;
+    const completedCount = shifts.filter(s => ['completed', 'paid'].includes(s.status)).length;
+    const cancelledCount = shifts.filter(s => ['cancelled', 'denied'].includes(s.status)).length;
 
 
     const handleAction = async (id, status) => {

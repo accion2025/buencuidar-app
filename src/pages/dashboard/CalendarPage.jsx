@@ -563,7 +563,7 @@ const CalendarPage = () => {
 
         const statusColors = {
             'confirmed': 'bg-green-100 text-green-700 border-green-200 font-bold',
-            'cancelled': 'bg-gray-100 text-gray-400 border-gray-100 opacity-60 italic',
+            'cancelled': 'bg-gray-100 text-gray-400 border-gray-100 opacity-60 italic line-through',
             'completed': 'bg-slate-100 text-slate-400 border-slate-100 opacity-60',
             'paid': 'bg-slate-100 text-slate-400 border-slate-200 opacity-60'
         };
@@ -747,7 +747,7 @@ const CalendarPage = () => {
                     )}
                     {emptyDays.map((_, index) => (<div key={`empty-${index}`} className="opacity-0"></div>))}
                     {days.map(day => {
-                        const dayEvents = appointments.filter(a => a.date === day && a.status !== 'cancelled' && a.type !== 'Cuidado+');
+                        const dayEvents = appointments.filter(a => a.date === day && a.type !== 'Cuidado+');
                         const isSelected = selectedDate === day;
                         const hasCuidadoPlus = dayEvents.some(e => e.type === 'Cuidado+');
                         return (
@@ -815,10 +815,10 @@ const CalendarPage = () => {
                         <div className="text-4xl font-light text-blue-600 mb-4">
                             {selectedDate} <span className="text-base text-gray-500 font-normal">de {months[currentDate.getMonth()]}</span>
                         </div>
-                        {appointments.filter(a => a.date === selectedDate && a.status !== 'cancelled' && a.type !== 'Cuidado+').length > 0 ? (
+                        {appointments.filter(a => a.date === selectedDate && a.type !== 'Cuidado+').length > 0 ? (
                             <>
                                 <button onClick={() => openModal(selectedDate)} className="w-full mb-4 py-2 border border-dashed border-blue-600 text-blue-600 rounded-[16px] font-medium hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"><Plus size={16} /> Agregar otra cita</button>
-                                {appointments.filter(a => a.date === selectedDate && a.status !== 'cancelled' && a.type !== 'Cuidado+').map(event => {
+                                {appointments.filter(a => a.date === selectedDate && a.type !== 'Cuidado+').map(event => {
                                     const now = new Date();
                                     const todayStr = now.toLocaleDateString('en-CA');
                                     const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
@@ -830,7 +830,7 @@ const CalendarPage = () => {
                                     const isActuallyPast = isPastDate || isPastTime;
                                     const isGray = ['completed', 'paid', 'cancelled'].includes(event.status) || isActuallyPast;
                                     return (
-                                        <div key={event.id} className={`p-4 rounded-[16px] shadow-sm border relative group/event ${isGray ? 'bg-gray-50 border-gray-200 opacity-60' : 'bg-white border-gray-100'}`}>
+                                        <div key={event.id} className={`p-4 rounded-[16px] shadow-sm border relative group/event ${isGray ? 'bg-gray-50 border-gray-200 opacity-60' : 'bg-white border-gray-100'} ${event.status === 'cancelled' ? 'line-through' : ''}`}>
                                             <div className="flex gap-1 absolute top-2 right-2">
                                                 {(() => {
                                                     return !isGray && !isActuallyPast ? (
@@ -845,7 +845,7 @@ const CalendarPage = () => {
                                                     );
                                                 })()}
                                             </div>
-                                            <h4 className={`font-bold mb-1 pr-8 ${isGray ? 'text-gray-500' : 'text-gray-800'}`}>{event.title} {isGray && `(${event.status === 'cancelled' ? 'Cancelada' : 'Finalizada'})`}</h4>
+                                            <h4 className={`font-bold mb-1 pr-8 ${isGray ? 'text-gray-500' : 'text-gray-800'}`}>{event.title} {event.status === 'cancelled' ? '(Cancelada)' : isActuallyPast ? '(Finalizada)' : ''}</h4>
                                             <div className="text-sm text-gray-600 flex items-center gap-2"><Clock size={14} /> {event.time} {event.end_time ? `- ${event.end_time.substring(0, 5)}` : ''}</div>
 
                                             <div className={`mt-3 p-3 rounded-[12px] flex items-center gap-3 border ${event.caregiver_id ? 'bg-green-50 border-green-100 text-green-700' : 'bg-amber-50 border-amber-100 text-amber-700'}`}>
