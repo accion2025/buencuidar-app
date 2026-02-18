@@ -668,10 +668,10 @@ const CalendarPage = () => {
                 <div className="flex justify-between items-end mb-4 shrink-0">
                     <div className="flex flex-col">
                         <div className="flex items-baseline justify-start gap-4 mb-2 w-full">
-                            <span className="text-8xl font-black !text-[#2FAE8F] tracking-tighter leading-none drop-shadow-sm">
+                            <span className="text-5xl font-black !text-[#2FAE8F] tracking-tighter leading-none drop-shadow-sm">
                                 {currentDate.getFullYear()}
                             </span>
-                            <h2 className="text-3xl font-bold text-gray-400 tracking-tight">
+                            <h2 className="text-xl font-bold text-gray-400 tracking-tight">
                                 Agenda tu cita
                             </h2>
                         </div>
