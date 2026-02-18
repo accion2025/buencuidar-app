@@ -14,10 +14,13 @@ La capacidad de crear o editar una agenda depende estrictamente del plan del usu
 ### 1.2 Regla de Inmutabilidad
 No se permite la creación ni modificación de agendas para citas con estado `finalized`, `cancelled` o citas cuya fecha sea anterior a la actual.
 
-### 1.3 Restricciones de Horario en Edición
-Cuando se edita una agenda, no se podrán definir horarios para las actividades que:
-*   Sean anteriores a la hora en la que se realiza la edición (no se pueden programar tareas en el pasado).
-*   Sean posteriores a la hora definida como fin de la cita.
+### 1.3 Restricciones de Horario en Edición de Agenda
+Al editar el seguimiento (agenda técnica), no se pueden programar actividades en el pasado (para citas de hoy) ni fuera del rango de fin de la cita.
+
+### 1.4 Restricciones en Edición de Cita
+Al modificar los horarios base de una cita:
+- La **Hora de Inicio** no puede ser previa a la hora actual (solo para citas del día de hoy).
+- La **Hora de Fin** debe ser estrictamente posterior a la hora de inicio definida.
 
 ---
 

@@ -60,6 +60,31 @@ const EditAppointmentModal = ({ isOpen, onClose, appointment, onSave, patients =
         e.preventDefault();
         setSaving(true);
         try {
+            // Validation: Time limits
+            const now = new Date();
+            const todayLocal = now.toLocaleDateString('en-CA');
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            const infractions = [];
+            const startTime = formData.time;
+            const endTime = formData.endTime;
+
+            // 1. Cronológica (No pasado para hoy)
+            if (formData.date === todayLocal && startTime < currentTime) {
+                infractions.push(`• Infracción Cronológica: La hora de inicio (${startTime}) ya ha pasado (Actual: ${currentTime}).`);
+            }
+
+            // 2. Horario (Fin después de Inicio)
+            if (endTime && endTime <= startTime) {
+                infractions.push(`• Infracción de Horario: La hora de fin (${endTime}) debe ser posterior a la hora de inicio (${startTime}).`);
+            }
+
+            if (infractions.length > 0) {
+                alert(`Se han detectado las siguientes infracciones en la cita:\n\n${infractions.join('\n')}\n\nPor favor, corrija los horarios para continuar.`);
+                setSaving(false);
+                return;
+            }
+
             // Format details from services only
             let formattedDetails = "";
 
