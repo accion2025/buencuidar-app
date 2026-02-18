@@ -733,75 +733,81 @@ const CalendarPage = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-7 mb-2 text-center text-gray-500 font-medium shrink-0">
-                    {['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'].map(day => (
-                        <div key={day} className="py-1">{day}</div>
-                    ))}
-                </div>
-
-                <div className={`grid grid-cols-7 ${gridRowsClass} gap-2 bg-gray-50 p-2 rounded-[16px] border border-gray-200 overflow-y-scroll relative h-full min-h-0`}>
-                    {fetching && (
-                        <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center z-20">
-                            <Loader2 className="animate-spin text-blue-600" size={40} />
+                {/* Scrollable Calendar Frame (Horizontal scroll on mobile) */}
+                <div className="flex-grow overflow-x-auto custom-scrollbar-h relative min-h-0 flex flex-col">
+                    <div className="min-w-[700px] lg:min-w-0 flex-grow flex flex-col">
+                        {/* Day Names Header */}
+                        <div className="grid grid-cols-7 mb-2 text-center text-gray-500 font-medium shrink-0">
+                            {['DOM', 'LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB'].map(day => (
+                                <div key={day} className="py-1">{day}</div>
+                            ))}
                         </div>
-                    )}
-                    {emptyDays.map((_, index) => (<div key={`empty-${index}`} className="opacity-0"></div>))}
-                    {days.map(day => {
-                        const dayEvents = appointments.filter(a => a.date === day && a.type !== 'Cuidado+');
-                        const isSelected = selectedDate === day;
-                        const hasCuidadoPlus = dayEvents.some(e => e.type === 'Cuidado+');
-                        return (
-                            <div
-                                key={day}
-                                onClick={() => setSelectedDate(day)}
-                                className={`bg-white rounded-[16px] p-2 border transition-all cursor-pointer h-full min-h-0 flex flex-col gap-1 relative overflow-hidden ${isSelected ? 'border-blue-600 ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300'} ${hasCuidadoPlus ? '!bg-emerald-50/20' : ''}`}
-                            >
-                                {hasCuidadoPlus && (
-                                    <div className="absolute top-0 left-0 w-full h-1.5 bg-[var(--secondary-color)] opacity-80 z-10" />
-                                )}
-                                <div className="flex justify-between items-start relative z-10 shrink-0">
-                                    <span className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-semibold mb-1 ${isSelected ? 'bg-blue-600 !text-[#FAFAF7]' : 'text-gray-700'}`}>
-                                        {day}
-                                    </span>
-                                    <button onClick={(e) => { e.stopPropagation(); openModal(day); }} className="text-gray-300 hover:text-blue-600 group-hover:opacity-100 transition-opacity"><Plus size={16} /></button>
+
+                        {/* Calendar Grid */}
+                        <div className={`grid grid-cols-7 ${gridRowsClass} gap-2 bg-gray-50 p-2 rounded-[16px] border border-gray-200 overflow-y-scroll relative h-full min-h-0`}>
+                            {fetching && (
+                                <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] flex items-center justify-center z-20">
+                                    <Loader2 className="animate-spin text-blue-600" size={40} />
                                 </div>
-                                <div className="flex-1 overflow-y-auto no-scrollbar space-y-0.5">
-                                    {dayEvents.map(event => (
-                                        <div
-                                            key={event.id}
-                                            onClick={(e) => {
-                                                if (event.type === 'Cuidado+') {
-                                                    // Check historical/status
-                                                    const now = new Date();
-                                                    const todayStr = now.toLocaleDateString('en-CA');
-                                                    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
-                                                    const endTime = event.end_time || event.time;
-                                                    const isPast = event.originalDate < todayStr || (event.originalDate === todayStr && endTime < currentTime);
-                                                    const isHistorical = ['completed', 'paid', 'cancelled'].includes(event.status) || isPast;
-
-                                                    if (isHistorical) {
-                                                        // Let it bubble to the day cell onClick, which opens the Side Panel (Detalles del Día)
-                                                        // The Side Panel handles the read-only view with Lock icons.
-                                                        return;
-                                                    }
-
-                                                    e.stopPropagation();
-                                                    setDualEditTarget(event);
-                                                    setShowDualEditModal(true);
-                                                }
-                                            }}
-                                            className={`text-[10px] p-1 rounded border mb-0.5 truncate flex justify-between items-center group/dayevent ${getEventColor(event)} ${event.type === 'Cuidado+' ? '!bg-[var(--secondary-color)] !text-white !border-transparent font-black uppercase tracking-tighter cursor-pointer hover:brightness-110' : ''} ${event.caregiver_id && event.type !== 'Cuidado+' ? '!border-green-200 !bg-green-50/50' : ''}`}
-                                        >
-                                            <span className={`truncate flex-1 min-w-0 ${event.caregiver_id ? 'font-bold' : ''}`}>{event.time?.substring(0, 5)} - {event.title}</span>
-                                            {(event.caregiver_id || event.type === 'Cuidado+') && (
-                                                event.type === 'Cuidado+' ? <ShieldCheck size={10} className="ml-1 shrink-0" /> : <User size={10} className="ml-1 text-green-600 shrink-0" />
-                                            )}
+                            )}
+                            {emptyDays.map((_, index) => (<div key={`empty-${index}`} className="opacity-0"></div>))}
+                            {days.map(day => {
+                                const dayEvents = appointments.filter(a => a.date === day && a.type !== 'Cuidado+');
+                                const isSelected = selectedDate === day;
+                                const hasCuidadoPlus = dayEvents.some(e => e.type === 'Cuidado+');
+                                return (
+                                    <div
+                                        key={day}
+                                        onClick={() => setSelectedDate(day)}
+                                        className={`bg-white rounded-[16px] p-2 border transition-all cursor-pointer h-full min-h-0 flex flex-col gap-1 relative overflow-hidden ${isSelected ? 'border-blue-600 ring-2 ring-blue-100' : 'border-gray-200 hover:border-gray-300'} ${hasCuidadoPlus ? '!bg-emerald-50/20' : ''}`}
+                                    >
+                                        {hasCuidadoPlus && (
+                                            <div className="absolute top-0 left-0 w-full h-1.5 bg-[var(--secondary-color)] opacity-80 z-10" />
+                                        )}
+                                        <div className="flex justify-between items-start relative z-10 shrink-0">
+                                            <span className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-semibold mb-1 ${isSelected ? 'bg-blue-600 !text-[#FAFAF7]' : 'text-gray-700'}`}>
+                                                {day}
+                                            </span>
+                                            <button onClick={(e) => { e.stopPropagation(); openModal(day); }} className="text-gray-300 hover:text-blue-600 group-hover:opacity-100 transition-opacity"><Plus size={16} /></button>
                                         </div>
-                                    ))}
-                                </div>
-                            </div>
-                        );
-                    })}
+                                        {/* Vertical scroll inside the day cell for many events */}
+                                        <div className="flex-1 overflow-y-auto no-scrollbar space-y-0.5 min-h-0">
+                                            {dayEvents.map(event => (
+                                                <div
+                                                    key={event.id}
+                                                    onClick={(e) => {
+                                                        if (event.type === 'Cuidado+') {
+                                                            // Check historical/status
+                                                            const now = new Date();
+                                                            const todayStr = now.toLocaleDateString('en-CA');
+                                                            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:00`;
+                                                            const endTime = event.end_time || event.time;
+                                                            const isPast = event.originalDate < todayStr || (event.originalDate === todayStr && endTime < currentTime);
+                                                            const isHistorical = ['completed', 'paid', 'cancelled'].includes(event.status) || isPast;
+
+                                                            if (isHistorical) {
+                                                                return;
+                                                            }
+
+                                                            e.stopPropagation();
+                                                            setDualEditTarget(event);
+                                                            setShowDualEditModal(true);
+                                                        }
+                                                    }}
+                                                    className={`text-[10px] p-1 rounded border mb-0.5 truncate flex justify-between items-center group/dayevent ${getEventColor(event)} ${event.type === 'Cuidado+' ? '!bg-[var(--secondary-color)] !text-white !border-transparent font-black uppercase tracking-tighter cursor-pointer hover:brightness-110' : ''} ${event.caregiver_id && event.type !== 'Cuidado+' ? '!border-green-200 !bg-green-50/50' : ''}`}
+                                                >
+                                                    <span className={`truncate flex-1 min-w-0 ${event.caregiver_id ? 'font-bold' : ''}`}>{event.time?.substring(0, 5)} - {event.title}</span>
+                                                    {(event.caregiver_id || event.type === 'Cuidado+') && (
+                                                        event.type === 'Cuidado+' ? <ShieldCheck size={10} className="ml-1 shrink-0" /> : <User size={10} className="ml-1 text-green-600 shrink-0" />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
             </div>
 

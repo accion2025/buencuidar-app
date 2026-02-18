@@ -55,6 +55,16 @@ body,
   height: 100%;
 }
 
+/* Custom scrollbar for horizontal scrolling without scrollbars */
+.custom-scrollbar-h {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.custom-scrollbar-h::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   font-family: var(--font-secondary);
   background-color: var(--base-bg);
