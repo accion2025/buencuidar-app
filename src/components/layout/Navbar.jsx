@@ -45,8 +45,8 @@ const Navbar = () => {
 
                         {/* Desktop Menu */}
                         <nav className="hidden md:flex items-center gap-6">
-                            <Link to="/services" className="text-[var(--text-main)] font-semibold hover:text-[var(--primary-color)] transition-colors">
-                                Servicios
+                            <Link to="/como-funciona" className="text-[var(--text-main)] font-semibold hover:text-[var(--primary-color)] transition-colors">
+                                cómo funciona BC
                             </Link>
                             <Link to="/ecosistema-salud" className="text-[var(--text-main)] font-semibold hover:text-[var(--primary-color)] transition-colors flex items-center gap-1">
                                 <Activity size={16} className="text-[var(--secondary-color)]" />
@@ -228,9 +228,9 @@ const Navbar = () => {
                         />
                         <SidebarItem
                             icon={Sparkles}
-                            label="Servicios"
-                            onClick={() => handleNavigation('/services')}
-                            active={location.pathname === '/services'}
+                            label="cómo funciona BC"
+                            onClick={() => handleNavigation('/como-funciona')}
+                            active={location.pathname === '/como-funciona'}
                         />
                         <SidebarItem
                             icon={Activity}

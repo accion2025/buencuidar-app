@@ -77,11 +77,11 @@ const Home = () => {
                         </button>
 
                         <button
-                            onClick={() => navigate('/services')}
+                            onClick={() => navigate('/como-funciona')}
                             className="btn btn-outline text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm"
                             style={{ color: '#FAFAF7', fontFamily: 'Poppins, sans-serif' }}
                         >
-                            Servicios
+                            cómo funciona BC
                         </button>
 
                         <button
