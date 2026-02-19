@@ -45,10 +45,18 @@ const Services = () => {
             {/* Hero Section */}
             <header className="bg-[var(--primary-color)] text-[#FAFAF7] pt-[100px] pb-[80px] px-8 md:px-16 text-center">
                 <div className="max-w-4xl mx-auto">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">Cómo funciona BuenCuidar</h1>
+                    <h1
+                        className="text-4xl md:text-5xl font-bold mb-6"
+                        style={{ color: '#FAFAF7' }}
+                    >
+                        Cómo funciona BuenCuidar
+                    </h1>
 
                     <div className="bg-[#0F3C4C]/30 backdrop-blur-sm border border-[#2FAE8F]/30 p-6 rounded-2xl inline-block mt-4">
-                        <h2 className="text-xl md:text-2xl font-bold text-white mb-2">
+                        <h2
+                            className="text-xl md:text-2xl font-bold mb-2"
+                            style={{ color: '#FAFAF7' }}
+                        >
                             El acceso es totalmente gratuito.
                         </h2>
                         <p className="text-lg text-gray-100">
@@ -67,13 +75,13 @@ const Services = () => {
                             BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
                         </p>
 
-                        <div className="bg-gray-50 p-8 md:p-10 rounded-[24px] border border-gray-100 shadow-sm inline-block w-full max-w-4xl">
+                        <div className="bg-gray-50 p-8 md:p-10 rounded-[24px] border border-gray-100 shadow-sm inline-block w-full max-w-4xl text-left md:text-center">
                             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                                 <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
                             </p>
-                            <p className="text-lg text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)] flex items-center justify-center gap-3">
+                            <p className="text-lg text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)] flex flex-col md:flex-row items-center justify-center gap-3">
                                 <span className="text-2xl">💡</span>
-                                Nuestro propósito es simple: hacer posible que el cuidado llegue a quien lo necesita, y que quien cuida pueda ofrecer su servicio con libertad.
+                                <span>Nuestro propósito es simple: hacer posible que el cuidado llegue a quien lo necesita, y que quien cuida pueda ofrecer su servicio con libertad.</span>
                             </p>
                         </div>
                     </div>
@@ -146,7 +154,12 @@ const Services = () => {
                 <section className="py-20 px-8 md:px-16 bg-[var(--primary-color)] text-white text-center">
                     <div className="max-w-3xl mx-auto">
                         <DoorOpen className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-6" />
-                        <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">BC es una puerta abierta</h2>
+                        <h2
+                            className="text-3xl md:text-4xl font-bold mb-8"
+                            style={{ color: '#FAFAF7' }}
+                        >
+                            BC es una puerta abierta
+                        </h2>
                         <div className="space-y-4 text-xl text-gray-200 mb-10">
                             <p>Una puerta para quien necesita apoyo.</p>
                             <p>Una puerta para quien tiene la vocación de cuidar.</p>
