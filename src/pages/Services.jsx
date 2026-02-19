@@ -52,7 +52,7 @@ const Services = () => {
                         Cómo funciona BuenCuidar
                     </h1>
 
-                    <div className="bg-[#0F3C4C]/30 backdrop-blur-sm border border-[#2FAE8F]/30 p-6 rounded-2xl inline-block mt-4">
+                    <div className="bg-[#0F3C4C]/30 backdrop-blur-sm border border-[#2FAE8F]/30 p-6 rounded-xl inline-block mt-4">
                         <h2
                             className="text-xl md:text-2xl font-bold mb-2"
                             style={{ color: '#FAFAF7' }}
@@ -75,7 +75,7 @@ const Services = () => {
                             BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
                         </p>
 
-                        <div className="bg-gray-50 p-8 md:p-10 rounded-[24px] border border-gray-100 shadow-sm inline-block w-full max-w-4xl text-left md:text-center">
+                        <div className="bg-gray-50 p-8 md:p-10 rounded-xl border border-gray-100 shadow-sm inline-block w-full max-w-4xl text-left md:text-center">
                             <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                                 <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
                             </p>
@@ -99,9 +99,9 @@ const Services = () => {
 
                         <div className="grid md:grid-cols-2 gap-8 md:gap-10 mb-16 max-w-6xl mx-auto">
                             {steps.map((step, idx) => (
-                                <div key={idx} className="bg-white p-8 md:p-10 rounded-[24px] shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex gap-6 group text-left">
+                                <div key={idx} className="bg-white p-8 md:p-10 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex gap-6 group text-left">
                                     <div className="flex-shrink-0">
-                                        <div className="w-16 h-16 rounded-2xl bg-[var(--base-bg)] group-hover:bg-[var(--primary-color)] transition-colors flex items-center justify-center text-[var(--primary-color)] group-hover:text-white">
+                                        <div className="w-16 h-16 rounded-xl bg-[var(--base-bg)] group-hover:bg-[var(--primary-color)] transition-colors flex items-center justify-center text-[var(--primary-color)] group-hover:text-white">
                                             <step.icon size={32} />
                                         </div>
                                     </div>
@@ -113,7 +113,7 @@ const Services = () => {
                             ))}
                         </div>
 
-                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-10 rounded-[24px] max-w-5xl mx-auto text-center relative overflow-hidden">
+                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-10 rounded-xl max-w-5xl mx-auto text-center relative overflow-hidden">
                             <div className="relative z-10">
                                 <h4 className="text-lg font-bold text-[#0F3C4C] mb-2 uppercase tracking-wide">Importante</h4>
                                 <p className="text-gray-700 text-lg">
@@ -135,13 +135,13 @@ const Services = () => {
 
                         <div className="grid md:grid-cols-3 gap-8 mb-16">
                             {['Acceso libre y gratuito para todos', 'Respeto por la dignidad de cada persona', 'Conexiones humanas, directas y transparentes'].map((item, i) => (
-                                <div key={i} className="bg-gray-50 p-8 rounded-[24px] hover:bg-gray-100 transition-colors">
+                                <div key={i} className="bg-gray-50 p-8 rounded-xl hover:bg-gray-100 transition-colors">
                                     <p className="font-bold text-xl text-gray-700">{item}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="bg-[var(--primary-color)]/5 p-8 rounded-[24px] inline-block">
+                        <div className="bg-[var(--primary-color)]/5 p-8 rounded-xl inline-block">
                             <p className="text-2xl font-bold text-[var(--primary-color)]">
                                 Crear una cuenta en BC es completamente gratuito, hoy y siempre.<br />
                                 <span className="text-[var(--secondary-color)] font-normal text-xl mt-2 block">Porque el cuidado no debe tener barreras de entrada.</span>
@@ -172,7 +172,7 @@ const Services = () => {
                         {!profile && (
                             <button
                                 onClick={() => navigate('/register')}
-                                className="bg-[var(--secondary-color)] text-[#0F3C4C] hover:bg-white hover:text-[var(--primary-color)] transition-colors py-4 px-10 rounded-[16px] font-bold text-lg uppercase tracking-widest shadow-lg"
+                                className="bg-[var(--secondary-color)] text-[#0F3C4C] hover:bg-white hover:text-[var(--primary-color)] transition-colors py-4 px-10 rounded-xl font-bold text-lg uppercase tracking-widest shadow-lg"
                             >
                                 Únete Ahora
                             </button>
