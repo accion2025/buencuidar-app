@@ -521,22 +521,57 @@ const MonitoringCenter = () => {
                 doc.setFontSize(12);
                 doc.text('Resumen de Indicadores de Bienestar (Evolución):', 20, 70);
 
-                const wellnessData = wellnessLogs.map(log => {
-                    const date = new Date(log.created_at);
-                    return [
-                        date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                // Group wellness logs by date
+                const groupedWellness = wellnessLogs.reduce((acc, log) => {
+                    const dateKey = new Date(log.created_at).toLocaleDateString([], {
+                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                    });
+                    const formattedDate = dateKey.charAt(0).toUpperCase() + dateKey.slice(1);
+
+                    if (!acc[formattedDate]) acc[formattedDate] = [];
+                    acc[formattedDate].push(log);
+                    return acc;
+                }, {});
+
+                let currentY = 75;
+
+                Object.keys(groupedWellness).forEach((dateKey) => {
+                    // Check page break
+                    if (currentY > pageWidth - 40) {
+                        doc.addPage();
+                        currentY = 20;
+                    }
+
+                    // Print Date Header for Wellness
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(15, 60, 76);
+                    doc.text(dateKey, 20, currentY);
+
+                    const wellnessData = groupedWellness[dateKey].map(log => [
+                        new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         log.action,
                         log.detail
-                    ];
-                });
+                    ]);
 
-                autoTable(doc, {
-                    startY: 75,
-                    head: [['Fecha / Hora de Emisión', 'Indicador', 'Valor']],
-                    body: wellnessData.slice(-15), // Show last 15 for brevity or all if needed
-                    theme: 'striped',
-                    headStyles: { fillColor: [47, 174, 143] },
-                    margin: { left: 20, right: 20 }
+                    autoTable(doc, {
+                        startY: currentY + 3,
+                        head: [['Hora', 'Indicador', 'Valor']],
+                        body: wellnessData,
+                        theme: 'striped',
+                        headStyles: { fillColor: [47, 174, 143] },
+                        styles: { overflow: 'linebreak', cellWidth: 'auto', cellPadding: 2, fontSize: 9 },
+                        columnStyles: {
+                            0: { cellWidth: 25 },
+                            1: { cellWidth: 60 },
+                            2: { cellWidth: 'auto' }
+                        },
+                        margin: { left: 20, right: 20 },
+                        didDrawPage: (data) => {
+                            currentY = data.cursor.y + 10;
+                        }
+                    });
+                    currentY = doc.lastAutoTable.finalY + 10;
                 });
             }
 
