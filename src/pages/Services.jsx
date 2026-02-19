@@ -48,7 +48,7 @@ const Services = () => {
                     <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#FAFAF7]">Cómo funciona BuenCuidar</h1>
 
                     <div className="bg-[#0F3C4C]/30 backdrop-blur-sm border border-[#2FAE8F]/30 p-6 rounded-2xl inline-block mt-4">
-                        <h2 className="text-xl md:text-2xl font-bold text-[var(--secondary-color)] mb-2">
+                        <h2 className="text-xl md:text-2xl font-bold text-[#FAFAF7] mb-2">
                             El acceso es totalmente gratuito.
                         </h2>
                         <p className="text-lg text-gray-100">
@@ -61,9 +61,9 @@ const Services = () => {
             <main className="w-full flex-grow">
                 {/* ¿Qué es BuenCuidar? */}
                 <section className="py-16 md:py-24 px-8 md:px-16 bg-white">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="grid md:grid-cols-12 gap-12 items-center">
-                            <div className="md:col-span-5 text-center md:text-left">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="grid md:grid-cols-2 gap-16 items-center">
+                            <div className="text-center md:text-left">
                                 <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-6">¿Qué es BuenCuidar?</h2>
                                 <p className="text-lg text-gray-600 leading-relaxed mb-6">
                                     BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
@@ -71,7 +71,7 @@ const Services = () => {
                                 <div className="hidden md:block h-1 w-24 bg-[var(--secondary-color)] rounded-full"></div>
                             </div>
 
-                            <div className="md:col-span-7 bg-gray-50 p-8 md:p-10 rounded-[24px] border border-gray-100 shadow-sm">
+                            <div className="bg-gray-50 p-8 md:p-12 rounded-[24px] border border-gray-100 shadow-sm">
                                 <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                                     <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
                                 </p>
