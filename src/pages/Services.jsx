@@ -89,7 +89,7 @@ const Services = () => {
 
                 {/* ¿Cómo funciona? (4 Pasos) */}
                 <section className="py-16 md:py-24 px-8 md:px-16 bg-gray-50">
-                    <div className="max-w-7xl mx-auto">
+                    <div className="max-w-5xl mx-auto">
                         <div className="text-center max-w-3xl mx-auto mb-16">
                             <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-4">¿Cómo funciona BuenCuidar?</h2>
                             <p className="text-lg text-gray-600">
@@ -97,9 +97,9 @@ const Services = () => {
                             </p>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-8 md:gap-10 mb-16 max-w-6xl mx-auto">
+                        <div className="grid md:grid-cols-2 gap-8 md:gap-10 mb-16 max-w-5xl mx-auto">
                             {steps.map((step, idx) => (
-                                <div key={idx} className="bg-white p-8 md:p-10 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex gap-6 group text-left">
+                                <div key={idx} className="bg-white p-8 md:p-10 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex flex-col items-center gap-6 group text-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-16 h-16 rounded-xl bg-[var(--base-bg)] group-hover:bg-[var(--primary-color)] transition-colors flex items-center justify-center text-[var(--primary-color)] group-hover:text-white">
                                             <step.icon size={32} />
@@ -113,7 +113,7 @@ const Services = () => {
                             ))}
                         </div>
 
-                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-10 rounded-xl max-w-5xl mx-auto text-center relative overflow-hidden">
+                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-10 rounded-xl max-w-4xl mx-auto text-center relative overflow-hidden">
                             <div className="relative z-10">
                                 <h4 className="text-lg font-bold text-[#0F3C4C] mb-2 uppercase tracking-wide">Importante</h4>
                                 <p className="text-gray-700 text-lg">
@@ -126,16 +126,16 @@ const Services = () => {
 
                 {/* Nuestro Compromiso */}
                 <section className="py-16 md:py-24 px-8 md:px-16 bg-white">
-                    <div className="max-w-6xl mx-auto text-center">
+                    <div className="max-w-5xl mx-auto text-center">
                         <Heart className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-6" />
                         <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-10">Nuestro compromiso</h2>
                         <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
                             En BC creemos que el cuidado es una de las acciones más importantes que existen. Por eso, nuestra plataforma se basa en tres principios:
                         </p>
 
-                        <div className="grid md:grid-cols-3 gap-8 mb-16">
+                        <div className="grid md:grid-cols-3 gap-8 mb-16 max-w-5xl mx-auto">
                             {['Acceso libre y gratuito para todos', 'Respeto por la dignidad de cada persona', 'Conexiones humanas, directas y transparentes'].map((item, i) => (
-                                <div key={i} className="bg-gray-50 p-8 rounded-xl hover:bg-gray-100 transition-colors">
+                                <div key={i} className="bg-gray-50 p-8 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center min-h-[120px]">
                                     <p className="font-bold text-xl text-gray-700">{item}</p>
                                 </div>
                             ))}
