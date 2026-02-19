@@ -545,26 +545,64 @@ const MonitoringCenter = () => {
             if (allLogs.length > 0) {
                 const startY = (doc.lastAutoTable?.finalY || 70) + 15;
                 doc.text('Bitácora Detallada de Actividades:', 20, startY);
-                const logData = allLogs.map(log => [
-                    new Date(log.created_at).toLocaleDateString() + ' ' + new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                    log.action,
-                    log.detail || 'Sin observaciones'
-                ]);
 
-                autoTable(doc, {
-                    startY: startY + 5,
-                    head: [['Fecha/Hora', 'Acción', 'Detalle/Observaciones']],
-                    body: logData,
-                    theme: 'grid',
-                    headStyles: { fillColor: [15, 60, 76] },
-                    styles: { overflow: 'linebreak', cellWidth: 'auto', cellPadding: 2 },
-                    columnStyles: {
-                        0: { cellWidth: 42 },
-                        1: { cellWidth: 55 },
-                        2: { cellWidth: 'auto' }
-                    },
-                    margin: { left: 20, right: 20 }
+                // Group logs by date
+                const groupedLogs = allLogs.reduce((acc, log) => {
+                    const dateKey = new Date(log.created_at).toLocaleDateString([], {
+                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                    });
+                    // Capitalize first letter
+                    const formattedDate = dateKey.charAt(0).toUpperCase() + dateKey.slice(1);
+
+                    if (!acc[formattedDate]) acc[formattedDate] = [];
+                    acc[formattedDate].push(log);
+                    return acc;
+                }, {});
+
+                let currentY = startY + 5;
+
+                Object.keys(groupedLogs).forEach((dateKey) => {
+                    // Check if we need a new page for the date header
+                    if (currentY > pageWidth - 40) {
+                        doc.addPage();
+                        currentY = 20;
+                    }
+
+                    // Print Date Header
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(15, 60, 76);
+                    doc.text(dateKey, 20, currentY);
+
+                    const logData = groupedLogs[dateKey].map(log => [
+                        new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        log.action,
+                        log.detail || 'Sin observaciones'
+                    ]);
+
+                    autoTable(doc, {
+                        startY: currentY + 3,
+                        head: [['Hora', 'Acción', 'Detalle/Observaciones']],
+                        body: logData,
+                        theme: 'grid',
+                        headStyles: { fillColor: [47, 174, 143] }, // Secondary color for daily tables
+                        styles: { overflow: 'linebreak', cellWidth: 'auto', cellPadding: 2, fontSize: 9 },
+                        columnStyles: {
+                            0: { cellWidth: 25 }, // Time column smaller
+                            1: { cellWidth: 60 },
+                            2: { cellWidth: 'auto' }
+                        },
+                        margin: { left: 20, right: 20 },
+                        didDrawPage: (data) => {
+                            // Update currentY for next iteration
+                            currentY = data.cursor.y + 10;
+                        }
+                    });
+                    // Update Y manually after table in case it didn't break page
+                    currentY = doc.lastAutoTable.finalY + 10;
                 });
+            } else {
+                doc.text('No hay registros de actividad en este periodo.', 20, 90);
             }
 
             // Footer
