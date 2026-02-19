@@ -59,27 +59,22 @@ const Services = () => {
             </header>
 
             <main className="w-full flex-grow">
-                {/* ¿Qué es BuenCuidar? */}
+                {/* ¿Qué es BuenCuidar? - Layout Centrado (V1.0.52) */}
                 <section className="py-16 md:py-24 px-8 md:px-16 bg-white">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="grid md:grid-cols-2 gap-16 items-center">
-                            <div className="text-center md:text-left">
-                                <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-6">¿Qué es BuenCuidar?</h2>
-                                <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                                    BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
-                                </p>
-                                <div className="hidden md:block h-1 w-24 bg-[var(--secondary-color)] rounded-full"></div>
-                            </div>
+                    <div className="max-w-5xl mx-auto text-center">
+                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-8">¿Qué es BuenCuidar?</h2>
+                        <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-4xl mx-auto">
+                            BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
+                        </p>
 
-                            <div className="bg-gray-50 p-8 md:p-12 rounded-[24px] border border-gray-100 shadow-sm">
-                                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                                    <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
-                                </p>
-                                <p className="text-lg text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)] flex items-start gap-3">
-                                    <span className="text-2xl mt-1">💡</span>
-                                    Nuestro propósito es simple: hacer posible que el cuidado llegue a quien lo necesita, y que quien cuida pueda ofrecer su servicio con libertad.
-                                </p>
-                            </div>
+                        <div className="bg-gray-50 p-8 md:p-10 rounded-[24px] border border-gray-100 shadow-sm inline-block w-full max-w-4xl">
+                            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                                <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
+                            </p>
+                            <p className="text-lg text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)] flex items-center justify-center gap-3">
+                                <span className="text-2xl">💡</span>
+                                Nuestro propósito es simple: hacer posible que el cuidado llegue a quien lo necesita, y que quien cuida pueda ofrecer su servicio con libertad.
+                            </p>
                         </div>
                     </div>
                 </section>
@@ -94,9 +89,9 @@ const Services = () => {
                             </p>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-8 md:gap-10 mb-16">
+                        <div className="grid md:grid-cols-2 gap-8 md:gap-10 mb-16 max-w-6xl mx-auto">
                             {steps.map((step, idx) => (
-                                <div key={idx} className="bg-white p-8 md:p-10 rounded-[24px] shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex gap-6 group">
+                                <div key={idx} className="bg-white p-8 md:p-10 rounded-[24px] shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex gap-6 group text-left">
                                     <div className="flex-shrink-0">
                                         <div className="w-16 h-16 rounded-2xl bg-[var(--base-bg)] group-hover:bg-[var(--primary-color)] transition-colors flex items-center justify-center text-[var(--primary-color)] group-hover:text-white">
                                             <step.icon size={32} />
