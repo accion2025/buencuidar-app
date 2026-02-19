@@ -67,56 +67,56 @@ const Services = () => {
             </header>
 
             <main className="w-full flex-grow">
-                {/* ¿Qué es BuenCuidar? - Layout Centrado (V1.0.52) */}
-                <section className="py-16 md:py-24 px-8 md:px-16 bg-white">
-                    <div className="max-w-5xl mx-auto text-center">
-                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-8">¿Qué es BuenCuidar?</h2>
-                        <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-4xl mx-auto">
+                {/* ¿Qué es BuenCuidar? - Layout Estilo Pulso */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full">
+                    <div className="w-full text-center">
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">¿Qué es BuenCuidar?</h2>
+                        <p className="text-xl text-gray-600 mb-12 leading-relaxed max-w-4xl mx-auto font-medium">
                             BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
                         </p>
 
-                        <div className="bg-gray-50 p-8 md:p-10 rounded-xl border border-gray-100 shadow-sm inline-block w-full max-w-4xl text-left md:text-center">
-                            <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                        <div className="bg-gray-50 p-8 md:p-12 rounded-xl border border-gray-100 shadow-sm inline-block w-full max-w-5xl text-center mx-auto">
+                            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
                                 <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
                             </p>
-                            <p className="text-lg text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)] flex flex-col md:flex-row items-center justify-center gap-3">
-                                <span className="text-2xl">💡</span>
+                            <p className="text-xl text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)] flex flex-col md:flex-row items-center justify-center gap-4">
+                                <span className="text-3xl">💡</span>
                                 <span>Nuestro propósito es simple: hacer posible que el cuidado llegue a quien lo necesita, y que quien cuida pueda ofrecer su servicio con libertad.</span>
                             </p>
                         </div>
                     </div>
                 </section>
 
-                {/* ¿Cómo funciona? (4 Pasos) */}
-                <section className="py-16 md:py-24 px-8 md:px-16 bg-gray-50">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="text-center max-w-3xl mx-auto mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-4">¿Cómo funciona BuenCuidar?</h2>
-                            <p className="text-lg text-gray-600">
+                {/* ¿Cómo funciona? (4 Pasos) - Layout Estilo Pulso */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-gray-50 w-full">
+                    <div className="w-full">
+                        <div className="text-center mb-20">
+                            <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-6 tracking-tighter">¿Cómo funciona BuenCuidar?</h2>
+                            <p className="text-xl text-gray-600 font-medium max-w-3xl mx-auto">
                                 Conectamos familias con cuidadores de forma directa. El proceso funciona en cuatro pasos simples:
                             </p>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-8 md:gap-10 mb-16 max-w-5xl mx-auto">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20 w-full">
                             {steps.map((step, idx) => (
-                                <div key={idx} className="bg-white p-8 md:p-10 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex flex-col items-center gap-6 group text-center">
+                                <div key={idx} className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex flex-col items-center gap-6 group text-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-16 h-16 rounded-xl bg-[var(--base-bg)] group-hover:bg-[var(--primary-color)] transition-colors flex items-center justify-center text-[var(--primary-color)] group-hover:text-white">
                                             <step.icon size={32} />
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-3">{step.title}</h3>
+                                        <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-4">{step.title}</h3>
                                         <div className="text-gray-600 leading-relaxed text-lg">{step.desc}</div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-10 rounded-xl max-w-4xl mx-auto text-center relative overflow-hidden">
+                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-12 rounded-xl max-w-4xl mx-auto text-center relative overflow-hidden">
                             <div className="relative z-10">
-                                <h4 className="text-lg font-bold text-[#0F3C4C] mb-2 uppercase tracking-wide">Importante</h4>
-                                <p className="text-gray-700 text-lg">
+                                <h4 className="text-lg font-bold text-[#0F3C4C] mb-3 uppercase tracking-wide">Importante</h4>
+                                <p className="text-gray-700 text-lg leading-relaxed">
                                     El uso esencial de BuenCuidar —crear cuenta, buscar, conectar y formar parte de la comunidad— es <strong>completamente gratuito</strong>. La suscripción BC Pulso es una opción adicional para quienes desean ampliar sus capacidades.
                                 </p>
                             </div>
@@ -124,35 +124,35 @@ const Services = () => {
                     </div>
                 </section>
 
-                {/* Nuestro Compromiso */}
-                <section className="py-16 md:py-24 px-8 md:px-16 bg-white">
-                    <div className="max-w-5xl mx-auto text-center">
-                        <Heart className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-6" />
-                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-10">Nuestro compromiso</h2>
-                        <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+                {/* Nuestro Compromiso - Layout Estilo Pulso */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full">
+                    <div className="w-full text-center">
+                        <Heart className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-8 animate-pulse" />
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-12 tracking-tighter">Nuestro compromiso</h2>
+                        <p className="text-xl text-gray-600 mb-16 max-w-3xl mx-auto font-medium">
                             En BC creemos que el cuidado es una de las acciones más importantes que existen. Por eso, nuestra plataforma se basa en tres principios:
                         </p>
 
-                        <div className="grid md:grid-cols-3 gap-8 mb-16 max-w-5xl mx-auto">
+                        <div className="grid md:grid-cols-3 gap-10 mb-20 w-full">
                             {['Acceso libre y gratuito para todos', 'Respeto por la dignidad de cada persona', 'Conexiones humanas, directas y transparentes'].map((item, i) => (
-                                <div key={i} className="bg-gray-50 p-8 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center min-h-[120px]">
-                                    <p className="font-bold text-xl text-gray-700">{item}</p>
+                                <div key={i} className="bg-gray-50 p-10 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center min-h-[140px] border border-gray-100 shadow-sm">
+                                    <p className="font-bold text-2xl text-gray-700 tracking-tight">{item}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="bg-[var(--primary-color)]/5 p-8 rounded-xl inline-block">
-                            <p className="text-2xl font-bold text-[var(--primary-color)]">
+                        <div className="bg-[var(--primary-color)]/5 p-10 rounded-xl inline-block border border-[var(--primary-color)]/10">
+                            <p className="text-2xl md:text-3xl font-bold text-[var(--primary-color)] tracking-tight">
                                 Crear una cuenta en BC es completamente gratuito, hoy y siempre.<br />
-                                <span className="text-[var(--secondary-color)] font-normal text-xl mt-2 block">Porque el cuidado no debe tener barreras de entrada.</span>
+                                <span className="text-[var(--secondary-color)] font-normal text-2xl mt-4 block">Porque el cuidado no debe tener barreras de entrada.</span>
                             </p>
                         </div>
                     </div>
                 </section>
 
-                {/* Cierre - Puerta Abierta */}
-                <section className="py-20 px-8 md:px-16 bg-[var(--primary-color)] text-white text-center">
-                    <div className="max-w-3xl mx-auto">
+                {/* Cierre - Puerta Abierta - Layout Estilo Pulso */}
+                <section className="py-24 px-8 md:px-[60px] bg-[var(--primary-color)] text-white text-center w-full min-h-[60vh] flex items-center justify-center">
+                    <div className="max-w-4xl w-full">
                         <DoorOpen className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-6" />
                         <h2
                             className="text-3xl md:text-4xl font-bold mb-8"
