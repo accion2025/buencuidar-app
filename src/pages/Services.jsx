@@ -64,7 +64,7 @@ const Services = () => {
                     <div className="max-w-6xl mx-auto">
                         <div className="grid md:grid-cols-2 gap-16 items-center">
                             <div className="text-center md:text-left">
-                                <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-6">¿Qué es BuenCuidar?</h2>
+                                <h2 className="text-xl md:text-2xl font-bold text-[#FAFAF7] mb-2">¿Qué es BuenCuidar?</h2>
                                 <p className="text-lg text-gray-600 leading-relaxed mb-6">
                                     BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
                                 </p>
