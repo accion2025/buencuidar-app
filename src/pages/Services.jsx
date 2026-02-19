@@ -60,75 +60,90 @@ const Services = () => {
 
             <main className="w-full flex-grow">
                 {/* ¿Qué es BuenCuidar? */}
-                <section className="py-16 px-8 md:px-16 bg-white">
-                    <div className="max-w-4xl mx-auto text-center">
-                        <h2 className="text-3xl font-bold text-[var(--primary-color)] mb-8">¿Qué es BuenCuidar?</h2>
-                        <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                            BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
-                        </p>
-                        <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                            <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
-                        </p>
-                        <p className="text-lg text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)]">
-                            Nuestro propósito es simple: hacer posible que el cuidado llegue a quien lo necesita, y que quien cuida pueda ofrecer su servicio con libertad.
-                        </p>
+                <section className="py-16 md:py-24 px-8 md:px-16 bg-white">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid md:grid-cols-12 gap-12 items-center">
+                            <div className="md:col-span-5 text-center md:text-left">
+                                <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-6">¿Qué es BuenCuidar?</h2>
+                                <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                                    BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
+                                </p>
+                                <div className="hidden md:block h-1 w-24 bg-[var(--secondary-color)] rounded-full"></div>
+                            </div>
+
+                            <div className="md:col-span-7 bg-gray-50 p-8 md:p-10 rounded-[24px] border border-gray-100 shadow-sm">
+                                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                                    <strong>BC no es una agencia ni un intermediario.</strong> Es un espacio de encuentro humano que facilita la conexión, respetando la autonomía de cada persona.
+                                </p>
+                                <p className="text-lg text-gray-600 leading-relaxed font-medium text-[var(--secondary-color)] flex items-start gap-3">
+                                    <span className="text-2xl mt-1">💡</span>
+                                    Nuestro propósito es simple: hacer posible que el cuidado llegue a quien lo necesita, y que quien cuida pueda ofrecer su servicio con libertad.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
                 {/* ¿Cómo funciona? (4 Pasos) */}
-                <section className="py-16 px-8 md:px-16 bg-gray-50">
-                    <div className="max-w-6xl mx-auto">
-                        <h2 className="text-3xl font-bold text-center text-[var(--primary-color)] mb-4">¿Cómo funciona BuenCuidar?</h2>
-                        <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
-                            Conectamos familias con cuidadores de forma directa. El proceso funciona en cuatro pasos simples:
-                        </p>
+                <section className="py-16 md:py-24 px-8 md:px-16 bg-gray-50">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center max-w-3xl mx-auto mb-16">
+                            <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-4">¿Cómo funciona BuenCuidar?</h2>
+                            <p className="text-lg text-gray-600">
+                                Conectamos familias con cuidadores de forma directa. El proceso funciona en cuatro pasos simples:
+                            </p>
+                        </div>
 
-                        <div className="grid md:grid-cols-2 gap-8 mb-12">
+                        <div className="grid md:grid-cols-2 gap-8 md:gap-10 mb-16">
                             {steps.map((step, idx) => (
-                                <div key={idx} className="bg-white p-8 rounded-[20px] shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex gap-6">
+                                <div key={idx} className="bg-white p-8 md:p-10 rounded-[24px] shadow-sm hover:shadow-md transition-all hover:-translate-y-1 border border-gray-100 flex gap-6 group">
                                     <div className="flex-shrink-0">
-                                        <div className="w-14 h-14 rounded-2xl bg-[var(--base-bg)] flex items-center justify-center text-[var(--primary-color)]">
-                                            <step.icon size={28} />
+                                        <div className="w-16 h-16 rounded-2xl bg-[var(--base-bg)] group-hover:bg-[var(--primary-color)] transition-colors flex items-center justify-center text-[var(--primary-color)] group-hover:text-white">
+                                            <step.icon size={32} />
                                         </div>
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-gray-800 mb-3">{step.title}</h3>
-                                        <div className="text-gray-600 leading-relaxed">{step.desc}</div>
+                                        <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-3">{step.title}</h3>
+                                        <div className="text-gray-600 leading-relaxed text-lg">{step.desc}</div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="bg-blue-50 border border-blue-100 p-8 rounded-[20px] max-w-4xl mx-auto text-center">
-                            <h4 className="text-lg font-bold text-[#0F3C4C] mb-2 uppercase tracking-wide">Importante</h4>
-                            <p className="text-gray-700">
-                                El uso esencial de BuenCuidar —crear cuenta, buscar, conectar y formar parte de la comunidad— es <strong>completamente gratuito</strong>. La suscripción BC Pulso es una opción adicional para quienes desean ampliar sus capacidades.
-                            </p>
+                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-10 rounded-[24px] max-w-5xl mx-auto text-center relative overflow-hidden">
+                            <div className="relative z-10">
+                                <h4 className="text-lg font-bold text-[#0F3C4C] mb-2 uppercase tracking-wide">Importante</h4>
+                                <p className="text-gray-700 text-lg">
+                                    El uso esencial de BuenCuidar —crear cuenta, buscar, conectar y formar parte de la comunidad— es <strong>completamente gratuito</strong>. La suscripción BC Pulso es una opción adicional para quienes desean ampliar sus capacidades.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </section>
 
                 {/* Nuestro Compromiso */}
-                <section className="py-16 px-8 md:px-16 bg-white">
-                    <div className="max-w-4xl mx-auto text-center">
+                <section className="py-16 md:py-24 px-8 md:px-16 bg-white">
+                    <div className="max-w-6xl mx-auto text-center">
                         <Heart className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-6" />
-                        <h2 className="text-3xl font-bold text-[var(--primary-color)] mb-8">Nuestro compromiso</h2>
-                        <p className="text-lg text-gray-600 mb-8">
+                        <h2 className="text-3xl md:text-4xl font-bold text-[var(--primary-color)] mb-10">Nuestro compromiso</h2>
+                        <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
                             En BC creemos que el cuidado es una de las acciones más importantes que existen. Por eso, nuestra plataforma se basa en tres principios:
                         </p>
 
-                        <div className="grid md:grid-cols-3 gap-6 mb-12 text-center">
+                        <div className="grid md:grid-cols-3 gap-8 mb-16">
                             {['Acceso libre y gratuito para todos', 'Respeto por la dignidad de cada persona', 'Conexiones humanas, directas y transparentes'].map((item, i) => (
-                                <div key={i} className="bg-gray-50 p-6 rounded-2xl">
-                                    <p className="font-bold text-gray-700">{item}</p>
+                                <div key={i} className="bg-gray-50 p-8 rounded-[24px] hover:bg-gray-100 transition-colors">
+                                    <p className="font-bold text-xl text-gray-700">{item}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <p className="text-xl font-bold text-[var(--primary-color)]">
-                            Crear una cuenta en BC es completamente gratuito, hoy y siempre.<br />
-                            <span className="text-[var(--secondary-color)] font-normal text-lg">Porque el cuidado no debe tener barreras de entrada.</span>
-                        </p>
+                        <div className="bg-[var(--primary-color)]/5 p-8 rounded-[24px] inline-block">
+                            <p className="text-2xl font-bold text-[var(--primary-color)]">
+                                Crear una cuenta en BC es completamente gratuito, hoy y siempre.<br />
+                                <span className="text-[var(--secondary-color)] font-normal text-xl mt-2 block">Porque el cuidado no debe tener barreras de entrada.</span>
+                            </p>
+                        </div>
                     </div>
                 </section>
 
