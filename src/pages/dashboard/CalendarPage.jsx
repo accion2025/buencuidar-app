@@ -332,14 +332,8 @@ const CalendarPage = () => {
         }, 8000);
 
         try {
-            // SAFE DATE CALCULATION: Avoid .toISOString() which shifts to UTC (causing day-off errors)
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth(); // 0-indexed
-
-            // Format YYYY-MM-DD manually for local consistency
-            constPad = (n) => String(n).padStart(2, '0');
-            const firstDayStr = `${year}-${constPad(month + 1)}-01`;
-            const lastDayStr = `${year}-${constPad(month + 1)}-${new Date(year, month + 1, 0).getDate()}`;
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString();
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).toISOString();
 
             const { data, error } = await supabase
                 .from('appointments')
@@ -351,8 +345,8 @@ const CalendarPage = () => {
             `)
                 .or(`client_id.eq.${user.id},caregiver_id.eq.${user.id}`)
                 .neq('type', 'Cuidado+') // EXCLUDE Cuidado+ for V1.0
-                .gte('date', firstDayStr)
-                .lte('date', lastDayStr);
+                .gte('date', firstDay.split('T')[0])
+                .lte('date', lastDay.split('T')[0]);
             // Removed .neq('status', 'cancelled') to show historical records
 
             if (error) throw error;
@@ -674,58 +668,48 @@ const CalendarPage = () => {
                 <div className="flex justify-between items-end mb-4 shrink-0">
                     <div className="flex flex-col">
                         <div className="flex items-baseline justify-start gap-4 mb-2 w-full">
-                            <span className="text-5xl font-black !text-[#2FAE8F] tracking-tighter leading-none drop-shadow-sm">
+                            <span className="text-8xl font-black !text-[#2FAE8F] tracking-tighter leading-none drop-shadow-sm">
                                 {currentDate.getFullYear()}
                             </span>
-                            <h2 className="text-xl font-bold text-gray-400 tracking-tight">
+                            <h2 className="text-3xl font-bold text-gray-400 tracking-tight">
                                 Agenda tu cita
                             </h2>
                         </div>
                         <div className="flex items-center justify-start mt-1 px-1 relative">
-                            <div className="flex items-center gap-1 group">
-                                <button onClick={handlePrevMonth} className="p-1 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-blue-600">
-                                    <ChevronLeft size={20} />
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowMonthSelector(!showMonthSelector)}
+                                    className="text-3xl font-black text-gray-800 uppercase tracking-[0.15em] text-center hover:text-blue-600 transition-colors flex items-center justify-center gap-2 group w-full px-4"
+                                >
+                                    {months[currentDate.getMonth()]}
+                                    <ChevronRight size={20} className={`transform transition-transform ${showMonthSelector ? 'rotate-90' : 'rotate-0'} text-gray-400 group-hover:text-blue-600`} />
                                 </button>
 
-                                <div className="relative">
-                                    <button
-                                        onClick={() => setShowMonthSelector(!showMonthSelector)}
-                                        className="text-3xl font-black text-gray-800 uppercase tracking-[0.15em] text-center hover:text-blue-600 transition-colors flex items-center justify-center gap-2 w-full px-2"
-                                    >
-                                        {months[currentDate.getMonth()]}
-                                        <ChevronRight size={20} className={`transform transition-transform ${showMonthSelector ? 'rotate-90' : 'rotate-0'} text-gray-400 group-hover:text-blue-600`} />
-                                    </button>
-
-                                    {showMonthSelector && (
-                                        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-[16px] shadow-2xl border border-gray-100 z-50 overflow-hidden animate-fade-in">
-                                            <div className="grid grid-cols-1 max-h-[300px] overflow-y-auto custom-scrollbar">
-                                                {months.map((month, idx) => (
-                                                    <button
-                                                        key={month}
-                                                        onClick={() => handleMonthSelect(idx)}
-                                                        className={`px-4 py-3 text-left font-bold text-sm tracking-wide transition-colors flex justify-between items-center ${currentDate.getMonth() === idx ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'}`}
-                                                    >
-                                                        {month.toUpperCase()}
-                                                        {yearStats[idx] && (
-                                                            <div className="flex items-center gap-1">
-                                                                {yearStats[idx].hasUpcoming && (
-                                                                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" title="Citas programadas"></span>
-                                                                )}
-                                                                {!yearStats[idx].hasUpcoming && (
-                                                                    <span className="w-2 h-2 rounded-full bg-gray-300" title="Citas pasadas"></span>
-                                                                )}
-                                                            </div>
-                                                        )}
-                                                    </button>
-                                                ))}
-                                            </div>
+                                {showMonthSelector && (
+                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-[16px] shadow-2xl border border-gray-100 z-50 overflow-hidden animate-fade-in">
+                                        <div className="grid grid-cols-1 max-h-[300px] overflow-y-auto custom-scrollbar">
+                                            {months.map((month, idx) => (
+                                                <button
+                                                    key={month}
+                                                    onClick={() => handleMonthSelect(idx)}
+                                                    className={`px-4 py-3 text-left font-bold text-sm tracking-wide transition-colors flex justify-between items-center ${currentDate.getMonth() === idx ? 'bg-blue-50 text-blue-600' : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'}`}
+                                                >
+                                                    {month.toUpperCase()}
+                                                    {yearStats[idx] && (
+                                                        <div className="flex items-center gap-1">
+                                                            {yearStats[idx].hasUpcoming && (
+                                                                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" title="Citas programadas"></span>
+                                                            )}
+                                                            {!yearStats[idx].hasUpcoming && (
+                                                                <span className="w-2 h-2 rounded-full bg-gray-300" title="Citas pasadas"></span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </button>
+                                            ))}
                                         </div>
-                                    )}
-                                </div>
-
-                                <button onClick={handleNextMonth} className="p-1 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-blue-600">
-                                    <ChevronRight size={20} />
-                                </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -128,13 +128,13 @@ const Services = () => {
                     <div className="grid md:grid-cols-3 gap-8">
                         <div className="hidden md:block"></div>
                         <div className="flex flex-col">
-                            <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">Queremos que te sientas seguro</h2>
-                            <p className="text-gray-600 text-center mb-12">Resolvemos tus dudas para que des el paso con total confianza.</p>
+                            <h2 className="text-3xl font-bold text-center mb-4 text-gray-800">Queremos que tomes decisiones con claridad</h2>
+                            <p className="text-gray-600 text-center mb-12">BuenCuidar existe para ayudarte a encontrar apoyo confiable y organizar el cuidado de forma sencilla, transparente y humana.</p>
                             <div className="space-y-4">
                                 {[
-                                    { q: "¿Qué incluye la verificación de cuidadores?", a: "Todos nuestros cuidadores pasan por revisión de antecedentes penales, verificación de identidad, validación de certificados y entrevistas psicológicas." },
-                                    { q: "¿Puedo cambiar de cuidador si no estoy satisfecho?", a: "Absolutamente. Tu tranquilidad es primero. Si no hay 'química', te ayudamos a encontrar un reemplazo sin costo adicional." },
-                                    { q: "¿Cómo funcionan los pagos?", a: "Los pagos se realizan de forma segura a través de la plataforma. El cuidador recibe su pago solo después de completar el servicio satisfactoriamente." }
+                                    { q: "¿Cuál es el objetivo de BuenCuidar?", a: "Facilitar el acceso a apoyo humano confiable, reduciendo el tiempo, la incertidumbre y el esfuerzo que implica encontrar a la persona adecuada para acompañar y cuidar." },
+                                    { q: "¿Quién define las condiciones del servicio?", a: "Las condiciones, horarios, duración y forma de pago se acuerdan directamente entre la familia y el cuidador. BuenCuidar facilita el contacto y la organización, respetando la autonomía de ambas partes." },
+                                    { q: "¿Qué información puedes conocer antes de elegir?", a: "Puedes revisar el perfil del cuidador, su disponibilidad, experiencia y tipo de apoyo que ofrece. Esto te permite tomar decisiones informadas según la situación específica que enfrentas." }
                                 ].map((faq, idx) => (
                                     <div key={idx} className="bg-white p-6 rounded-[16px] shadow-sm border border-gray-100">
                                         <h4 className="font-bold text-lg mb-2 text-gray-800">{faq.q}</h4>
