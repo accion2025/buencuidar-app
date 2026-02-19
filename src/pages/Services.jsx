@@ -43,26 +43,24 @@ const Services = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <header className="bg-[var(--primary-color)] text-[#FAFAF7] pt-[100px] pb-[80px] px-8 md:px-16 text-center">
-                <div className="max-w-4xl mx-auto">
-                    <h1
-                        className="text-4xl md:text-5xl font-bold mb-6"
+            <header className="bg-[var(--primary-color)] text-[#FAFAF7] pt-[100px] pb-[80px] px-8 md:px-[60px] text-center w-full flex flex-col items-center justify-center">
+                <h1
+                    className="text-4xl md:text-5xl font-bold mb-6 w-full"
+                    style={{ color: '#FAFAF7' }}
+                >
+                    Cómo funciona BuenCuidar
+                </h1>
+
+                <div className="bg-[#0F3C4C]/30 backdrop-blur-sm border border-[#2FAE8F]/30 p-6 rounded-xl inline-block mt-4 mx-auto">
+                    <h2
+                        className="text-xl md:text-2xl font-bold mb-2"
                         style={{ color: '#FAFAF7' }}
                     >
-                        Cómo funciona BuenCuidar
-                    </h1>
-
-                    <div className="bg-[#0F3C4C]/30 backdrop-blur-sm border border-[#2FAE8F]/30 p-6 rounded-xl inline-block mt-4">
-                        <h2
-                            className="text-xl md:text-2xl font-bold mb-2"
-                            style={{ color: '#FAFAF7' }}
-                        >
-                            El acceso es totalmente gratuito.
-                        </h2>
-                        <p className="text-lg text-gray-100">
-                            BuenCuidar conecta a familias y cuidadores de forma directa, segura y sin intermediación.
-                        </p>
-                    </div>
+                        El acceso es totalmente gratuito.
+                    </h2>
+                    <p className="text-lg text-gray-100">
+                        BuenCuidar conecta a familias y cuidadores de forma directa, segura y sin intermediación.
+                    </p>
                 </div>
             </header>
 
