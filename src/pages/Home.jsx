@@ -81,7 +81,7 @@ const Home = () => {
                             className="btn btn-outline text-lg md:text-xl py-6 px-12 rounded-[20px] uppercase tracking-widest font-black w-full max-w-sm border-2 border-white hover:bg-white/10 transition-all backdrop-blur-sm"
                             style={{ color: '#FAFAF7', fontFamily: 'Poppins, sans-serif' }}
                         >
-                            cómo funciona BC
+                            Cómo funciona BC
                         </button>
 
                         <button

@@ -228,7 +228,7 @@ const Navbar = () => {
                         />
                         <SidebarItem
                             icon={Sparkles}
-                            label="cómo funciona BC"
+                            label="Cómo funciona BC"
                             onClick={() => handleNavigation('/como-funciona')}
                             active={location.pathname === '/como-funciona'}
                         />
