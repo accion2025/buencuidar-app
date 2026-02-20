@@ -201,18 +201,20 @@ const SubscriptionPlans = () => {
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-brand">¿Qué ocurre si no activas BC PULSO?</h3>
                 <p className="text-lg text-gray-600 mb-6 font-medium">Tu cuenta sigue siendo gratuita y puedes:</p>
 
-                <div className="mx-auto w-fit text-left py-8 text-lg font-bold text-gray-700 space-y-4 mb-8">
-                    <div className="flex items-center gap-3">
-                        <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
-                        <span>Mantener tu perfil activo</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
-                        <span>Explorar la plataforma</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
-                        <span>Preparar futuras solicitudes</span>
+                <div className="flex justify-center w-full mb-8">
+                    <div className="text-left text-lg font-bold text-gray-700 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
+                            <span>Mantener tu perfil activo</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
+                            <span>Explorar la plataforma</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
+                            <span>Preparar futuras solicitudes</span>
+                        </div>
                     </div>
                 </div>
 
