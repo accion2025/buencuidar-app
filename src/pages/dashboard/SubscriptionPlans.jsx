@@ -55,7 +55,7 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                     disabled={true}
                     className="w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
                 >
-                    ACTIVAR POR {period}
+                    ACTIVAR BC PULSO
                 </button>
             )}
         </div>
@@ -181,6 +181,8 @@ const SubscriptionPlans = () => {
                     <p className="text-lg text-slate-400 italic">Activa solo cuando lo necesites. Sin contratos ni compromisos.</p>
                 </div>
             </div>
+
+            <div className="w-full h-12"></div>
 
             {/* Grid de Planes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full mb-24 items-stretch px-4">
