@@ -148,11 +148,11 @@ const Services = () => {
                 </section>
 
                 {/* Cierre - Puerta Abierta - Layout Estilo Pulso */}
-                <section className="py-20 px-8 md:px-[60px] bg-[var(--primary-color)] text-white w-full min-h-[40vh] flex items-center justify-center">
+                <section className="py-12 px-8 md:px-[60px] bg-[var(--primary-color)] text-white w-full flex items-center justify-center">
                     <div className="max-w-5xl w-full flex flex-col items-center">
                         {/* Título: Siempre centrado en la parte superior */}
                         <h2
-                            className="text-4xl md:text-5xl font-bold mb-12 tracking-tight text-center"
+                            className="text-4xl md:text-5xl font-bold mb-8 tracking-tight text-center"
                             style={{ color: '#FAFAF7' }}
                         >
                             BC es una puerta abierta
