@@ -151,12 +151,14 @@ const CaregiverPlans = () => {
 
             if (error) throw error;
 
-            await supabase.from('subscriptions').insert({
+            const { error: subError } = await supabase.from('subscriptions').insert({
                 user_id: user.id,
                 plan_type: planType,
                 status: 'active',
                 current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
             });
+
+            if (subError) throw subError;
 
             alert(`¡Plan BC PRO activado correctamente!`);
             window.location.href = '/caregiver';

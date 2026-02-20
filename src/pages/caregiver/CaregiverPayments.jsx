@@ -36,7 +36,7 @@ const CaregiverPayments = () => {
         fetchSub();
     }, [profile?.id]);
 
-    const isActive = subDetails?.status === 'active' || profile?.subscription_status === 'active';
+    const isActive = subDetails?.status === 'active' || (profile?.subscription_status === 'active' && !loading);
     const isPro = isActive && (profile?.plan_type !== 'base' && profile?.plan_type !== 'free');
 
     const getPlanName = () => {
@@ -45,7 +45,7 @@ const CaregiverPayments = () => {
         if (type === 'monthly') return 'BC PRO — 1 mes';
         if (type === 'annual') return 'BC PRO — 12 meses';
         if (type === 'professional_pro') return 'Profesional PRO';
-        return 'Membresía Premium';
+        return 'BC PRO Activo';
     };
     const planName = getPlanName();
 

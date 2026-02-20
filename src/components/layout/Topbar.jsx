@@ -14,7 +14,9 @@ const Topbar = ({ profile, unreadChatCount, unreadNotificationsCount, onMenuClic
     };
 
     const getRoleLabel = () => {
-        if (profile?.role === 'caregiver') return 'CUIDADOR PRO';
+        if (profile?.role === 'caregiver') {
+            return profile?.subscription_status === 'active' ? 'CUIDADOR PRO' : 'CUIDADOR';
+        }
         if (profile?.role === 'admin') return 'Administrador del Sistema';
         return 'Familia / Usuario';
     };

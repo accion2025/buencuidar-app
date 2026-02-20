@@ -38,16 +38,16 @@ const SubscriptionManagement = () => {
         }
     }, [profile?.id]);
 
-    const isPremium = profile?.subscription_status === 'active' || subDetails?.status === 'active';
+    const isPremium = subDetails?.status === 'active' || (profile?.subscription_status === 'active' && !loadingSub);
     const activePlanId = subDetails?.plan_type || profile?.plan_type;
 
     const planName = isPremium
         ? (activePlanId === 'pulso' ? 'BC PULSO — 1 mes' : (activePlanId === 'plus' ? 'BC PULSO — 3 meses' : 'Plan Premium PULSO'))
         : 'Plan Básico';
 
-    const renewalDate = subDetails?.current_period_end
+    const renewalDate = (subDetails?.status === 'active' && subDetails?.current_period_end)
         ? new Date(subDetails.current_period_end).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
-        : (isPremium ? 'Renovación automática' : 'Sin cargos activos');
+        : (isPremium ? 'Suscripción Activa' : 'Sin cargos activos');
 
     const benefits = [
         'El estado general de bienestar',

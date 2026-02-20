@@ -55,8 +55,8 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                     onClick={() => onSelect(plan.id)}
                     disabled={loading || plan.id === 'plus'}
                     className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${loading || plan.id === 'plus'
-                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-                            : 'bg-[#0F3C4C] text-white hover:bg-[#0a2a36] shadow-lg shadow-blue-100 active:scale-95'
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                        : 'bg-[#0F3C4C] text-white hover:bg-[#0a2a36] shadow-lg shadow-blue-100 active:scale-95'
                         }`}
                 >
                     {loading ? 'Procesando...' : (plan.id === 'base' ? 'ACTIVAR GRATUITO' : 'ACTIVAR BC PULSO')}
@@ -153,12 +153,14 @@ const SubscriptionPlans = () => {
 
             if (error) throw error;
 
-            await supabase.from('subscriptions').insert({
+            const { error: subError } = await supabase.from('subscriptions').insert({
                 user_id: user.id,
                 plan_type: planType,
                 status: 'active',
                 current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
             });
+
+            if (subError) throw subError;
 
             alert(`¡Plan BC PULSO activado correctamente!`);
             window.location.href = '/dashboard';
