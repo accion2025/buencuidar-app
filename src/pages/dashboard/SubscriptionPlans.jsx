@@ -53,13 +53,13 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
             ) : (
                 <button
                     onClick={() => onSelect(plan.id)}
-                    disabled={loading}
-                    className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${loading
+                    disabled={loading || plan.id === 'plus'}
+                    className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${loading || plan.id === 'plus'
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
                             : 'bg-[#0F3C4C] text-white hover:bg-[#0a2a36] shadow-lg shadow-blue-100 active:scale-95'
                         }`}
                 >
-                    {loading ? 'Procesando...' : 'ACTIVAR BC PULSO'}
+                    {loading ? 'Procesando...' : (plan.id === 'base' ? 'ACTIVAR GRATUITO' : 'ACTIVAR BC PULSO')}
                 </button>
             )}
         </div>
