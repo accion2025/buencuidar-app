@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+import { Check, Shield } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
+
 const PlanCard = ({ plan, isCurrent, color, onSelect, loading }) => {
     const { title, subtitle, price, period, description, features, recommended } = plan;
 
