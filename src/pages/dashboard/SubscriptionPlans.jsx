@@ -175,7 +175,7 @@ const SubscriptionPlans = () => {
                 </h1>
                 <div className="space-y-4">
                     <p className="text-2xl font-bold text-[#2FAE8F] italic">Tu cuenta ya está lista.</p>
-                    <p className="text-xl text-slate-600 leading-relaxed font-medium max-w-xl mx-auto text-center">
+                    <p className="text-xl text-slate-600 leading-relaxed font-medium text-center">
                         Ahora puedes activar BC PULSO para contactar, coordinar y recibir apoyo cuando lo necesites.
                     </p>
                     <p className="text-lg text-slate-400 italic">Activa solo cuando lo necesites. Sin contratos ni compromisos.</p>
