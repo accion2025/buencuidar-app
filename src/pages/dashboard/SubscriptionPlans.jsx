@@ -4,7 +4,7 @@ import { Check, CreditCard, Shield, Star, Zap, Info, Lightbulb } from 'lucide-re
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 
-const PlanCard = ({ title, price, period, description, features, recommended, color, onSelect, loading, isCurrent }) => (
+const PlanCard = ({ title, subtitle, price, period, description, features, recommended, color, onSelect, loading, isCurrent }) => (
     <div className={`relative bg-white rounded-2xl p-8 transition-all duration-500 flex flex-col h-full ${recommended
         ? `border-2 ${color.border} shadow-2xl scale-105 z-10`
         : 'border border-gray-100 shadow-sm hover:shadow-xl'
@@ -16,19 +16,19 @@ const PlanCard = ({ title, price, period, description, features, recommended, co
         )}
 
         <div className="text-center mb-8">
-            <div className={`inline-block px-4 py-1 rounded-md ${color.bg} ${color.text} text-[10px] font-black uppercase tracking-widest mb-4`}>
+            <div className={`inline-block px-4 py-1 rounded-lg ${color.bg} ${color.text} text-[10px] font-black uppercase tracking-widest mb-2`}>
                 {title}
             </div>
-            <div className="flex flex-col items-center justify-center gap-1 mb-1">
-                <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-black text-gray-900">${price}</span>
-                    {price !== '0' && <span className="text-gray-400 font-bold text-sm">/ {period}</span>}
-                </div>
-                {description && <p className="text-gray-500 font-medium text-sm mt-2">{description}</p>}
+            {subtitle && <p className="text-gray-500 text-xs font-bold mb-4 italic">{subtitle}</p>}
+            <div className="flex items-center justify-center gap-1 mb-1">
+                <span className="text-5xl font-black text-gray-900">${price}</span>
+                {period && <span className="text-gray-400 font-bold text-sm mt-3">/ {period}</span>}
             </div>
+            {description && <p className="text-gray-600 text-sm mt-4 leading-relaxed font-medium">{description}</p>}
         </div>
 
         <div className="flex-grow space-y-4 mb-8">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-2">Incluye:</p>
             {features.map((feature, idx) => (
                 <div key={idx} className="flex items-start gap-2 text-gray-600">
                     <Check size={16} className={`${color.text} flex-shrink-0 mt-0.5`} />
@@ -41,10 +41,10 @@ const PlanCard = ({ title, price, period, description, features, recommended, co
             onClick={onSelect}
             disabled={loading || isCurrent}
             className={`w-full py-4 rounded-xl font-black text-sm transition-all duration-300 transform uppercase tracking-widest ${isCurrent
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                ? 'bg-blue-50 text-blue-600 cursor-not-allowed border-2 border-blue-100'
                 : recommended
                     ? `bg-[#2FAE8F] text-white hover:scale-105 shadow-xl shadow-emerald-100`
-                    : `bg-[#0F3C4C] text-white hover:scale-105`
+                    : `bg-slate-800 text-white hover:bg-slate-900 hover:scale-105`
                 } ${loading ? 'opacity-50 cursor-wait' : ''}`}
         >
             {loading ? 'Cargando...' : (isCurrent ? 'Activado' : (price === '0' ? 'Empezar Gratis' : `Activar por ${period}`))}
@@ -62,9 +62,10 @@ const SubscriptionPlans = () => {
         {
             id: 'base',
             title: 'GRATUITO',
+            subtitle: 'Empieza sin costo',
             price: '0',
-            period: 'siempre',
-            description: 'Empieza sin costo',
+            period: '',
+            description: 'Esenciales para comenzar',
             features: [
                 "Búsqueda básica de cuidadores",
                 "Mensajes ilimitados",
@@ -81,11 +82,12 @@ const SubscriptionPlans = () => {
             }
         },
         {
-            id: 'pulso_1_mes',
+            id: 'pulso',
             title: 'BC Pulso — 1 mes',
+            subtitle: 'Acceso completo',
             price: '7',
             period: '1 mes',
-            description: 'Acceso completo',
+            description: 'Ideal para necesidades puntuales o temporales.',
             features: [
                 "Contacto directo con cuidadores",
                 "Acceso completo a perfiles verificados",
@@ -102,24 +104,25 @@ const SubscriptionPlans = () => {
             }
         },
         {
-            id: 'pulso_3_meses',
+            id: 'plus',
             title: 'BC Pulso — 3 meses ⭐',
+            subtitle: 'Mejor valor',
             price: '15',
             period: '3 meses',
-            description: 'Mejor valor',
+            description: 'Mayor tranquilidad con menor costo mensual (Equivale a solo $5 por mes).',
             features: [
-                "Todo lo anterior, con ahorro del 29%",
-                "Ideal si necesitas apoyo continuo",
-                "Estás en proceso de recuperación",
-                "Acceso activo sin interrupciones",
-                "Equivale a solo $5 por mes"
+                "Todo el acceso anterior",
+                "Ahorro del 29% en suscripción",
+                "Ideal para apoyo continuo",
+                "Ideal para procesos de recuperación",
+                "Mantenimiento de acceso activo sin interrupciones"
             ],
             color: {
-                border: 'border-[#2FAE8F]',
-                bg: 'bg-emerald-50',
-                text: 'text-[#2FAE8F]',
-                badge: 'bg-[#2FAE8F]',
-                btn: 'bg-[#2FAE8F]'
+                border: 'border-indigo-600',
+                bg: 'bg-indigo-50',
+                text: 'text-indigo-600',
+                badge: 'bg-indigo-600',
+                btn: 'bg-indigo-600'
             },
             recommended: true
         }
@@ -160,42 +163,60 @@ const SubscriptionPlans = () => {
 
     return (
         <div className="min-h-screen bg-gray-50/50 flex flex-col items-center py-20 px-4">
-            <div className="max-w-6xl w-full text-center space-y-6 mb-16">
-                <h1 className="text-4xl md:text-6xl font-brand font-bold tracking-tighter leading-tight italic text-[#0F3C4C]">
+            <div className="max-w-4xl w-full text-center space-y-6 mb-16">
+                <h1 className="text-4xl md:text-5xl font-brand font-bold tracking-tight text-[#0F3C4C]">
                     ¡Activa BC Pulso y conecta directamente con cuidadores!
                 </h1>
-                <div className="space-y-2">
-                    <p className="text-2xl md:text-3xl font-bold text-[#2FAE8F]">Tu cuenta ya está lista.</p>
-                    <p className="text-xl md:text-2xl text-slate-600 font-medium font-secondary max-w-4xl mx-auto leading-relaxed">
+                <div className="space-y-4">
+                    <p className="text-2xl font-bold text-[var(--secondary-color)] italic">Tu cuenta ya está lista.</p>
+                    <p className="text-xl text-slate-600 leading-relaxed font-medium">
                         Ahora puedes activar BC PULSO para contactar, coordinar y recibir apoyo cuando lo necesites.
                     </p>
-                    <p className="text-lg text-slate-500 italic font-medium">Activa solo cuando lo necesites. Sin contratos ni compromisos.</p>
+                    <p className="text-lg text-slate-400 italic">Activa solo cuando lo necesites. Sin contratos ni compromisos.</p>
                 </div>
             </div>
 
             {/* Sección en blanco (Espaciador) */}
             <div className="w-full h-12 md:h-20"></div>
 
-            <div className="max-w-4xl w-full mb-24">
-                <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-100 shadow-sm text-center">
-                    <h3 className="text-2xl md:text-3xl font-bold text-[#0F3C4C] mb-8">¿Qué ocurre si no activas BC Pulso?</h3>
-                    <p className="text-lg text-gray-600 mb-8 font-medium">Tu cuenta sigue siendo gratuita y puedes:</p>
-                    <div className="grid md:grid-cols-3 gap-6 mb-10">
-                        {[
-                            'Mantener tu perfil activo',
-                            'Explorar la plataforma',
-                            'Preparar futuras solicitudes'
-                        ].map((item, i) => (
-                            <div key={i} className="flex flex-col items-center gap-3">
-                                <div className="w-12 h-12 bg-emerald-50 text-[#2FAE8F] rounded-full flex items-center justify-center">
-                                    <Check size={24} />
-                                </div>
-                                <span className="font-bold text-gray-700">{item}</span>
-                            </div>
-                        ))}
-                    </div>
-                    <p className="text-[#2FAE8F] font-bold text-xl italic">Puedes activar BC Pulso en cualquier momento.</p>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full mb-32 items-stretch">
+                {plans.map((plan) => (
+                    <PlanCard
+                        key={plan.id}
+                        title={plan.title}
+                        subtitle={plan.subtitle}
+                        price={plan.price}
+                        period={plan.period}
+                        description={plan.description}
+                        features={plan.features}
+                        recommended={plan.recommended}
+                        color={plan.color}
+                        onSelect={() => handleSubscribe(plan.id)}
+                        loading={loading}
+                        isCurrent={currentPlan === plan.id}
+                    />
+                ))}
+            </div>
+
+            {/* Nueva sección: ¿Qué ocurre si no activas BC Pulso? */}
+            <div className="max-w-4xl w-full mb-20 bg-white border border-gray-100 rounded-2xl p-8 md:p-12 shadow-sm text-center">
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">¿Qué ocurre si no activas BC Pulso?</h3>
+                <p className="text-lg text-gray-600 mb-8">Tu cuenta sigue siendo gratuita y puedes:</p>
+                <ul className="grid md:grid-cols-3 gap-6 mb-10">
+                    <li className="flex flex-col items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                        <span className="text-2xl">👤</span>
+                        <span className="font-bold text-gray-700">Mantener tu perfil activo</span>
+                    </li>
+                    <li className="flex flex-col items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                        <span className="text-2xl">🔍</span>
+                        <span className="font-bold text-gray-700">Explorar la plataforma</span>
+                    </li>
+                    <li className="flex flex-col items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                        <span className="text-2xl">📝</span>
+                        <span className="font-bold text-gray-700">Preparar futuras solicitudes</span>
+                    </li>
+                </ul>
+                <p className="text-xl font-bold text-[var(--secondary-color)] italic">Puedes activar BC Pulso en cualquier momento.</p>
             </div>
 
             <div className="max-w-4xl w-full pb-20">
