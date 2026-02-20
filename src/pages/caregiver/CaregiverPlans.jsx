@@ -172,7 +172,7 @@ const CaregiverPlans = () => {
             <div className="max-w-2xl w-full mb-24 text-center px-4">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-brand">Tú decides tu ritmo</h3>
 
-                <div className="text-lg text-gray-600 space-y-2 mb-8 font-medium">
+                <div className="text-lg text-gray-700 space-y-4 mb-8 font-bold">
                     <p>BuenCuidar no cobra comisiones.</p>
                     <p>No interviene en tus acuerdos.</p>
                     <p>No limita tu crecimiento.</p>
