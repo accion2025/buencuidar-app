@@ -54,7 +54,7 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                         : `bg-slate-800 text-white hover:bg-slate-900 hover:scale-105`
                     } ${loading ? 'opacity-50 cursor-wait' : ''}`}
             >
-                {loading ? 'Cargando...' : (isCurrent ? 'ACTIVADO' : (price === '0' ? 'Empezar Gratis' : `Activar por ${period}`))}
+                {loading ? 'Cargando...' : (isCurrent ? 'ACTIVADO' : (price === '0' ? 'EMPEZAR GRATIS' : `ACTIVAR POR ${period}`))}
             </button>
         </div>
     );
