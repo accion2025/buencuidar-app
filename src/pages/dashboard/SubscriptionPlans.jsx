@@ -34,7 +34,7 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                 </p>
             </div>
 
-            <div className="flex-grow space-y-4 mb-8 mt-6">
+            <div className="flex-grow space-y-4 mb-8">
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">Incluye:</p>
                 {features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-2 text-gray-600">
