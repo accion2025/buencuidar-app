@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, MessageCircle, MapPin } from 'lucide-react';
 
 const Footer = () => {
     return (
@@ -19,15 +19,27 @@ const Footer = () => {
                     <ul className="flex flex-col md:flex-row gap-4 md:gap-6 items-center justify-center text-xs font-secondary">
                         <li className="flex items-center gap-2">
                             <MapPin size={14} className="text-[var(--secondary-color)]" />
-                            <span className="text-gray-300">Asunción, Paraguay</span>
+                            <span className="text-gray-300">Managua, Nicaragua</span>
                         </li>
-                        <li className="flex items-center gap-2">
-                            <Phone size={14} className="text-[var(--secondary-color)]" />
-                            <span className="text-gray-300">+595 (900) 000 000</span>
+                        <li>
+                            <a
+                                href="https://wa.me/50584234337"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 hover:text-white transition-colors"
+                            >
+                                <MessageCircle size={14} className="text-[var(--secondary-color)]" />
+                                <span className="text-gray-300">+505 8423 4337</span>
+                            </a>
                         </li>
-                        <li className="flex items-center gap-2">
-                            <Mail size={14} className="text-[var(--secondary-color)]" />
-                            <span className="text-gray-300">hola@buencuidar.com</span>
+                        <li>
+                            <a
+                                href="mailto:soporte@buencuidar.com"
+                                className="flex items-center gap-2 hover:text-white transition-colors"
+                            >
+                                <Mail size={14} className="text-[var(--secondary-color)]" />
+                                <span className="text-gray-300">soporte@buencuidar.com</span>
+                            </a>
                         </li>
                     </ul>
                 </div>

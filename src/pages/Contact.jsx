@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, MessageCircle, MapPin, Send } from 'lucide-react';
 
 const Contact = () => {
     return (
@@ -34,29 +34,37 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900">Oficinas Centrales</h4>
-                                    <p className="text-gray-600">Av. Paseo de la Reforma 123, Piso 4<br />Col. Juárez, CDMX, 06600</p>
+                                    <p className="text-gray-600">Managua, Nicaragua</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4">
+                            <a
+                                href="https://wa.me/50584234337"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-4 hover:bg-gray-100 p-2 rounded-xl transition-colors"
+                            >
                                 <div className="w-10 h-10 bg-[var(--primary-light)]/20 text-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Phone size={20} />
+                                    <MessageCircle size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-gray-900">Teléfono</h4>
-                                    <p className="text-gray-600">+52 (55) 1234 5678</p>
+                                    <h4 className="font-bold text-gray-900">WhatsApp</h4>
+                                    <p className="text-gray-600">+505 8423 4337</p>
                                 </div>
-                            </div>
+                            </a>
 
-                            <div className="flex items-center gap-4">
+                            <a
+                                href="mailto:soporte@buencuidar.com"
+                                className="flex items-center gap-4 hover:bg-gray-100 p-2 rounded-xl transition-colors"
+                            >
                                 <div className="w-10 h-10 bg-[var(--primary-light)]/20 text-[var(--primary-color)] rounded-full flex items-center justify-center flex-shrink-0">
                                     <Mail size={20} />
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900">Email</h4>
-                                    <p className="text-gray-600">hola@buencuidar.com</p>
+                                    <p className="text-gray-600">soporte@buencuidar.com</p>
                                 </div>
-                            </div>
+                            </a>
                         </div>
 
                         {/* Map Placeholder */}
