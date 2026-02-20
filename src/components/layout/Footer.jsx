@@ -28,10 +28,18 @@ const Footer = () => {
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-3 hover:text-white transition-colors group"
                             >
-                                <img
-                                    src="/images/klipartz.com (47).png"
-                                    alt="WhatsApp"
-                                    className="w-6 h-6 object-contain group-hover:scale-110 transition-transform"
+                                <div
+                                    className="w-5 h-5 group-hover:scale-110 transition-transform bg-[var(--secondary-color)]"
+                                    style={{
+                                        maskImage: 'url("/images/klipartz.com (47).png")',
+                                        maskSize: 'contain',
+                                        maskRepeat: 'no-repeat',
+                                        maskPosition: 'center',
+                                        WebkitMaskImage: 'url("/images/klipartz.com (47).png")',
+                                        WebkitMaskSize: 'contain',
+                                        WebkitMaskRepeat: 'no-repeat',
+                                        WebkitMaskPosition: 'center'
+                                    }}
                                 />
                                 <span className="text-[#FAFAF7] text-lg tracking-wide">+505 8423 4337</span>
                             </a>
