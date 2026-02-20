@@ -201,10 +201,19 @@ const SubscriptionPlans = () => {
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-brand">¿Qué ocurre si no activas BC PULSO?</h3>
                 <p className="text-lg text-gray-600 mb-6 font-medium">Tu cuenta sigue siendo gratuita y puedes:</p>
 
-                <div className="text-xl font-bold text-gray-800 space-y-2 mb-10">
-                    <p>Mantener tu perfil activo</p>
-                    <p>Explorar la plataforma</p>
-                    <p>Preparar futuras solicitudes</p>
+                <div className="mx-auto w-fit text-left py-8 text-lg font-bold text-gray-700 space-y-4 mb-8">
+                    <div className="flex items-center gap-3">
+                        <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
+                        <span>Mantener tu perfil activo</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
+                        <span>Explorar la plataforma</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Check size={20} className="text-[#2FAE8F] flex-shrink-0" />
+                        <span>Preparar futuras solicitudes</span>
+                    </div>
                 </div>
 
                 <p className="text-xl font-bold text-[#2FAE8F] italic">Puedes activar BC PULSO en cualquier momento.</p>
