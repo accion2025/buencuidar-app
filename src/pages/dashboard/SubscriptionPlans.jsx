@@ -45,7 +45,7 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
             </div>
 
             {isCurrent && plan.id === 'base' ? (
-                <div className="w-full py-4 text-center font-black text-blue-600 bg-blue-50 rounded-xl border-2 border-blue-100 uppercase tracking-widest">
+                <div className="w-full py-4 text-center font-black text-[#2FAE8F] uppercase tracking-widest italic text-lg">
                     ACTIVADO
                 </div>
             ) : (
@@ -202,15 +202,15 @@ const SubscriptionPlans = () => {
             {/* Sección en blanco (Espaciador) */}
             <div className="w-full h-12 md:h-20"></div>
 
-            {/* Nueva sección: ¿Qué ocurre si no activas BC PULSO? */}
-            <div className="max-w-4xl w-full mb-20 bg-white border border-gray-100 rounded-2xl p-8 md:p-12 shadow-sm text-center">
+            {/* Nueva sección: ¿Qué ocurre si no activas BC PULSO? (Estructura Simple) */}
+            <div className="max-w-2xl w-full mb-24 text-center">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-brand">¿Qué ocurre si no activas BC PULSO?</h3>
-                <p className="text-lg text-gray-600 mb-8 font-medium">Tu cuenta sigue siendo gratuita y puedes:</p>
+                <p className="text-lg text-gray-600 mb-6 font-medium">Tu cuenta sigue siendo gratuita y puedes:</p>
 
-                <div className="max-w-md mx-auto py-8 text-lg font-bold text-gray-700 space-y-3 mb-8">
-                    <p>• Mantener tu perfil activo</p>
-                    <p>• Explorar la plataforma</p>
-                    <p>• Preparar futuras solicitudes</p>
+                <div className="text-xl font-bold text-gray-800 space-y-2 mb-10">
+                    <p>Mantener tu perfil activo</p>
+                    <p>Explorar la plataforma</p>
+                    <p>Preparar futuras solicitudes</p>
                 </div>
 
                 <p className="text-xl font-bold text-[#2FAE8F] italic">Puedes activar BC PULSO en cualquier momento.</p>
