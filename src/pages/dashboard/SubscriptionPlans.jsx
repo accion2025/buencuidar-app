@@ -44,18 +44,24 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                 ))}
             </div>
 
-            <button
-                onClick={() => onSelect(plan.id)}
-                disabled={loading || isCurrent}
-                className={`w-full py-4 rounded-xl font-black text-sm transition-all duration-300 transform uppercase tracking-widest ${isCurrent
-                    ? 'bg-blue-50 text-blue-600 cursor-not-allowed border-2 border-blue-100'
-                    : recommended
-                        ? `bg-[#2FAE8F] text-white hover:scale-105 shadow-xl shadow-emerald-100`
-                        : `bg-slate-800 text-white hover:bg-slate-900 hover:scale-105`
-                    } ${loading ? 'opacity-50 cursor-wait' : ''}`}
-            >
-                {loading ? 'Cargando...' : (isCurrent ? 'ACTIVADO' : (price === '0' ? 'EMPEZAR GRATIS' : `ACTIVAR POR ${period}`))}
-            </button>
+            {isCurrent && plan.id === 'base' ? (
+                <div className="w-full py-4 text-center font-black text-blue-600 bg-blue-50 rounded-xl border-2 border-blue-100 uppercase tracking-widest">
+                    ACTIVADO
+                </div>
+            ) : (
+                <button
+                    onClick={() => onSelect(plan.id)}
+                    disabled={loading || isCurrent}
+                    className={`w-full py-4 rounded-xl font-black text-sm transition-all duration-300 transform uppercase tracking-widest ${isCurrent
+                        ? 'bg-blue-50 text-blue-600 cursor-not-allowed border-2 border-blue-100'
+                        : recommended
+                            ? `bg-[#2FAE8F] text-white hover:scale-105 shadow-xl shadow-emerald-100`
+                            : `bg-slate-800 text-white hover:bg-slate-900 hover:scale-105`
+                        } ${loading ? 'opacity-50 cursor-wait' : ''}`}
+                >
+                    {loading ? 'Cargando...' : (isCurrent ? 'ACTIVADO' : (price === '0' ? 'EMPEZAR GRATIS' : `ACTIVAR POR ${period}`))}
+                </button>
+            )}
         </div>
     );
 };
@@ -193,33 +199,21 @@ const SubscriptionPlans = () => {
                 ))}
             </div>
 
-            {/* Sección Informativa: ¿Qué ocurre si no activas? */}
+            {/* Sección en blanco (Espaciador) */}
+            <div className="w-full h-12 md:h-20"></div>
+
+            {/* Nueva sección: ¿Qué ocurre si no activas BC PULSO? */}
             <div className="max-w-4xl w-full mb-20 bg-white border border-gray-100 rounded-2xl p-8 md:p-12 shadow-sm text-center">
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-brand">¿Qué ocurre si no activas BC Pulso?</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 font-brand">¿Qué ocurre si no activas BC PULSO?</h3>
                 <p className="text-lg text-gray-600 mb-8 font-medium">Tu cuenta sigue siendo gratuita y puedes:</p>
 
-                <div className="grid md:grid-cols-3 gap-6 mb-10">
-                    <div className="p-6 bg-gray-50 rounded-xl flex flex-col items-center gap-3 border border-gray-100">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-blue-600">
-                            <Check size={24} />
-                        </div>
-                        <span className="font-bold text-gray-700">Mantener tu perfil activo</span>
-                    </div>
-                    <div className="p-6 bg-gray-50 rounded-xl flex flex-col items-center gap-3 border border-gray-100">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-blue-600">
-                            <Check size={24} />
-                        </div>
-                        <span className="font-bold text-gray-700">Explorar la plataforma</span>
-                    </div>
-                    <div className="p-6 bg-gray-50 rounded-xl flex flex-col items-center gap-3 border border-gray-100">
-                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-blue-600">
-                            <Check size={24} />
-                        </div>
-                        <span className="font-bold text-gray-700">Preparar futuras solicitudes</span>
-                    </div>
+                <div className="max-w-md mx-auto py-8 text-lg font-bold text-gray-700 space-y-3 mb-8">
+                    <p>• Mantener tu perfil activo</p>
+                    <p>• Explorar la plataforma</p>
+                    <p>• Preparar futuras solicitudes</p>
                 </div>
 
-                <p className="text-xl font-bold text-[#2FAE8F] italic">Puedes activar BC Pulso en cualquier momento.</p>
+                <p className="text-xl font-bold text-[#2FAE8F] italic">Puedes activar BC PULSO en cualquier momento.</p>
             </div>
 
             {/* Garantía */}
