@@ -163,8 +163,8 @@ const CaregiverPlans = () => {
             alert(`¡Plan BC PRO activado correctamente!`);
             window.location.href = '/caregiver';
         } catch (err) {
-            console.error(err);
-            alert("Error al procesar la activación");
+            console.error("Error en handleSubscribe:", err);
+            alert(`Error al procesar la activación: ${err.message || "Error desconocido"}`);
         } finally {
             setLoading(false);
         }

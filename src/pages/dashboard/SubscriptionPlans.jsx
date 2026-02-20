@@ -165,8 +165,8 @@ const SubscriptionPlans = () => {
             alert(`¡Plan BC PULSO activado correctamente!`);
             window.location.href = '/dashboard';
         } catch (err) {
-            console.error(err);
-            alert("Error al procesar la activación");
+            console.error("Error en handleSubscribe:", err);
+            alert(`Error al procesar la activación: ${err.message || "Error desconocido"}`);
         } finally {
             setLoading(false);
         }
