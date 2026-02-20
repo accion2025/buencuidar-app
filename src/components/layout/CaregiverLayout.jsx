@@ -75,7 +75,7 @@ const CaregiverLayout = () => {
     if (loading) return null;
 
     return (
-        <div className="h-[100dvh] bg-gray-50 flex font-sans overflow-hidden">
+        <div className="h-[100dvh] bg-gray-50 flex overflow-hidden">
             {/* Sidebar */}
             <aside
                 className={`fixed top-0 left-0 h-[100dvh] z-50 w-64 bg-slate-900 !text-[#FAFAF7] transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'

@@ -142,9 +142,9 @@ const CaregiverPlans = () => {
                     ¡Haz visible tu vocación de cuidar!
                 </h1>
                 <div className="space-y-4">
-                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Crear tu cuenta es completamente gratuito.</p>
+                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Tu cuenta ya está lista.</p>
                     <p className="text-xl text-slate-600 leading-relaxed font-medium max-w-2xl mx-auto">
-                        Puedes formar parte de la comunidad, crear tu perfil y comenzar a construir tu presencia desde hoy.
+                        Ahora puedes formar parte de la comunidad, crear tu perfil y comenzar a construir tu presencia desde hoy.
                     </p>
                     <p className="text-lg text-slate-400 italic">Si deseas aumentar tu visibilidad y acceder a más oportunidades, puedes activar BC PRO.</p>
                 </div>
