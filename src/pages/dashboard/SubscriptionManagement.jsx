@@ -66,7 +66,7 @@ const SubscriptionManagement = () => {
                         }
                         <button
                             onClick={() => navigate('/dashboard/plans')}
-                            className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-8 py-3 rounded-[16px] font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all shadow-xl shadow-green-900/40 border-none w-full"
+                            className="bg-[var(--secondary-color)] !text-[#FAFAF7] px-10 py-5 rounded-[16px] font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all shadow-xl shadow-green-900/40 border-none w-full"
                         >
                             {isPremium ? 'Administrar' : 'Actualizar a PULSO'}
                         </button>

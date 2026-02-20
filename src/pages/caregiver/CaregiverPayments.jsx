@@ -99,10 +99,7 @@ const CaregiverPayments = () => {
                         </p>
                         <Link
                             to="/caregiver/plans"
-                            className={`${isActive
-                                ? 'bg-[var(--secondary-color)] hover:bg-emerald-600 shadow-green-900/40'
-                                : 'bg-[var(--primary-color)] hover:bg-[#1a5a70] shadow-blue-900/20'
-                                } !text-[#FAFAF7] px-8 py-3 rounded-[16px] font-black uppercase tracking-widest text-[10px] transition-all shadow-xl border-none w-full inline-block text-center`}
+                            className="bg-[var(--secondary-color)] hover:bg-emerald-600 shadow-green-900/40 !text-[#FAFAF7] px-10 py-5 rounded-[16px] font-black uppercase tracking-widest text-xs transition-all shadow-xl border-none w-full inline-block text-center"
                         >
                             {isActive ? 'Administrar' : 'Mejorar a PRO'}
                         </Link>
