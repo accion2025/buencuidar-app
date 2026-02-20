@@ -2,20 +2,50 @@ import React, { useEffect } from 'react';
 import { CheckCircle, Crown, Shield, CreditCard, Download, Zap, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 const SubscriptionManagement = () => {
     const { profile, refreshProfile } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (refreshProfile) {
-            refreshProfile();
-        }
-    }, []);
+    const [subDetails, setSubDetails] = React.useState(null);
+    const [loadingSub, setLoadingSub] = React.useState(true);
 
-    const isPremium = profile?.subscription_status === 'active';
-    const planName = isPremium ? 'Plan Premium PULSO' : 'Plan Básico';
-    const renewalDate = "15 Feb, 2026"; // Mocked for now
+    useEffect(() => {
+        const fetchSub = async () => {
+            if (!profile?.id) return;
+            try {
+                const { data, error } = await supabase
+                    .from('subscriptions')
+                    .select('*')
+                    .eq('user_id', profile.id)
+                    .eq('status', 'active')
+                    .order('created_at', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                if (data) setSubDetails(data);
+            } catch (err) {
+                console.error("Error fetching subscription:", err);
+            } finally {
+                setLoadingSub(false);
+            }
+        };
+
+        if (profile?.id) {
+            refreshProfile?.();
+            fetchSub();
+        }
+    }, [profile?.id]);
+
+    const isPremium = profile?.subscription_status === 'active' || subDetails?.status === 'active';
+    const planName = isPremium
+        ? (subDetails?.plan_type === 'plus' ? 'BC PULSO — 3 meses' : 'Plan Premium PULSO')
+        : 'Plan Básico';
+
+    const renewalDate = subDetails?.current_period_end
+        ? new Date(subDetails.current_period_end).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+        : (isPremium ? 'Renovación automática' : 'Sin cargos activos');
 
     const benefits = [
         'El estado general de bienestar',

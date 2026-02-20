@@ -35,8 +35,17 @@ const CaregiverPayments = () => {
     }, [profile?.id]);
 
     const isActive = subDetails?.status === 'active' || profile?.subscription_status === 'active';
-    const isPro = subDetails?.plan_type === 'professional_pro' || subDetails?.plan_type === 'premium' || profile?.plan_type === 'professional_pro' || profile?.plan_type === 'premium';
-    const planName = isPro ? (profile?.plan_type === 'professional_pro' ? 'Profesional PRO' : 'Membresía Premium') : 'Plan Básico (Gratis)';
+    const isPro = isActive && (profile?.plan_type !== 'base' && profile?.plan_type !== 'free');
+
+    const getPlanName = () => {
+        if (!isActive) return 'Plan Básico (Gratis)';
+        const type = subDetails?.plan_type || profile?.plan_type;
+        if (type === 'monthly') return 'BC PRO — 1 mes';
+        if (type === 'annual') return 'BC PRO — 12 meses';
+        if (type === 'professional_pro') return 'Profesional PRO';
+        return 'Membresía Premium';
+    };
+    const planName = getPlanName();
 
     if (loading) {
         return (
