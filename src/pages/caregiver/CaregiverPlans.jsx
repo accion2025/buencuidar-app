@@ -142,17 +142,16 @@ const CaregiverPlans = () => {
                     ¡Haz visible tu vocación de cuidar!
                 </h1>
                 <div className="space-y-4">
-                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Crear tu cuenta es completamente gratuito.</p>
-                    <p className="text-xl text-slate-600 leading-relaxed font-medium max-w-2xl mx-auto">
+                    <p className="text-2xl text-[#2FAE8F] italic font-medium">Crear tu cuenta es completamente gratuito.</p>
+                    <p className="text-xl text-slate-600 leading-relaxed font-medium max-w-2xl mx-auto font-secondary text-center">
                         Puedes formar parte de la comunidad, crear tu perfil y comenzar a construir tu presencia desde hoy.
                     </p>
-                    <p className="text-lg text-slate-400 italic">Si deseas aumentar tu visibilidad y acceder a más oportunidades, puedes activar BC PRO.</p>
+                    <p className="text-lg text-slate-400 italic font-secondary">Si deseas aumentar tu visibilidad y acceder a más oportunidades, puedes activar BC PRO.</p>
                 </div>
             </div>
 
-            <div className="max-w-4xl w-full text-center mb-12">
-                <h2 className="text-2xl font-brand font-bold text-gray-700 uppercase tracking-widest">Elige cómo quieres crecer en BuenCuidar</h2>
-            </div>
+            <div className="w-full h-12"></div>
+
 
             {/* Grid de Planes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full mb-24 items-stretch px-4">
@@ -193,8 +192,8 @@ const CaregiverPlans = () => {
                         <Shield size={32} />
                     </div>
                     <div className="flex-1 text-center md:text-left z-10">
-                        <h3 className="font-brand font-bold text-2xl !text-white mb-2">Garantía BuenCuidar</h3>
-                        <p className="text-white/60 font-medium text-sm">Pagos procesados de forma segura con encriptación de nivel bancario a través de Stripe.</p>
+                        <h3 className="font-brand font-bold text-2xl !text-white mb-2 text-center md:text-left">Garantía BuenCuidar</h3>
+                        <p className="text-white/60 font-medium font-secondary text-center md:text-left">Pagos procesados de forma segura con encriptación de nivel bancario a través de Stripe.</p>
                     </div>
                     <div className="flex items-center gap-6 z-10 opacity-50 grayscale hover:grayscale-0 transition-all">
                         <span className="text-white font-black text-2xl italic">VISA</span>
