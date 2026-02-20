@@ -22,7 +22,7 @@ const SubscriptionManagement = () => {
                     .eq('status', 'active')
                     .order('created_at', { ascending: false })
                     .limit(1)
-                    .single();
+                    .maybeSingle();
 
                 if (data) setSubDetails(data);
             } catch (err) {
@@ -39,8 +39,10 @@ const SubscriptionManagement = () => {
     }, [profile?.id]);
 
     const isPremium = profile?.subscription_status === 'active' || subDetails?.status === 'active';
+    const activePlanId = subDetails?.plan_type || profile?.plan_type;
+
     const planName = isPremium
-        ? (subDetails?.plan_type === 'plus' ? 'BC PULSO — 3 meses' : 'Plan Premium PULSO')
+        ? (activePlanId === 'pulso' ? 'BC PULSO — 1 mes' : (activePlanId === 'plus' ? 'BC PULSO — 3 meses' : 'Plan Premium PULSO'))
         : 'Plan Básico';
 
     const renewalDate = subDetails?.current_period_end

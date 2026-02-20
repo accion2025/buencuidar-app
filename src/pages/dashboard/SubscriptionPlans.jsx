@@ -157,7 +157,7 @@ const SubscriptionPlans = () => {
                 user_id: user.id,
                 plan_type: planType,
                 status: 'active',
-                current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
+                current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
             });
 
             alert(`¡Plan BC PULSO activado correctamente!`);
