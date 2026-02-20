@@ -94,7 +94,7 @@ const CaregiverLayout = () => {
                 <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto pb-24">
                     {menuItems.map((item) => {
                         const isPremiumOnly = item.path === '/caregiver/analytics';
-                        const isPremiumUser = profile?.plan_type === 'premium' || profile?.plan_type === 'professional_pro';
+                        const isPremiumUser = profile?.plan_type === 'premium' || profile?.plan_type === 'professional_pro' || profile?.plan_type === 'monthly' || profile?.plan_type === 'annual';
                         const isBlocked = isPremiumOnly && !isPremiumUser;
 
                         return (
