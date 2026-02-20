@@ -46,7 +46,7 @@ const Navbar = () => {
                         {/* Desktop Menu */}
                         <nav className="hidden md:flex items-center gap-6">
                             <Link to="/como-funciona" className="text-[var(--text-main)] font-semibold hover:text-[var(--primary-color)] transition-colors">
-                                cómo funciona BC
+                                Cómo funciona BC
                             </Link>
                             <Link to="/ecosistema-salud" className="text-[var(--text-main)] font-semibold hover:text-[var(--primary-color)] transition-colors flex items-center gap-1">
                                 <Activity size={16} className="text-[var(--secondary-color)]" />
