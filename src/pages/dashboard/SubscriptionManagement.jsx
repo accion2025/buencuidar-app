@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CheckCircle, Crown, Shield, CreditCard, Download, Zap, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const SubscriptionManagement = () => {
-    const { profile } = useAuth();
+    const { profile, refreshProfile } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (refreshProfile) {
+            refreshProfile();
+        }
+    }, []);
 
     const isPremium = profile?.subscription_status === 'active';
     const planName = isPremium ? 'Plan Premium PULSO' : 'Plan Básico';
