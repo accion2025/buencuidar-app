@@ -69,7 +69,7 @@ const Services = () => {
                 <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full">
                     <div className="w-full text-center">
                         <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">¿Qué es BuenCuidar?</h2>
-                        <p className="text-xl text-gray-600 mb-12 leading-relaxed max-w-4xl mx-auto font-medium">
+                        <p className="text-xl text-gray-600 mb-12 leading-relaxed w-full font-medium">
                             BuenCuidar es una plataforma creada para conectar personas que necesitan cuidados con cuidadores dispuestos a ofrecer su servicio de forma directa, digna y transparente.
                         </p>
 
@@ -90,7 +90,7 @@ const Services = () => {
                     <div className="w-full">
                         <div className="text-center mb-20">
                             <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-6 tracking-tighter">¿Cómo funciona BuenCuidar?</h2>
-                            <p className="text-xl text-gray-600 font-medium max-w-3xl mx-auto">
+                            <p className="text-xl text-gray-600 font-medium w-full">
                                 Conectamos familias con cuidadores de forma directa. El proceso funciona en cuatro pasos simples:
                             </p>
                         </div>
@@ -113,10 +113,9 @@ const Services = () => {
                     </div>
                 </section>
 
-                {/* Nuestro Compromiso - Layout Estilo Pulso */}
                 <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full">
-                    <div className="w-full text-center">
-                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-12 rounded-xl max-w-4xl mx-auto text-center relative overflow-hidden mb-16">
+                    <div className="w-full text-center flex flex-col items-center">
+                        <div className="bg-blue-50 border border-blue-100 p-8 md:p-12 rounded-xl w-full max-w-5xl text-center relative overflow-hidden mb-16 mx-auto">
                             <div className="relative z-10">
                                 <h4 className="text-lg font-bold text-[#0F3C4C] mb-3 uppercase tracking-wide">Importante</h4>
                                 <p className="text-gray-700 text-lg leading-relaxed">
@@ -127,7 +126,7 @@ const Services = () => {
 
                         <Heart className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-8 animate-pulse" />
                         <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-12 tracking-tighter">Nuestro compromiso</h2>
-                        <p className="text-xl text-gray-600 mb-16 max-w-3xl mx-auto font-medium">
+                        <p className="text-xl text-gray-600 mb-16 w-full font-medium">
                             En BC creemos que el cuidado es una de las acciones más importantes que existen. Por eso, nuestra plataforma se basa en tres principios:
                         </p>
 
