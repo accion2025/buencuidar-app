@@ -133,31 +133,8 @@ const SubscriptionManagement = () => {
                     <h3 className="font-brand font-bold text-xl !text-[#0F3C4C]">Historial de Facturación</h3>
                 </div>
                 <div className="divide-y divide-gray-50">
-                    {isPremium ? (
-                        [
-                            { date: "15 Ene, 2026", concept: "Suscripción Mensual PULSO - Enero", amount: "$29.00", status: "Pagado" },
-                            { date: "15 Dic, 2025", concept: "Suscripción Mensual PULSO - Diciembre", amount: "$29.00", status: "Pagado" },
-                        ].map((inv, idx) => (
-                            <div key={idx} className="p-8 flex items-center justify-between hover:bg-slate-50/50 transition-all border-l-4 border-transparent hover:border-l-[var(--secondary-color)] group">
-                                <div>
-                                    <p className="font-brand font-bold text-[#0F3C4C] text-lg">{inv.concept}</p>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">{inv.date}</p>
-                                </div>
-                                <div className="flex items-center gap-8">
-                                    <span className="bg-[var(--secondary-color)]/10 text-[var(--secondary-color)] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">{inv.status}</span>
-                                    <span className="font-brand font-bold text-[#0F3C4C] text-lg">{inv.amount}</span>
-                                    <button className="p-3 bg-slate-50 text-gray-400 hover:text-[var(--primary-color)] hover:bg-white hover:shadow-lg rounded-[16px] transition-all border-none">
-                                        <Download size={20} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="p-12 text-center text-gray-400 font-secondary italic bg-white w-full flex flex-col items-center">
-                            <Download size={40} className="mb-4 opacity-20" />
-                            No tienes facturas generadas.
-                        </div>
-                    )}
+                    <div className="p-12 text-center text-gray-400 font-secondary italic bg-white w-full flex flex-col items-center">
+                    </div>
                 </div>
             </div>
         </div>

@@ -173,17 +173,14 @@ const CaregiverPayments = () => {
                 </div>
             </div>
 
-            {/* Invoice History (Only if active or had history) */}
-            {isActive && (
-                <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
-                    <div className="p-8 border-b border-gray-50 bg-slate-50/50">
-                        <h3 className="font-brand font-bold text-xl !text-[#0F3C4C]">Historial de Facturación</h3>
-                    </div>
-                    <div className="divide-y divide-gray-50 text-center py-12 text-gray-400 italic">
-                        No se encontraron facturas recientes.
-                    </div>
+            {/* Invoice History */}
+            <div className="bg-white rounded-[16px] border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+                <div className="p-8 border-b border-gray-50 bg-slate-50/50">
+                    <h3 className="font-brand font-bold text-xl !text-[#0F3C4C]">Historial de Facturación</h3>
                 </div>
-            )}
+                <div className="divide-y divide-gray-50 text-center py-12 text-gray-400 italic">
+                </div>
+            </div>
         </div>
     );
 };
