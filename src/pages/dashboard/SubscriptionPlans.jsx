@@ -13,7 +13,7 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
             : 'border-gray-100 shadow-sm hover:shadow-xl'
             }`}>
             {recommended && (
-                <div className={`absolute -top-5 left-1/2 transform -translate-x-1/2 ${color.badge} !text-[#FAFAF7] px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap`}>
+                <div className={`absolute -top-5 left-1/2 transform -translate-x-1/2 ${color.badge} !text-[#FAFAF7] px-6 py-2 rounded-md text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap`}>
                     MEJOR VALOR ⭐
                 </div>
             )}
@@ -54,7 +54,7 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                         : `bg-slate-800 text-white hover:bg-slate-900 hover:scale-105`
                     } ${loading ? 'opacity-50 cursor-wait' : ''}`}
             >
-                {loading ? 'Cargando...' : (isCurrent ? 'Activado' : (price === '0' ? 'Empezar Gratis' : `Activar por ${period}`))}
+                {loading ? 'Cargando...' : (isCurrent ? 'ACTIVADO' : (price === '0' ? 'Empezar Gratis' : `Activar por ${period}`))}
             </button>
         </div>
     );
@@ -90,7 +90,7 @@ const SubscriptionPlans = () => {
         },
         {
             id: 'pulso',
-            title: 'BC Pulso — 1 mes',
+            title: 'BC PULSO — 1 mes',
             subtitle: 'Acceso completo',
             price: '7',
             period: '1 mes',
@@ -111,7 +111,7 @@ const SubscriptionPlans = () => {
         },
         {
             id: 'plus',
-            title: 'BC Pulso — 3 meses ⭐',
+            title: 'BC PULSO — 3 meses ⭐',
             subtitle: 'Mejor valor',
             price: '15',
             period: '3 meses',
@@ -169,7 +169,7 @@ const SubscriptionPlans = () => {
             {/* Encabezado */}
             <div className="max-w-4xl w-full text-center space-y-6 mb-16">
                 <h1 className="text-4xl md:text-5xl font-brand font-bold tracking-tight text-[#0F3C4C]">
-                    ¡Activa BC Pulso y conecta directamente con cuidadores!
+                    ¡Activa BC PULSO y conecta directamente con cuidadores!
                 </h1>
                 <div className="space-y-4">
                     <p className="text-2xl font-bold text-[#2FAE8F] italic">Tu cuenta ya está lista.</p>
