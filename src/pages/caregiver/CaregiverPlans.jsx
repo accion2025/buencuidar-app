@@ -35,10 +35,10 @@ const PlanCard = ({ plan, isCurrent, color, onSelect, loading }) => {
 
             <div className="flex-grow mb-8 flex flex-col items-center">
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2 mb-4 w-full text-center">Incluye:</p>
-                <div className="text-left space-y-3 w-fit">
+                <div className="space-y-3 w-full text-center">
                     {features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-gray-600">
-                            <Check size={16} className={`${color.text} flex-shrink-0 mt-0.5`} />
+                        <div key={idx} className="flex items-center justify-center gap-2 text-gray-600">
+                            <Check size={16} className={`${color.text} flex-shrink-0`} />
                             <span className="text-sm font-medium leading-tight">{feature}</span>
                         </div>
                     ))}
@@ -143,7 +143,7 @@ const CaregiverPlans = () => {
                 </h1>
                 <div className="space-y-4">
                     <p className="text-2xl font-bold text-[#2FAE8F] italic">Crear tu cuenta es completamente gratuito.</p>
-                    <p className="text-xl text-slate-600 leading-relaxed font-medium text-center">
+                    <p className="text-xl text-slate-600 leading-relaxed font-medium max-w-xl mx-auto text-center">
                         Puedes formar parte de la comunidad, crear tu perfil y comenzar a construir tu presencia desde hoy.
                     </p>
                     <p className="text-lg text-slate-400 italic">Si deseas aumentar tu visibilidad y acceder a más oportunidades, puedes activar BC PRO.</p>
