@@ -132,7 +132,7 @@ const Services = () => {
 
                         <div className="grid md:grid-cols-3 gap-10 mb-20 w-full">
                             {['Acceso libre y gratuito para todos', 'Respeto por la dignidad de cada persona', 'Conexiones humanas, directas y transparentes'].map((item, i) => (
-                                <div key={i} className="bg-gray-50 p-10 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center min-h-[140px] border border-gray-100 shadow-sm">
+                                <div key={i} className="bg-gray-50 p-8 rounded-xl hover:bg-gray-100 transition-colors flex items-center justify-center min-h-[100px] border border-gray-100 shadow-sm">
                                     <p className="font-bold text-2xl text-gray-700 tracking-tight">{item}</p>
                                 </div>
                             ))}
@@ -141,14 +141,14 @@ const Services = () => {
                         <div className="bg-[var(--primary-color)]/5 p-10 rounded-xl inline-block border border-[var(--primary-color)]/10">
                             <p className="text-2xl md:text-3xl font-bold text-[var(--primary-color)] tracking-tight">
                                 Crear una cuenta en BC es completamente gratuito, hoy y siempre.<br />
-                                <span className="text-[var(--secondary-color)] font-normal text-2xl mt-4 block">Porque el cuidado no debe tener barreras de entrada.</span>
+                                <span className="text-[var(--secondary-color)] font-normal text-2xl mt-4 block italic">¡Porque el cuidado no debe tener barreras de entrada!</span>
                             </p>
                         </div>
                     </div>
                 </section>
 
                 {/* Cierre - Puerta Abierta - Layout Estilo Pulso */}
-                <section className="py-24 px-8 md:px-[60px] bg-[var(--primary-color)] text-white text-center w-full min-h-[60vh] flex items-center justify-center">
+                <section className="py-16 px-8 md:px-[60px] bg-[var(--primary-color)] text-white text-center w-full min-h-[40vh] flex items-center justify-center">
                     <div className="max-w-4xl w-full">
                         <DoorOpen className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-6" />
                         <h2
