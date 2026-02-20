@@ -46,16 +46,20 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                 </div>
             </div>
 
-            {plan.id === 'base' ? (
+            {isCurrent ? (
                 <div className="w-full py-4 text-center font-black text-[#2FAE8F] uppercase tracking-widest rounded-xl bg-emerald-50 border border-emerald-100 shadow-sm">
                     ACTIVADO
                 </div>
             ) : (
                 <button
-                    disabled={true}
-                    className="w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    onClick={() => onSelect(plan.id)}
+                    disabled={loading}
+                    className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${loading
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                            : 'bg-[#0F3C4C] text-white hover:bg-[#0a2a36] shadow-lg shadow-blue-100 active:scale-95'
+                        }`}
                 >
-                    ACTIVAR BC PULSO
+                    {loading ? 'Procesando...' : 'ACTIVAR BC PULSO'}
                 </button>
             )}
         </div>

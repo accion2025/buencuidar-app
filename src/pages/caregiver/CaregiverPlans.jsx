@@ -45,16 +45,20 @@ const PlanCard = ({ plan, isCurrent, color, onSelect, loading }) => {
                 </div>
             </div>
 
-            {plan.id === 'base' ? (
+            {isCurrent ? (
                 <div className="w-full py-4 text-center font-black text-[#2FAE8F] uppercase tracking-widest rounded-xl bg-emerald-50 border border-emerald-100 shadow-sm">
                     ACTIVADO
                 </div>
             ) : (
                 <button
-                    disabled={true}
-                    className="w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                    onClick={() => onSelect(plan.id)}
+                    disabled={loading}
+                    className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${loading
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                            : 'bg-[#0F3C4C] text-white hover:bg-[#0a2a36] shadow-lg shadow-blue-100 active:scale-95'
+                        }`}
                 >
-                    ACTIVAR {title.split(' — ')[0]}
+                    {loading ? 'Procesando...' : `ACTIVAR ${title.split(' — ')[0]}`}
                 </button>
             )}
         </div>
@@ -130,9 +134,39 @@ const CaregiverPlans = () => {
                 text: 'text-[#2FAE8F]',
                 badge: 'bg-[#2FAE8F]'
             },
-            recommended: true
         }
     ];
+
+    const handleSubscribe = async (planType) => {
+        if (planType === currentPlan) return;
+        setLoading(true);
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    plan_type: planType,
+                    subscription_status: 'active'
+                })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            await supabase.from('subscriptions').insert({
+                user_id: user.id,
+                plan_type: planType,
+                status: 'active',
+                current_period_end: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString()
+            });
+
+            alert(`¡Plan BC PRO activado correctamente!`);
+            window.location.href = '/caregiver';
+        } catch (err) {
+            console.error(err);
+            alert("Error al procesar la activación");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-50/10 flex flex-col items-center py-16 px-4">
@@ -161,6 +195,7 @@ const CaregiverPlans = () => {
                         plan={plan}
                         isCurrent={currentPlan === plan.id}
                         color={plan.color}
+                        onSelect={handleSubscribe}
                         loading={loading}
                     />
                 ))}
