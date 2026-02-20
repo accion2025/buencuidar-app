@@ -148,21 +148,30 @@ const Services = () => {
                 </section>
 
                 {/* Cierre - Puerta Abierta - Layout Estilo Pulso */}
-                <section className="py-16 px-8 md:px-[60px] bg-[var(--primary-color)] text-white text-center w-full min-h-[40vh] flex items-center justify-center">
-                    <div className="max-w-4xl w-full">
-                        <DoorOpen className="w-16 h-16 text-[var(--secondary-color)] mx-auto mb-6" />
-                        <h2
-                            className="text-3xl md:text-4xl font-bold mb-8"
-                            style={{ color: '#FAFAF7' }}
-                        >
-                            BC es una puerta abierta
-                        </h2>
-                        <div className="space-y-4 text-xl text-gray-200 mb-10">
-                            <p>Una puerta para quien necesita apoyo.</p>
-                            <p>Una puerta para quien tiene la vocación de cuidar.</p>
-                            <p>Una puerta para construir confianza.</p>
+                <section className="py-20 px-8 md:px-[60px] bg-[var(--primary-color)] text-white text-center w-full min-h-[40vh] flex items-center justify-center">
+                    <div className="max-w-5xl w-full flex flex-col items-center">
+                        {/* Bloque Icono + Texto alineado a la izquierda, pero centrado como conjunto */}
+                        <div className="flex flex-col md:flex-row items-center md:items-start justify-center gap-8 md:gap-12 mb-12">
+                            <div className="flex-shrink-0 pt-2">
+                                <DoorOpen className="w-20 h-20 text-[var(--secondary-color)]" />
+                            </div>
+                            <div className="text-left">
+                                <h2
+                                    className="text-4xl md:text-5xl font-bold mb-6 tracking-tight"
+                                    style={{ color: '#FAFAF7' }}
+                                >
+                                    BC es una puerta abierta
+                                </h2>
+                                <div className="space-y-3 text-xl md:text-2xl text-gray-200">
+                                    <p>Una puerta para quien necesita apoyo.</p>
+                                    <p>Una puerta para quien tiene la vocación de cuidar.</p>
+                                    <p>Una puerta para construir confianza.</p>
+                                </div>
+                            </div>
                         </div>
-                        <p className="text-2xl font-bold text-[var(--secondary-color)] mb-10">
+
+                        {/* Frase final en verde permanece centrada e independiente */}
+                        <p className="text-2xl md:text-3xl font-bold text-[var(--secondary-color)] mb-12 max-w-4xl tracking-tight">
                             BC existe para conectar, facilitar y dignificar el cuidado humano.
                         </p>
 
