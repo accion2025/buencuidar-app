@@ -44,22 +44,16 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                 ))}
             </div>
 
-            {isCurrent && plan.id === 'base' ? (
-                <div className="w-full py-4 text-center font-black text-[#2FAE8F] uppercase tracking-widest italic text-lg">
+            {plan.id === 'base' ? (
+                <div className="w-full py-4 text-center font-black text-[#2FAE8F] uppercase tracking-widest rounded-xl bg-emerald-50 border border-emerald-100 shadow-sm">
                     ACTIVADO
                 </div>
             ) : (
                 <button
-                    onClick={() => onSelect(plan.id)}
-                    disabled={loading || isCurrent}
-                    className={`w-full py-4 rounded-xl font-black text-sm transition-all duration-300 transform uppercase tracking-widest ${isCurrent
-                        ? 'bg-blue-50 text-blue-600 cursor-not-allowed border-2 border-blue-100'
-                        : recommended
-                            ? `bg-[#2FAE8F] text-white hover:scale-105 shadow-xl shadow-emerald-100`
-                            : `bg-slate-800 text-white hover:bg-slate-900 hover:scale-105`
-                        } ${loading ? 'opacity-50 cursor-wait' : ''}`}
+                    disabled={true}
+                    className="w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
                 >
-                    {loading ? 'Cargando...' : (isCurrent ? 'ACTIVADO' : (price === '0' ? 'EMPEZAR GRATIS' : `ACTIVAR POR ${period}`))}
+                    ACTIVAR POR {period}
                 </button>
             )}
         </div>
