@@ -145,7 +145,7 @@ const SubscriptionManagement = () => {
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Expira 08/27</p>
                                     </div>
                                 </div>
-                                <button className="text-[var(--primary-color)] text-xs font-black uppercase tracking-widest hover:underline border-none bg-transparent">Cambiar</button>
+                                <button disabled className="text-gray-400 text-xs font-black uppercase tracking-widest border-none bg-transparent cursor-not-allowed opacity-50">Cambiar</button>
                             </div>
                             <p className="text-[10px] text-gray-400 font-medium text-center uppercase tracking-tighter">
                                 Cargo automático de <span className="font-black text-[#0F3C4C]">$29.00 USD</span> mensual.

@@ -161,7 +161,7 @@ const CaregiverPayments = () => {
                                         <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Expira 12/28</p>
                                     </div>
                                 </div>
-                                <button className="text-[var(--primary-color)] text-xs font-black uppercase tracking-widest hover:underline">Cambiar</button>
+                                <button disabled className="text-gray-400 text-xs font-black uppercase tracking-widest border-none bg-transparent cursor-not-allowed opacity-50">Cambiar</button>
                             </div>
                             <p className="text-[10px] text-gray-400 font-medium text-center uppercase tracking-tighter">
                                 Cargo automático de <span className="font-black text-[#0F3C4C]">$199 MXN</span> mensual.
