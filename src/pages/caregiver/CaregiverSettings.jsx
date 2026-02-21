@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 import OneSignal from 'react-onesignal';
 
 const CaregiverSettings = () => {
-    const { user, resetPassword } = useAuth();
+    const { user, profile, resetPassword } = useAuth();
     const [preferences, setPreferences] = useState({
         urgentCalls: false,
         weekendWork: false,
@@ -106,6 +106,28 @@ const CaregiverSettings = () => {
             } else {
                 alert("Correo enviado. Revisa tu bandeja de entrada.");
             }
+        }
+    };
+
+    const handleDeleteAccount = () => {
+        if (confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.")) {
+            const subject = encodeURIComponent("BuenCuidar - Solicitud de Baja (Cuidador)");
+            const body = encodeURIComponent(
+                `Hola equipo de Soporte de BuenCuidar,\n\n` +
+                `Solicito la eliminación definitiva de mi cuenta de Cuidador y todos mis datos asociados.\n\n` +
+                `Detalles de la cuenta:\n` +
+                `- Nombre: ${profile?.full_name || 'No especificado'}\n` +
+                `- Email: ${user?.email || 'No especificado'}\n` +
+                `- ID de Usuario: ${user?.id || 'No especificado'}\n\n` +
+                `Entiendo que esta acción es permanente y que no podré recuperar mi perfil de cuidador.`
+            );
+
+            window.location.href = `mailto:soporte@buencuidar.com?subject=${subject}&body=${body}`;
+
+            // Mostrar confirmación informativa para cerrar el flujo del usuario
+            setTimeout(() => {
+                alert("Solicitud generada satisfactoriamente. \n\nPor favor, asegúrate de enviar el correo electrónico que se acaba de abrir en tu dispositivo para que nuestro equipo pueda procesar tu baja definitivamente.");
+            }, 800);
         }
     };
 
@@ -212,11 +234,7 @@ const CaregiverSettings = () => {
                     </button>
 
                     <button
-                        onClick={() => {
-                            if (confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.")) {
-                                alert("Por favor contacta a soporte para proceder con la baja definitiva.");
-                            }
-                        }}
+                        onClick={handleDeleteAccount}
                         className="w-full p-8 hover:bg-red-50 transition-all font-brand font-bold text-red-500 text-lg flex justify-between items-center group"
                     >
                         Eliminar Cuenta

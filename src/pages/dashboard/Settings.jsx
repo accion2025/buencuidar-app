@@ -134,6 +134,28 @@ const Settings = () => {
     // Derived State for Subscription
     const isPremium = profile?.subscription_status === 'active';
 
+    const handleDeleteAccount = () => {
+        if (confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.")) {
+            const subject = encodeURIComponent("BuenCuidar - Solicitud de Baja (Familia)");
+            const body = encodeURIComponent(
+                `Hola equipo de Soporte de BuenCuidar,\n\n` +
+                `Solicito la eliminación definitiva de mi cuenta y todos mis datos asociados.\n\n` +
+                `Detalles de la cuenta:\n` +
+                `- Nombre: ${profile?.full_name || 'No especificado'}\n` +
+                `- Email: ${user?.email || 'No especificado'}\n` +
+                `- ID de Usuario: ${user?.id || 'No especificado'}\n\n` +
+                `Entiendo que esta acción es permanente.`
+            );
+
+            window.location.href = `mailto:soporte@buencuidar.com?subject=${subject}&body=${body}`;
+
+            // Mostrar confirmación informativa para cerrar el flujo del usuario
+            setTimeout(() => {
+                alert("Solicitud generada satisfactoriamente. \n\nPor favor, asegúrate de enviar el correo electrónico que se acaba de abrir en tu dispositivo (revisa tu aplicación de correo) para que nuestro equipo pueda procesar tu baja definitivamente.");
+            }, 800);
+        }
+    };
+
     return (
         <div className="space-y-10 animate-fade-in max-w-3xl text-left">
             <div className="flex items-center justify-between">
@@ -211,11 +233,7 @@ const Settings = () => {
                     </button>
 
                     <button
-                        onClick={() => {
-                            if (confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción es irreversible.")) {
-                                alert("Por favor contacta a soporte para proceder con la baja definitiva.");
-                            }
-                        }}
+                        onClick={handleDeleteAccount}
                         className="w-full p-8 hover:bg-red-50 transition-all font-brand font-bold text-red-500 text-lg flex justify-between items-center group"
                     >
                         Eliminar Cuenta
