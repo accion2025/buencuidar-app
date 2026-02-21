@@ -13,7 +13,7 @@ const Terms = () => {
             <Navbar />
 
             <main className="flex-grow pt-32 pb-20 px-6">
-                <div className="max-w-4xl mx-auto">
+                <div className="max-w-[1440px] mx-auto">
                     {/* Header */}
                     <div className="mb-16 text-center animate-fade-in">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-[var(--secondary-color)]/10 rounded-2xl mb-6 text-[var(--secondary-color)]">
@@ -27,7 +27,7 @@ const Terms = () => {
                         </p>
                     </div>
 
-                    <div className="bg-white rounded-[32px] shadow-xl shadow-slate-200/50 p-8 md:p-16 border border-slate-100 relative overflow-hidden">
+                    <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 p-8 md:p-16 border border-slate-100 relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)]/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
 
                         <div className="relative z-10 space-y-12 text-gray-700 leading-relaxed font-medium">
@@ -48,7 +48,7 @@ const Terms = () => {
                                 <p>
                                     BuenCuidar es una plataforma digital cuyo propósito es facilitar la conexión entre personas que requieren servicios de cuidado y personas que ofrecen dichos servicios.
                                 </p>
-                                <div className="bg-slate-50 p-6 rounded-[24px] space-y-2 border border-slate-100">
+                                <div className="bg-slate-50 p-6 rounded-[8px] space-y-2 border border-slate-100">
                                     <p className="font-bold text-[var(--primary-color)] mb-2">BuenCuidar:</p>
                                     <ul className="grid md:grid-cols-2 gap-3 list-none">
                                         <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--secondary-color)]"></div> No es empleador de los cuidadores</li>
@@ -75,7 +75,7 @@ const Terms = () => {
                                     <li className="flex items-start gap-3"><ShieldCheck className="text-[var(--secondary-color)] mt-1 shrink-0" size={18} /> Crear una sola cuenta personal</li>
                                     <li className="flex items-start gap-3"><ShieldCheck className="text-[var(--secondary-color)] mt-1 shrink-0" size={18} /> Mantener la confidencialidad de tu contraseña</li>
                                 </ul>
-                                <p className="p-4 bg-amber-50 rounded-2xl border border-amber-100 text-amber-900 text-sm">
+                                <p className="p-4 bg-amber-50 rounded-[8px] border border-amber-100 text-amber-900 text-sm">
                                     Eres responsable de toda actividad realizada desde tu cuenta. BuenCuidar se reserva el derecho de suspender o eliminar cuentas que contengan información falsa o engañosa.
                                 </p>
                             </section>
@@ -120,10 +120,10 @@ const Terms = () => {
                                 </h2>
                                 <p>Aceptas utilizar BuenCuidar de forma ética y respetuosa. Está prohibido:</p>
                                 <ul className="grid md:grid-cols-2 gap-4">
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-xl text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Proporcionar información falsa</li>
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-xl text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Suplantar identidad</li>
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-xl text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Actividades ilegales</li>
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-xl text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Hostigar o discriminar</li>
+                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Proporcionar información falsa</li>
+                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Suplantar identidad</li>
+                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Actividades ilegales</li>
+                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Hostigar o discriminar</li>
                                 </ul>
                             </section>
 
@@ -167,15 +167,21 @@ const Terms = () => {
                                 </section>
                                 <section className="space-y-3">
                                     <h3 className="font-bold text-[var(--primary-color)] flex items-center gap-2 uppercase tracking-widest text-xs">
-                                        <AlertCircle size={16} /> 9. Suspensión
+                                        <AlertCircle size={16} /> 9. Suspensión o terminación
                                     </h3>
-                                    <p className="text-xs text-gray-500">Podemos eliminar cuentas que incumplan estos términos o representen un riesgo para otros usuarios.</p>
+                                    <p className="text-xs text-gray-500">BuenCuidar puede suspender o eliminar cuentas que incumplan estos términos o representen un riesgo para otros usuarios. El usuario también puede eliminar su cuenta en cualquier momento.</p>
+                                </section>
+                                <section className="space-y-3">
+                                    <h3 className="font-bold text-[var(--primary-color)] flex items-center gap-2 uppercase tracking-widest text-xs">
+                                        <Scale size={16} /> 10. Modificaciones
+                                    </h3>
+                                    <p className="text-xs text-gray-500">BuenCuidar puede actualizar estos términos cuando sea necesario. El uso continuo de la plataforma implica la aceptación de las modificaciones.</p>
                                 </section>
                             </div>
 
-                            <section className="p-10 bg-[var(--primary-color)] rounded-[32px] text-center text-white space-y-6">
+                            <section className="p-10 bg-[var(--primary-color)] rounded-[16px] text-center text-white space-y-6">
                                 <UserCheck className="mx-auto text-[var(--secondary-color)]" size={48} />
-                                <h2 className="text-2xl font-bold">11. Aceptación</h2>
+                                <h2 className="text-2xl font-bold text-white">11. Aceptación</h2>
                                 <p className="text-blue-100 text-sm max-w-lg mx-auto leading-relaxed">
                                     Al crear una cuenta, confirmas que has leído estos términos, los comprendes y aceptas cumplirlos. BuenCuidar existe para construir un entorno de confianza y cuidado. Cada usuario forma parte de ese compromiso.
                                 </p>
