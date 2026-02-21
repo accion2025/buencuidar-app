@@ -177,18 +177,21 @@ const SubscriptionPlans = () => {
             {/* Encabezado */}
             <div className="max-w-4xl w-full text-center space-y-6 mb-16">
                 <h1 className="text-4xl md:text-5xl font-brand font-bold tracking-tight text-[#0F3C4C]">
-                    ¡Activa BC PULSO y conecta directamente con cuidadores!
+                    ¡BC PULSO Activado Gratuitamente!
                 </h1>
                 <div className="space-y-4">
-                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Tu cuenta ya está lista.</p>
+                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Te regalamos tu primer mes.</p>
                     <p className="text-xl text-slate-600 leading-relaxed font-medium text-center">
-                        Ahora puedes activar BC PULSO para contactar, coordinar y recibir apoyo cuando lo necesites.
+                        Como bienvenida, hemos activado **BC PULSO** automáticamente en tu cuenta por los próximos 30 días.
                     </p>
-                    <p className="text-lg text-slate-400 italic">Activa solo cuando lo necesites. Sin contratos ni compromisos.</p>
+                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl inline-flex items-center gap-3 text-blue-700 font-medium">
+                        <Info size={20} className="flex-shrink-0" />
+                        <span>Tu periodo de prueba de 1 mes ya está en curso. ¡Aprovéchalo ahora!</span>
+                    </div>
                 </div>
             </div>
 
-            <div className="w-full h-12"></div>
+            <div className="w-full h-8"></div>
 
             {/* Grid de Planes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full mb-24 items-stretch px-4">

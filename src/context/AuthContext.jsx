@@ -114,6 +114,56 @@ export const AuthProvider = ({ children }) => {
                 } else {
                     setProfile(data);
                 }
+
+                // --- V1.0.98: Lógica de Expiración Pasiva (Lazy Downgrade) ---
+                if (data.subscription_status === 'active' && data.plan_type !== 'basic') {
+                    // Buscar la suscripción activa más reciente
+                    const { data: subData } = await supabase
+                        .from('subscriptions')
+                        .select('current_period_end')
+                        .eq('user_id', id)
+                        .eq('status', 'active')
+                        .order('created_at', { ascending: false })
+                        .limit(1)
+                        .maybeSingle();
+
+                    if (subData?.current_period_end) {
+                        const expiryDate = new Date(subData.current_period_end);
+                        const now = new Date();
+
+                        if (expiryDate < now) {
+                            console.log("Suscripción expirada detectada. Ejecutando downgrade...");
+
+                            // 1. Actualizar tabla subscriptions
+                            await supabase
+                                .from('subscriptions')
+                                .update({ status: 'past_due' })
+                                .eq('user_id', id)
+                                .eq('status', 'active');
+
+                            // 2. Actualizar perfil
+                            const { data: updatedProfile } = await supabase
+                                .from('profiles')
+                                .update({
+                                    plan_type: 'basic',
+                                    subscription_status: 'inactive'
+                                })
+                                .eq('id', id)
+                                .select()
+                                .single();
+
+                            if (updatedProfile) {
+                                // Forzar refresco del estado local del perfil
+                                setProfile(prev => ({
+                                    ...prev,
+                                    plan_type: 'basic',
+                                    subscription_status: 'inactive'
+                                }));
+                            }
+                        }
+                    }
+                }
+                // --- Fin V1.0.98 ---
             }
         } catch (error) {
             console.error("Error fetching profile details:", error);

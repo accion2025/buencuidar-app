@@ -90,4 +90,3 @@ CREATE TRIGGER tr_unified_care_logs_notify
     AFTER INSERT ON care_logs
     FOR EACH ROW
     EXECUTE FUNCTION notify_client_on_care_log_insert();
-procede

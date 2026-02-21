@@ -175,18 +175,21 @@ const CaregiverPlans = () => {
             {/* Header Block */}
             <div className="max-w-4xl w-full text-center space-y-6 mb-16 px-4">
                 <h1 className="text-4xl md:text-5xl font-brand font-bold tracking-tight text-[#0F3C4C]">
-                    ¡Haz visible tu vocación de cuidar!
+                    ¡BC PRO Activado Gratuitamente!
                 </h1>
                 <div className="space-y-4">
-                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Crear tu cuenta es completamente gratuito.</p>
+                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Te regalamos tu primer mes de visibilidad.</p>
                     <p className="text-xl text-slate-600 leading-relaxed font-medium text-center">
-                        Puedes formar parte de la comunidad, crear tu perfil y comenzar a construir tu presencia desde hoy.
+                        Como bienvenida, hemos activado **BC PRO** automáticamente en tu cuenta por los próximos 30 días.
                     </p>
-                    <p className="text-lg text-slate-400 italic">Si deseas aumentar tu visibilidad y acceder a más oportunidades, puedes activar BC PRO.</p>
+                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl inline-flex items-center gap-3 text-blue-700 font-medium">
+                        <Check size={20} className="flex-shrink-0 text-blue-600" />
+                        <span>Tu periodo de prueba de 1 mes ya está activo. ¡Aprovecha para destacar tu perfil!</span>
+                    </div>
                 </div>
             </div>
 
-            <div className="w-full h-12"></div>
+            <div className="w-full h-8"></div>
 
 
             {/* Grid de Planes */}
