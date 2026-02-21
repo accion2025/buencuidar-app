@@ -212,19 +212,15 @@ const Terms = () => {
                 {/* Sección Final - Aceptación */}
                 <section className="py-24 px-8 md:px-[60px] bg-[var(--primary-color)] text-white w-full flex items-center justify-center">
                     <div className="max-w-5xl w-full flex flex-col items-center text-center">
-                        <h2 className="text-4xl md:text-5xl font-brand font-bold mb-10 tracking-tighter text-white uppercase" style={{ color: '#FAFAF7' }}>
+                        <h2 className="text-3xl md:text-4xl font-brand font-bold mb-4 tracking-tighter text-white uppercase flex items-center justify-center gap-3" style={{ color: '#FAFAF7' }}>
+                            <UserCheck className="w-8 h-8 md:w-10 md:h-10 text-[var(--secondary-color)]" />
                             11. Aceptación del Compromiso
                         </h2>
 
-                        <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16 mb-20 max-w-4xl">
-                            <div className="flex-shrink-0">
-                                <UserCheck className="w-16 h-16 md:w-20 md:h-20 text-[var(--secondary-color)]" />
-                            </div>
-                            <div className="text-left">
-                                <p className="text-xl md:text-xl text-blue-100 italic font-light font-secondary leading-snug">
-                                    "Al crear una cuenta, confirmas que has leído estos términos, los comprendes y aceptas cumplirlos. BuenCuidar existe para construir un entorno de confianza."
-                                </p>
-                            </div>
+                        <div className="max-w-4xl mb-12">
+                            <p className="text-xl md:text-xl text-blue-100 italic font-light font-secondary leading-snug">
+                                "Al crear una cuenta, confirmas que has leído estos términos, los comprendes y aceptas cumplirlos. BuenCuidar existe para construir un entorno de confianza."
+                            </p>
                         </div>
 
                         <p className="text-2xl md:text-2xl font-brand font-bold mb-10 tracking-tighter leading-tight mt-12" style={{ color: '#2FAE8F' }}>
