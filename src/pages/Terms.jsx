@@ -9,11 +9,11 @@ const Terms = () => {
     }, []);
 
     return (
-        <div className="min-h-screen flex flex-col font-sans bg-gray-50 items-center">
+        <div className="min-h-screen flex flex-col font-sans bg-gray-50">
             <Navbar />
 
             {/* Hero Section */}
-            <header className="bg-[var(--primary-color)] text-[#FAFAF7] pt-[120px] pb-[80px] px-8 md:px-[60px] text-center w-full flex flex-col items-center justify-center">
+            <header className="bg-[var(--primary-color)] text-[#FAFAF7] pt-[100px] pb-[80px] px-8 md:px-[60px] text-center w-full flex flex-col items-center justify-center">
                 <div className="w-full max-w-5xl mx-auto flex flex-col items-center">
                     <h1
                         className="text-4xl md:text-6xl font-bold mb-8 w-full tracking-tight text-center"
@@ -30,7 +30,7 @@ const Terms = () => {
                 </div>
             </header>
 
-            <main className="w-full flex-grow flex flex-col items-center">
+            <main className="w-full flex-grow">
                 {/* 1. Naturaleza de la plataforma */}
                 <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full flex justify-center">
                     <div className="max-w-6xl w-full mx-auto">
@@ -66,8 +66,8 @@ const Terms = () => {
                                 </ul>
                             </div>
 
-                            <div className="flex flex-col justify-center w-full">
-                                <p className="text-2xl text-gray-600 leading-relaxed font-medium italic p-10 bg-blue-50 rounded-xl border border-blue-100 h-full flex items-center justify-center text-center">
+                            <div className="flex flex-col justify-center w-full text-center md:text-left">
+                                <p className="text-2xl text-gray-600 leading-relaxed font-medium italic p-10 bg-blue-50 rounded-xl border border-blue-100 h-full flex items-center justify-center">
                                     "La relación laboral o de servicio se establece exclusivamente entre las partes involucradas. BuenCuidar actúa únicamente como un medio de conexión humano y tecnológico."
                                 </p>
                             </div>
