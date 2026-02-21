@@ -65,7 +65,7 @@ const Terms = () => {
                             </div>
 
                             <div className="flex flex-col justify-center">
-                                <p className="text-xl text-gray-600 leading-relaxed font-medium italic p-8 bg-blue-50 rounded-xl border border-blue-100">
+                                <p className="text-xl text-gray-600 leading-relaxed font-medium italic p-10 bg-blue-50 rounded-xl border border-blue-100 h-full flex items-center">
                                     "La relación laboral o de servicio se establece exclusivamente entre las partes involucradas. BuenCuidar actúa únicamente como un medio de conexión humano y tecnológico."
                                 </p>
                             </div>
@@ -76,37 +76,41 @@ const Terms = () => {
                 {/* 2. Creación de cuenta & 3. Responsabilidad */}
                 <section className="py-16 md:py-24 px-8 md:px-[60px] bg-gray-50 w-full">
                     <div className="max-w-[1440px] mx-auto">
-                        <div className="grid md:grid-cols-2 gap-16">
-                            <div>
+                        <div className="grid md:grid-cols-2 gap-12">
+                            <div className="flex flex-col">
                                 <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">2. Creación de cuenta</h2>
-                                <p className="text-lg text-gray-600 mb-8 font-medium">Para utilizar la plataforma, te comprometes a:</p>
-                                <ul className="space-y-4">
-                                    {[
-                                        'Proporcionar información veraz, completa y actualizada.',
-                                        'Ser mayor de 18 años.',
-                                        'Crear una sola cuenta personal.',
-                                        'Mantener la confidencialidad de tu contraseña.'
-                                    ].map((text, i) => (
-                                        <li key={i} className="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
-                                            <ShieldCheck size={24} className="text-[var(--secondary-color)] shrink-0" />
-                                            <span className="text-gray-700 font-medium">{text}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="bg-white p-8 md:p-10 rounded-xl border border-gray-100 shadow-sm flex-grow">
+                                    <p className="text-lg text-gray-600 mb-8 font-medium">Para utilizar la plataforma, te comprometes a:</p>
+                                    <ul className="space-y-4">
+                                        {[
+                                            'Proporcionar información veraz, completa y actualizada.',
+                                            'Ser mayor de 18 años.',
+                                            'Crear una sola cuenta personal.',
+                                            'Mantener la confidencialidad de tu contraseña.'
+                                        ].map((text, i) => (
+                                            <li key={i} className="flex items-start gap-4">
+                                                <ShieldCheck size={24} className="text-[var(--secondary-color)] shrink-0" />
+                                                <span className="text-gray-700 font-medium">{text}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </div>
 
-                            <div>
+                            <div className="flex flex-col">
                                 <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">3. Responsabilidad del usuario</h2>
-                                <p className="text-lg text-gray-600 mb-8 font-medium">Cada usuario es soberano y responsable de:</p>
-                                <div className="space-y-4">
-                                    <div className="p-6 bg-white rounded-xl border border-gray-100 shadow-sm italic text-gray-600">
-                                        "La información que publica en su perfil y las decisiones que tome al contactar o contratar a otra persona."
-                                    </div>
-                                    <div className="p-6 bg-white rounded-xl border border-gray-100 shadow-sm italic text-gray-600">
-                                        "Verificar personalmente la idoneidad de cualquier cuidador o familia."
-                                    </div>
-                                    <div className="p-6 bg-white rounded-xl border border-gray-100 shadow-sm italic text-gray-600">
-                                        "Establecer sus propios acuerdos, condiciones y pagos de forma transparente."
+                                <div className="bg-white p-8 md:p-10 rounded-xl border border-gray-100 shadow-sm flex-grow">
+                                    <p className="text-lg text-gray-600 mb-8 font-medium">Cada usuario es soberano y responsable de:</p>
+                                    <div className="space-y-6">
+                                        <p className="italic text-gray-600 leading-relaxed text-lg">
+                                            "La información que publica en su perfil y las decisiones que tome al contactar o contratar a otra persona."
+                                        </p>
+                                        <p className="italic text-gray-600 leading-relaxed text-lg">
+                                            "Verificar personalmente la idoneidad de cualquier cuidador o familia."
+                                        </p>
+                                        <p className="italic text-gray-600 leading-relaxed text-lg">
+                                            "Establecer sus propios acuerdos, condiciones y pagos de forma transparente."
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -121,8 +125,8 @@ const Terms = () => {
                             <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">Confianza y Respeto</h2>
                         </div>
 
-                        <div className="grid md:grid-cols-2 gap-10">
-                            <div className="bg-[var(--primary-color)]/5 p-10 rounded-xl border border-[var(--primary-color)]/10">
+                        <div className="grid md:grid-cols-2 gap-12">
+                            <div className="bg-[var(--primary-color)]/5 p-10 rounded-xl border border-[var(--primary-color)]/10 h-full">
                                 <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-4">4. Verificación de información</h3>
                                 <p className="text-lg text-gray-600 leading-relaxed font-medium">
                                     BuenCuidar puede solicitar documentos para mejorar la confianza dentro de la plataforma (Identidad, antecedentes, referencias).
@@ -132,7 +136,7 @@ const Terms = () => {
                                 </p>
                             </div>
 
-                            <div className="bg-red-50 p-10 rounded-xl border border-red-100">
+                            <div className="bg-red-50 p-10 rounded-xl border border-red-100 h-full">
                                 <h3 className="text-2xl font-bold text-red-800 mb-4">5. Uso adecuado</h3>
                                 <p className="text-lg text-red-900/70 mb-6 font-medium">Está estrictamente prohibido:</p>
                                 <div className="grid grid-cols-2 gap-4 text-sm font-bold uppercase tracking-wider text-red-800">
@@ -151,7 +155,7 @@ const Terms = () => {
                     <div className="max-w-[1440px] mx-auto text-center">
                         <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-12 tracking-tighter">Políticas del Servicio</h2>
 
-                        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                        <div className="grid md:grid-cols-2 gap-12 w-full">
                             <div className="bg-white p-10 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
                                 <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-[var(--primary-color)] mb-6">
                                     <FileText size={32} />
@@ -197,7 +201,7 @@ const Terms = () => {
                 {/* Sección Final - Aceptación */}
                 <section className="py-20 px-8 md:px-[60px] bg-[var(--primary-color)] text-white w-full flex items-center justify-center">
                     <div className="max-w-[1440px] w-full flex flex-col items-center text-center">
-                        <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight text-[#FAFAF7]">
+                        <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight text-white uppercase">
                             11. Aceptación del Compromiso
                         </h2>
 
