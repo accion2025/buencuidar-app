@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
-import { ShieldCheck, Scale, FileText, UserCheck, AlertCircle } from 'lucide-react';
+import { ShieldCheck, Scale, FileText, UserCheck, AlertCircle, Heart, Shield } from 'lucide-react';
 
 const Terms = () => {
     useEffect(() => {
@@ -9,186 +9,216 @@ const Terms = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
+        <div className="min-h-screen flex flex-col font-sans bg-gray-50">
             <Navbar />
 
-            <main className="flex-grow pt-32 pb-20 px-6">
-                <div className="max-w-[1440px] mx-auto">
-                    {/* Header */}
-                    <div className="mb-16 text-center animate-fade-in">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-[var(--secondary-color)]/10 rounded-2xl mb-6 text-[var(--secondary-color)]">
-                            <Scale size={32} />
+            {/* Hero Section */}
+            <header className="bg-[var(--primary-color)] text-[#FAFAF7] pt-[100px] pb-[80px] px-8 md:px-[60px] text-center w-full flex flex-col items-center justify-center">
+                <h1
+                    className="text-4xl md:text-5xl font-bold mb-6 w-full tracking-tight"
+                    style={{ color: '#FAFAF7' }}
+                >
+                    Términos y Condiciones de Uso
+                </h1>
+
+                <div className="bg-[#0F3C4C]/30 backdrop-blur-sm border border-[#2FAE8F]/30 p-6 rounded-xl inline-block mt-4 mx-auto max-w-2xl">
+                    <p className="text-lg text-gray-100 italic">
+                        Bienvenidos a BuenCuidar. Al utilizar nuestra plataforma, te unes a una comunidad basada en la confianza y el respeto mutuo.
+                    </p>
+                </div>
+            </header>
+
+            <main className="w-full flex-grow">
+                {/* 1. Naturaleza de la plataforma */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full">
+                    <div className="max-w-[1440px] mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">1. Naturaleza de la plataforma</h2>
+                            <p className="text-xl text-gray-600 mb-12 leading-relaxed font-medium">
+                                BuenCuidar (BC) es una plataforma digital cuyo propósito es facilitar la conexión entre personas que requieren servicios de cuidado y personas que ofrecen dichos servicios.
+                            </p>
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-primary font-bold text-[var(--primary-color)] mb-4 tracking-tight">
-                            Términos y Condiciones de Uso
-                        </h1>
-                        <p className="text-gray-500 font-secondary uppercase tracking-[0.2em] text-xs font-bold">
-                            BuenCuidar (BC) • Última actualización: 2026
-                        </p>
-                    </div>
 
-                    <div className="bg-white rounded-[16px] shadow-xl shadow-slate-200/50 p-8 md:p-16 border border-slate-100 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--secondary-color)]/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
-
-                        <div className="relative z-10 space-y-12 text-gray-700 leading-relaxed font-medium">
-                            <section className="animate-fade-in-up">
-                                <p className="text-lg md:text-xl text-[var(--primary-color)] font-semibold">
-                                    Bienvenido a BuenCuidar. Al crear una cuenta y utilizar esta plataforma, aceptas los siguientes términos y condiciones. Te recomendamos leerlos cuidadosamente.
-                                </p>
-                            </section>
-
-                            <hr className="border-slate-100" />
-
-                            {/* Section 1 */}
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[var(--primary-color)] flex items-center gap-3">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[var(--primary-color)] text-sm">1</span>
-                                    Naturaleza de la plataforma
-                                </h2>
-                                <p>
-                                    BuenCuidar es una plataforma digital cuyo propósito es facilitar la conexión entre personas que requieren servicios de cuidado y personas que ofrecen dichos servicios.
-                                </p>
-                                <div className="bg-slate-50 p-6 rounded-[8px] space-y-2 border border-slate-100">
-                                    <p className="font-bold text-[var(--primary-color)] mb-2">BuenCuidar:</p>
-                                    <ul className="grid md:grid-cols-2 gap-3 list-none">
-                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--secondary-color)]"></div> No es empleador de los cuidadores</li>
-                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--secondary-color)]"></div> No contrata cuidadores en nombre de las familias</li>
-                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--secondary-color)]"></div> No actúa como agencia de empleo</li>
-                                        <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--secondary-color)]"></div> No intermedia ni procesa pagos entre usuarios</li>
-                                    </ul>
-                                </div>
-                                <p className="italic text-sm text-gray-500">
-                                    La relación laboral o de servicio se establece exclusivamente entre las partes involucradas. BuenCuidar actúa únicamente como un medio de conexión.
-                                </p>
-                            </section>
-
-                            {/* Section 2 */}
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[var(--primary-color)] flex items-center gap-3">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[var(--primary-color)] text-sm">2</span>
-                                    Creación de cuenta
-                                </h2>
-                                <p>Para utilizar la plataforma, debes:</p>
-                                <ul className="space-y-3 pl-4">
-                                    <li className="flex items-start gap-3"><ShieldCheck className="text-[var(--secondary-color)] mt-1 shrink-0" size={18} /> Proporcionar información veraz, completa y actualizada</li>
-                                    <li className="flex items-start gap-3"><ShieldCheck className="text-[var(--secondary-color)] mt-1 shrink-0" size={18} /> Ser mayor de 18 años</li>
-                                    <li className="flex items-start gap-3"><ShieldCheck className="text-[var(--secondary-color)] mt-1 shrink-0" size={18} /> Crear una sola cuenta personal</li>
-                                    <li className="flex items-start gap-3"><ShieldCheck className="text-[var(--secondary-color)] mt-1 shrink-0" size={18} /> Mantener la confidencialidad de tu contraseña</li>
+                        <div className="grid md:grid-cols-2 gap-10">
+                            <div className="bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm">
+                                <h3 className="text-xl font-bold text-[var(--primary-color)] mb-6 flex items-center gap-3">
+                                    <Shield size={24} className="text-[var(--secondary-color)]" /> Lo que BuenCuidar NO es:
+                                </h3>
+                                <ul className="space-y-4 text-gray-600 text-lg">
+                                    <li className="flex items-start gap-3">
+                                        <div className="w-2 h-2 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                        <span>No es empleador de los cuidadores.</span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <div className="w-2 h-2 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                        <span>No contrata cuidadores en nombre de las familias.</span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <div className="w-2 h-2 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                        <span>No actúa como agencia de empleo.</span>
+                                    </li>
+                                    <li className="flex items-start gap-3">
+                                        <div className="w-2 h-2 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                        <span>No intermedia ni procesa pagos entre usuarios.</span>
+                                    </li>
                                 </ul>
-                                <p className="p-4 bg-amber-50 rounded-[8px] border border-amber-100 text-amber-900 text-sm">
-                                    Eres responsable de toda actividad realizada desde tu cuenta. BuenCuidar se reserva el derecho de suspender o eliminar cuentas que contengan información falsa o engañosa.
-                                </p>
-                            </section>
-
-                            {/* Section 3 */}
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[var(--primary-color)] flex items-center gap-3">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[var(--primary-color)] text-sm">3</span>
-                                    Responsabilidad del usuario
-                                </h2>
-                                <p>Cada usuario es responsable de:</p>
-                                <ul className="space-y-2 list-disc pl-6 text-sm">
-                                    <li>La información que publica en su perfil</li>
-                                    <li>Las decisiones que tome al contactar o contratar a otra persona</li>
-                                    <li>Verificar personalmente la idoneidad de cualquier cuidador o familia</li>
-                                    <li>Establecer sus propios acuerdos, condiciones y pagos</li>
-                                </ul>
-                                <p className="text-sm font-bold text-[var(--primary-color)] mt-4">
-                                    BuenCuidar no garantiza la conducta, capacidad o disponibilidad de los usuarios.
-                                </p>
-                            </section>
-
-                            {/* Section 4 */}
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[var(--primary-color)] flex items-center gap-3">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[var(--primary-color)] text-sm">4</span>
-                                    Verificación de información
-                                </h2>
-                                <p>
-                                    BuenCuidar puede solicitar documentos para mejorar la confianza dentro de la plataforma, incluyendo documento de identidad, antecedentes penales, referencias y evaluaciones complementarias.
-                                </p>
-                                <div className="border-l-4 border-[var(--secondary-color)] pl-6 py-2 italic text-sm">
-                                    Sin embargo, BuenCuidar no garantiza la exactitud absoluta de dicha información. La verificación es un proceso de confianza, no una certificación legal.
-                                </div >
-                            </section>
-
-                            {/* Section 5 */}
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[var(--primary-color)] flex items-center gap-3">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[var(--primary-color)] text-sm">5</span>
-                                    Uso adecuado de la plataforma
-                                </h2>
-                                <p>Aceptas utilizar BuenCuidar de forma ética y respetuosa. Está prohibido:</p>
-                                <ul className="grid md:grid-cols-2 gap-4">
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Proporcionar información falsa</li>
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Suplantar identidad</li>
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Actividades ilegales</li>
-                                    <li className="flex items-center gap-2 p-3 bg-red-50/50 rounded-[8px] text-xs"><AlertCircle className="text-red-400 shrink-0" size={14} /> Hostigar o discriminar</li>
-                                </ul>
-                            </section>
-
-                            {/* Section 6 */}
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[var(--primary-color)] flex items-center gap-3">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[var(--primary-color)] text-sm">6</span>
-                                    Suscripciones
-                                </h2>
-                                <p>
-                                    BuenCuidar ofrece planes gratuitos y planes opcionales de suscripción que pueden mejorar la visibilidad del perfil.
-                                </p>
-                                <ul className="space-y-2 text-sm text-gray-500">
-                                    <li>• Son completamente opcionales</li>
-                                    <li>• No garantizan empleo ni contratación</li>
-                                    <li>• El usuario puede cancelar en cualquier momento</li>
-                                </ul>
-                            </section>
-
-                            {/* Section 7 */}
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[var(--primary-color)] flex items-center gap-3">
-                                    <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-[var(--primary-color)] text-sm">7</span>
-                                    Limitación de responsabilidad
-                                </h2>
-                                <p className="uppercase text-[10px] font-black tracking-widest text-gray-400 mb-2">Advertencia Legal</p>
-                                <p className="text-sm font-medium">
-                                    BuenCuidar no es responsable por acuerdos realizados entre usuarios, pagos, incumplimientos o daños derivados de interacciones. Cada usuario es responsable de sus decisiones.
-                                </p>
-                            </section>
-
-                            <hr className="border-slate-100" />
-
-                            {/* Remaining Sections Simplified */}
-                            <div className="grid md:grid-cols-2 gap-10">
-                                <section className="space-y-3">
-                                    <h3 className="font-bold text-[var(--primary-color)] flex items-center gap-2 uppercase tracking-widest text-xs">
-                                        <FileText size={16} /> 8. Privacidad
-                                    </h3>
-                                    <p className="text-xs text-gray-500">Protegemos tu información personal. No será vendida a terceros y se usa solo para el funcionamiento de la plataforma.</p>
-                                </section>
-                                <section className="space-y-3">
-                                    <h3 className="font-bold text-[var(--primary-color)] flex items-center gap-2 uppercase tracking-widest text-xs">
-                                        <AlertCircle size={16} /> 9. Suspensión o terminación
-                                    </h3>
-                                    <p className="text-xs text-gray-500">BuenCuidar puede suspender o eliminar cuentas que incumplan estos términos o representen un riesgo para otros usuarios. El usuario también puede eliminar su cuenta en cualquier momento.</p>
-                                </section>
-                                <section className="space-y-3">
-                                    <h3 className="font-bold text-[var(--primary-color)] flex items-center gap-2 uppercase tracking-widest text-xs">
-                                        <Scale size={16} /> 10. Modificaciones
-                                    </h3>
-                                    <p className="text-xs text-gray-500">BuenCuidar puede actualizar estos términos cuando sea necesario. El uso continuo de la plataforma implica la aceptación de las modificaciones.</p>
-                                </section>
                             </div>
 
-                            <section className="p-10 bg-[var(--primary-color)] rounded-[16px] text-center text-white space-y-6">
-                                <UserCheck className="mx-auto text-[var(--secondary-color)]" size={48} />
-                                <h2 className="text-2xl font-bold text-white">11. Aceptación</h2>
-                                <p className="text-blue-100 text-sm max-w-lg mx-auto leading-relaxed">
-                                    Al crear una cuenta, confirmas que has leído estos términos, los comprendes y aceptas cumplirlos. BuenCuidar existe para construir un entorno de confianza y cuidado. Cada usuario forma parte de ese compromiso.
+                            <div className="flex flex-col justify-center">
+                                <p className="text-xl text-gray-600 leading-relaxed font-medium italic p-8 bg-blue-50 rounded-xl border border-blue-100">
+                                    "La relación laboral o de servicio se establece exclusivamente entre las partes involucradas. BuenCuidar actúa únicamente como un medio de conexión humano y tecnológico."
                                 </p>
-                            </section>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                {/* 2. Creación de cuenta & 3. Responsabilidad */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-gray-50 w-full">
+                    <div className="max-w-[1440px] mx-auto">
+                        <div className="grid md:grid-cols-2 gap-16">
+                            <div>
+                                <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">2. Creación de cuenta</h2>
+                                <p className="text-lg text-gray-600 mb-8 font-medium">Para utilizar la plataforma, te comprometes a:</p>
+                                <ul className="space-y-4">
+                                    {[
+                                        'Proporcionar información veraz, completa y actualizada.',
+                                        'Ser mayor de 18 años.',
+                                        'Crear una sola cuenta personal.',
+                                        'Mantener la confidencialidad de tu contraseña.'
+                                    ].map((text, i) => (
+                                        <li key={i} className="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
+                                            <ShieldCheck size={24} className="text-[var(--secondary-color)] shrink-0" />
+                                            <span className="text-gray-700 font-medium">{text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">3. Responsabilidad del usuario</h2>
+                                <p className="text-lg text-gray-600 mb-8 font-medium">Cada usuario es soberano y responsable de:</p>
+                                <div className="space-y-4">
+                                    <div className="p-6 bg-white rounded-xl border border-gray-100 shadow-sm italic text-gray-600">
+                                        "La información que publica en su perfil y las decisiones que tome al contactar o contratar a otra persona."
+                                    </div>
+                                    <div className="p-6 bg-white rounded-xl border border-gray-100 shadow-sm italic text-gray-600">
+                                        "Verificar personalmente la idoneidad de cualquier cuidador o familia."
+                                    </div>
+                                    <div className="p-6 bg-white rounded-xl border border-gray-100 shadow-sm italic text-gray-600">
+                                        "Establecer sus propios acuerdos, condiciones y pagos de forma transparente."
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 4. Verificación & 5. Uso adecuado */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full">
+                    <div className="max-w-[1440px] mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">Confianza y Respeto</h2>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 gap-10">
+                            <div className="bg-[var(--primary-color)]/5 p-10 rounded-xl border border-[var(--primary-color)]/10">
+                                <h3 className="text-2xl font-bold text-[var(--primary-color)] mb-4">4. Verificación de información</h3>
+                                <p className="text-lg text-gray-600 leading-relaxed font-medium">
+                                    BuenCuidar puede solicitar documentos para mejorar la confianza dentro de la plataforma (Identidad, antecedentes, referencias).
+                                </p>
+                                <p className="mt-4 text-gray-500 italic text-sm">
+                                    Sin embargo, BuenCuidar no garantiza la exactitud absoluta de dicha información. La verificación es un proceso de confianza mutua.
+                                </p>
+                            </div>
+
+                            <div className="bg-red-50 p-10 rounded-xl border border-red-100">
+                                <h3 className="text-2xl font-bold text-red-800 mb-4">5. Uso adecuado</h3>
+                                <p className="text-lg text-red-900/70 mb-6 font-medium">Está estrictamente prohibido:</p>
+                                <div className="grid grid-cols-2 gap-4 text-sm font-bold uppercase tracking-wider text-red-800">
+                                    <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400"></div> Mentir</div>
+                                    <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400"></div> Suplantar</div>
+                                    <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400"></div> Ilegalidad</div>
+                                    <div className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-red-400"></div> Hostigar</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 6. Suscripciones & 7. Limitación */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-gray-50 w-full">
+                    <div className="max-w-[1440px] mx-auto text-center">
+                        <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-12 tracking-tighter">Políticas del Servicio</h2>
+
+                        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                            <div className="bg-white p-10 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                                <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-[var(--primary-color)] mb-6">
+                                    <FileText size={32} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">6. Suscripciones</h3>
+                                <p className="text-gray-600 text-lg">
+                                    El uso esencial de BC es gratuito. Los planes opcionales (PULSO/PRO) mejoran la visibilidad pero no garantizan contrataciones. Puedes cancelar cuando quieras.
+                                </p>
+                            </div>
+
+                            <div className="bg-white p-10 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                                <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 mb-6">
+                                    <AlertCircle size={32} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">7. Limitación de responsabilidad</h3>
+                                <p className="text-gray-600 text-lg">
+                                    BuenCuidar no es responsable por acuerdos realizados entre usuarios, pagos, incumplimientos o daños. La prudencia es tu mejor aliada.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 8, 9, 10 - Grid de 3 */}
+                <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full">
+                    <div className="max-w-[1440px] mx-auto">
+                        <div className="grid md:grid-cols-3 gap-8">
+                            {[
+                                { title: '8. Privacidad', icon: ShieldCheck, desc: 'Protegemos tu información personal. Se usa solo para el funcionamiento vital de nuestra red.' },
+                                { title: '9. Suspensión', icon: AlertCircle, desc: 'Nos reservamos el derecho de eliminar cuentas que representen un riesgo para la comunidad de BC.' },
+                                { title: '10. Modificaciones', icon: Scale, desc: 'Estos términos pueden actualizarse. Seguir usando BC implica que aceptas las nuevas versiones.' }
+                            ].map((item, i) => (
+                                <div key={i} className="bg-gray-50 p-8 rounded-xl border border-gray-100 text-center hover:bg-gray-100 transition-colors">
+                                    <item.icon size={32} className="mx-auto mb-6 text-[var(--secondary-color)]" />
+                                    <h3 className="text-xl font-bold text-gray-800 mb-4 tracking-tight uppercase text-xs tracking-widest">{item.title}</h3>
+                                    <p className="text-gray-600">{item.desc}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Sección Final - Aceptación */}
+                <section className="py-20 px-8 md:px-[60px] bg-[var(--primary-color)] text-white w-full flex items-center justify-center">
+                    <div className="max-w-[1440px] w-full flex flex-col items-center text-center">
+                        <h2 className="text-4xl md:text-5xl font-bold mb-8 tracking-tight text-[#FAFAF7]">
+                            11. Aceptación del Compromiso
+                        </h2>
+
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-16 max-w-4xl">
+                            <div className="flex-shrink-0">
+                                <UserCheck className="w-16 h-16 md:w-24 md:h-24 text-[var(--secondary-color)]" />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-xl md:text-2xl text-blue-100 italic leading-relaxed">
+                                    "Al crear una cuenta, confirmas que has leído estos términos, los comprendes y aceptas cumplirlos. BuenCuidar existe para construir un entorno de confianza."
+                                </p>
+                            </div>
+                        </div>
+
+                        <p className="text-2xl md:text-3xl font-bold text-[var(--secondary-color)] mb-8 tracking-tight">
+                            ¡Gracias por ser parte de la red de cuidado más humana!
+                        </p>
+
+                        <Heart className="w-12 h-12 text-[var(--secondary-color)] animate-pulse" />
+                    </div>
+                </section>
             </main>
 
             <Footer />
