@@ -80,7 +80,7 @@ const Terms = () => {
                     <div className="max-w-6xl w-full mx-auto">
                         <div className="grid md:grid-cols-2 gap-12 w-full items-stretch">
                             <div className="flex flex-col w-full">
-                                <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">2. Creación de cuenta</h2>
+                                <h3 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-6">2. Creación de cuenta</h3>
                                 <div className="bg-white p-10 rounded-xl border border-gray-100 shadow-sm flex-grow w-full">
                                     <p className="text-xl text-gray-600 mb-8 font-medium font-secondary">Para utilizar la plataforma, te comprometes a:</p>
                                     <ul className="space-y-5 font-secondary">
@@ -100,7 +100,7 @@ const Terms = () => {
                             </div>
 
                             <div className="flex flex-col w-full">
-                                <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">3. Responsabilidad del usuario</h2>
+                                <h3 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-6">3. Responsabilidad del usuario</h3>
                                 <div className="bg-white p-10 rounded-xl border border-gray-100 shadow-sm flex-grow w-full">
                                     <p className="text-xl text-gray-600 mb-8 font-medium font-secondary">Cada usuario es soberano y responsable de:</p>
                                     <div className="space-y-5 font-secondary">
@@ -201,7 +201,7 @@ const Terms = () => {
                             ].map((item, i) => (
                                 <div key={i} className="bg-gray-50 p-10 rounded-xl border border-gray-100 text-center hover:bg-gray-100 transition-colors w-full flex flex-col items-center">
                                     <item.icon size={40} className="mx-auto mb-8 text-[var(--secondary-color)]" />
-                                    <h3 className="text-xl font-brand font-bold text-gray-800 mb-6 uppercase tracking-widest">{item.title}</h3>
+                                    <h3 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-6">{item.title}</h3>
                                     <p className="text-gray-600 text-lg text-center font-secondary">{item.desc}</p>
                                 </div>
                             ))}
@@ -212,10 +212,9 @@ const Terms = () => {
                 {/* Sección Final - Aceptación */}
                 <section className="py-24 px-8 md:px-[60px] bg-[var(--primary-color)] text-white w-full flex items-center justify-center">
                     <div className="max-w-5xl w-full flex flex-col items-center text-center">
-                        <h2 className="text-3xl md:text-4xl font-brand font-bold mb-4 tracking-tighter text-white uppercase flex items-center justify-center gap-3" style={{ color: '#FAFAF7' }}>
-                            <UserCheck className="w-8 h-8 md:w-10 md:h-10 text-[var(--secondary-color)]" />
+                        <h3 className="text-3xl font-brand font-bold mb-6 text-white" style={{ color: '#FAFAF7' }}>
                             11. Aceptación del Compromiso
-                        </h2>
+                        </h3>
 
                         <div className="max-w-4xl mb-12">
                             <p className="text-xl md:text-xl text-blue-100 italic font-light font-secondary leading-snug">
