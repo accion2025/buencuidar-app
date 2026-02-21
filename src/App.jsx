@@ -14,6 +14,7 @@ import SaludInfo from './pages/SaludInfo';
 import RegistrationSuccess from './pages/RegistrationSuccess';
 import ForgotPassword from './pages/ForgotPassword';
 import UpdatePassword from './pages/UpdatePassword';
+import Terms from './pages/Terms';
 
 // Dashboard Imports
 import DashboardLayout from './components/layout/DashboardLayout';
@@ -75,6 +76,8 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/ecosistema-salud" element={<SaludInfo />} />
+
+              <Route path="/terminos" element={<Terms />} />
 
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />

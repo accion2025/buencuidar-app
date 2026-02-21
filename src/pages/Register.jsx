@@ -395,7 +395,7 @@ const Register = () => {
                                 className="mt-1 h-5 w-5 text-[var(--secondary-color)] focus:ring-[var(--secondary-color)] border-gray-300 rounded-[6px] transition-all cursor-pointer"
                             />
                             <label htmlFor="terms" className="ml-3 block text-sm text-[var(--text-main)] font-secondary">
-                                Al registrarme, acepto los <a href="#" className="font-bold text-[var(--secondary-color)] hover:underline">Términos y Condiciones</a> y la Política de Privacidad de BuenCuidar.
+                                Al registrarme, acepto los <Link to="/terminos" className="font-bold text-[var(--secondary-color)] hover:underline">Términos y Condiciones</Link> y la Política de Privacidad de BuenCuidar.
                             </label>
                         </div>
 
