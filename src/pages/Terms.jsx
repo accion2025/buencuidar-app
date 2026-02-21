@@ -34,9 +34,9 @@ const Terms = () => {
                 {/* 1. Naturaleza de la plataforma */}
                 <section className="py-16 md:py-24 px-8 md:px-[60px] bg-white w-full flex justify-center">
                     <div className="max-w-6xl w-full mx-auto">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">1. Naturaleza de la plataforma</h2>
-                            <p className="text-xl text-gray-600 mb-12 leading-relaxed font-medium max-w-4xl mx-auto font-secondary">
+                        <div className="w-full flex flex-col items-center text-center mb-16">
+                            <h2 className="text-3xl md:text-5xl font-brand font-bold text-[var(--primary-color)] mb-4 tracking-tighter">1. Naturaleza de la plataforma</h2>
+                            <p className="text-xl text-gray-600 mb-12 leading-relaxed w-full font-secondary font-medium">
                                 BuenCuidar (BC) es una plataforma digital cuyo propósito es facilitar la conexión entre personas que requieren servicios de cuidado y personas que ofrecen dichos servicios.
                             </p>
                         </div>
@@ -47,27 +47,27 @@ const Terms = () => {
                                     <Shield size={28} className="text-[var(--secondary-color)]" /> Lo que BuenCuidar NO es:
                                 </h3>
                                 <ul className="space-y-4 text-gray-600 text-lg font-secondary">
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                    <li className="flex items-center gap-4">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0"></div>
                                         <span>No es empleador de los cuidadores.</span>
                                     </li>
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                    <li className="flex items-center gap-4">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0"></div>
                                         <span>No contrata cuidadores en nombre de las familias.</span>
                                     </li>
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                    <li className="flex items-center gap-4">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0"></div>
                                         <span>No actúa como agencia de empleo.</span>
                                     </li>
-                                    <li className="flex items-start gap-4">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 mt-2.5 shrink-0"></div>
+                                    <li className="flex items-center gap-4">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0"></div>
                                         <span>No intermedia ni procesa pagos entre usuarios.</span>
                                     </li>
                                 </ul>
                             </div>
 
                             <div className="flex flex-col justify-center w-full text-center md:text-left">
-                                <p className="text-2xl text-gray-600 leading-tight font-medium italic p-10 bg-blue-50 rounded-xl border border-blue-100 h-full flex items-center justify-center font-secondary">
+                                <p className="text-xl text-gray-600 leading-snug font-medium italic p-10 bg-blue-50 rounded-xl border border-blue-100 h-full flex items-center justify-center font-secondary text-center">
                                     "La relación laboral o de servicio se establece exclusivamente entre las partes involucradas. BuenCuidar actúa únicamente como un medio de conexión humano y tecnológico."
                                 </p>
                             </div>
@@ -90,9 +90,9 @@ const Terms = () => {
                                             'Crear una sola cuenta personal.',
                                             'Mantener la confidencialidad de tu contraseña.'
                                         ].map((text, i) => (
-                                            <li key={i} className="flex items-start gap-4">
+                                            <li key={i} className="flex items-center gap-4">
                                                 <ShieldCheck size={28} className="text-[var(--secondary-color)] shrink-0" />
-                                                <span className="text-gray-700 font-medium text-lg">{text}</span>
+                                                <span className="text-gray-700 text-lg">{text}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -103,16 +103,25 @@ const Terms = () => {
                                 <h2 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-8 tracking-tighter">3. Responsabilidad del usuario</h2>
                                 <div className="bg-white p-10 rounded-xl border border-gray-100 shadow-sm flex-grow w-full">
                                     <p className="text-xl text-gray-600 mb-8 font-medium font-secondary">Cada usuario es soberano y responsable de:</p>
-                                    <div className="space-y-8 font-secondary">
-                                        <p className="italic text-gray-600 leading-snug text-xl">
-                                            "La información que publica en su perfil y las decisiones que tome al contactar o contratar a otra persona."
-                                        </p>
-                                        <p className="italic text-gray-600 leading-snug text-xl">
-                                            "Verificar personalmente la idoneidad de cualquier cuidador o familia."
-                                        </p>
-                                        <p className="italic text-gray-600 leading-snug text-xl">
-                                            "Establecer sus propios acuerdos, condiciones y pagos de forma transparente."
-                                        </p>
+                                    <div className="space-y-5 font-secondary">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-[var(--secondary-color)] shrink-0"></div>
+                                            <p className="text-gray-600 leading-snug text-lg">
+                                                La información que publica en su perfil y las decisiones que tome al contactar o contratar a otra persona.
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-[var(--secondary-color)] shrink-0"></div>
+                                            <p className="text-gray-600 leading-snug text-lg">
+                                                Verificar personalmente la idoneidad de cualquier cuidador o familia.
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-[var(--secondary-color)] shrink-0"></div>
+                                            <p className="text-gray-600 leading-snug text-lg">
+                                                Establecer sus propios acuerdos, condiciones y pagos de forma transparente.
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -128,9 +137,9 @@ const Terms = () => {
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-12 w-full items-stretch">
-                            <div className="bg-[var(--primary-color)]/5 p-12 rounded-xl border border-[var(--primary-color)]/10 h-full w-full">
+                            <div className="bg-white p-12 rounded-xl border border-gray-100 shadow-sm h-full w-full">
                                 <h3 className="text-3xl font-brand font-bold text-[var(--primary-color)] mb-6">4. Verificación de información</h3>
-                                <p className="text-xl text-gray-600 leading-relaxed font-medium text-center md:text-left font-secondary">
+                                <p className="text-xl text-gray-600 leading-relaxed text-center md:text-left font-secondary">
                                     BuenCuidar puede solicitar documentos para mejorar la confianza dentro de la plataforma (Identidad, antecedentes, referencias).
                                 </p>
                                 <p className="mt-6 text-gray-500 italic text-lg text-center md:text-left font-secondary">
@@ -212,13 +221,13 @@ const Terms = () => {
                                 <UserCheck className="w-16 h-16 md:w-20 md:h-20 text-[var(--secondary-color)]" />
                             </div>
                             <div className="text-left">
-                                <p className="text-2xl md:text-3xl text-blue-100 italic font-light font-secondary leading-tight">
+                                <p className="text-xl md:text-xl text-blue-100 italic font-light font-secondary leading-snug">
                                     "Al crear una cuenta, confirmas que has leído estos términos, los comprendes y aceptas cumplirlos. BuenCuidar existe para construir un entorno de confianza."
                                 </p>
                             </div>
                         </div>
 
-                        <p className="text-3xl md:text-4xl font-brand font-bold text-[var(--secondary-color)] mb-10 tracking-tighter leading-tight">
+                        <p className="text-2xl md:text-2xl font-brand font-bold mb-10 tracking-tighter leading-tight mt-12" style={{ color: '#2FAE8F' }}>
                             ¡Gracias por ser parte de la red de cuidado más humana!
                         </p>
                     </div>
