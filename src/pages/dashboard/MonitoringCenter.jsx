@@ -365,30 +365,8 @@ const MonitoringCenter = () => {
 
     // Determine the agenda source
     let agendaItems = [];
-    if (activeAppointment) {
-        if (activeAppointment.care_agenda && Array.isArray(activeAppointment.care_agenda) && activeAppointment.care_agenda.length > 0) {
-            agendaItems = activeAppointment.care_agenda;
-        } else if (activeAppointment.details) {
-            // Handle Cuidado+ JSON format
-            if (activeAppointment.details.includes('---SERVICES---')) {
-                try {
-                    const jsonStr = activeAppointment.details.split('---SERVICES---')[1];
-                    const services = JSON.parse(jsonStr);
-                    if (Array.isArray(services)) {
-                        agendaItems = services;
-                    }
-                } catch (e) {
-                    console.error("Error parsing services in MonitoringCenter", e);
-                }
-            }
-
-            // Fallback to old format or manual notes
-            if (agendaItems.length === 0) {
-                agendaItems = activeAppointment.details.includes('[PLAN DE CUIDADO]')
-                    ? activeAppointment.details.split('[PLAN DE CUIDADO]')[1].split('---SERVICES---')[0].split('•').map(s => s.trim()).filter(s => s && s.length > 2)
-                    : activeAppointment.details.split(/[\n•]/).map(s => s.trim()).filter(s => s.length > 2);
-            }
-        }
+    if (activeAppointment && activeAppointment.care_agenda && Array.isArray(activeAppointment.care_agenda)) {
+        agendaItems = activeAppointment.care_agenda;
     }
 
     // Unified Matching Logic: The caregiver app adds (Time) to the action name.
