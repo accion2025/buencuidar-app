@@ -106,6 +106,15 @@ const RegisterCaregiver = () => {
                 authData = { user, session: true };
             } else {
                 // NEW USER REGISTRATION
+                // V1.0.113: Calcular fecha de vencimiento para el piloto (30 días)
+                const expiryDate = new Date();
+                expiryDate.setDate(expiryDate.getDate() + 30);
+                const trialExpiryDate = expiryDate.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
                 const { data, error: signUpError } = await signUp(
                     formData.email,
                     formData.password,
@@ -115,7 +124,8 @@ const RegisterCaregiver = () => {
                         role: 'caregiver',
                         bio: formData.bio,
                         specialization: formData.specialization,
-                        experience: formData.experience
+                        experience: formData.experience,
+                        trial_expiry_date: trialExpiryDate // V1.0.113
                     },
                     window.location.origin + '/caregiver'
                 );

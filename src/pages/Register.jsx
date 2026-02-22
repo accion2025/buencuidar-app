@@ -84,6 +84,15 @@ const Register = () => {
         setError('');
 
         try {
+            // V1.0.113: Calcular fecha de vencimiento para el piloto (30 días)
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            const trialExpiryDate = expiryDate.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+
             // New User Registration with unified data
             const { error: signUpError } = await signUp(formData.email, formData.password, {
                 full_name: formData.fullName,
@@ -94,7 +103,8 @@ const Register = () => {
                 location: `${formData.municipality}, ${formData.department}`,
                 specialization: formData.role === 'caregiver' ? formData.specialization : null,
                 experience: formData.role === 'caregiver' ? formData.experience : null,
-                bio: formData.role === 'caregiver' ? formData.bio : null
+                bio: formData.role === 'caregiver' ? formData.bio : null,
+                trial_expiry_date: trialExpiryDate // V1.0.113
             });
 
             if (signUpError) {
