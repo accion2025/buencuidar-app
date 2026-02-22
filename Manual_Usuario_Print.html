@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario - BuenCuidar</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Inter:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary-color: #0F3C4C;
+            --secondary-color: #2FAE8F;
+            --bg-light: #FAFAF7;
+            --text-dark: #1E293B;
+            --text-gray: #64748B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: #e2e8f0;
+        }
+
+        /* --- Estilos de Página (A4) --- */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 10mm auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media print {
+            body {
+                background: none;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* --- Portada Premium Oficial --- */
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            padding: 20mm;
+            background: var(--bg-light);
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .cover::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+            opacity: 0.03;
+            pointer-events: none;
+        }
+
+        .cover-content {
+            z-index: 10;
+        }
+
+        .official-logo {
+            width: 280px;
+            margin-bottom: 3rem;
+        }
+
+        h1.main-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 4rem;
+        }
+
+        .logo-box {
+            background: white;
+            color: var(--primary-color);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 1.8rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+        }
+
+        .cover-decoration {
+            width: 80px;
+            height: 6px;
+            background: var(--secondary-color);
+            margin: 2rem 0;
+            border-radius: var(--radius-full);
+        }
+
+        /* --- Tipografía y Secciones Oficiales --- */
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 2rem 0 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 1.5rem 0 1rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background: #f8fafc;
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .plan-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .plan-card.pulso {
+            border-top: 6px solid #3b82f6;
+        }
+
+        .plan-card.pro {
+            border-top: 6px solid var(--secondary-color);
+        }
+
+        .plan-title {
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-green {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        ul {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        ul li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        ul li i {
+            color: var(--secondary-color);
+            margin-top: 3px;
+        }
+
+        .footer-info {
+            position: absolute;
+            bottom: 20mm;
+            left: 20mm;
+            right: 20mm;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .contact-section {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            border-radius: 24px;
+            margin-top: 2rem;
+        }
+
+        .contact-section h2 {
+            color: white;
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .btn-print {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-print:hover {
+            background: #1a4d5e;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="btn-print no-print" onclick="window.print()">
+        <i data-lucide="printer"></i> Guardar como PDF
+    </button>
+
+    <!-- PÁGINA 1: PORTADA -->
+    <div class="page">
+        <div class="cover">
+            <div class="cover-content">
+                <img src="./assets/images/official_logo_final.png" alt="BuenCuidar" class="official-logo">
+                <h1 class="main-title">Manual de Usuario</h1>
+                <p class="subtitle">Guía de Inicio Rápido</p>
+                <div class="cover-decoration" style="margin: 0 auto;"></div>
+                <p
+                    style="margin-top: 4rem; color: var(--text-gray); font-weight: 600; letter-spacing: 2px; font-family: 'Poppins';">
+                    VERSION 1.0 — 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PÁGINA 2: REGISTRO -->
+    <div class="page">
+        <h2><i data-lucide="user-plus"></i> 1. Registro y Primeros Pasos</h2>
+        <p>Bienvenido a <strong>BuenCuidar</strong>. Nuestra meta es facilitar la conexión entre profesionales del
+            cuidado y familias de forma directa y segura.</p>
+
+        <h3>🆕 Crear una Cuenta</h3>
+        <p>El proceso es sencillo y diseñado para ser rápido:</p>
+        <div class="highlight-box">
+            <ol style="margin-left: 1.5rem;">
+                <li>Pulsa en <strong>"Comenzar Ahora"</strong> en la web principal.</li>
+                <li>Elige tu rol: <strong>Familia</strong> o <strong>Cuidador</strong>.</li>
+                <li>Verifica tu email: Recibirás un correo para activar tu acceso.</li>
+            </ol>
+        </div>
+
+        <h3>👤 Completa tu Perfil</h3>
+        <p>Un perfil detallado es la clave del éxito en la plataforma:</p>
+        <ul>
+            <li><i data-lucide="check-circle-2"></i> <strong>Familias:</strong> Describe las necesidades de la persona
+                atendida.</li>
+            <li><i data-lucide="check-circle-2"></i> <strong>Cuidadores:</strong> Detalla experiencia, cursos y
+                habilidades específicas.</li>
+            <li><i data-lucide="camera"></i> <strong>Foto:</strong> Usa una imagen clara y profesional para generar
+                confianza.</li>
+        </ul>
+
+        <div class="footer-info">
+            <span>BuenCuidar v1.0</span>
+            <span>Página 2</span>
+        </div>
+    </div>
+
+    <!-- PÁGINA 3: SUSCRIPCIONES -->
+    <div class="page">
+        <h2><i data-lucide="star"></i> 2. Suscripciones y Beneficios</h2>
+        <p>Queremos que pruebes todo el potencial de la red. Por ello, <strong>tu primer mes es totalmente
+                gratuito.</strong></p>
+
+        <div class="plan-card pulso">
+            <div class="badge badge-blue">Suscripción Familias</div>
+            <div class="plan-title">BC PULSO</div>
+            <p>Diseñada para familias que buscan un apoyo profesional y constante.</p>
+            <ul>
+                <li><i data-lucide="message-square"></i> Mensajería y chat directo ilimitado.</li>
+                <li><i data-lucide="phone"></i> Acceso a teléfonos de cuidadores verificados.</li>
+                <li><i data-lucide="megaphone"></i> Publicación de ofertas de trabajo activas.</li>
+                <li><i data-lucide="shield-check"></i> Registro diario de bienestar (PULSO).</li>
+            </ul>
+        </div>
+
+        <div class="plan-card pro" style="margin-top: 1.5rem;">
+            <div class="badge badge-green">Suscripción Cuidadores</div>
+            <div class="plan-title">BC PRO</div>
+            <p>Para profesionales que desean maximizar sus oportunidades laborales.</p>
+            <ul>
+                <li><i data-lucide="trending-up"></i> Posicionamiento prioritario en búsquedas.</li>
+                <li><i data-lucide="award"></i> Sello distintivo de Cuidador Destacado.</li>
+                <li><i data-lucide="zap"></i> Alertas instantáneas de nuevas vacantes.</li>
+                <li><i data-lucide="users"></i> Visibilidad 100% ante todas las familias.</li>
+            </ul>
+        </div>
+
+        <div class="footer-info">
+            <span>BuenCuidar v1.0</span>
+            <span>Página 3</span>
+        </div>
+    </div>
+
+    <!-- PÁGINA 4: GESTIÓN Y SOPORTE -->
+    <div class="page">
+        <h2><i data-lucide="settings"></i> 3. Gestión y Soporte</h2>
+
+        <h3>⚙️ Ajustes de Cuenta</h3>
+        <p>Desde el menú de Configuración puedes personalizar tu experiencia:</p>
+        <ul>
+            <li><i data-lucide="lock"></i> Cambio de contraseña.</li>
+            <li><i data-lucide="bell"></i> Notificaciones por Email y SMS.</li>
+            <li><i data-lucide="eye-off"></i> Estado de disponibilidad (Cuidador).</li>
+        </ul>
+
+        <h3>🚪 Proceso de Baja</h3>
+        <p>Si necesitas eliminar tu cuenta, el sistema generará automáticamente una solicitud formal a nuestro equipo de
+            soporte para asegurar que no queden datos residuales.</p>
+
+        <div class="contact-section">
+            <h2 style="margin-top: 0; font-size: 1.5rem;"><i data-lucide="help-circle"></i> Contacto de Soporte</h2>
+            <p>Estamos aquí para ayudarte en cada paso del camino.</p>
+            <div style="margin-top: 1rem;">
+                <p><strong>Email:</strong> soporte@buencuidar.com</p>
+                <p><strong>WhatsApp:</strong> +505 8423 4337</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 4rem; text-align: center;">
+            <p
+                style="font-family: 'Outfit', sans-serif; font-weight: 900; color: var(--primary-color); font-size: 1.8rem;">
+                BuenCuidar</p>
+            <p style="color: var(--text-gray); font-style: italic;">Cuidando a quienes más quieres.</p>
+        </div>
+
+        <div class="footer-info">
+            <span>BuenCuidar v1.0</span>
+            <span>Página 4</span>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

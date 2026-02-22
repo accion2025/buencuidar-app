@@ -15,6 +15,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { safeDateParse } from '../../utils/time';
 import { CARE_AGENDA_CATEGORIES } from '../../constants/careAgenda';
+import { SERVICE_CATEGORIES } from '../../components/dashboard/ServiceSelector';
 
 // Local helper removed, using safeDateParse from utils
 
@@ -391,41 +392,52 @@ const MonitoringCenter = () => {
     }
 
     // Unified Matching Logic: The caregiver app adds (Time) to the action name.
-    // We need to match either the Base Name or the Base Name + Time.
+    // We create a translation map for services defined in Cuidado+
+    const serviceTranslations = SERVICE_CATEGORIES.reduce((acc, cat) => {
+        cat.items.forEach(item => {
+            acc[item.id] = item.label;
+        });
+        return acc;
+    }, {});
+
     const careAgenda = agendaItems.map((item, idx) => {
-        const baseName = typeof item === 'string' ? item : (item.activity || item.name || item.activity_name);
+        const rawName = typeof item === 'string' ? item : (item.activity || item.name || item.activity_name || item.id || item);
+        const translatedName = serviceTranslations[rawName] || rawName;
         const activityTime = typeof item === 'string' ? '---' : (item.time || '---');
         let category = typeof item === 'object' ? (item.program_name || item.category || item.program) : null;
 
         // Auto-resolve category if missing
-        if (!category && baseName) {
+        if (!category && rawName) {
             const match = CARE_AGENDA_CATEGORIES.find(cat => {
                 // Check flat activities
-                if (cat.activities?.some(a => a === baseName || baseName.includes(a))) return true;
+                if (cat.activities?.some(a => a === translatedName || translatedName.includes(a))) return true;
                 // Check nested sections
                 if (cat.sections) {
-                    return cat.sections.some(sec => sec.activities?.some(a => a === baseName || baseName.includes(a)));
+                    return cat.sections.some(sec => sec.activities?.some(a => a === translatedName || translatedName.includes(a)));
                 }
                 return false;
             });
             if (match) category = match.name;
         }
 
-        // Exact match or match by base name (ignoring the suffix added by caregiver app)
+        // Exact match or match by translated name (ignoring the suffix added by caregiver app)
+        // Check both translated and raw for robust matching
         const isDone = careLogs.some(log =>
-            log.action === baseName ||
-            log.action.startsWith(`${baseName} (`) ||
-            log.action === `${baseName} (${activityTime})`
+            log.action === translatedName ||
+            log.action === rawName ||
+            log.action.startsWith(`${translatedName} (`) ||
+            log.action.startsWith(`${rawName} (`) ||
+            log.action === `${translatedName} (${activityTime})`
         );
 
         let IconComponent = CircleDashed;
         if (isDone) IconComponent = CircleCheck;
-        else if (baseName.toLowerCase().includes('comida') || baseName.toLowerCase().includes('aliment') || baseName.toLowerCase().includes('desayuno') || baseName.toLowerCase().includes('cena')) IconComponent = Utensils;
-        else if (baseName.toLowerCase().includes('medic') || baseName.toLowerCase().includes('pastill')) IconComponent = Pill;
-        else if (baseName.toLowerCase().includes('baño') || baseName.toLowerCase().includes('aseo')) IconComponent = Bath;
+        else if (translatedName.toLowerCase().includes('comida') || translatedName.toLowerCase().includes('aliment') || translatedName.toLowerCase().includes('desayuno') || translatedName.toLowerCase().includes('cena')) IconComponent = Utensils;
+        else if (translatedName.toLowerCase().includes('medic') || translatedName.toLowerCase().includes('pastill')) IconComponent = Pill;
+        else if (translatedName.toLowerCase().includes('aseo') || translatedName.toLowerCase().includes('baño') || translatedName.toLowerCase().includes('higiene')) IconComponent = Bath;
 
         return {
-            name: baseName,
+            name: translatedName,
             category: category,
             time: activityTime !== '---' ? `Programado: ${activityTime}` : 'Sin horario asignado',
             frequency: '',
