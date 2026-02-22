@@ -20,8 +20,9 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
+        // V1.0.111: Initialize state ONLY when modal transitions from closed to open
+        // This prevents background updates from wiping out user selection during editing
         if (isOpen) {
-            // Load existing agenda
             const initialMap = {};
             if (Array.isArray(currentAgenda)) {
                 currentAgenda.forEach(item => {
@@ -34,7 +35,8 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
             }
             setSelectedActivities(initialMap);
         }
-    }, [isOpen, currentAgenda]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]); // Removed currentAgenda from dependencies
 
     const toggleCategory = (id) => {
         setOpenCategories(prev => ({ ...prev, [id]: !prev[id] }));
