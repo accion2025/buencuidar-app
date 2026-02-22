@@ -744,6 +744,8 @@ const MonitoringCenter = () => {
                     onClose={() => setShowAgendaModal(false)}
                     appointmentId={activeAppointment.id}
                     currentAgenda={activeAppointment.care_agenda || []}
+                    appointmentDate={activeAppointment.date}
+                    appointmentEndTime={activeAppointment.end_time}
                     onSave={handleUpdateAgenda}
                 />
             )}

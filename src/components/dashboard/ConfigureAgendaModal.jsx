@@ -71,15 +71,17 @@ const ConfigureAgendaModal = ({ isOpen, onClose, appointmentId, currentAgenda = 
             const infractions = [];
 
             for (const [activity, time] of Object.entries(selectedActivities)) {
+                if (!time) continue; // Skip if no time assigned
+
                 const cleanTime = time.substring(0, 5);
 
-                // 1. End Time Limit
+                // 1. End Time Limit (Only validate if prop is provided)
                 if (cleanEndTime && cleanTime > cleanEndTime) {
                     infractions.push(`• Horario: "${activity}" (${cleanTime}) excede el fin de la cita (${cleanEndTime}).`);
                 }
 
-                // 2. Present/Future Limit (only if the appointment is today)
-                if (appointmentDate === todayLocal && cleanTime < currentTime) {
+                // 2. Present/Future Limit (Only if appointmentDate is provided and matches today)
+                if (appointmentDate && appointmentDate === todayLocal && cleanTime < currentTime) {
                     infractions.push(`• Cronológica: "${activity}" (${cleanTime}) ya ha pasado (Actual: ${currentTime}).`);
                 }
             }
