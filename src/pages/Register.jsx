@@ -17,6 +17,7 @@ const Register = () => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
+        phone: '+505 ', // Añadido v1.0.115 con prefijo inicial
         password: '',
         confirmPassword: '',
         role: 'family', // Default to family
@@ -63,6 +64,16 @@ const Register = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        // Mantener el prefijo +505 si es el campo de teléfono
+        if (name === 'phone') {
+            if (!value.startsWith('+505 ')) {
+                // Si intenta borrar el prefijo, lo restauramos
+                setFormData(prevState => ({ ...prevState, phone: '+505 ' + value.replace(/^\+505\s?/, '') }));
+                return;
+            }
+        }
+
         setFormData(prevState => ({
             ...prevState,
             [name]: value
@@ -96,15 +107,13 @@ const Register = () => {
             // New User Registration with unified data
             const { error: signUpError } = await signUp(formData.email, formData.password, {
                 full_name: formData.fullName,
+                phone: formData.phone,
                 role: formData.role,
                 country: formData.country,
                 department: formData.department,
                 municipality: formData.municipality,
                 location: `${formData.municipality}, ${formData.department}`,
-                specialization: formData.role === 'caregiver' ? formData.specialization : null,
-                experience: formData.role === 'caregiver' ? formData.experience : null,
-                bio: formData.role === 'caregiver' ? formData.bio : null,
-                trial_expiry_date: trialExpiryDate // V1.0.113
+                trial_expiry_date: trialExpiryDate // V1.0.115: Enviar fecha al trigger
             });
 
             if (signUpError) {
@@ -219,6 +228,22 @@ const Register = () => {
                             </div>
 
                             <div>
+                                <label htmlFor="phone" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
+                                    Teléfono
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    required
+                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
+                                    placeholder="+505 0000 0000"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div className="md:col-span-2">
                                 <label htmlFor="email" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
                                     Correo Electrónico
                                 </label>

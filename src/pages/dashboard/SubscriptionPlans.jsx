@@ -46,21 +46,23 @@ const PlanCard = ({ plan, isCurrent, onSelect, loading }) => {
                 </div>
             </div>
 
-            {isCurrent ? (
-                <div className="w-full py-4 text-center font-black text-[#2FAE8F] uppercase tracking-widest rounded-xl bg-emerald-50 border border-emerald-100 shadow-sm">
-                    ACTIVADO
-                </div>
-            ) : (
-                <button
-                    onClick={() => onSelect(plan.id)}
-                    disabled={loading || plan.id === 'plus'}
-                    className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${loading || plan.id === 'plus'
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-                        : 'bg-[#0F3C4C] text-white hover:bg-[#0a2a36] shadow-lg shadow-blue-100 active:scale-95'
-                        }`}
-                >
-                    {loading ? 'Procesando...' : (plan.id === 'base' ? 'ACTIVAR GRATUITO' : 'ACTIVAR BC PULSO')}
-                </button>
+            {plan.id !== 'base' && (
+                isCurrent ? (
+                    <div className="w-full py-4 text-center font-black text-[#2FAE8F] uppercase tracking-widest rounded-xl bg-emerald-50 border border-emerald-100 shadow-sm">
+                        ACTIVADO
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => onSelect(plan.id)}
+                        disabled={loading || plan.id === 'plus'}
+                        className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all ${loading || plan.id === 'plus'
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                            : 'bg-[#0F3C4C] text-white hover:bg-[#0a2a36] shadow-lg shadow-blue-100 active:scale-95'
+                            }`}
+                    >
+                        {loading ? 'Procesando...' : 'ACTIVAR BC PULSO'}
+                    </button>
+                )
             )}
         </div>
     );
@@ -177,17 +179,16 @@ const SubscriptionPlans = () => {
             {/* Encabezado */}
             <div className="max-w-4xl w-full text-center space-y-6 mb-16">
                 <h1 className="text-4xl md:text-5xl font-brand font-bold tracking-tight text-[#0F3C4C]">
-                    ¡BC PULSO Activado Gratuitamente!
+                    ¡Activa tu mes de cortesía BC PULSO!
                 </h1>
                 <div className="space-y-4">
-                    <p className="text-2xl font-bold text-[#2FAE8F] italic">Te regalamos tu primer mes.</p>
-                    <p className="text-xl text-slate-600 leading-relaxed font-medium text-center">
-                        Como bienvenida, hemos activado **BC PULSO** automáticamente en tu cuenta por los próximos 30 días.
+                    <p className="text-2xl font-bold text-[#2FAE8F]">Programa Piloto BuenCuidar</p>
+                    <p className="text-lg text-slate-600 leading-relaxed font-medium text-center italic">
+                        Este acceso especial te permitirá explorar los beneficios adicionales sin costo durante este período.
                     </p>
-                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl inline-flex items-center gap-3 text-blue-700 font-medium">
-                        <Info size={20} className="flex-shrink-0" />
-                        <span>Tu periodo de prueba de 1 mes ya está en curso. ¡Aprovéchalo ahora!</span>
-                    </div>
+                    <p className="text-lg text-slate-600 leading-relaxed font-medium text-center italic">
+                        Tu participación es clave para ayudarnos a mejorar la plataforma.
+                    </p>
                 </div>
             </div>
 

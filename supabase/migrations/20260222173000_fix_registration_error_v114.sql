@@ -1,11 +1,29 @@
--- 🛠️ BuenCuidar - Fix Registro V1.0.114
--- Añade columna trial_expiry_date y actualiza el trigger de registro para el Programa Piloto.
+-- 🛠️ BuenCuidar - Fix Registro V1.1 (V1.0.115)
+-- Añade columna trial_expiry_date, actualiza el trigger de registro y expande restricciones de suscripción.
 
 -- 1. Añadir la columna faltante a profiles
 ALTER TABLE public.profiles 
 ADD COLUMN IF NOT EXISTS trial_expiry_date TEXT;
 
--- 2. Actualizar la función handle_new_user para capturar trial_expiry_date
+-- 2. Corregir restricciones de la tabla subscriptions para permitir planes del piloto
+DO $$
+BEGIN
+    -- Eliminar restricciones antiguas de plan_type
+    ALTER TABLE public.subscriptions DROP CONSTRAINT IF EXISTS subscriptions_plan_type_check;
+    
+    -- Añadir nueva restricción con los tipos de plan requeridos
+    ALTER TABLE public.subscriptions ADD CONSTRAINT subscriptions_plan_type_check 
+    CHECK (plan_type IN ('basic', 'premium', 'pulso', 'monthly', 'free'));
+
+    -- Eliminar restricciones antiguas de status
+    ALTER TABLE public.subscriptions DROP CONSTRAINT IF EXISTS subscriptions_status_check;
+    
+    -- Añadir nueva restricción de estatus
+    ALTER TABLE public.subscriptions ADD CONSTRAINT subscriptions_status_check 
+    CHECK (status IN ('active', 'past_due', 'canceled', 'incomplete', 'trialing'));
+END $$;
+
+-- 3. Actualizar la función handle_new_user para capturar trial_expiry_date y manejar el registro atómico
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN

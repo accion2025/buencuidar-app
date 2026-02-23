@@ -15,7 +15,7 @@ const RegisterCaregiver = () => {
         fullName: '',
         email: '',
         password: '',
-        phone: '',
+        phone: '+505 ', // Añadido v1.0.115 con prefijo inicial
         experience: '',
         specialization: 'Acompañamiento Integral',
         bio: ''
@@ -58,6 +58,15 @@ const RegisterCaregiver = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        // Mantener el prefijo +505 si es el campo de teléfono
+        if (name === 'phone') {
+            if (!value.startsWith('+505 ')) {
+                setFormData(prevState => ({ ...prevState, phone: '+505 ' + value.replace(/^\+505\s?/, '') }));
+                return;
+            }
+        }
+
         setFormData(prevState => ({
             ...prevState,
             [name]: value
@@ -125,6 +134,7 @@ const RegisterCaregiver = () => {
                         bio: formData.bio,
                         specialization: formData.specialization,
                         experience: formData.experience,
+                        location: 'Nicaragua', // Valor por defecto requerido por el trigger
                         trial_expiry_date: trialExpiryDate // V1.0.113
                     },
                     window.location.origin + '/caregiver'
