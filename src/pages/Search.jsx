@@ -19,7 +19,7 @@ const Search = () => {
         department: '',
         municipality: '',
         specialty: '',
-        priceRange: 500,
+        priceRange: 50,
         experience: '' // 'under1', '1-3', '3-5', 'over5'
     });
 
@@ -123,7 +123,7 @@ const Search = () => {
             }
 
             // Apply price range filter
-            if (filters.priceRange < 500) {
+            if (filters.priceRange < 50) {
                 query = query.lte('caregiver_details.hourly_rate', filters.priceRange);
             }
 
@@ -205,7 +205,7 @@ const Search = () => {
             department: '',
             municipality: '',
             specialty: '',
-            priceRange: 500,
+            priceRange: 50,
             experience: ''
         });
     };
@@ -356,20 +356,20 @@ const Search = () => {
                             <div className="mb-8">
                                 <div className="flex justify-between items-center mb-4">
                                     <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Tarifa Máxima</h4>
-                                    <span className="text-sm font-bold text-[var(--secondary-color)] bg-emerald-50 px-3 py-1 rounded-[8px] border border-emerald-100">${filters.priceRange}{filters.priceRange >= 500 && '+'}</span>
+                                    <span className="text-sm font-bold text-[var(--secondary-color)] bg-emerald-50 px-3 py-1 rounded-[8px] border border-emerald-100">${filters.priceRange}{filters.priceRange >= 50 && '+'}</span>
                                 </div>
                                 <input
                                     type="range"
-                                    min="50"
-                                    max="500"
-                                    step="10"
+                                    min="3"
+                                    max="50"
+                                    step="1"
                                     className="w-full h-2 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-[var(--secondary-color)]"
                                     value={filters.priceRange}
                                     onChange={(e) => setFilters({ ...filters, priceRange: parseInt(e.target.value) })}
                                 />
                                 <div className="flex justify-between text-xs font-bold text-gray-400 mt-2 px-1">
-                                    <span>$50</span>
-                                    <span>$500+</span>
+                                    <span>$3</span>
+                                    <span>$50+</span>
                                 </div>
                             </div>
 
