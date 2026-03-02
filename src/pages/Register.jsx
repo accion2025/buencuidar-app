@@ -17,7 +17,7 @@ const Register = () => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
-        phone: '+505 ', // Añadido v1.0.115 con prefijo inicial
+        phone: '', // Se inicializa vacío para que el useEffect lo asigne según país
         password: '',
         confirmPassword: '',
         role: 'family', // Default to family
@@ -62,14 +62,28 @@ const Register = () => {
         }
     }, [formData.department, formData.country]);
 
+    // V1.0.117: Lógica de prefijo telefónico dinámico
+    useEffect(() => {
+        const prefix = formData.country === 'nicaragua' ? '+505 ' : '+506 ';
+        setFormData(prev => {
+            // Solo actualizamos si el teléfono está vacío o tiene el prefijo del OTRO país
+            const oldPrefix = formData.country === 'nicaragua' ? '+506 ' : '+505 ';
+            if (!prev.phone || prev.phone === oldPrefix || prev.phone === oldPrefix.trim()) {
+                return { ...prev, phone: prefix };
+            }
+            return prev;
+        });
+    }, [formData.country]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Mantener el prefijo +505 si es el campo de teléfono
+        // V1.0.117: Mantener el prefijo dinámico según el país
         if (name === 'phone') {
-            if (!value.startsWith('+505 ')) {
+            const prefix = formData.country === 'nicaragua' ? '+505 ' : '+506 ';
+            if (!value.startsWith(prefix)) {
                 // Si intenta borrar el prefijo, lo restauramos
-                setFormData(prevState => ({ ...prevState, phone: '+505 ' + value.replace(/^\+505\s?/, '') }));
+                setFormData(prevState => ({ ...prevState, phone: prefix + value.replace(/^\+\d{3}\s?/, '') }));
                 return;
             }
         }

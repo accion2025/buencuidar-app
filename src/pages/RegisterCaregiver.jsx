@@ -15,7 +15,7 @@ const RegisterCaregiver = () => {
         fullName: '',
         email: '',
         password: '',
-        phone: '+505 ', // Añadido v1.0.115 con prefijo inicial
+        phone: '', // Se inicializa vacío para ser asignado dinámicamente o por perfil
         experience: '',
         specialization: 'Acompañamiento Integral',
         bio: ''
@@ -43,6 +43,20 @@ const RegisterCaregiver = () => {
         localStorage.setItem('caregiver_registration_temp', JSON.stringify(formData));
     }, [formData]);
 
+    // V1.0.117: Lógica de prefijo telefónico dinámico (Solo si no hay perfil previo)
+    useEffect(() => {
+        if (!profile?.phone) {
+            // Por ahora asumimos Nicaragua si no hay perfil, o podríamos detectar por IP/idioma 
+            // Pero para cuidadores, el perfil suele tener el país. Si es nuevo, usamos +505 por defecto
+            // hasta que se implemente el selector de país también aquí.
+            const prefix = '+505 ';
+            setFormData(prev => {
+                if (!prev.phone) return { ...prev, phone: prefix };
+                return prev;
+            });
+        }
+    }, [profile]);
+
     // Pre-fill data if user is already logged in (takes precedence over localStorage)
     useEffect(() => {
         // Run immediately if user or profile exists
@@ -60,9 +74,11 @@ const RegisterCaregiver = () => {
         const { name, value } = e.target;
 
         // Mantener el prefijo +505 si es el campo de teléfono
+        // V1.0.117: Lógica de prefijo dinámico o flexible
         if (name === 'phone') {
-            if (!value.startsWith('+505 ')) {
-                setFormData(prevState => ({ ...prevState, phone: '+505 ' + value.replace(/^\+505\s?/, '') }));
+            const prefix = profile?.country === 'costa_rica' ? '+506 ' : '+505 ';
+            if (!value.startsWith('+')) { // Permitir cualquier prefijo internacional si borra el actual
+                setFormData(prevState => ({ ...prevState, phone: prefix }));
                 return;
             }
         }
@@ -134,7 +150,7 @@ const RegisterCaregiver = () => {
                         bio: formData.bio,
                         specialization: formData.specialization,
                         experience: formData.experience,
-                        location: 'Nicaragua', // Valor por defecto requerido por el trigger
+                        location: profile?.country === 'costa_rica' ? 'Costa Rica' : 'Nicaragua', // Dinámico
                         trial_expiry_date: trialExpiryDate // V1.0.113
                     },
                     window.location.origin + '/caregiver'

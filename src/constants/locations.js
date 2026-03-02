@@ -23,7 +23,20 @@ export const CENTRAL_AMERICA = [
             'RACCS': ['Bluefields', 'Corn Island', 'El Ayote', 'El Rama', 'El Tortuguero', 'Kukra Hill', 'La Cruz de Río Grande', 'Laguna de Perlas', 'Muelle de los Bueyes', 'Nueva Guinea', 'Paiwas']
         }
     },
-    { id: 'costa_rica', name: 'Costa Rica', active: false },
+    {
+        id: 'costa_rica',
+        name: 'Costa Rica',
+        active: true,
+        departments: {
+            'San José': ['San José', 'Escazú', 'Desamparados', 'Santa Ana', 'Alajuelita', 'Pérez Zeledón', 'Curridabat', 'Goicoechea', 'Tibás', 'Moravia', 'Montes de Oca'],
+            'Alajuela': ['Alajuela', 'San Ramón', 'Grecia', 'San Carlos', 'Atenas', 'Naranjo', 'Palmares', 'Poás', 'Orotina'],
+            'Cartago': ['Cartago', 'Paraíso', 'La Unión', 'Jiménez', 'Turrialba', 'Alvarado', 'Oreamuno', 'El Guarco'],
+            'Heredia': ['Heredia', 'Barva', 'Santo Domingo', 'Santa Bárbara', 'San Rafael', 'San Isidro', 'Belén', 'Flores', 'San Pablo', 'Sarapiquí'],
+            'Guanacaste': ['Liberia', 'Nicoya', 'Santa Cruz', 'Bagaces', 'Cañas', 'Abangares', 'Tilarán', 'Nandayure', 'La Cruz', 'Hojancha'],
+            'Puntarenas': ['Puntarenas', 'Esparza', 'Buenos Aires', 'Montes de Oro', 'Osa', 'Quepos', 'Golfito', 'Coto Brus', 'Parrita', 'Corredores', 'Garabito'],
+            'Limón': ['Limón', 'Pococí', 'Siquirres', 'Talamanca', 'Matina', 'Guácimo']
+        }
+    },
     { id: 'honduras', name: 'Honduras', active: false },
     { id: 'el_salvador', name: 'El Salvador', active: false },
     { id: 'guatemala', name: 'Guatemala', active: false },
