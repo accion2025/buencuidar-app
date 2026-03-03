@@ -241,7 +241,7 @@ const CaregiverProfile = () => {
             department: initialDepartment,
             municipality: initialMunicipality,
             experience: profile.experience || profile.caregiver_details?.experience || '1',
-            hourly_rate: profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150,
+            hourly_rate: profile.hourly_rate || profile.caregiver_details?.hourly_rate || 0,
             bio: profile.bio || profile.caregiver_details?.bio || '',
             certifications: profile.certifications || profile.caregiver_details?.certifications || [
                 { title: "Enfermería General", org: "UNAM", year: "2018" },
@@ -262,7 +262,7 @@ const CaregiverProfile = () => {
 
         try {
             // 1. Validaciones y Saneamiento
-            const numericRate = Number(formData.hourly_rate) || 150;
+            const numericRate = Number(formData.hourly_rate) || 0;
             const numericExperience = Number(formData.experience) || 1;
             const fullLocation = [formData.municipality, formData.department, formData.country]
                 .filter(Boolean)
@@ -293,7 +293,7 @@ const CaregiverProfile = () => {
                 experience: numericExperience,
                 bio: formData.bio,
                 location: fullLocation,
-                hourly_rate: numericRate,
+                hourly_rate: Number(formData.hourly_rate) || 0,
                 certifications: formData.certifications,
                 skills: formData.skills
             };
@@ -587,7 +587,7 @@ const CaregiverProfile = () => {
 
                                 <div className={`flex items-center gap-3 ${isPro ? 'w-full justify-center lg:w-auto lg:justify-start border-none lg:border-l lg:border-white/10 pl-0 lg:pl-8' : 'border-l border-white/10 pl-8'}`}>
                                     <CreditCard size={20} className="text-purple-400" />
-                                    <span className="text-xl font-brand font-bold !text-[#FAFAF7]">${profile.hourly_rate || profile.caregiver_details?.hourly_rate || 150} /hr</span>
+                                    <span className="text-xl font-brand font-bold !text-[#FAFAF7]">{profile.hourly_rate || profile.caregiver_details?.hourly_rate || 0} usd/hr</span>
                                 </div>
                             </div>
                         </div>

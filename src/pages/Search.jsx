@@ -15,7 +15,7 @@ const Search = () => {
     const [loading, setLoading] = useState(true);
     const [selectedCaregiver, setSelectedCaregiver] = useState(null);
     const [filters, setFilters] = useState({
-        country: 'nicaragua',
+        country: '',
         department: '',
         municipality: '',
         specialty: '',
@@ -73,7 +73,7 @@ const Search = () => {
                             id: data.id,
                             name: data.full_name,
                             role: details.specialization || 'Cuidador',
-                            image: data.avatar_url || 'https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&q=80',
+                            image: data.avatar_url,
                             rating: details.rating || 5, // Fallback if no real stats yet
                             reviews: details.reviews_count || 0,
                             location: details.municipality ? `${details.municipality}, ${details.department}` : 'Ubicación pendiente',
@@ -161,7 +161,7 @@ const Search = () => {
                         experience: (details?.experience || 0) + ' años',
                         location: formatLocation(p, details),
                         price: details?.hourly_rate || 150,
-                        image: p.avatar_url || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                        image: p.avatar_url,
                         tags: details?.skills || ['Acompañamiento', 'Cuidado Integral'],
                         raw: p // Keep raw data for the modal
                     };
@@ -201,7 +201,7 @@ const Search = () => {
 
     const handleClearFilters = () => {
         setFilters({
-            country: 'nicaragua',
+            country: '',
             department: '',
             municipality: '',
             specialty: '',
@@ -249,9 +249,15 @@ const Search = () => {
                                     value={filters.country}
                                     onChange={(e) => setFilters({ ...filters, country: e.target.value, department: '', municipality: '' })}
                                 >
-                                    <option value="">Todos</option>
+                                    <option value="">Todos los Países</option>
                                     {CENTRAL_AMERICA.map(country => (
-                                        <option key={country.id} value={country.id}>{country.name}</option>
+                                        <option
+                                            key={country.id}
+                                            value={country.id}
+                                            className={!country.active ? 'text-gray-400 bg-gray-50' : ''}
+                                        >
+                                            {country.name} {!country.active && '(Próximamente)'}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -403,12 +409,18 @@ const Search = () => {
                                     <div key={caregiver.id} className="bg-white rounded-[16px] shadow-sm border border-gray-100 hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 overflow-hidden flex flex-col group hover:-translate-y-2">
                                         <div className="p-8 flex-grow">
                                             <div className="flex items-start gap-5 mb-6">
-                                                <div className="w-20 h-20 rounded-[12px] overflow-hidden border-4 border-gray-50 shadow-inner shrink-0 relative">
-                                                    <img
-                                                        src={caregiver.image}
-                                                        alt={caregiver.name}
-                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                                    />
+                                                <div className="w-20 h-20 rounded-[12px] overflow-hidden border-4 border-gray-50 shadow-inner shrink-0 relative flex items-center justify-center bg-blue-50">
+                                                    {caregiver.image ? (
+                                                        <img
+                                                            src={caregiver.image}
+                                                            alt={caregiver.name}
+                                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center bg-[var(--primary-light)]/10 text-[var(--primary-color)] font-brand font-bold text-2xl uppercase">
+                                                            {caregiver.name?.charAt(0)}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex items-center gap-3 mb-1">

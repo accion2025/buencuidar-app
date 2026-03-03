@@ -149,7 +149,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
     const bio = caregiver.bio || details?.bio || "Este cuidador se especializa en brindar atención compasiva y profesional, enfocándose en el bienestar integral de la persona atendida.";
     const skills = details?.skills || caregiver.skills || ['Cuidados Básicos'];
     const certifications = details?.certifications || caregiver.certifications || [];
-    const hourlyRate = details?.hourly_rate || caregiver.hourly_rate || 150;
+    const hourlyRate = details?.hourly_rate || caregiver.hourly_rate || 0;
 
     const isPro = caregiver.plan_type === 'premium' || caregiver.plan_type === 'professional_pro';
 
@@ -263,7 +263,7 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
                                         <DollarSign size={14} />
                                         <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Tarifa</p>
                                     </div>
-                                    <p className="text-lg font-brand font-bold text-slate-800">${hourlyRate}<span className="text-xs text-slate-400 font-normal ml-1">/hr</span></p>
+                                    <p className="text-lg font-brand font-bold text-slate-800">{hourlyRate}<span className="text-xs text-slate-400 font-normal ml-1">usd/hr</span></p>
                                 </div>
 
                                 {/* Experiencia Box */}
