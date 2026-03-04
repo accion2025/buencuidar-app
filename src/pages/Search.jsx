@@ -79,7 +79,7 @@ const Search = () => {
                             location: details.municipality ? `${details.municipality}, ${details.department}` : 'Ubicación pendiente',
                             experience: `${details.experience || 1} años`,
                             tags: details.skills || [],
-                            price: details.hourly_rate || 10,
+                            price: details.hourly_rate || 0,
                             raw: data
                         };
                         setSelectedCaregiver(formatted.raw);
@@ -160,7 +160,7 @@ const Search = () => {
                         reviews: details?.reviews_count || 0,
                         experience: (details?.experience || 0) + ' años',
                         location: formatLocation(p, details),
-                        price: details?.hourly_rate || 150,
+                        price: details?.hourly_rate || 0,
                         image: p.avatar_url,
                         tags: details?.skills || ['Acompañamiento', 'Cuidado Integral'],
                         raw: p // Keep raw data for the modal
@@ -483,8 +483,7 @@ const Search = () => {
                                             <div>
                                                 <p className="text-xs text-gray-400 uppercase font-black tracking-widest leading-none mb-1">Inversión / Hr</p>
                                                 <p className="text-3xl font-brand font-bold text-[var(--primary-color)] flex items-baseline">
-                                                    <span>${caregiver.price}</span>
-                                                    <span className="text-sm font-secondary font-bold text-gray-400 ml-1 uppercase tracking-widest">USD</span>
+                                                    <span>{caregiver.price} usd/hr</span>
                                                 </p>
                                             </div>
                                             <button
