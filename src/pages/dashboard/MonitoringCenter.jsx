@@ -101,6 +101,8 @@ const MonitoringCenter = () => {
     const [hoursStats, setHoursStats] = useState({ confirmed: 0, pending: 0 });
     const [averageRating, setAverageRating] = useState(null);
     const [activeAlert, setActiveAlert] = useState(null);
+    const [patients, setPatients] = useState([]);
+    const [selectedPatientId, setSelectedPatientId] = useState('all');
 
     // Report Range States
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -111,6 +113,7 @@ const MonitoringCenter = () => {
     useEffect(() => {
         if (can('accessMonitoring') && profile?.id) {
             fetchLiveData();
+            fetchPatients();
 
             // 1. Realtime Subscription for Emergency Alerts
             const alertsChannel = supabase
@@ -163,6 +166,21 @@ const MonitoringCenter = () => {
             };
         }
     }, [can, profile?.id]);
+
+    const fetchPatients = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('patients')
+                .select('id, full_name')
+                .eq('client_id', profile.id)
+                .order('full_name', { ascending: true });
+
+            if (error) throw error;
+            setPatients(data || []);
+        } catch (err) {
+            console.error("Error fetching patients:", err);
+        }
+    };
 
     const fetchLiveData = async () => {
         try {
@@ -452,12 +470,18 @@ const MonitoringCenter = () => {
             const today = new Date().toLocaleDateString();
 
             // 1. Fetch ALL appointments for this client in the range
-            const { data: rangeAppointments, error: appError } = await supabase
+            let query = supabase
                 .from('appointments')
-                .select('id, date, status, caregiver_id')
+                .select('id, date, status, caregiver_id, patient_id')
                 .eq('client_id', profile.id)
                 .gte('date', reportStartDate)
                 .lte('date', reportEndDate);
+
+            if (selectedPatientId !== 'all') {
+                query = query.eq('patient_id', selectedPatientId);
+            }
+
+            const { data: rangeAppointments, error: appError } = await query;
 
             if (appError) throw appError;
 
@@ -497,12 +521,18 @@ const MonitoringCenter = () => {
             doc.setTextColor(15, 60, 76);
             doc.setFontSize(14);
             doc.setFont('helvetica', 'bold');
-            // Try different sources for the familiar name
-            const familiarName = activeAppointment?.familiar?.full_name ||
-                activeAppointment?.patients?.full_name ||
-                activeAppointment?.title ||
-                profile?.full_name ||
-                'No especificado';
+
+            let familiarName = 'Todos los familiares';
+            if (selectedPatientId !== 'all') {
+                const patient = patients.find(p => p.id === selectedPatientId);
+                familiarName = patient?.full_name || 'No especificado';
+            } else {
+                familiarName = activeAppointment?.familiar?.full_name ||
+                    activeAppointment?.patients?.full_name ||
+                    activeAppointment?.title ||
+                    profile?.full_name ||
+                    'General';
+            }
             doc.text(`Familiar: ${familiarName}`, 20, 55);
 
             // Wellbeing Summary (Extract wellness logs)
@@ -761,6 +791,21 @@ const MonitoringCenter = () => {
                         </div>
 
                         <div className="p-8 space-y-6">
+                            {/* Patient Selector */}
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Seleccionar Familiar</label>
+                                <select
+                                    value={selectedPatientId}
+                                    onChange={(e) => setSelectedPatientId(e.target.value)}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-[12px] px-4 py-3 text-sm focus:ring-2 focus:ring-[var(--secondary-color)] focus:border-transparent outline-none transition-all appearance-none cursor-pointer"
+                                >
+                                    <option value="all">Todos los familiares</option>
+                                    {patients.map(p => (
+                                        <option key={p.id} value={p.id}>{p.full_name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fecha Inicio</label>
