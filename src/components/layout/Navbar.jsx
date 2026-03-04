@@ -122,6 +122,25 @@ const Navbar = () => {
                                     </button>
                                 </div>
                             )}
+
+                            {/* Admin Quick Access Badge */}
+                            {profile?.role === 'admin' && (
+                                <div className="flex items-center ml-2 pl-4 border-l border-gray-100">
+                                    <button
+                                        onClick={() => navigate('/admin/verification')}
+                                        className="relative p-2.5 text-blue-500 hover:text-blue-600 transition-all bg-blue-50 rounded-[16px] hover:shadow-md group flex items-center gap-2"
+                                        title="Verificaciones Pendientes"
+                                    >
+                                        <Activity size={20} className="group-hover:scale-110 transition-transform" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Admin</span>
+                                        {useNotifications().pendingVerificationCount > 0 && (
+                                            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white border-2 border-white animate-bounce-short">
+                                                {useNotifications().pendingVerificationCount}
+                                            </span>
+                                        )}
+                                    </button>
+                                </div>
+                            )}
                         </nav>
 
                         <div className="md:hidden flex items-center gap-2">

@@ -10,6 +10,7 @@ export const NotificationProvider = ({ children }) => {
     const [initialized, setInitialized] = useState(false);
     const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
     const [unreadChatCount, setUnreadChatCount] = useState(0);
+    const [pendingVerificationCount, setPendingVerificationCount] = useState(0);
     const [notifications, setNotifications] = useState([]);
     const [loadingNotifications, setLoadingNotifications] = useState(true);
 
@@ -80,6 +81,7 @@ export const NotificationProvider = ({ children }) => {
         if (!user) {
             setUnreadNotificationsCount(0);
             setUnreadChatCount(0);
+            setPendingVerificationCount(0);
             setNotifications([]);
             setLoadingNotifications(false);
             return;
@@ -87,8 +89,30 @@ export const NotificationProvider = ({ children }) => {
 
         fetchNotificationsData();
 
-        // Periodic refresh (every 1 minute) to "maturate" hidden notifications
-        const refreshInterval = setInterval(fetchNotificationsData, 60000);
+        // 1. Admin Specific: Fetch pending documents
+        const fetchPendingVerifications = async () => {
+            if (profile?.role !== 'admin') return;
+            try {
+                const { count, error } = await supabase
+                    .from('caregiver_documents')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'pending');
+                if (error) throw error;
+                setPendingVerificationCount(count || 0);
+            } catch (err) {
+                console.error("Error fetching pending verifications:", err);
+            }
+        };
+
+        if (profile?.role === 'admin') {
+            fetchPendingVerifications();
+        }
+
+        // Periodic refresh (every 1 minute)
+        const refreshInterval = setInterval(() => {
+            fetchNotificationsData();
+            if (profile?.role === 'admin') fetchPendingVerifications();
+        }, 60000);
 
         const channel = supabase
             .channel(`notifications-unified-${user.id}`)
@@ -100,16 +124,29 @@ export const NotificationProvider = ({ children }) => {
             }, (payload) => {
                 console.log("🔔 Cambio en tiempo real detectado:", payload.eventType);
                 fetchNotificationsData();
-            })
-            .subscribe((status) => {
-                console.log("📡 Estado de la suscripción Realtime:", status);
             });
+
+        // 2. Admin Specific: Subscribe to document changes
+        if (profile?.role === 'admin') {
+            channel.on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'caregiver_documents'
+            }, (payload) => {
+                console.log("📂 Cambio en documentos detectado (Admin):", payload.eventType);
+                fetchPendingVerifications();
+            });
+        }
+
+        channel.subscribe((status) => {
+            console.log("📡 Estado de la suscripción Realtime:", status);
+        });
 
         return () => {
             supabase.removeChannel(channel);
             clearInterval(refreshInterval);
         };
-    }, [user, fetchNotificationsData]);
+    }, [user, profile, fetchNotificationsData]);
 
     const markAsRead = async (id) => {
         try {
@@ -296,6 +333,7 @@ export const NotificationProvider = ({ children }) => {
             initialized,
             unreadNotificationsCount,
             unreadChatCount,
+            pendingVerificationCount,
             notifications,
             loadingNotifications,
             markAsRead,
