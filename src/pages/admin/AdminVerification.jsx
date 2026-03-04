@@ -92,9 +92,14 @@ const AdminVerification = () => {
             if (profileError) console.error("Error actualizando perfil:", profileError);
 
             setPendingDocs(prev => prev.filter(d => d.id !== docId));
+
+            // FEEDBACK V1.0.125
+            const actionLabel = status === 'verified' ? 'Aprobado' : 'Rechazado';
+            console.log(`✅ Documento ${docId} ${actionLabel} correctamente.`);
+
         } catch (error) {
             console.error("Error handling action:", error);
-            alert("No se pudo procesar la acción.");
+            alert("No se pudo procesar la acción. Verifica tu conexión o permisos.");
         } finally {
             setActioning(null);
         }
@@ -189,7 +194,11 @@ const AdminVerification = () => {
                                         <button
                                             onClick={() => {
                                                 const reason = prompt("Razón de la denegación:");
-                                                if (reason) handleAction(doc.id, doc.caregiver_id, 'rejected', reason);
+                                                if (reason && reason.trim()) {
+                                                    handleAction(doc.id, doc.caregiver_id, 'rejected', reason);
+                                                } else if (reason !== null) {
+                                                    alert("Debes proporcionar una razón para denegar el documento.");
+                                                }
                                             }}
                                             disabled={actioning === doc.id}
                                             className="bg-red-500 hover:bg-red-600 !text-[#FAFAF7] p-4 rounded-[16px] shadow-lg shadow-red-100 transition-all border-none"

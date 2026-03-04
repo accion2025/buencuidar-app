@@ -137,6 +137,13 @@ const Notifications = () => {
         }
 
         // 3. Fallback Redirection Logic (Legacy or missing target_path) based on V1.0.15 Policy
+        if (profile?.role === 'admin') {
+            if (metadata.is_admin_alert || notification.type === 'verification_pending' || notification.title?.includes('Verificación')) {
+                navigate('/admin/verification');
+                return;
+            }
+        }
+
         if (!isCaregiver) {
             // Role: FAMILY
             if (metadata.notif_category === 'application' || notification.title?.includes('Postulación') || notification.title?.includes('Aceptada')) {
