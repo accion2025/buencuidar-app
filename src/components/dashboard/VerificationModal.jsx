@@ -164,27 +164,6 @@ const VerificationModal = ({ isOpen, onClose, caregiverId, onComplete }) => {
                 .eq('id', activeUserId)
                 .eq('verification_status', 'pending');
 
-            // --- PASO V1.0.122: Notificar a Administradores ---
-            try {
-                const { data: admins } = await supabase
-                    .from('profiles')
-                    .select('id')
-                    .eq('role', 'admin');
-
-                if (admins && admins.length > 0) {
-                    const notifications = admins.map(admin => ({
-                        user_id: admin.id,
-                        title: 'Nueva Verificación Pendiente',
-                        message: `Un cuidador ha subido un documento tipo "${docType}" para su revisión.`,
-                        type: 'verification_pending',
-                        metadata: { caregiver_id: activeUserId, doc_type: docType }
-                    }));
-                    await supabase.from('notifications').insert(notifications);
-                }
-            } catch (notifyErr) {
-                console.warn("Aviso: No se pudo generar la notificación para admins (opcional):", notifyErr);
-            }
-
             setUploadStep(4);
             setSuccess(`Documento "${docType}" subido correctamente.`);
             await fetchUserDocs();

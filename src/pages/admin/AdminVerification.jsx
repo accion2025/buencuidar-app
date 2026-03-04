@@ -44,32 +44,52 @@ const AdminVerification = () => {
 
             if (docError) throw docError;
 
-            // 2. If all docs are verified, update profile
-            if (status === 'verified') {
-                const { data: remaining } = await supabase
-                    .from('caregiver_documents')
-                    .select('id')
-                    .eq('caregiver_id', caregiverId)
-                    .neq('status', 'verified');
+            // 2. Refresh profile status based on ALL documents
+            const { data: allDocs, error: fetchAllDocsError } = await supabase
+                .from('caregiver_documents')
+                .select('status')
+                .eq('caregiver_id', caregiverId);
 
-                if (!remaining || remaining.length === 0) {
-                    await supabase
-                        .from('profiles')
-                        .update({
-                            verification_status: 'verified',
-                            verified_at: new Date().toISOString()
-                        })
-                        .eq('id', caregiverId);
-                }
-            } else if (status === 'rejected') {
-                await supabase
-                    .from('profiles')
-                    .update({
-                        verification_status: 'rejected',
-                        rejection_reason: reason
-                    })
-                    .eq('id', caregiverId);
+            if (fetchAllDocsError) {
+                console.error("Error fetching all documents for profile status update:", fetchAllDocsError);
+                throw fetchAllDocsError;
             }
+
+            console.log(`Documentos del cuidador ${caregiverId} después de la acción:`, allDocs);
+
+            const hasPending = allDocs?.some(d => d.status === 'pending');
+            const hasRejected = allDocs?.some(d => d.status === 'rejected');
+            // Condition for 'verified': no pending, no rejected, and at least one document (e.g., ID)
+            const allDocumentsProcessedAndVerified = !hasPending && !hasRejected && (allDocs?.length || 0) > 0 && allDocs.every(d => d.status === 'verified');
+
+            let newProfileStatus = 'in_review'; // Default status
+            if (allDocumentsProcessedAndVerified) {
+                newProfileStatus = 'verified';
+            } else if (hasRejected) {
+                newProfileStatus = 'rejected';
+            } else if (hasPending) {
+                newProfileStatus = 'in_review'; // Still pending documents
+            } else if ((allDocs?.length || 0) > 0 && allDocs.every(d => d.status === 'verified')) {
+                // This case handles if there are no pending/rejected, but not all are 'verified' (e.g., some might be 'approved' if that was a status)
+                // For simplicity, if no pending/rejected, and all existing are verified, then it's verified.
+                newProfileStatus = 'verified';
+            } else if ((allDocs?.length || 0) === 0) {
+                // No documents at all, profile should probably be 'pending_documents' or similar, but 'in_review' is a safe default.
+                newProfileStatus = 'in_review';
+            }
+
+
+            console.log(`Sincronizando perfil ${caregiverId} a estado: ${newProfileStatus}`);
+
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .update({
+                    verification_status: newProfileStatus,
+                    verified_at: newProfileStatus === 'verified' ? new Date().toISOString() : null
+                })
+                .eq('id', caregiverId);
+
+            if (profileError) console.error("Error actualizando perfil:", profileError);
 
             setPendingDocs(prev => prev.filter(d => d.id !== docId));
         } catch (error) {
