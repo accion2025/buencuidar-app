@@ -172,7 +172,7 @@ const MonitoringCenter = () => {
             const { data, error } = await supabase
                 .from('patients')
                 .select('id, full_name')
-                .eq('client_id', profile.id)
+                .eq('family_id', profile.id)
                 .order('full_name', { ascending: true });
 
             if (error) throw error;
