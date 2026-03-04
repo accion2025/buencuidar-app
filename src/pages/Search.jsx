@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { supabase } from '../lib/supabase';
-import { Star, MapPin, Briefcase, Loader2, Search as SearchIcon, Globe, Home, Award } from 'lucide-react';
+import { Star, MapPin, Briefcase, Loader2, Search as SearchIcon, Globe, Home, Award, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import CaregiverDetailModal from '../components/dashboard/CaregiverDetailModal';
 import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
@@ -80,6 +80,7 @@ const Search = () => {
                             experience: `${details.experience || 1} años`,
                             tags: details.skills || [],
                             price: details.hourly_rate || 0,
+                            isVerified: data.verification_status === 'verified',
                             raw: data
                         };
                         setSelectedCaregiver(formatted.raw);
@@ -162,6 +163,7 @@ const Search = () => {
                         location: formatLocation(p, details),
                         price: details?.hourly_rate || 0,
                         image: p.avatar_url,
+                        isVerified: p.verification_status === 'verified',
                         tags: details?.skills || ['Acompañamiento', 'Cuidado Integral'],
                         raw: p // Keep raw data for the modal
                     };
@@ -423,14 +425,22 @@ const Search = () => {
                                                     )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-3 mb-1">
-                                                        <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] group-hover:text-[var(--secondary-color)] transition-colors truncate">{caregiver.name}</h3>
-                                                        {(caregiver.raw?.plan_type === 'premium' || caregiver.raw?.plan_type === 'professional_pro') && (
-                                                            <div className="shrink-0 bg-emerald-50 text-[var(--secondary-color)] px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-1 shadow-sm">
-                                                                <Award size={10} />
-                                                                <span>BC PRO</span>
+                                                    <div className="flex flex-col gap-1.5 mb-2">
+                                                        {caregiver.isVerified && (
+                                                            <div className="flex items-center gap-1.5 text-blue-600 bg-blue-50/50 w-fit px-2 py-0.5 rounded-md border border-blue-100/50 shadow-sm">
+                                                                <Shield size={10} strokeWidth={3} />
+                                                                <span className="text-[9px] font-black uppercase tracking-widest">Verificado</span>
                                                             </div>
                                                         )}
+                                                        <div className="flex items-center gap-3">
+                                                            <h3 className="font-brand font-bold text-2xl text-[var(--primary-color)] group-hover:text-[var(--secondary-color)] transition-colors truncate">{caregiver.name}</h3>
+                                                            {(caregiver.raw?.plan_type === 'premium' || caregiver.raw?.plan_type === 'professional_pro') && (
+                                                                <div className="shrink-0 bg-emerald-50 text-[var(--secondary-color)] px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100 flex items-center gap-1 shadow-sm">
+                                                                    <Award size={10} />
+                                                                    <span>BC PRO</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                     <p className="text-[var(--secondary-color)] text-xs font-black uppercase tracking-[0.2em] mb-2">{caregiver.role}</p>
                                                     <div className="flex items-center gap-2">

@@ -221,10 +221,15 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
                         {/* 3. Name & Info Badges (Slightly less padding top since avatar moved up) */}
                         <div className="pt-8 pb-8 px-6 lg:px-12 text-center">
                             {/* Name */}
-                            <h2 className="text-3xl font-brand font-bold text-slate-800 mb-2 tracking-tight">{caregiver.full_name}</h2>
-
+                            <h2 className="text-3xl font-brand font-bold text-slate-800 mb-1 tracking-tight">{caregiver.full_name}</h2>
                             {/* Badges Row */}
                             <div className="flex flex-col items-center gap-2 mb-8">
+                                {(caregiver.verification_status === 'verified' || details?.verification_status === 'verified') && (
+                                    <div className="flex items-center justify-center gap-1.5 text-blue-600 bg-blue-50/50 w-fit px-4 py-1.5 rounded-full border border-blue-100/50 shadow-sm">
+                                        <Shield size={14} strokeWidth={3} />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verificado</span>
+                                    </div>
+                                )}
                                 {isPro ? (
                                     <div className="flex items-center gap-2 bg-emerald-50 text-[var(--secondary-color)] border-emerald-100 px-4 py-1.5 rounded-full text-xs font-black tracking-[0.15em] border uppercase">
                                         <Award size={14} />
