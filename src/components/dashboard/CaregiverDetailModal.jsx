@@ -298,12 +298,18 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
                                             <MessageCircle size={14} />
                                             <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Contacto</p>
                                         </div>
-                                        <a
-                                            href={`tel:${caregiver.phone}`}
-                                            className="text-sm font-brand font-bold text-[var(--secondary-color)] hover:underline truncate max-w-full"
-                                        >
-                                            {caregiver.phone || 'No disponible'}
-                                        </a>
+                                        {user ? (
+                                            <a
+                                                href={`tel:${caregiver.phone}`}
+                                                className="text-sm font-brand font-bold text-[var(--secondary-color)] hover:underline truncate max-w-full"
+                                            >
+                                                {caregiver.phone || 'No disponible'}
+                                            </a>
+                                        ) : (
+                                            <p className="text-[10px] font-black uppercase text-rose-500 tracking-tight leading-tight">
+                                                Inicia sesión para ver
+                                            </p>
+                                        )}
                                     </div>
                                 )}
                             </div>
