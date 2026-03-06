@@ -4,6 +4,8 @@ import { Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { translateSupabaseError } from '../utils/translations';
+import { formatPhoneNumber } from '../utils/phoneUtils';
+import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -43,17 +45,14 @@ const RegisterCaregiver = () => {
         localStorage.setItem('caregiver_registration_temp', JSON.stringify(formData));
     }, [formData]);
 
-    // V1.0.117: Lógica de prefijo telefónico dinámico (Solo si no hay perfil previo)
+    // V1.0.117: Lógica de prefijo telefónico dinámico (Centralizado)
     useEffect(() => {
         if (!profile?.phone) {
-            // Por ahora asumimos Nicaragua si no hay perfil, o podríamos detectar por IP/idioma 
-            // Pero para cuidadores, el perfil suele tener el país. Si es nuevo, usamos +505 por defecto
-            // hasta que se implemente el selector de país también aquí.
-            const prefix = '+505 ';
-            setFormData(prev => {
-                if (!prev.phone) return { ...prev, phone: prefix };
-                return prev;
-            });
+            const country = profile?.country || 'nicaragua';
+            setFormData(prev => ({
+                ...prev,
+                phone: formatPhoneNumber(prev.phone, country)
+            }));
         }
     }, [profile]);
 
@@ -73,14 +72,13 @@ const RegisterCaregiver = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Mantener el prefijo +505 si es el campo de teléfono
-        // V1.0.117: Lógica de prefijo dinámico o flexible
         if (name === 'phone') {
-            const prefix = profile?.country === 'costa_rica' ? '+506 ' : '+505 ';
-            if (!value.startsWith('+')) { // Permitir cualquier prefijo internacional si borra el actual
-                setFormData(prevState => ({ ...prevState, phone: prefix }));
-                return;
-            }
+            const country = profile?.country || 'nicaragua';
+            setFormData(prevState => ({
+                ...prevState,
+                phone: formatPhoneNumber(value, country)
+            }));
+            return;
         }
 
         setFormData(prevState => ({
@@ -350,20 +348,13 @@ const RegisterCaregiver = () => {
                                 <select
                                     id="specialization"
                                     name="specialization"
-                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5ejoincm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
                                     value={formData.specialization}
                                     onChange={handleChange}
                                 >
-                                    <option>Acompañamiento Integral</option>
-                                    <option>Cuidado Personal Avanzado</option>
-                                    <option>Recuperación Funcional</option>
-                                    <option>Movimiento y Autonomía</option>
-                                    <option>Acompañamiento Compasivo</option>
-                                    <option>Compañía Activa</option>
-                                    <option>Apoyo en el Hogar</option>
-                                    <option>Apoyo en Traslados</option>
-                                    <option>Organización Diaria</option>
-                                    <option>Apoyo Emocional</option>
+                                    {CAREGIVER_SPECIALTIES.map(spec => (
+                                        <option key={spec} value={spec}>{spec}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>

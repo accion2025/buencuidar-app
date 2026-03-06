@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MapPin, Star, Edit2, BookOpen, Award, Check, X, Loader2, Camera, Phone, Briefcase, User, Plus, ShieldCheck, CreditCard, Clock, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { formatPhoneNumber } from '../../utils/phoneUtils';
 import VerificationModal from '../../components/dashboard/VerificationModal';
 import ImageCropper from '../../components/dashboard/ImageCropper';
 import { CAREGIVER_SPECIALTIES } from '../../constants/caregiver';
@@ -235,7 +236,7 @@ const CaregiverProfile = () => {
         setFormData({
             full_name: profile.full_name || '',
             specialization: profile.specialization || profile.caregiver_details?.specialization || 'Acompañamiento Integral',
-            phone: profile.phone || '',
+            phone: formatPhoneNumber(profile.phone || '', initialCountry),
             location: registeredLocation || profile.location || profile.caregiver_details?.location || '',
             country: initialCountry,
             department: initialDepartment,
@@ -800,7 +801,10 @@ const CaregiverProfile = () => {
                                             type="tel"
                                             className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)]"
                                             value={formData.phone}
-                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                            onChange={e => setFormData({
+                                                ...formData,
+                                                phone: formatPhoneNumber(e.target.value, formData.country)
+                                            })}
                                         />
                                     </div>
                                     <div className="md:col-span-2 space-y-6">

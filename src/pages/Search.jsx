@@ -426,10 +426,15 @@ const Search = () => {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex flex-col gap-1.5 mb-2">
-                                                        {caregiver.isVerified && (
+                                                        {caregiver.isVerified ? (
                                                             <div className="flex items-center gap-1.5 text-blue-600 bg-blue-50/50 w-fit px-2 py-0.5 rounded-md border border-blue-100/50 shadow-sm">
                                                                 <Shield size={10} strokeWidth={3} />
                                                                 <span className="text-[9px] font-black uppercase tracking-widest">Verificado</span>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex items-center gap-1.5 text-slate-400 bg-slate-50 w-fit px-2 py-0.5 rounded-md border border-slate-100 shadow-sm">
+                                                                <Shield size={10} strokeWidth={3} className="opacity-50" />
+                                                                <span className="text-[9px] font-black uppercase tracking-widest">No verificado</span>
                                                             </div>
                                                         )}
                                                         <div className="flex items-center gap-3">

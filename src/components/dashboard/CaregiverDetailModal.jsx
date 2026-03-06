@@ -203,10 +203,11 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
                                         </div>
                                     )}
                                 </div>
-                                {/* Verification Badge */}
-                                <div className="absolute bottom-1 right-1 bg-[var(--secondary-color)] w-7 h-7 rounded-full border-[3px] border-[#0F3C4C] shadow-lg flex items-center justify-center text-white" title="Perfil Verificado">
-                                    <Check size={14} strokeWidth={4} />
-                                </div>
+                                {caregiver.verification_status === 'verified' && (
+                                    <div className="absolute bottom-1 right-1 bg-[var(--secondary-color)] w-7 h-7 rounded-full border-[3px] border-[#0F3C4C] shadow-lg flex items-center justify-center text-white" title="Perfil Verificado">
+                                        <Check size={14} strokeWidth={4} />
+                                    </div>
+                                )}
                             </div>
 
                             {/* Close Button stayed at top right of the overall component, not the banner center */}
@@ -224,10 +225,15 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
                             <h2 className="text-3xl font-brand font-bold text-slate-800 mb-1 tracking-tight">{caregiver.full_name}</h2>
                             {/* Badges Row */}
                             <div className="flex flex-col items-center gap-2 mb-8">
-                                {(caregiver.verification_status === 'verified' || details?.verification_status === 'verified') && (
+                                {caregiver.verification_status === 'verified' || details?.verification_status === 'verified' ? (
                                     <div className="flex items-center justify-center gap-1.5 text-blue-600 bg-blue-50/50 w-fit px-4 py-1.5 rounded-full border border-blue-100/50 shadow-sm">
                                         <Shield size={14} strokeWidth={3} />
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em]">Verificado</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-center gap-1.5 text-slate-400 bg-slate-50 w-fit px-4 py-1.5 rounded-full border border-slate-100 shadow-sm">
+                                        <Shield size={14} strokeWidth={3} className="opacity-50" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">No verificado</span>
                                     </div>
                                 )}
                                 {isPro ? (

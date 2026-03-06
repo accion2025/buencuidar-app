@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Save, Plus, X, Trash2, Edit2, Loader2, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { formatPhoneNumber } from '../../utils/phoneUtils';
 
 const ClientProfile = () => {
     const { profile, profileLoading, refreshProfile } = useAuth();
@@ -309,7 +310,10 @@ const ClientProfile = () => {
                                         type="tel"
                                         disabled={!isEditing}
                                         value={formData.phone}
-                                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                        onChange={e => setFormData({
+                                            ...formData,
+                                            phone: formatPhoneNumber(e.target.value, profile?.country || 'nicaragua')
+                                        })}
                                         placeholder="Ej. 555-1234"
                                         className="w-full pl-6 pr-12 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
                                     />

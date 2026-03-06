@@ -7,6 +7,7 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import { CENTRAL_AMERICA } from '../constants/locations';
 import { CAREGIVER_SPECIALTIES } from '../constants/caregiver';
+import { formatPhoneNumber } from '../utils/phoneUtils';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -62,30 +63,23 @@ const Register = () => {
         }
     }, [formData.department, formData.country]);
 
-    // V1.0.117: Lógica de prefijo telefónico dinámico
+    // V1.0.117: Lógica de prefijo telefónico dinámico (Centralizado)
     useEffect(() => {
-        const prefix = formData.country === 'nicaragua' ? '+505 ' : '+506 ';
-        setFormData(prev => {
-            // Solo actualizamos si el teléfono está vacío o tiene el prefijo del OTRO país
-            const oldPrefix = formData.country === 'nicaragua' ? '+506 ' : '+505 ';
-            if (!prev.phone || prev.phone === oldPrefix || prev.phone === oldPrefix.trim()) {
-                return { ...prev, phone: prefix };
-            }
-            return prev;
-        });
+        setFormData(prev => ({
+            ...prev,
+            phone: formatPhoneNumber(prev.phone, formData.country)
+        }));
     }, [formData.country]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // V1.0.117: Mantener el prefijo dinámico según el país
         if (name === 'phone') {
-            const prefix = formData.country === 'nicaragua' ? '+505 ' : '+506 ';
-            if (!value.startsWith(prefix)) {
-                // Si intenta borrar el prefijo, lo restauramos
-                setFormData(prevState => ({ ...prevState, phone: prefix + value.replace(/^\+\d{3}\s?/, '') }));
-                return;
-            }
+            setFormData(prevState => ({
+                ...prevState,
+                phone: formatPhoneNumber(value, formData.country)
+            }));
+            return;
         }
 
         setFormData(prevState => ({
@@ -133,6 +127,8 @@ const Register = () => {
             if (signUpError) {
                 if (signUpError.message.includes('already registered')) {
                     setError('Este correo ya está registrado. Intenta iniciar sesión.');
+                } else if (signUpError.message.includes('asociado al límite máximo')) {
+                    setError('Este número de teléfono ya está asociado al máximo de cuentas permitidas (2).');
                 } else {
                     setError(translateSupabaseError(signUpError.message));
                 }
@@ -225,7 +221,7 @@ const Register = () => {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
+                            <div className="md:col-span-2">
                                 <label htmlFor="fullName" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
                                     Nombre Completo
                                 </label>
@@ -237,22 +233,6 @@ const Register = () => {
                                     className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
                                     placeholder="Ej. Juan Pérez"
                                     value={formData.fullName}
-                                    onChange={handleChange}
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="phone" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
-                                    Teléfono
-                                </label>
-                                <input
-                                    type="tel"
-                                    id="phone"
-                                    name="phone"
-                                    required
-                                    className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
-                                    placeholder="+505 0000 0000"
-                                    value={formData.phone}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -272,6 +252,89 @@ const Register = () => {
                                     onChange={handleChange}
                                 />
                             </div>
+                        </div>
+
+                        {/* Location Fields (Moved Up for UX) */}
+                        <div className="space-y-6 bg-gray-50/50 p-6 rounded-[24px] border border-gray-100">
+                            <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
+                                <MapPin size={16} className="text-[var(--secondary-color)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">¿Dónde te encuentras?</span>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label htmlFor="country" className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Globe size={14} /> País
+                                    </label>
+                                    <select
+                                        id="country"
+                                        name="country"
+                                        className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-[16px] focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                        value={formData.country}
+                                        onChange={handleChange}
+                                    >
+                                        {CENTRAL_AMERICA.map(c => (
+                                            <option key={c.id} value={c.id} disabled={!c.active}>
+                                                {c.name} {!c.active && '(Próximamente)'}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="department" className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Home size={14} /> Departamento
+                                    </label>
+                                    <select
+                                        id="department"
+                                        name="department"
+                                        required
+                                        className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-[16px] focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                        value={formData.department}
+                                        onChange={handleChange}
+                                    >
+                                        {availableDepartments.map(dept => (
+                                            <option key={dept} value={dept}>{dept}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label htmlFor="municipality" className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3">
+                                        Municipio
+                                    </label>
+                                    <select
+                                        id="municipality"
+                                        name="municipality"
+                                        required
+                                        className="w-full px-6 py-4 bg-white border-2 border-transparent rounded-[16px] focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
+                                        value={formData.municipality}
+                                        onChange={handleChange}
+                                    >
+                                        {availableMunicipalities.map(muni => (
+                                            <option key={muni} value={muni}>{muni}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label htmlFor="phone" className="block text-xs font-black text-[var(--primary-color)] uppercase tracking-widest mb-3">
+                                Teléfono de Contacto
+                            </label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                required
+                                className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800"
+                                placeholder={formData.country === 'costa_rica' ? '+506 0000 0000' : '+505 0000 0000'}
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
+                            <p className="mt-2 text-[10px] text-gray-400 font-secondary uppercase tracking-wider">
+                                * Se usará para coordinar servicios y verificaciones
+                            </p>
                         </div>
 
                         {/* Caregiver specific fields */}
@@ -338,69 +401,6 @@ const Register = () => {
                             </div>
                         )}
 
-                        {/* Location Fields */}
-                        <div className="space-y-6">
-                            <div className="flex items-center gap-2 border-b border-gray-100 pb-2">
-                                <MapPin size={16} className="text-[var(--secondary-color)]" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Ubicación del Servicio</span>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label htmlFor="country" className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <Globe size={14} /> País
-                                    </label>
-                                    <select
-                                        id="country"
-                                        name="country"
-                                        className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
-                                        value={formData.country}
-                                        onChange={handleChange}
-                                    >
-                                        {CENTRAL_AMERICA.map(c => (
-                                            <option key={c.id} value={c.id} disabled={!c.active}>
-                                                {c.name} {!c.active && '(Próximamente)'}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label htmlFor="department" className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <Home size={14} /> Departamento
-                                    </label>
-                                    <select
-                                        id="department"
-                                        name="department"
-                                        required
-                                        className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
-                                        value={formData.department}
-                                        onChange={handleChange}
-                                    >
-                                        {availableDepartments.map(dept => (
-                                            <option key={dept} value={dept}>{dept}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label htmlFor="municipality" className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3">
-                                        Municipio
-                                    </label>
-                                    <select
-                                        id="municipality"
-                                        name="municipality"
-                                        required
-                                        className="w-full px-6 py-4 bg-[var(--base-bg)] border-2 border-transparent rounded-[16px] focus:bg-white focus:border-[var(--secondary-color)] outline-none transition-all font-secondary text-gray-800 appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
-                                        value={formData.municipality}
-                                        onChange={handleChange}
-                                    >
-                                        {availableMunicipalities.map(muni => (
-                                            <option key={muni} value={muni}>{muni}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
