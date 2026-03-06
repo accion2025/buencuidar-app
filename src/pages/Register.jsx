@@ -187,7 +187,7 @@ const Register = () => {
                                 <button
                                     type="button"
                                     onClick={() => handleRoleSelect('family')}
-                                    className={`p-6 rounded-[24px] border-2 transition-all flex flex-col items-center gap-3 text-center ${formData.role === 'family'
+                                    className={`py-5 px-6 rounded-[24px] border-2 transition-all flex flex-col items-center gap-2 text-center ${formData.role === 'family'
                                         ? 'border-[var(--secondary-color)] bg-green-50 shadow-lg shadow-green-100'
                                         : 'border-gray-100 hover:border-gray-200 bg-gray-50/50'
                                         }`}
@@ -196,15 +196,15 @@ const Register = () => {
                                         <Heart size={24} />
                                     </div>
                                     <div>
-                                        <h3 className={`font-bold uppercase tracking-widest text-xs ${formData.role === 'family' ? 'text-[var(--primary-color)]' : 'text-gray-500'}`}>Busco Cuidado</h3>
-                                        <p className="text-[10px] text-gray-400 font-secondary mt-1">Para familias y personas atendidas</p>
+                                        <h3 className={`font-bold uppercase tracking-widest text-xs ${formData.role === 'family' ? 'text-[var(--primary-color)]' : 'text-gray-500'}`}>Familia</h3>
+                                        <p className={`text-xs font-secondary mt-1 leading-tight ${formData.role === 'family' ? 'text-[var(--primary-color)] opacity-70' : 'text-gray-400'}`}>Para familias y personas necesitadas de cuidadores</p>
                                     </div>
                                 </button>
 
                                 <button
                                     type="button"
                                     onClick={() => handleRoleSelect('caregiver')}
-                                    className={`p-6 rounded-[24px] border-2 transition-all flex flex-col items-center gap-3 text-center ${formData.role === 'caregiver'
+                                    className={`py-5 px-6 rounded-[24px] border-2 transition-all flex flex-col items-center gap-2 text-center ${formData.role === 'caregiver'
                                         ? 'border-[var(--primary-color)] bg-blue-50 shadow-lg shadow-blue-100'
                                         : 'border-gray-100 hover:border-gray-200 bg-gray-50/50'
                                         }`}
@@ -214,7 +214,7 @@ const Register = () => {
                                     </div>
                                     <div>
                                         <h3 className={`font-bold uppercase tracking-widest text-xs ${formData.role === 'caregiver' ? 'text-[var(--primary-color)]' : 'text-gray-500'}`}>Soy Cuidador</h3>
-                                        <p className="text-[10px] text-gray-400 font-secondary mt-1">Para profesionales de la salud</p>
+                                        <p className={`text-xs font-secondary mt-1 leading-tight ${formData.role === 'caregiver' ? 'text-[var(--primary-color)] opacity-70' : 'text-gray-400'}`}>Para cuidadores y asistentes domiciliario</p>
                                     </div>
                                 </button>
                             </div>

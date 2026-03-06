@@ -846,7 +846,8 @@ const CaregiverProfile = () => {
                                                             ...prev,
                                                             country: newCountry,
                                                             department: '',
-                                                            municipality: ''
+                                                            municipality: '',
+                                                            phone: formatPhoneNumber(prev.phone, newCountry)
                                                         }));
                                                         setAvailableMunicipalities([]);
                                                     }}
