@@ -75,10 +75,12 @@ const CaregiverProfile = () => {
     // Helper para obtener string de ubicación seguro/limpio
     const getLocationString = (p) => {
         try {
-            const countryClean = (p?.country && typeof p.country === 'string')
-                ? (p.country.charAt(0).toUpperCase() + p.country.slice(1))
-                : (p?.country || '');
-            return [p?.municipality, p?.department, countryClean].filter(Boolean).join(', ') || p?.location || 'Nicaragua';
+            if (!p) return 'Nicaragua';
+            const countryId = p.country || 'nicaragua';
+            const countryData = CENTRAL_AMERICA.find(c => c.id === countryId);
+            const countryDisplay = countryData ? countryData.name : (countryId.charAt(0).toUpperCase() + countryId.slice(1).replace('_', ' '));
+
+            return [p?.municipality, p?.department, countryDisplay].filter(Boolean).join(', ') || p?.location || 'Nicaragua';
         } catch (e) {
             return p?.location || 'Nicaragua';
         }
@@ -838,7 +840,16 @@ const CaregiverProfile = () => {
                                                 <select
                                                     className="w-full px-6 py-4 rounded-[16px] border-2 border-gray-50 focus:border-[var(--secondary-color)] outline-none transition-all bg-gray-50/30 text-base font-brand font-bold text-[var(--primary-color)] appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSJncmF5Ij48cGF0aCBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTE5IDlsLTcgNy03LTciPjwvcGF0aD48L3N2Zz4=')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1.2em]"
                                                     value={formData.country}
-                                                    onChange={e => setFormData({ ...formData, country: e.target.value })}
+                                                    onChange={e => {
+                                                        const newCountry = e.target.value;
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            country: newCountry,
+                                                            department: '',
+                                                            municipality: ''
+                                                        }));
+                                                        setAvailableMunicipalities([]);
+                                                    }}
                                                 >
                                                     {CENTRAL_AMERICA.map(c => (
                                                         <option key={c.id} value={c.id} disabled={!c.active}>
