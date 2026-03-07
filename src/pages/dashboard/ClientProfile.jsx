@@ -3,6 +3,7 @@ import { User, Mail, Phone, MapPin, Save, Plus, X, Trash2, Edit2, Loader2, Check
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { formatPhoneNumber } from '../../utils/phoneUtils';
+import { CENTRAL_AMERICA } from '../../constants/locations';
 
 const ClientProfile = () => {
     const { profile, profileLoading, refreshProfile } = useAuth();
@@ -14,20 +15,79 @@ const ClientProfile = () => {
         name: '',
         email: '',
         phone: '',
-        address: ''
+        address: '',
+        country: 'nicaragua',
+        department: '',
+        municipality: ''
     });
+
+    // Location lists based on selection
+    const [availableDepartments, setAvailableDepartments] = useState([]);
+    const [availableMunicipalities, setAvailableMunicipalities] = useState([]);
 
     // Update state when profile loads
     useEffect(() => {
         if (profile) {
+            const initialCountry = profile.country || 'nicaragua';
+            const initialDept = profile.department || '';
+
             setFormData({
                 name: profile.full_name || '',
                 email: profile.email || '',
-                phone: profile.phone || '',
-                address: profile.address || ''
+                phone: formatPhoneNumber(profile.phone || '', initialCountry),
+                address: profile.address || '',
+                country: initialCountry,
+                department: initialDept,
+                municipality: profile.municipality || ''
             });
+
+            // Load initial lists
+            const countryData = CENTRAL_AMERICA.find(c => c.id === initialCountry);
+            if (countryData?.departments) {
+                setAvailableDepartments(Object.keys(countryData.departments));
+                if (initialDept && countryData.departments[initialDept]) {
+                    setAvailableMunicipalities(countryData.departments[initialDept]);
+                }
+            }
         }
     }, [profile]);
+
+    // Update phone prefix when country changes
+    useEffect(() => {
+        if (formData.country) {
+            setFormData(prev => ({
+                ...prev,
+                phone: formatPhoneNumber(prev.phone, formData.country)
+            }));
+        }
+    }, [formData.country]);
+
+    // Update available departments when country changes
+    useEffect(() => {
+        if (formData.country) {
+            const countryData = CENTRAL_AMERICA.find(c => c.id === formData.country);
+            if (countryData && countryData.departments) {
+                const depts = Object.keys(countryData.departments);
+                setAvailableDepartments(depts);
+            } else {
+                setAvailableDepartments([]);
+                setAvailableMunicipalities([]);
+            }
+        }
+    }, [formData.country]);
+
+    // Update available municipalities when department changes
+    useEffect(() => {
+        if (formData.country && formData.department) {
+            const countryData = CENTRAL_AMERICA.find(c => c.id === formData.country);
+            if (countryData && countryData.departments) {
+                const munis = countryData.departments[formData.department] || [];
+                setAvailableMunicipalities(munis);
+            } else {
+                setAvailableMunicipalities([]);
+            }
+        }
+    }, [formData.department, formData.country]);
 
     // Patients State
     const [patients, setPatients] = useState([]);
@@ -181,6 +241,10 @@ const ClientProfile = () => {
                     full_name: formData.name,
                     phone: formData.phone,
                     address: formData.address,
+                    country: formData.country,
+                    department: formData.department,
+                    municipality: formData.municipality,
+                    location: `${formData.municipality}, ${formData.department}`
                 })
                 .eq('id', profile.id);
 
@@ -270,11 +334,15 @@ const ClientProfile = () => {
                                             setIsEditing(false);
                                             // Reset form data to original profile values
                                             if (profile) {
+                                                const initialCountry = profile.country || 'nicaragua';
                                                 setFormData({
                                                     name: profile.full_name || '',
                                                     email: profile.email || '',
-                                                    phone: profile.phone || '',
-                                                    address: profile.address || ''
+                                                    phone: formatPhoneNumber(profile.phone || '', initialCountry),
+                                                    address: profile.address || '',
+                                                    country: initialCountry,
+                                                    department: profile.department || '',
+                                                    municipality: profile.municipality || ''
                                                 });
                                             }
                                         }} className="cursor-pointer hover:underline opacity-80 mr-2 text-[9px]">CANCELAR</span>
@@ -312,7 +380,7 @@ const ClientProfile = () => {
                                         value={formData.phone}
                                         onChange={e => setFormData({
                                             ...formData,
-                                            phone: formatPhoneNumber(e.target.value, profile?.country || 'nicaragua')
+                                            phone: formatPhoneNumber(e.target.value, formData.country)
                                         })}
                                         placeholder="Ej. 555-1234"
                                         className="w-full pl-6 pr-12 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
@@ -344,6 +412,66 @@ const ClientProfile = () => {
                                         className="w-full pl-6 pr-12 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm"
                                     />
                                     <MapPin size={20} className={`absolute right-5 top-5 transition-colors ${isEditing ? 'text-[var(--secondary-color)]' : 'text-gray-300'}`} />
+                                </div>
+                            </div>
+
+                            {/* Nuevos Selectores de Ubicación */}
+                            <div className="grid md:grid-cols-3 gap-8 md:col-span-2">
+                                <div>
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">País</label>
+                                    <div className="relative">
+                                        <select
+                                            disabled={!isEditing}
+                                            value={formData.country}
+                                            onChange={e => setFormData({ ...formData, country: e.target.value, department: '', municipality: '' })}
+                                            className="w-full px-6 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm appearance-none bg-white"
+                                        >
+                                            {CENTRAL_AMERICA.map(c => (
+                                                <option key={c.id} value={c.id}>{c.name}</option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Departamento / Provincia</label>
+                                    <div className="relative">
+                                        <select
+                                            disabled={!isEditing || availableDepartments.length === 0}
+                                            value={formData.department}
+                                            onChange={e => setFormData({ ...formData, department: e.target.value, municipality: '' })}
+                                            className="w-full px-6 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm appearance-none bg-white"
+                                        >
+                                            <option value="">Seleccionar...</option>
+                                            {availableDepartments.map(dept => (
+                                                <option key={dept} value={dept}>{dept}</option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3 ml-1">Municipio / Ciudad</label>
+                                    <div className="relative">
+                                        <select
+                                            disabled={!isEditing || availableMunicipalities.length === 0}
+                                            value={formData.municipality}
+                                            onChange={e => setFormData({ ...formData, municipality: e.target.value })}
+                                            className="w-full px-6 py-4 rounded-[16px] border border-gray-100 disabled:bg-gray-50 disabled:text-gray-400 text-[var(--primary-color)] font-bold text-lg focus:ring-4 focus:ring-[var(--secondary-color)]/10 focus:border-[var(--secondary-color)]/30 outline-none transition-all shadow-sm appearance-none bg-white"
+                                        >
+                                            <option value="">Seleccionar...</option>
+                                            {availableMunicipalities.map(muni => (
+                                                <option key={muni} value={muni}>{muni}</option>
+                                            ))}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
