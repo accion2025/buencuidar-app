@@ -105,7 +105,8 @@ const Search = () => {
                     *,
                     caregiver_details!inner (*)
                 `)
-                .eq('role', 'caregiver');
+                .eq('role', 'caregiver')
+                .eq('email_confirmed', true);
 
             // Apply location filters (profiles table)
             if (filters.country) {

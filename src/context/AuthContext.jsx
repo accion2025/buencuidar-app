@@ -189,6 +189,13 @@ export const AuthProvider = ({ children }) => {
         });
         if (response.error) {
             console.error("Error en supabase.auth.signUp:", response.error);
+        } else {
+            // FIX SESIÓN PREMATURA: Evitar que Supabase mantenga iniciada la sesión 
+            // tras un registro exitoso, forzando estado "no autenticado" para que 
+            // requieran confirmar email primero.
+            await supabase.auth.signOut();
+            setUser(null);
+            setProfile(null);
         }
         return response;
     };
