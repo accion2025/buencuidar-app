@@ -155,21 +155,21 @@ const UserManagement = () => {
                 </div>
             </div>
 
-            <div className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden">
-                <div className="overflow-x-auto">
+            <div className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden flex flex-col h-[600px]">
+                <div className="overflow-auto flex-1 relative">
                     <table className="w-full text-left">
-                        <thead className="bg-gray-50 border-b border-gray-100">
+                        <thead className="bg-gray-50 border-b border-gray-100 sticky top-0 z-10 shadow-sm">
                             <tr>
-                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Usuario</th>
-                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Rol</th>
-                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Estado</th>
-                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Suscripción</th>
-                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Acciones</th>
+                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50">Usuario</th>
+                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50">Rol</th>
+                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50">Estado</th>
+                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50">Suscripción</th>
+                                <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-right bg-gray-50">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
                             {filteredUsers.map((user) => (
-                                <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
+                                <tr key={user.id} className="even:bg-white odd:bg-slate-100 hover:bg-slate-200 transition-colors">
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500">
