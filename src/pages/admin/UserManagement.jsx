@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreHorizontal, Shield, ShieldOff, User, Edit2, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Shield, ShieldOff, User, Edit2, CheckCircle, XCircle, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const UserManagement = () => {
@@ -51,6 +51,33 @@ const UserManagement = () => {
         } catch (error) {
             console.error('Error toggling ban:', error);
             alert('Error al cambiar el estado del usuario. Asegúrate de haber corrido el script SQL setup_blocking_policy.sql');
+        }
+    };
+
+    const handleToggleActive = async (userId, currentStatus) => {
+        // currentStatus representa is_active (true = visible, false = oculto)
+        // Por defecto en la BD nueva o null, asumiremos true.
+        const isActive = currentStatus !== false;
+        const action = isActive ? 'ocultar' : 'mostrar';
+        const description = isActive
+            ? 'Este usuario será expulsado del buscador (baja lógica).'
+            : 'Este usuario volverá a ser visible en el buscador.';
+
+        if (!window.confirm(`¿Estás seguro de que deseas ${action} a este usuario?\n\n${description}`)) return;
+
+        try {
+            const { error } = await supabase.rpc('toggle_user_active_status', { target_user_id: userId });
+
+            if (error) throw error;
+
+            // Optimistic update
+            setUsers(prev => prev.map(u =>
+                u.id === userId ? { ...u, is_active: !isActive } : u
+            ));
+
+        } catch (error) {
+            console.error('Error toggling active status:', error);
+            alert('Error al cambiar la visibilidad del usuario. Asegúrate de ejecutar el script supabase_soft_delete.sql en Supabase.');
         }
     };
 
@@ -196,17 +223,26 @@ const UserManagement = () => {
                                         )}
                                     </td>
                                     <td className="p-4">
-                                        {user.is_banned ? (
-                                            <span className="flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 px-2.5 py-1 rounded-full border border-red-100 w-fit">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                                                Bloqueado
-                                            </span>
-                                        ) : (
-                                            <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 w-fit">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                Activo
-                                            </span>
-                                        )}
+                                        <div className="flex flex-col gap-2">
+                                            {user.is_banned ? (
+                                                <span className="flex items-center gap-1.5 text-xs font-medium text-red-600 bg-red-50 px-2.5 py-1 rounded-full border border-red-100 w-fit">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                                                    Bloqueado
+                                                </span>
+                                            ) : (
+                                                <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 w-fit">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                    Activo
+                                                </span>
+                                            )}
+
+                                            {user.is_active === false && (
+                                                <span className="flex items-center gap-1.5 text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200 w-fit" title="No aparece en el buscador">
+                                                    <EyeOff size={10} />
+                                                    Oculto
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="p-4">
                                         <span className="text-xs text-gray-500 font-medium capitalize">
@@ -216,12 +252,23 @@ const UserManagement = () => {
                                     <td className="p-4 text-right">
                                         <div className="flex justify-end gap-2">
                                             <button
+                                                onClick={() => handleToggleActive(user.id, user.is_active)}
+                                                className={`p-2 rounded-[16px] transition-all border ${user.is_active === false
+                                                    ? 'bg-orange-50 text-orange-500 border-orange-100 hover:bg-orange-100'
+                                                    : 'bg-white text-gray-400 border-gray-100 hover:bg-gray-50 hover:text-[var(--primary-color)] hover:border-gray-200'
+                                                    }`}
+                                                title={user.is_active === false ? "Mostrar usuario" : "Ocultar usuario (Soft Delete)"}
+                                            >
+                                                {user.is_active === false ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+
+                                            <button
                                                 onClick={() => handleToggleBan(user.id, user.is_banned)}
                                                 className={`p-2 rounded-[16px] transition-all border ${user.is_banned
                                                     ? 'bg-red-50 text-red-500 border-red-100 hover:bg-red-100'
                                                     : 'bg-white text-gray-400 border-gray-100 hover:bg-gray-50 hover:text-[var(--primary-color)] hover:border-gray-200'
                                                     }`}
-                                                title={user.is_banned ? "Desbloquear usuario" : "Bloquear usuario"}
+                                                title={user.is_banned ? "Desbloquear usuario" : "Baneo Duro de usuario"}
                                             >
                                                 {user.is_banned ? <ShieldOff size={18} /> : <Shield size={18} />}
                                             </button>

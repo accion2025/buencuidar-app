@@ -12,7 +12,17 @@ const Login = () => {
         email: '',
         password: ''
     });
-    const { state } = useLocation(); // To pick up success messages from registration
+    const { state, search } = useLocation(); // To pick up success messages from registration or errors from redirect
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(search);
+        const errorType = queryParams.get('error');
+        if (errorType === 'banned') {
+            setError('Tu cuenta ha sido suspendida por el administrador.');
+        } else if (errorType === 'inactive') {
+            setError('Tu cuenta ha sido desactivada temporalmente. Por favor, contacta a soporte si crees que es un error.');
+        }
+    }, [search]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

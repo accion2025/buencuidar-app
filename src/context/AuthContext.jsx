@@ -94,6 +94,16 @@ export const AuthProvider = ({ children }) => {
                     return;
                 }
 
+                // SOFT DELETE POLICY
+                if (data.is_active === false) {
+                    console.warn("Usuario desactivado intentando acceder. Cerrando sesión...");
+                    await supabase.auth.signOut();
+                    setUser(null);
+                    setProfile(null);
+                    window.location.href = '/login?error=inactive'; // Redirect for explicitly disabled accounts
+                    return;
+                }
+
                 // caregiver_details puede venir como objeto o array
                 if (data.caregiver_details) {
                     const caregiverData = Array.isArray(data.caregiver_details)
