@@ -28,7 +28,9 @@ const AdminDashboard = () => {
         totalCaregivers: 0,
         visibleCaregivers: 0,
         totalAppointments: 0,
-        activeSubs: 0
+        activeSubs: 0,
+        activeSubsFamilies: 0,
+        activeSubsCaregivers: 0
     });
     const [activityData, setActivityData] = useState([]);
     const [timeRange, setTimeRange] = useState('7d'); // ['7d', '14d', '28d', '3m']
@@ -76,6 +78,18 @@ const AdminDashboard = () => {
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .eq('subscription_status', 'active');
+
+            const { count: activeSubsFamilies } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true })
+                .eq('subscription_status', 'active')
+                .eq('role', 'family');
+
+            const { count: activeSubsCaregivers } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true })
+                .eq('subscription_status', 'active')
+                .eq('role', 'caregiver');
 
 
             // 5. Activity Chart Data (Usuarios nuevos por periodo seleccionado)
@@ -161,7 +175,9 @@ const AdminDashboard = () => {
                 totalCaregivers: totalCaregivers || 0,
                 visibleCaregivers: visibleCaregivers || 0,
                 totalAppointments: apptCount || 0,
-                activeSubs: subCount || 0
+                activeSubs: subCount || 0,
+                activeSubsFamilies: activeSubsFamilies || 0,
+                activeSubsCaregivers: activeSubsCaregivers || 0
             });
         } catch (error) {
             console.error("Error fetching admin stats:", error);
@@ -173,7 +189,7 @@ const AdminDashboard = () => {
     return (
         <div className="space-y-6 animate-fade-in">
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 <StatCard
                     title="Cuidadores Visibles"
                     value={stats.visibleCaregivers}
@@ -191,7 +207,7 @@ const AdminDashboard = () => {
                 <StatCard
                     title="Suscripciones"
                     value={stats.activeSubs}
-                    subtext="Planes activos actualmente"
+                    subtext={`${stats.activeSubsCaregivers} Cuidadores / ${stats.activeSubsFamilies} Familias`}
                     icon={CreditCard}
                     color="text-emerald-600 bg-emerald-100"
                 />
@@ -203,11 +219,11 @@ const AdminDashboard = () => {
                     color="text-purple-600 bg-purple-100"
                 />
                 <StatCard
-                    title="Cuidadores"
-                    value={stats.totalCaregivers}
-                    subtext="Profesionales en la plataforma"
+                    title="Total de Usuarios"
+                    value={stats.totalCaregivers + stats.totalFamilies}
+                    subtext="Registrados globalmente"
                     icon={Activity}
-                    color="text-orange-600 bg-orange-100"
+                    color="text-pink-600 bg-pink-100"
                 />
             </div>
 

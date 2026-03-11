@@ -30,6 +30,7 @@ const UserManagement = () => {
     };
 
     const filteredUsers = users.filter(u => {
+        if (u.role === 'admin') return false; // Excluimos administradores de la tabla visual
         if (filter === 'all') return true;
         return u.role === filter;
     });
@@ -138,7 +139,7 @@ const UserManagement = () => {
                         onClick={() => setFilter('all')}
                         className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'all' ? 'bg-slate-800 !text-[#FAFAF7]' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
-                        Todos <span className="ml-1 opacity-80 font-normal">({users.filter(u => u.is_active !== false).length}/{users.length})</span>
+                        Todos <span className="ml-1 opacity-80 font-normal">({users.filter(u => u.role !== 'admin' && u.is_active !== false).length}/{users.filter(u => u.role !== 'admin').length})</span>
                     </button>
                     <button
                         onClick={() => setFilter('family')}
