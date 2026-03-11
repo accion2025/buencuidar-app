@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreHorizontal, Shield, ShieldOff, User, Edit2, CheckCircle, XCircle, Eye, EyeOff } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Shield, ShieldOff, User, Edit2, CheckCircle, XCircle, Eye, EyeOff, AlertTriangle, Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const UserManagement = () => {
@@ -241,6 +241,20 @@ const UserManagement = () => {
                                                 <span className="flex items-center gap-1.5 text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200 w-fit" title="No aparece en el buscador">
                                                     <EyeOff size={10} />
                                                     Oculto
+                                                </span>
+                                            )}
+
+                                            {user.email_confirmed === false && (
+                                                <span className="flex items-center gap-1.5 text-xs font-medium text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 w-fit" title="No ha verificado su correo electrónico (Oculto del panel público)">
+                                                    <AlertTriangle size={10} />
+                                                    Sin Email Conf.
+                                                </span>
+                                            )}
+
+                                            {user.role === 'caregiver' && user.is_available === false && (
+                                                <span className="flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 w-fit" title="Apagó su disponibilidad para trabajar temporalmente (Oculto del panel de familias)">
+                                                    <Clock size={10} />
+                                                    No Disponible
                                                 </span>
                                             )}
                                         </div>
