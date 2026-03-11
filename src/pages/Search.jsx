@@ -107,7 +107,8 @@ const Search = () => {
                 `)
                 .eq('role', 'caregiver')
                 .eq('email_confirmed', true)
-                .eq('is_active', true); // Soft Delete check
+                .eq('is_active', true) // Soft Delete check
+                .eq('is_available', true); // Caregiver's manual availability toggle
 
             // Apply location filters (profiles table)
             if (filters.country) {

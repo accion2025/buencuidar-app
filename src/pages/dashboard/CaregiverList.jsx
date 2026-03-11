@@ -26,6 +26,8 @@ const CaregiverList = () => {
                 `)
                 .eq('role', 'caregiver')
                 .eq('is_available', true)
+                .eq('email_confirmed', true)
+                .eq('is_active', true)
                 .order('rating', { foreignTable: 'caregiver_details', ascending: false, nullsFirst: false });
 
             if (error) throw error;

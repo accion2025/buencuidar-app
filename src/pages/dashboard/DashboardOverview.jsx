@@ -398,7 +398,9 @@ const DashboardOverview = () => {
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .eq('role', 'caregiver')
-                .eq('is_available', true); // Only count available caregivers
+                .eq('is_available', true)
+                .eq('email_confirmed', true) // Añadido filtro estricto
+                .eq('is_active', true); // Añadido check de Soft Delete
 
             if (error) throw error;
             setCaregiversCount(count || 0);
