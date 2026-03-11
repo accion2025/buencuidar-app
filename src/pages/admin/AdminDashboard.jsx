@@ -23,10 +23,12 @@ const StatCard = ({ title, value, subtext, icon: Icon, color }) => (
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
-        totalUsers: 0,
-        activeSubs: 0,
+        totalFamilies: 0,
+        visibleFamilies: 0,
+        totalCaregivers: 0,
+        visibleCaregivers: 0,
         totalAppointments: 0,
-        pendingCaregivers: 0
+        activeSubs: 0
     });
     const [activityData, setActivityData] = useState([]);
     const [timeRange, setTimeRange] = useState('7d'); // ['7d', '14d', '28d', '3m']
@@ -39,28 +41,41 @@ const AdminDashboard = () => {
 
     const fetchStats = async () => {
         try {
-            // 1. Total Users
-            const { count: userCount, error: userError } = await supabase
+            // 1. Total and Visible Families
+            const { count: totalFamilies } = await supabase
                 .from('profiles')
-                .select('*', { count: 'exact', head: true });
+                .select('*', { count: 'exact', head: true })
+                .eq('role', 'family');
 
-            // 2. Active Appointments (Confirmed)
-            const { count: apptCount, error: apptError } = await supabase
+            const { count: visibleFamilies } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true })
+                .eq('role', 'family')
+                .eq('is_active', true);
+
+            // 2. Total and Visible Caregivers
+            const { count: totalCaregivers } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true })
+                .eq('role', 'caregiver');
+
+            const { count: visibleCaregivers } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true })
+                .eq('role', 'caregiver')
+                .eq('is_active', true);
+
+            // 3. Active Appointments (Confirmed)
+            const { count: apptCount } = await supabase
                 .from('appointments')
                 .select('*', { count: 'exact', head: true })
                 .eq('status', 'confirmed');
 
-            // 3. Active Subs (Mock logic or check subscription_status)
-            const { count: subCount, error: subError } = await supabase
+            // 4. Active Subs
+            const { count: subCount } = await supabase
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .eq('subscription_status', 'active');
-
-            // 4. Pending Caregivers (Mock or role check) - Assuming 'caregiver' role
-            const { count: caregiverCount, error: cgError } = await supabase
-                .from('profiles')
-                .select('*', { count: 'exact', head: true })
-                .eq('role', 'caregiver');
 
 
             // 5. Activity Chart Data (Usuarios nuevos por periodo seleccionado)
@@ -141,10 +156,12 @@ const AdminDashboard = () => {
             setActivityData(Object.values(chartMap));
 
             setStats({
-                totalUsers: userCount || 0,
-                activeSubs: subCount || 0,
+                totalFamilies: totalFamilies || 0,
+                visibleFamilies: visibleFamilies || 0,
+                totalCaregivers: totalCaregivers || 0,
+                visibleCaregivers: visibleCaregivers || 0,
                 totalAppointments: apptCount || 0,
-                totalCaregivers: caregiverCount || 0
+                activeSubs: subCount || 0
             });
         } catch (error) {
             console.error("Error fetching admin stats:", error);
@@ -158,11 +175,18 @@ const AdminDashboard = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <StatCard
-                    title="Usuarios Totales"
-                    value={stats.totalUsers}
-                    subtext="Familias y Cuidadores registrados"
+                    title="Cuidadores Visibles"
+                    value={stats.visibleCaregivers}
+                    subtext={`De un total de ${stats.totalCaregivers} registros`}
                     icon={Users}
                     color="text-blue-600 bg-blue-100"
+                />
+                <StatCard
+                    title="Familias Visibles"
+                    value={stats.visibleFamilies}
+                    subtext={`De un total de ${stats.totalFamilies} registros`}
+                    icon={Users}
+                    color="text-orange-600 bg-orange-100"
                 />
                 <StatCard
                     title="Suscripciones"

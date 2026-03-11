@@ -138,19 +138,19 @@ const UserManagement = () => {
                         onClick={() => setFilter('all')}
                         className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'all' ? 'bg-slate-800 !text-[#FAFAF7]' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
-                        Todos
+                        Todos <span className="ml-1 opacity-80 font-normal">({users.filter(u => u.is_active !== false).length}/{users.length})</span>
                     </button>
                     <button
                         onClick={() => setFilter('family')}
                         className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'family' ? 'bg-slate-800 !text-[#FAFAF7]' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
-                        Familias
+                        Familias <span className="ml-1 opacity-80 font-normal">({users.filter(u => u.role === 'family' && u.is_active !== false).length}/{users.filter(u => u.role === 'family').length})</span>
                     </button>
                     <button
                         onClick={() => setFilter('caregiver')}
                         className={`px-4 py-2 text-sm font-bold rounded-md transition-all ${filter === 'caregiver' ? 'bg-slate-800 !text-[#FAFAF7]' : 'text-gray-500 hover:bg-gray-50'}`}
                     >
-                        Cuidadores
+                        Cuidadores <span className="ml-1 opacity-80 font-normal">({users.filter(u => u.role === 'caregiver' && u.is_active !== false).length}/{users.filter(u => u.role === 'caregiver').length})</span>
                     </button>
                 </div>
             </div>
