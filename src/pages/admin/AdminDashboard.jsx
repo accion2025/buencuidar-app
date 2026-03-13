@@ -64,6 +64,7 @@ const AdminDashboard = () => {
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .eq('role', 'family')
+                .eq('email_confirmed', true)
                 .eq('is_active', true);
 
             // 2. Total and Visible Caregivers
@@ -76,6 +77,8 @@ const AdminDashboard = () => {
                 .from('profiles')
                 .select('*', { count: 'exact', head: true })
                 .eq('role', 'caregiver')
+                .eq('email_confirmed', true)
+                .eq('is_available', true)
                 .eq('is_active', true);
 
             // 3. Active Appointments (Confirmed)
@@ -290,14 +293,14 @@ const AdminDashboard = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 <StatCard
-                    title="Cuidadores Visibles"
+                    title="Cuidadores Disponibles"
                     value={stats.visibleCaregivers}
                     subtext={`De un total de ${stats.totalCaregivers} registros`}
                     icon={Users}
                     color="text-blue-600 bg-blue-100"
                 />
                 <StatCard
-                    title="Familias Visibles"
+                    title="Familias Confirmadas"
                     value={stats.visibleFamilies}
                     subtext={`De un total de ${stats.totalFamilies} registros`}
                     icon={Users}
