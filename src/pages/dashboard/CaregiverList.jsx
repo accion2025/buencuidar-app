@@ -399,7 +399,7 @@ const CaregiverList = () => {
                                     </p>
 
                                     <p className="text-slate-500 text-base font-secondary leading-relaxed mb-8 line-clamp-2">
-                                        {displayBio || 'Cuidador verificado de la plataforma BuenCuidar especializado en atención personalizada.'}
+                                        {displayBio || 'Este cuidador aún no ha añadido su biografía.'}
                                     </p>
 
                                     <button
