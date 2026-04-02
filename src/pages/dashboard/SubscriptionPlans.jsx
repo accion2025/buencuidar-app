@@ -244,7 +244,7 @@ const SubscriptionPlans = () => {
                     </div>
                     <div className="flex-1 text-center md:text-left z-10">
                         <h3 className="font-brand font-bold text-2xl !text-white mb-2">Garantía BuenCuidar</h3>
-                        <p className="text-white/60 font-medium">Pagos procesados de forma segura con encriptación de nivel bancario a través de Stripe.</p>
+                        <p className="text-white/60 font-medium">Pagos procesados de forma segura con encriptación de nivel bancario a través de Stripe (próximamente).</p>
                     </div>
                     <div className="flex items-center gap-6 z-10 opacity-50 grayscale hover:grayscale-0 transition-all">
                         <span className="text-white font-black text-2xl italic">VISA</span>
