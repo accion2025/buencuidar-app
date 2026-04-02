@@ -105,6 +105,12 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
             return;
         }
 
+        // V1.0.142: Bloqueo de seguridad para emails no confirmados
+        if (profile && profile.email_confirmed === false) {
+            alert("⚠️ Acción requerida: Para mayor seguridad de nuestros cuidadores, debes confirmar tu correo electrónico antes de solicitar un servicio. Revisa tu bandeja de entrada y spam.");
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             // 1. Create Appointment (Status: Pending)
