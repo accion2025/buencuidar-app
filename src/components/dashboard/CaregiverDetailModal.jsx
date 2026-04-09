@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideContactButton = false }) => {
     const { user, profile } = useAuth();
     const [reviews, setReviews] = useState([]);
-    const [realStats, setRealStats] = useState({ rating: '5.0', count: 0 });
+    const [realStats, setRealStats] = useState({ rating: 0, count: 0 });
 
     // Request Form State
     const [showRequestForm, setShowRequestForm] = useState(false);
@@ -255,17 +255,17 @@ const CaregiverDetailModal = ({ isOpen, onClose, caregiver, onContact, hideConta
                                 )}
                                 <div className="flex items-center gap-2 text-gray-400">
                                     <p className="text-cyan-700 font-bold font-mono text-xs opacity-80 uppercase tracking-widest mr-2">{specialization}</p>
-                                    <div className="flex items-center gap-2">
+                                     <div className="flex items-center gap-2">
                                         <div className="flex items-center bg-yellow-400/10 px-2 py-0.5 rounded-[4px]">
                                             <Star
-                                                size={14}
-                                                className={Number(realStats.rating) > 0 ? "text-yellow-400 fill-yellow-400" : "text-gray-300 fill-none"}
+                                                size={12}
+                                                className={Number(realStats.rating) > 0 ? "text-yellow-400 fill-yellow-400" : "text-slate-300 fill-none"}
                                             />
-                                            <span className={`text-sm font-black ml-1 ${Number(realStats.rating) > 0 ? 'text-yellow-600' : 'text-gray-400'}`}>
+                                            <span className={`text-sm font-black ml-1 ${Number(realStats.rating) > 0 ? 'text-yellow-600' : 'text-slate-400'}`}>
                                                 {Number(realStats.rating) > 0 ? `${realStats.rating}/5` : '0/5'}
                                             </span>
                                         </div>
-                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
                                             {realStats.count > 0 ? `(${realStats.count} valoraciones)` : '(Sin calificaciones)'}
                                         </span>
                                     </div>
